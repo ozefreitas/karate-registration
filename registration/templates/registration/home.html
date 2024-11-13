@@ -1,7 +1,4 @@
-<h2>Registo de Atleta</h2>
-
-<form action="" method="post">
-    {% csrf_token %}
-    {{form}}
-    <input type="submit">
-</form>
+{% extends "registration/base.html" %}
+{% block content%}
+    <h1>Página de inicio Karate Score App</h1>
+{% endblock content %}
