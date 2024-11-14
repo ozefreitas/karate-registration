@@ -88,6 +88,3 @@ def thanks(request):
 def wrong(request):
     context = {"errors": errors}
     return render(request, "registration/wrong.html", context)
-
-def login(request):
-    return render(request, "registration/login.html")
