@@ -7,4 +7,5 @@ urlpatterns = [
     path('help/', views.help, name="registration-help"),
     path('thanks/', views.thanks, name="registration-thanks"),
     path('wrong/', views.wrong, name="registration-wrong"),
+    path('delete/<int:athlete_id>/', views.delete, name="registration-delete"),
 ]

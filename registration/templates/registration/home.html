@@ -1,6 +1,9 @@
 {% extends "registration/base.html" %} 
 {% block content%}
 <h1>Página de inicio Karate Score App</h1>
+{% if user.is_authenticated %}
+    <p>Atenticado como <strong>{{user.username}}</strong></p>
+{% endif %}
 {% if messages %}
     {% for message in messages %}
         {{message}}
@@ -8,6 +11,12 @@
 {% endif %}
 
 <h2>Atletas já inscritos</h2>
-{{athlets}}
+{% for athlete in athlets%}
+    <p>{{athlete.first_name}} {{athlete.last_name}} {{athlete.match_type}} {{athlete.category}}</p>
+    <form action="{% url 'registration-delete' athlete.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Eliminar inscrição</button>
+    </form>
+{% endfor %}
 <button onclick="location.href='/form/'">Inscrever Atleta</button>
 {% endblock content %}

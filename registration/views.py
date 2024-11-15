@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from .forms import AthleteForm
@@ -6,6 +6,8 @@ from datetime import datetime
 from django.contrib import messages
 from .utils.utils import range_decoder
 from .models import Athlete
+
+# views for the athlets registrations
 
 age_graduation_rules = {
     "0-9": 9,
@@ -45,8 +47,8 @@ def form(request):
             date_now = datetime.now()
             age_at_comp = (date_now.year) - year_of_birth
 
-            if Athlete.objects.filter(first_name=form.cleaned_data["first_name"], birth_date=birth_date).exists():
-                errors.append("Um atleta com as mesmas credenciais já está inscrito")
+            if Athlete.objects.filter(first_name=form.cleaned_data["first_name"], birth_date=birth_date, match_type=form.cleaned_data.get("match_type")).exists():
+                errors.append("Um atleta com as mesmas credenciais já está inscrito. Verifique se a quer inscrever a mesma pessoa noutra prova")
 
             else:
                 for age_range, grad in age_graduation_rules.items():
@@ -93,3 +95,10 @@ def thanks(request):
 def wrong(request):
     context = {"errors": errors}
     return render(request, "registration/wrong.html", context)
+
+def delete(request, athlete_id):
+    if request.method == "POST":
+        athlete = get_object_or_404(Athlete, id=athlete_id)
+        athlete.delete()
+        athletes = Athlete.objects.filter(dojo=request.user)
+        return render(request, 'registration/home.html', {"athlets": athletes})

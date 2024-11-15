@@ -6,14 +6,24 @@ from django.contrib.auth.models import User
 class Athlete(models.Model):
     GRADUATIONS = {
         "9": "9º Kyu",
+        "8.5": "8º Kyu Karie",
         "8": "8º Kyu",
+        "7.5": "7º Kyu Karie",
         "7": "7º Kyu",
+        "6.5": "6º Kyu Karie",
         "6": "6º Kyu",
+        "5.5": "5º Kyu Karie",
         "5": "5º Kyu",
+        "4.5": "4º Kyu Karie",
         "4": "4º Kyu",
+        "3.5": "3º Kyu Karie",
         "3": "3º Kyu",
         "2": "2º Kyu",
         "1": "1º Kyu",
+        "1d": "1º Dan",
+        "2d": "2º Dan",
+        "3d": "3º Dan",
+        "4d": "4º Dan",
     }
 
     GENDERS = {
@@ -57,13 +67,13 @@ class Athlete(models.Model):
 
     first_name = models.CharField("Primeiro Nome", max_length=200)
     last_name = models.CharField("Último Nome", max_length=200)
-    graduation = models.CharField("Graduação", max_length=1, choices=GRADUATIONS, blank=True)
+    graduation = models.CharField("Graduação", max_length=3, choices=GRADUATIONS)
     birth_date = models.DateField("Data de Nascimento")
     gender = models.CharField("Género", choices=GENDERS, max_length=10)
     skip_number = models.IntegerField("Nº SKI-P", blank=True, null=True)
     category = models.CharField("Escalão", choices=CATEGORIES, max_length=99)
     match_type = models.CharField("Prova", choices=MATCHES, max_length=10)
-    weight = models.CharField("Peso", choices=WEIGHTS, max_length=10)
+    weight = models.CharField("Peso", choices=WEIGHTS, max_length=10, blank=True, null=True)
     dojo = models.ForeignKey(User, on_delete=models.CASCADE)
     additional_emails = models.EmailField("Emails adicionais")
 
