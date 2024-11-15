@@ -1,13 +1,10 @@
 {% extends "registration/base.html" %} 
 {% block content%}
-<h1>Página de inicio Karate Score App</h1>
+<h1>Saíste da tua conta</h1>
 {% if messages %}
     {% for message in messages %}
         {{message}}
     {% endfor %}
 {% endif %}
-
-<h2>Atletas já inscritos</h2>
-{{athlets}}
-<button onclick="location.href='/form/'">Inscrever Atleta</button>
+<button onclick="location.href='/login/'">Log in outra vez</button>
 {% endblock content %}

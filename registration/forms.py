@@ -4,7 +4,16 @@ from .models import Athlete
 class AthleteForm(forms.ModelForm):
     class Meta:
         model = Athlete
-        fields = "__all__"
+        fields = ["first_name", 
+                    "last_name",
+                    "graduation",
+                    "birth_date",
+                    "gender",
+                    "skip_number",
+                    "category",
+                    "match_type",
+                    "weight",
+                    "additional_emails"]
         widgets = {
             'birth_date': forms.DateInput(
                 attrs={

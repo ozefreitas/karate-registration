@@ -20,9 +20,14 @@
   </head>
   <body>
     <div class="header-container">
-      Karate Score App
-      <a href="/login/">Login</a>
-      <a href="/register/register_user/">Sign Up</a>
+      <a href="{% url 'registration-home' %}">Karate Score App</a>
+      {% if user.is_authenticated %}
+        <a href="{% url 'dojos-logout' %}">Logout</a>
+        <a href="{% url 'dojos-profile' %}">Profile</a>
+      {% else %}
+        <a href="{% url 'login' %}">Login</a>
+        <a href="{% url 'dojos-register' %}">Sign Up</a>
+      {% endif %}
     </div>
     {% block content %}{% endblock %}
   </body>

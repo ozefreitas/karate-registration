@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 
@@ -48,7 +49,7 @@ class Athlete(models.Model):
             ('-65', '-65Kg'),
             ('+65', '+65Kg'),
         ],
-        'Sénior': [
+        'Sénior e Veterano': [
             ('-75', '-75Kg'),
             ('+75', '+75Kg'),
         ],
@@ -62,9 +63,9 @@ class Athlete(models.Model):
     skip_number = models.IntegerField("Nº SKI-P", blank=True, null=True)
     category = models.CharField("Escalão", choices=CATEGORIES, max_length=99)
     match_type = models.CharField("Prova", choices=MATCHES, max_length=10)
-    weight = models.CharField("Peso", choices=WEIGHTS, max_length=10, default="10")
-    # dojo = models.ForeignKey("Dojo", on_delete=models.CASCADE)
-    additional_emails = models.EmailField("Emails adicionais", default="jpsfreitas19@gmail.com")
+    weight = models.CharField("Peso", choices=WEIGHTS, max_length=10)
+    dojo = models.ForeignKey(User, on_delete=models.CASCADE)
+    additional_emails = models.EmailField("Emails adicionais")
 
     def __str__(self): 
         return "{} {}".format(self.first_name, self.last_name)

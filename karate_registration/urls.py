@@ -17,11 +17,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views 
+from django.contrib.auth import logout
+from dojos import views as dojo_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("registration.urls")),
     path('register/', include("dojos.urls")),
-    path('login/', auth_views.LoginView.as_view(template_name="dojos/login.html"), name='login')
-    # path('logout/', auth_views.Log .as_view(), name='logout')
+    path('login/', auth_views.LoginView.as_view(template_name="dojos/login.html"), name='login'),
+    path('logout/', dojo_views.logout_user, name="dojos-logout"),
+    path('profile/', dojo_views.profile, name="dojos-profile"),
     ]

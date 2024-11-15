@@ -2,7 +2,9 @@ from django.shortcuts import render
 from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from .forms import DojoRegisterForm
+from django.contrib.auth import logout
 
 # Create your views here.
 
@@ -15,7 +17,7 @@ def register_user(request):
             form.save()
             dojo = form.cleaned_data.get("username")
             messages.success(request, f'Sucesso! Conta criada para o dojo {dojo}')
-            return HttpResponseRedirect("/")
+            return HttpResponseRedirect("/login/")
         else:
             messages.error(request, form.errors)
             return HttpResponseRedirect("/wrong")
@@ -23,3 +25,12 @@ def register_user(request):
     else:
         form = DojoRegisterForm()
         return render(request, 'dojos/register_user.html', {"form": form})
+    
+
+def logout_user(request):
+    logout(request)
+    return render(request, "dojos/logout.html")
+
+@login_required
+def profile(request):
+    return render(request, 'dojos/profile.html')

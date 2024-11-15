@@ -3,7 +3,8 @@
 <h2>Registo de Dojo</h2>
 
 <form action="" method="post">
-  {% csrf_token %} {{form.as_p}}
+  {% csrf_token %} 
+  {{form.as_p}}
   <button type="submit">Criar conta</button>
 </form>
 <button onclick="location.href='/login/'">Ir para Login</button>

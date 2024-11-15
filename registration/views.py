@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
 from .forms import AthleteForm
 from datetime import datetime
 from django.contrib import messages
@@ -28,12 +29,13 @@ age_category_rules = {
 
 errors = []
 
+@login_required()
 def form(request):
     # if this is a POST request we need to process the form data
     if request.method == "POST":
         # create a form instance and populate it with data from the request:
         form = AthleteForm(request.POST)
-        print(request.POST)
+        print(request.user)
         errors = []
         # check whether it's valid:
         if form.is_valid():
@@ -66,6 +68,7 @@ def form(request):
                 return HttpResponseRedirect("/wrong")
             
             newpost = form.save(commit=False) 
+            newpost.dojo = request.user
             newpost.save()
             # redirect to a new URL:
             return HttpResponseRedirect("/thanks/")
@@ -75,9 +78,11 @@ def form(request):
         form = AthleteForm()
         context = {"form": form, "title": "Inscrições"}
         return render(request, 'registration/form.html', context)
-    
+
+@login_required()
 def home(request):
-    return render(request, 'registration/home.html')
+    athletes = Athlete.objects.filter(dojo=request.user)
+    return render(request, 'registration/home.html', {"athlets": athletes})
 
 def help(request):
     return render(request, 'registration/help.html')
