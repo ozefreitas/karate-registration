@@ -13,10 +13,11 @@
 <h2>Atletas já inscritos</h2>
 {% for athlete in athlets%}
     <p>{{athlete.first_name}} {{athlete.last_name}} {{athlete.match_type}} {{athlete.category}}</p>
+    <a href="{% url 'registration-update' athlete.id %}">Editar inscrição</a>
     <form action="{% url 'registration-delete' athlete.id %}" method="post">
         {% csrf_token %}
         <button type="submit">Eliminar inscrição</button>
     </form>
 {% endfor %}
-<button onclick="location.href='/form/'">Inscrever Atleta</button>
+<button style="margin-top: 40px;" onclick="location.href='/form/'">Inscrever Atleta</button>
 {% endblock content %}

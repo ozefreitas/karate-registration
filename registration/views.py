@@ -102,3 +102,9 @@ def delete(request, athlete_id):
         athlete.delete()
         athletes = Athlete.objects.filter(dojo=request.user)
         return render(request, 'registration/home.html', {"athlets": athletes})
+    
+def update(request, athlete_id):
+    athlete = get_object_or_404(Athlete, id=athlete_id)
+    form = AthleteForm(instance=athlete)
+    # athletes = Athlete.objects.filter(dojo=request.user)
+    return render(request, 'registration/update_registration.html', {"form": form})

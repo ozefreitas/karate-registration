@@ -3,7 +3,9 @@
 <h2>Login</h2>
 
 <form action="" method="post">
-  {% csrf_token %} {{form.as_p}}
+  {% csrf_token %} 
+  {{form.as_p}}
   <button type="submit">Login</button>
 </form>
+<div>Não tem uma conta? <a href="{% url 'dojos-register' %}"> Clique aqui para criar.</a></div>
 {% endblock content %}

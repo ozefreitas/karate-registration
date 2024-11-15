@@ -10,3 +10,31 @@ class DojoRegisterForm(UserCreationForm):
     class Meta:
         model = User
         fields = ["username", "first_name", "last_name", "email", "password1", "password2"]
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Customize the attributes of each field
+
+        # username
+        self.fields['username'].help_text = "Deve ter menos que 150 caracteres."
+        self.fields['username'].label = "Nome de utilizador (dojo)"
+        self.fields['username'].widget.attrs.update({'placeholder': 'Inserir nome'})
+
+        # first_name
+        self.fields['first_name'].help_text = "Recomendado apenas um nome. Se tiver atletas com nomes iguais ou parecidos, deve colocar outro nome que os diferencie."
+        self.fields['first_name'].label = "Primeiro Nome"
+
+        # last_name
+        self.fields['last_name'].help_text = None
+        self.fields['last_name'].label = "Último Nome"
+
+        # password1
+        self.fields['password1'].help_text = "<ul><li>Não pode ser muito semelhante à informação fornecida acima;</li>\
+                                                <li>Tem de ter pelo menos 8 caracteres;</li>\
+                                                <li>Não pode ser uma palavra passe muito utilizada;</li>\
+                                                <li>Não pode ser só numérica.</li></ul>"
+        self.fields['password1'].label = "Palavra Passe"
+
+        # password2
+        self.fields['password2'].help_text = None
+        self.fields['password2'].label = "Repetir Palavra passe"

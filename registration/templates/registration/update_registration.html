@@ -1,0 +1,18 @@
+{% extends "registration/base.html" %} 
+{% block content%}
+<h1>Atualizar inscrição de .....</h1>
+{% if user.is_authenticated %}
+    <p>Atenticado como <strong>{{user.username}}</strong></p>
+{% endif %}
+{% if messages %}
+    {% for message in messages %}
+        {{message}}
+    {% endfor %}
+{% endif %}
+
+<form action="" method="post">
+    {% csrf_token %}
+    {{form.as_p}}
+    <input type="submit">
+</form>
+{% endblock %}

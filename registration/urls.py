@@ -8,4 +8,5 @@ urlpatterns = [
     path('thanks/', views.thanks, name="registration-thanks"),
     path('wrong/', views.wrong, name="registration-wrong"),
     path('delete/<int:athlete_id>/', views.delete, name="registration-delete"),
+    path('update_registration/<int:athlete_id>/', views.update, name="registration-update"),
 ]
