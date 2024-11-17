@@ -10,12 +10,12 @@ from .models import Athlete
 # views for the athlets registrations
 
 age_graduation_rules = {
-    "0-9": 9,
-    "10-11": 9,
-    "12-13": 8,
-    "14-15": 7,
-    "16-17": 6,
-    "18-50": 5
+    "0-9": 15,
+    "10-11": 15,
+    "12-13": 14,
+    "14-15": 13,
+    "16-17": 12,
+    "18-50": 11
 }
 
 age_category_rules = {
@@ -37,7 +37,7 @@ def form(request):
     if request.method == "POST":
         # create a form instance and populate it with data from the request:
         form = AthleteForm(request.POST)
-        print(request.user)
+        print(request.POST)
         errors = []
         # check whether it's valid:
         if form.is_valid():
@@ -63,15 +63,18 @@ def form(request):
                 
                 if form.cleaned_data["match_type"] == "kumite" and form.cleaned_data["category"] in ["infantil", "iniciado"]:
                     errors.append("Não existe prova de Kumite para esse escalão")
+                
+                if form.cleaned_data["match_type"] == "kumite" and form.cleaned_data["weight"] is None and form.cleaned_data["gender"] == "male":
+                    errors.append("Por favor selecione um peso")
             
             if len(errors) != 0:
                 for error in errors:
                     messages.error(request, error)
                 return HttpResponseRedirect("/wrong")
             
-            newpost = form.save(commit=False) 
-            newpost.dojo = request.user
-            newpost.save()
+            new_athlete = form.save(commit=False) 
+            new_athlete.dojo = request.user
+            new_athlete.save()
             # redirect to a new URL:
             return HttpResponseRedirect("/thanks/")
 
@@ -83,7 +86,7 @@ def form(request):
 
 @login_required()
 def home(request):
-    athletes = Athlete.objects.filter(dojo=request.user)
+    athletes = Athlete.objects.filter(dojo=request.user).order_by("first_name")
     return render(request, 'registration/home.html', {"athlets": athletes})
 
 def help(request):
@@ -105,6 +108,14 @@ def delete(request, athlete_id):
     
 def update(request, athlete_id):
     athlete = get_object_or_404(Athlete, id=athlete_id)
-    form = AthleteForm(instance=athlete)
-    # athletes = Athlete.objects.filter(dojo=request.user)
-    return render(request, 'registration/update_registration.html', {"form": form})
+    if request.method == "POST":
+        form = AthleteForm(request.POST, instance=athlete)
+        if form.is_valid():
+            new_athlete = form.save(commit=False) 
+            new_athlete.dojo = request.user
+            new_athlete.save()
+            return HttpResponseRedirect("/")
+    else:
+        form = AthleteForm(instance=athlete)
+        # athletes = Athlete.objects.filter(dojo=request.user)
+        return render(request, 'registration/update_registration.html', {"form": form, "athlete_id": athlete_id})

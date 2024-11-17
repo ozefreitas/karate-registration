@@ -1,6 +1,6 @@
 {% extends "registration/base.html" %} 
 {% block content%}
-<h1>Atualizar inscrição de .....</h1>
+<h1>Atualizar inscrição de {{athlete_id}}</h1>
 {% if user.is_authenticated %}
     <p>Atenticado como <strong>{{user.username}}</strong></p>
 {% endif %}
@@ -10,7 +10,7 @@
     {% endfor %}
 {% endif %}
 
-<form action="" method="post">
+<form action="{% url 'registration-update' athlete_id %}" method="post">
     {% csrf_token %}
     {{form.as_p}}
     <input type="submit">
