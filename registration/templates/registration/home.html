@@ -1,12 +1,9 @@
 {% extends "registration/base.html" %} 
 {% block content%}
 {% if user.is_authenticated %}
-<div>
-    <div>Página de inicio Karate Score App</div>
-    <div>Atenticado como <strong>{{user.username}}</strong></div></div>
-{% else %}
-    <h2>Página de inicio Karate Score App</h2>
+    <p>Autenticado como <strong>{{user.username}}</strong></p>
 {% endif %}
+<h1>Página de inicio Karate Score App</h1>
 {% if messages %}
     {% for message in messages %}
         {{message}}
@@ -14,17 +11,20 @@
 {% endif %}
 
 {% if athlets %}
-<h3>Atletas já inscritos</h3>
+    <h2>Atletas já inscritos:</h2>
+    {% for athlete in athlets%}
+        <div>
+            <div>{{athlete.first_name}} {{athlete.last_name}} {{athlete.match_type}} {{athlete.category}}
+            <a href="{% url 'registration-update' athlete.id %}">Editar/Consultar inscrição</a></div>
+            <form action="{% url 'registration-delete' athlete.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" style="margin-top: 20px;">Eliminar inscrição</button>
+            </form>
+            <hr>
+        </div>
+    {% endfor %}
 {% else %}
-<h4>Ainda não tem atletas inscritos</h4>
+    <div>Ainda sem atletas inscritos</div>
 {% endif %}
-{% for athlete in athlets %}
-    <p>{{athlete.first_name}} {{athlete.last_name}} {{athlete.match_type}} {{athlete.category}} <a href="{% url 'registration-update' athlete.id %}">Editar inscrição</a></p>
-    <form action="{% url 'registration-delete' athlete.id %}" method="post">
-        {% csrf_token %}
-        <button type="submit">Eliminar inscrição</button>
-    </form>
-<hr>
-{% endfor %}
 <button style="margin-top: 20px;" onclick="location.href='/form/'">Inscrever Atleta</button>
 {% endblock content %}

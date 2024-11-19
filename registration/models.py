@@ -20,10 +20,12 @@ class Athlete(models.Model):
         "9": "3º Kyu",
         "8": "2º Kyu",
         "7": "1º Kyu",
-        "5": "1º Dan",
-        "4": "2º Dan",
-        "3": "3º Dan",
-        "2": "4º Dan",
+        "6": "1º Dan",
+        "5": "2º Dan",
+        "4": "3º Dan",
+        "3": "5º Dan",
+        "2": "6º Dan",
+        "1": "7º Dan",
     }
 
     GENDERS = {
