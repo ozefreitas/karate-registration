@@ -5,25 +5,25 @@ from django.contrib.auth.models import User
 
 class Athlete(models.Model):
     GRADUATIONS = {
-        "9": "9º Kyu",
-        "8.5": "8º Kyu Karie",
-        "8": "8º Kyu",
-        "7.5": "7º Kyu Karie",
-        "7": "7º Kyu",
-        "6.5": "6º Kyu Karie",
-        "6": "6º Kyu",
-        "5.5": "5º Kyu Karie",
-        "5": "5º Kyu",
-        "4.5": "4º Kyu Karie",
-        "4": "4º Kyu",
-        "3.5": "3º Kyu Karie",
-        "3": "3º Kyu",
-        "2": "2º Kyu",
-        "1": "1º Kyu",
-        "1d": "1º Dan",
-        "2d": "2º Dan",
-        "3d": "3º Dan",
-        "4d": "4º Dan",
+        "15": "9º Kyu",
+        "14.5": "8º Kyu Karie",
+        "14": "8º Kyu",
+        "13.5": "7º Kyu Karie",
+        "13": "7º Kyu",
+        "12.5": "6º Kyu Karie",
+        "12": "6º Kyu",
+        "11.5": "5º Kyu Karie",
+        "11": "5º Kyu",
+        "10.5": "4º Kyu Karie",
+        "10": "4º Kyu",
+        "9.5": "3º Kyu Karie",
+        "9": "3º Kyu",
+        "8": "2º Kyu",
+        "7": "1º Kyu",
+        "5": "1º Dan",
+        "4": "2º Dan",
+        "3": "3º Dan",
+        "2": "4º Dan",
     }
 
     GENDERS = {
@@ -67,7 +67,7 @@ class Athlete(models.Model):
 
     first_name = models.CharField("Primeiro Nome", max_length=200)
     last_name = models.CharField("Último Nome", max_length=200)
-    graduation = models.CharField("Graduação", max_length=3, choices=GRADUATIONS)
+    graduation = models.CharField("Graduação", max_length=4, choices=GRADUATIONS)
     birth_date = models.DateField("Data de Nascimento")
     gender = models.CharField("Género", choices=GENDERS, max_length=10)
     skip_number = models.IntegerField("Nº SKI-P", blank=True, null=True)

@@ -10,12 +10,12 @@ from .models import Athlete
 # views for the athlets registrations
 
 age_graduation_rules = {
-    "0-9": 9,
-    "10-11": 9,
-    "12-13": 8,
-    "14-15": 7,
-    "16-17": 6,
-    "18-50": 5
+    "0-9": 15,
+    "10-11": 15,
+    "12-13": 14,
+    "14-15": 13,
+    "16-17": 12,
+    "18-50": 11
 }
 
 age_category_rules = {

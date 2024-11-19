@@ -1,0 +1,17 @@
+body {
+  font-size: 1.2rem;
+  width: 80%;
+  margin: auto;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 40px;
+}
+
+.dojos-actions {
+  width: 150px;
+  display: flex;
+  justify-content: space-around;
+}
