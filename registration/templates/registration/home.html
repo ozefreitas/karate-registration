@@ -1,9 +1,9 @@
 {% extends "registration/base.html" %} 
 {% block content%}
 {% if user.is_authenticated %}
-    <p>Autenticado como <strong>{{user.username}}</strong></p>
+    <p class="current_user">Autenticado como <strong>{{user.username}}</strong></p>
 {% endif %}
-<h1>Página de inicio Karate Score App</h1>
+<h1>Interface de registo</h1>
 {% if messages %}
     {% for message in messages %}
         {{message}}
@@ -11,20 +11,52 @@
 {% endif %}
 
 {% if athlets %}
-    <h2>Atletas já inscritos:</h2>
+    <h3>Atletas já inscritos:</h3>
     {% for athlete in athlets%}
         <div>
-            <div>{{athlete.first_name}} {{athlete.last_name}} {{athlete.match_type}} {{athlete.category}}
-            <a href="{% url 'registration-update' athlete.id %}">Editar/Consultar inscrição</a></div>
-            <form action="{% url 'registration-delete' athlete.id %}" method="post">
+            <div class="athlete_info_options">
+                <div class="athlete_info">
+                    <span class="athlete_name">{{athlete.first_name}} {{athlete.last_name}}</span>
+                    <span class="athlete_match_type">{{athlete.match_type}}</span>
+                    <span class="athlete_category">{{athlete.category}}</span>
+                </div>
+                <a href="{% url 'registration-update' athlete.id %}">Editar/Consultar inscrição</a>
+                <form action="{% url 'registration-delete' athlete.id %}" method="post">
                 {% csrf_token %}
-                <button type="submit" style="margin-top: 20px;">Eliminar inscrição</button>
+                <button class="delete_button" type="submit">
+                    <span class="text">Eliminar inscrição</span>
+                    <span class="icon">
+                        <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z"
+                        ></path>
+                      </svg>
+                    </span>
+                  </button>
             </form>
+            </div>
+            
             <hr>
         </div>
     {% endfor %}
 {% else %}
     <div>Ainda sem atletas inscritos</div>
 {% endif %}
-<button style="margin-top: 20px;" onclick="location.href='/form/'">Inscrever Atleta</button>
+<button class="add_button" onclick="location.href='/form/'">
+  <span class="text">Adicionar</span
+  ><span class="icon"
+    ><svg
+      viewBox="0 0 24 24"
+      height="24"
+      width="24"
+      xmlns="http://www.w3.org/2000/svg"
+    ></svg>
+    <span class="buttonSpan">+</span>
+</span>
+</button>
 {% endblock content %}

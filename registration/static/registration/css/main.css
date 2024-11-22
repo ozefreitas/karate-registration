@@ -1,0 +1,201 @@
+body {
+  font-size: 1.2rem;
+  width: 80%;
+  margin: auto;
+}
+
+.main_skip_logo {
+  width: 100px;
+  height: 100px;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 40px;
+}
+
+.current_user {
+  text-align: right;
+  margin: 0;
+}
+
+.dojos-actions {
+  width: 150px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.athlete_info_options {
+  height: 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.athlete_info {
+  width: 500px;
+}
+
+.athlete_info .athlete_match_type {
+  position: absolute;
+  left: 500px;
+}
+
+.athlete_info .athlete_category {
+  float: right;
+}
+
+.delete_button {
+  width: 220px;
+  height: 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
+  background: #e62222;
+}
+
+.delete_button,
+.delete_button span {
+  transition: 200ms;
+}
+
+.delete_button .text {
+  transform: translateX(35px);
+  color: white;
+  font-weight: bold;
+  -webkit-transform: translateX(35px);
+  -moz-transform: translateX(35px);
+  -ms-transform: translateX(35px);
+  -o-transform: translateX(35px);
+}
+
+.delete_button .icon {
+  position: absolute;
+  border-left: 1px solid #c41b1b;
+  transform: translateX(170px);
+  height: 30px;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-transform: translateX(170px);
+  -moz-transform: translateX(170px);
+  -ms-transform: translateX(170px);
+  -o-transform: translateX(170px);
+}
+
+.delete_button svg {
+  width: 15px;
+  fill: #eee;
+}
+
+.delete_button:hover {
+  background: #ff3636;
+}
+
+.delete_button:hover .text {
+  color: transparent;
+}
+
+.delete_button:hover .icon {
+  width: 150px;
+  border-left: none;
+  transform: translateX(30px);
+  -webkit-transform: translateX(30px);
+  -moz-transform: translateX(30px);
+  -ms-transform: translateX(30px);
+  -o-transform: translateX(30px);
+}
+
+.delete_button:focus {
+  outline: none;
+}
+
+.delete_button:active .icon svg {
+  transform: scale(0.8);
+}
+
+.add_button {
+  width: 150px;
+  height: 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  background: #00a600;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
+  margin-top: 20px;
+}
+
+.add_button,
+.add_button span {
+  transition: 200ms;
+}
+
+.add_button .text {
+  transform: translateX(25px);
+  color: white;
+  font-weight: bold;
+  -webkit-transform: translateX(25px);
+  -moz-transform: translateX(25px);
+  -ms-transform: translateX(25px);
+  -o-transform: translateX(25px);
+}
+
+.add_button .icon {
+  position: absolute;
+  border-left: 1px solid #007300;
+  transform: translateX(110px);
+  height: 30px;
+  width: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.add_button svg {
+  width: 15px;
+  fill: #eee;
+}
+
+.add_button:hover {
+  background: #00a600;
+}
+
+.add_button:active {
+  background: #00cc00;
+}
+
+.add_button:hover .text {
+  color: transparent;
+}
+
+.add_button:hover .icon {
+  width: 150px;
+  border-left: none;
+  transform: translateX(-5px);
+  -webkit-transform: translateX(-5px);
+  -moz-transform: translateX(-5px);
+  -ms-transform: translateX(-5px);
+  -o-transform: translateX(-5px);
+}
+
+.add_button:focus {
+  outline: none;
+}
+
+.add_button:active .icon svg {
+  transform: scale(0.8);
+}
+
+.buttonSpan {
+  color: white;
+  margin: 150px;
+  font-size: 30px;
+}

@@ -12,14 +12,11 @@
     {% endif %}
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="{% static 'css/main.css' %}"
-    />
+    <link rel="stylesheet" type="text/css" href="{% static 'registration/css/main.css' %}" />
   </head>
   <body>
     <div class="header-container">
+      <img src="./../../static/registration/images/skip-logo.png" alt="SKI-P logo" class="main_skip_logo">
       <a href="{% url 'registration-home' %}">Karate Score App</a>
       <div class="dojos-actions">
         {% if user.is_authenticated %}
