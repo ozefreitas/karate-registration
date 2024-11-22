@@ -1,12 +1,28 @@
+:root {
+}
+
 body {
   font-size: 1.2rem;
   width: 80%;
   margin: auto;
+  font-family: "Trebuchet MS", "Arial";
+}
+
+.logos_container {
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }
 
 .main_skip_logo {
   width: 100px;
   height: 100px;
+}
+
+.appname_span {
+  text-decoration: none;
+  color: black;
+  font-size: 1.2em;
 }
 
 .header-container {
@@ -40,11 +56,16 @@ body {
 
 .athlete_info .athlete_match_type {
   position: absolute;
-  left: 500px;
+  left: 450px;
 }
 
 .athlete_info .athlete_category {
   float: right;
+}
+
+.buttons-container {
+  width: 500px;
+  display: flex;
 }
 
 .delete_button {
@@ -198,4 +219,166 @@ body {
   color: white;
   margin: 150px;
   font-size: 30px;
+}
+
+.update_button {
+  font-size: 15px;
+  width: 140px;
+  height: 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  background: #00a600;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
+  text-decoration: none; 
+  text-align: center;
+}
+
+.update_button,
+.update_button span {
+  transition: 200ms;
+}
+
+.update_button .text {
+  transform: translateX(30px);
+  color: white;
+  font-weight: bold;
+  -webkit-transform: translateX(30px);
+  -moz-transform: translateX(30px);
+  -ms-transform: translateX(30px);
+  -o-transform: translateX(30px);
+}
+
+.update_button .icon {
+  position: absolute;
+  border-left: 1px solid #007300;
+  transform: translateX(95px);
+  height: 30px;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  fill: white;
+  -webkit-transform: translateX(95px);
+  -moz-transform: translateX(95px);
+  -ms-transform: translateX(95px);
+  -o-transform: translateX(95px);
+}
+
+.update_button svg {
+  width: 15px;
+  fill: #eee
+}
+
+.update_button:hover {
+  background: #00a600;
+}
+
+.update_button:active {
+  background: #00cc00;
+}
+
+.update_button:hover .text {
+  color: transparent;
+}
+
+.update_button:hover .icon {
+  width: 150px;
+  border-left: none;
+  transform: translateX(-10px);
+  -webkit-transform: translateX(-10px);
+  -moz-transform: translateX(-10px);
+  -ms-transform: translateX(-10px);
+  -o-transform: translateX(-10px);
+}
+
+.update_button:focus {
+  outline: none;
+}
+
+.update_button:active .icon svg {
+  transform: scale(0.8);
+}
+
+.view_button {
+  font-size: 15px;
+  width: 140px;
+  height: 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  background: #00a600;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
+  text-decoration: none; 
+  text-align: center;
+}
+
+.view_button,
+.view_button span {
+  transition: 200ms;
+}
+
+.view_button .text {
+  transform: translateX(30px);
+  color: white;
+  font-weight: bold;
+  -webkit-transform: translateX(30px);
+  -moz-transform: translateX(30px);
+  -ms-transform: translateX(30px);
+  -o-transform: translateX(30px);
+}
+
+.view_button .icon {
+  position: absolute;
+  border-left: 1px solid #007300;
+  transform: translateX(95px);
+  height: 30px;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  fill: white;
+  -webkit-transform: translateX(95px);
+  -moz-transform: translateX(95px);
+  -ms-transform: translateX(95px);
+  -o-transform: translateX(95px);
+}
+
+.view_button svg {
+  width: 15px;
+  fill: #eee
+}
+
+.view_button:hover {
+  background: #00a600;
+}
+
+.view_button:active {
+  background: #00cc00;
+}
+
+.view_button:hover .text {
+  color: transparent;
+}
+
+.view_button:hover .icon {
+  width: 150px;
+  border-left: none;
+  transform: translateX(30px);
+  -webkit-transform: translateX(30px);
+  -moz-transform: translateX(30px);
+  -ms-transform: translateX(30px);
+  -o-transform: translateX(30px);
+}
+
+.view_button:focus {
+  outline: none;
+}
+
+.view_button:active .icon svg {
+  transform: scale(0.8);
 }
