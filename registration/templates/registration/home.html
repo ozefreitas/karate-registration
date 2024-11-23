@@ -21,7 +21,7 @@
                     <span class="athlete_category">{{athlete.category|title}} {{athlete.gender|title}}</span>
                 </div>
                 <div class="buttons-container">
-                  <a href="{% url 'registration-update' athlete.id %}" class="view_button">
+                  <a onclick='toggleAthleteDetails({{athlete.id|safe}})' class="view_button">
                     <span class="text">Consultar</span>
                     <span class="icon">
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
@@ -57,9 +57,12 @@
                     </button>
                   </form>
               </div>
-                
             </div>
-            
+            <div id="athlete-details-{{athlete.id}}" class="athlete-deatils">
+              <span class="athlete_name">{{athlete.skip_number}} {{athlete.category}}</span>
+              <span class="athlete_match_type">{{athlete.birth_date}}</span>
+              <span class="athlete_category">{{athlete.weight}} {{athlete.dojo}}</span>
+            </div>
             <hr>
         </div>
     {% endfor %}

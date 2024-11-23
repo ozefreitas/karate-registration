@@ -52,6 +52,7 @@ body {
 
 .athlete_info {
   width: 500px;
+  cursor: pointer;
 }
 
 .athlete_info .athlete_match_type {
@@ -61,6 +62,10 @@ body {
 
 .athlete_info .athlete_category {
   float: right;
+}
+
+.athlete-deatils {
+  display: none;
 }
 
 .buttons-container {
@@ -254,17 +259,17 @@ body {
 .update_button .icon {
   position: absolute;
   border-left: 1px solid #007300;
-  transform: translateX(95px);
+  transform: translateX(90px);
   height: 30px;
   width: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   fill: white;
-  -webkit-transform: translateX(95px);
-  -moz-transform: translateX(95px);
-  -ms-transform: translateX(95px);
-  -o-transform: translateX(95px);
+  -webkit-transform: translateX(90px);
+  -moz-transform: translateX(90px);
+  -ms-transform: translateX(90px);
+  -o-transform: translateX(90px);
 }
 
 .update_button svg {
@@ -304,7 +309,7 @@ body {
 
 .view_button {
   font-size: 15px;
-  width: 140px;
+  width: 160px;
   height: 30px;
   cursor: pointer;
   display: flex;
@@ -335,17 +340,17 @@ body {
 .view_button .icon {
   position: absolute;
   border-left: 1px solid #007300;
-  transform: translateX(95px);
+  transform: translateX(110px);
   height: 30px;
   width: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   fill: white;
-  -webkit-transform: translateX(95px);
-  -moz-transform: translateX(95px);
-  -ms-transform: translateX(95px);
-  -o-transform: translateX(95px);
+  -webkit-transform: translateX(110px);
+  -moz-transform: translateX(110px);
+  -ms-transform: translateX(110px);
+  -o-transform: translateX(110px);
 }
 
 .view_button svg {
@@ -368,11 +373,11 @@ body {
 .view_button:hover .icon {
   width: 150px;
   border-left: none;
-  transform: translateX(30px);
-  -webkit-transform: translateX(30px);
-  -moz-transform: translateX(30px);
-  -ms-transform: translateX(30px);
-  -o-transform: translateX(30px);
+  transform: translateX(5px);
+  -webkit-transform: translateX(5px);
+  -moz-transform: translateX(5px);
+  -ms-transform: translateX(5px);
+  -o-transform: translateX(5px);
 }
 
 .view_button:focus {
