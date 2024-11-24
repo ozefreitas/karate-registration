@@ -84,4 +84,8 @@ class Athlete(models.Model):
 
 
 class Dojo(models.Model):
-    dojo = models.CharField("Dojo", max_length=99)
+    dojo = models.CharField("Dojo", max_length=99, unique=True)
+    is_registered = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.dojo

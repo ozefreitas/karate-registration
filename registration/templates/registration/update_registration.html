@@ -1,9 +1,6 @@
 {% extends "registration/base.html" %} 
 {% block content%}
 <h1>Atualizar inscrição de {{athlete_id}}</h1>
-{% if user.is_authenticated %}
-    <p>Atenticado como <strong>{{user.username}}</strong></p>
-{% endif %}
 {% if messages %}
     {% for message in messages %}
         {{message}}

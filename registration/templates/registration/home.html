@@ -12,6 +12,11 @@
 
 {% if athlets %}
     <h3>Atletas inscritos:</h3>
+    <div class="filter-options-container">
+      <span>Procurar</span>
+      <span>Ordenar</span>
+      <span>Filtros</span>
+    </div>
     {% for athlete in athlets%}
         <div>
             <div class="athlete_info_options">
@@ -59,9 +64,10 @@
               </div>
             </div>
             <div id="athlete-details-{{athlete.id}}" class="athlete-deatils">
-              <span class="athlete_name">{{athlete.skip_number}} {{athlete.category}}</span>
-              <span class="athlete_match_type">{{athlete.birth_date}}</span>
-              <span class="athlete_category">{{athlete.weight}} {{athlete.dojo}}</span>
+              <span class="athlete_name">Dojo: {{athlete.dojo}}</span>
+              <span class="athlete_name">Nº SKI-P: {{athlete.skip_number}}</span>
+              <span class="athlete_match_type">Data de nascimento: {{athlete.birth_date|date:"d-m-Y"}}</span>
+              <span class="athlete_category">Peso: {{athlete.weight|default:"Não especificado"}}</span>
             </div>
             <hr>
         </div>
