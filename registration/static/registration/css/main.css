@@ -44,14 +44,16 @@ body {
 }
 
 .filter-options-container {
-  height: 50px;
+  height: 30px;
   border-bottom: 1px solid black;
   display: flex;
+  justify-content: flex-end;
   align-items: center;
-  gap: 50px;
+  gap: 20px;
 }
 
 .athlete_info_options {
+  margin-top: 10px;
   height: 50px;
   display: flex;
   justify-content: space-between;
@@ -71,7 +73,7 @@ body {
   float: right;
 }
 
-.athlete-deatils {
+.athlete-details {
   display: none;
   flex-direction: column;
   gap: 10px;

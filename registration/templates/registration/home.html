@@ -1,5 +1,5 @@
 {% extends "registration/base.html" %} 
-{% block content%}
+{% block content %}
 {% if user.is_authenticated %}
     <p class="current_user">Autenticado como <strong>{{user.username}}</strong></p>
 {% endif %}
@@ -10,14 +10,14 @@
     {% endfor %}
 {% endif %}
 
-{% if athlets %}
+{% if athletes %}
     <h3>Atletas inscritos:</h3>
-    <div class="filter-options-container">
-      <span>Procurar</span>
-      <span>Ordenar</span>
-      <span>Filtros</span>
-    </div>
-    {% for athlete in athlets%}
+    <form action="" method="post" class="filter-options-container">
+      {% csrf_token %}
+      {{filters}}
+      <button>Filtrar</button>
+  </form>
+    {% for athlete in athletes %}
         <div>
             <div class="athlete_info_options">
                 <div class="athlete_info">
@@ -63,11 +63,11 @@
                   </form>
               </div>
             </div>
-            <div id="athlete-details-{{athlete.id}}" class="athlete-deatils">
+            <div id="athlete-details-{{athlete.id}}" class="athlete-details">
               <span class="athlete_name">Dojo: {{athlete.dojo}}</span>
               <span class="athlete_name">Nº SKI-P: {{athlete.skip_number}}</span>
               <span class="athlete_match_type">Data de nascimento: {{athlete.birth_date|date:"d-m-Y"}}</span>
-              <span class="athlete_category">Peso: {{athlete.weight|default:"Não especificado"}}</span>
+              <span class="athlete_category">Peso: {{athlete.weight|default:"Não especificado"}}Kg</span>
             </div>
             <hr>
         </div>

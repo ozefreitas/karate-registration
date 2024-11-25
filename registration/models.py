@@ -89,3 +89,16 @@ class Dojo(models.Model):
 
     def __str__(self):
         return self.dojo
+    
+class Filters(models.Model):
+    ORDER_BY = {
+        "first_name": "Primeiro Nome",
+        "last_name": "Último Nome",
+        "age": "Idade",
+        "category": "Categoria",
+        "gender": "Género"
+    }
+
+    order = models.CharField("Ordenar por", choices=ORDER_BY, max_length=20, blank=True, null=True)
+    filter = models.CharField("Filtrar apenas", choices=ORDER_BY, max_length=20, blank=True, null=True)
+    search = models.CharField("Procurar", max_length=99, blank=True, null=True)

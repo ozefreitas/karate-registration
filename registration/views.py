@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
-from .forms import AthleteForm
+from .forms import AthleteForm, FilterForm
 from datetime import datetime
 from django.contrib import messages
 from .utils.utils import range_decoder
@@ -86,8 +86,14 @@ def form(request):
 
 @login_required()
 def home(request):
-    athletes = Athlete.objects.filter(dojo=request.user).order_by("first_name")
-    return render(request, 'registration/home.html', {"athlets": athletes})
+    if request.method == "POST":
+        filter_form = FilterForm(request.POST)
+        if filter_form.is_valid():
+            athletes = Athlete.objects.filter(dojo=request.user).order_by(filter_form.cleaned_data["order"])
+    else:
+        filter_form = FilterForm()
+        athletes = Athlete.objects.filter(dojo=request.user)
+    return render(request, 'registration/home.html', {"athletes": athletes, "filters": filter_form})
 
 def help(request):
     return render(request, 'registration/help.html')
