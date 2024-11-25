@@ -64,7 +64,7 @@ def form(request):
                 if form.cleaned_data["match_type"] == "kumite" and form.cleaned_data["category"] in ["infantil", "iniciado"]:
                     errors.append("Não existe prova de Kumite para esse escalão")
                 
-                if form.cleaned_data["match_type"] == "kumite" and form.cleaned_data["weight"] is None and form.cleaned_data["gender"] == "male":
+                if form.cleaned_data["match_type"] == "kumite" and form.cleaned_data["weight"] is None and form.cleaned_data["gender"] == "masculino":
                     errors.append("Por favor selecione um peso")
             
             if len(errors) != 0:
@@ -86,14 +86,22 @@ def form(request):
 
 @login_required()
 def home(request):
+    not_fount = False
     if request.method == "POST":
         filter_form = FilterForm(request.POST)
         if filter_form.is_valid():
-            athletes = Athlete.objects.filter(dojo=request.user).order_by(filter_form.cleaned_data["order"])
+            athletes = Athlete.objects.filter(dojo=request.user)
+            if filter_form.cleaned_data["order"] != None:
+                athletes = athletes.order_by(filter_form.cleaned_data["order"])
+            elif filter_form.cleaned_data["filter"] != None and filter_form.cleaned_data["search"] != None:
+                filter_kwargs = {f"{filter_form.cleaned_data["filter"]}": filter_form.cleaned_data["search"]}
+                athletes = athletes.filter(**filter_kwargs)
+                if len(athletes) == 0:
+                    not_fount = True
     else:
         filter_form = FilterForm()
         athletes = Athlete.objects.filter(dojo=request.user)
-    return render(request, 'registration/home.html', {"athletes": athletes, "filters": filter_form})
+    return render(request, 'registration/home.html', {"athletes": athletes, "filters": filter_form, "not_found": not_fount})
 
 def help(request):
     return render(request, 'registration/help.html')
@@ -120,6 +128,7 @@ def update(request, athlete_id):
             new_athlete = form.save(commit=False) 
             new_athlete.dojo = request.user
             new_athlete.save()
+            # add one time message indicating a successful update
             return HttpResponseRedirect("/")
     else:
         form = AthleteForm(instance=athlete)

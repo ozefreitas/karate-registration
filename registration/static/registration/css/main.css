@@ -49,6 +49,10 @@ body {
   display: flex;
   justify-content: flex-end;
   align-items: center;
+}
+
+.filter-options-container form {
+  display: flex;
   gap: 20px;
 }
 

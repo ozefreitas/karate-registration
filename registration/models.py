@@ -29,8 +29,8 @@ class Athlete(models.Model):
     }
 
     GENDERS = {
-        "male": "Masculino",
-        "female": "Feminino"
+        "masculino": "Masculino",
+        "feminino": "Feminino"
     }
 
     CATEGORIES = {
@@ -94,11 +94,12 @@ class Filters(models.Model):
     ORDER_BY = {
         "first_name": "Primeiro Nome",
         "last_name": "Último Nome",
-        "age": "Idade",
+        "birth_date": "Idade",
         "category": "Categoria",
-        "gender": "Género"
+        "gender": "Género",
+        "match_type": "Prova"
     }
 
     order = models.CharField("Ordenar por", choices=ORDER_BY, max_length=20, blank=True, null=True)
-    filter = models.CharField("Filtrar apenas", choices=ORDER_BY, max_length=20, blank=True, null=True)
+    filter = models.CharField("Filtrar por", choices=ORDER_BY, max_length=20, blank=True, null=True)
     search = models.CharField("Procurar", max_length=99, blank=True, null=True)

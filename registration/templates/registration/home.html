@@ -12,11 +12,15 @@
 
 {% if athletes %}
     <h3>Atletas inscritos:</h3>
-    <form action="" method="post" class="filter-options-container">
-      {% csrf_token %}
-      {{filters}}
-      <button>Filtrar</button>
-  </form>
+    <div class="filter-options-container">
+      <form action="" method="post">
+        {% csrf_token %}
+        {{filters}}
+        <button>Filtrar</button>
+      </form>
+      <button onclick="location.href='/'">Limpar</button>
+    </div>
+      
     {% for athlete in athletes %}
         <div>
             <div class="athlete_info_options">
@@ -67,13 +71,16 @@
               <span class="athlete_name">Dojo: {{athlete.dojo}}</span>
               <span class="athlete_name">Nº SKI-P: {{athlete.skip_number}}</span>
               <span class="athlete_match_type">Data de nascimento: {{athlete.birth_date|date:"d-m-Y"}}</span>
-              <span class="athlete_category">Peso: {{athlete.weight|default:"Não especificado"}}Kg</span>
+              <span class="athlete_category">Peso: {{athlete.weight|default:"Não especificado"}}{% if athlete.weight != None %}Kg{% endif %}</span>
             </div>
             <hr>
         </div>
     {% endfor %}
 {% else %}
     <div>Ainda sem atletas inscritos</div>
+{% endif %}
+{% if not_found %}
+  <h2>Não foram encontrados atletas para esse filtro</h2>
 {% endif %}
 <button class="add_button" onclick="location.href='/form/'">
   <span class="text">Adicionar</span
