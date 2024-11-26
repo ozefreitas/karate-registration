@@ -5,7 +5,9 @@
 <form action="" method="post">
   {% csrf_token %} 
   {{form.as_p}}
-  <button type="submit">Criar conta</button>
+  <div style="display: flex; gap: 20px;">
+    <button class="default-button">Criar conta</button>
+    <button class="default-button" onclick="location.href='/login/'">Ir para Login</button>  
+  </div>
 </form>
-<button onclick="location.href='/login/'">Ir para Login</button>
 {% endblock content %}

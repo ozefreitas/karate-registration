@@ -5,7 +5,7 @@
 <form action="" method="post">
   {% csrf_token %} 
   {{form.as_p}}
-  <button type="submit">Login</button>
+  <button class="default-button">Entrar</button>
 </form>
-<div>Não tem uma conta? <a href="{% url 'dojos-register' %}"> Clique aqui para criar.</a></div>
+<div style="margin-top: 20px;">Não tem uma conta? <a href="{% url 'dojos-register' %}"> Clique aqui para criar.</a></div>
 {% endblock content %}

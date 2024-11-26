@@ -75,6 +75,8 @@ def form(request):
             new_athlete = form.save(commit=False) 
             new_athlete.dojo = request.user
             new_athlete.save()
+            # form will allow thanks to open
+            request.session['can_access_target_page'] = True
             # redirect to a new URL:
             return HttpResponseRedirect("/thanks/")
 
@@ -117,6 +119,10 @@ def help(request):
     return render(request, 'registration/help.html')
 
 def thanks(request):
+    # if not from form, cannot access this url
+    if not request.session.get('can_access_target_page', False):
+        return HttpResponseRedirect('/')
+    request.session['can_access_target_page'] = False
     return render(request, "registration/thanks.html")
 
 def wrong(request):

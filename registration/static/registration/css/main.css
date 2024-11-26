@@ -6,6 +6,7 @@ body {
   width: 80%;
   margin: auto;
   font-family: "Trebuchet MS", "Arial";
+  margin-bottom: 20px;
 }
 
 select, input {
@@ -67,7 +68,7 @@ select option {
 }
 
 .dojos-actions {
-  width: 150px;
+  width: 200px;
   display: flex;
   justify-content: space-around;
 }
@@ -77,6 +78,7 @@ select option {
   display: flex;
   border-bottom: 2px double black;
   margin-bottom: 10px;
+  margin-top: 40px;
   padding-bottom: 10px;
   gap: 10px;
 }
@@ -110,7 +112,7 @@ select option {
 }
 
 .athlete_info {
-  width: 500px;
+  width: 600px;
 }
 
 .athlete_info .athlete_match_type {
@@ -150,6 +152,8 @@ select option {
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
   background: white;
   font-weight: bold;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 .default-button:active {

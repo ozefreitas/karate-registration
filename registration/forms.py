@@ -26,7 +26,7 @@ class AthleteForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         # Customize the attributes of each field
         
-        self.fields['first_name'].help_text = "Recomendado apenas um nome. Se tiver atletas com nomes iguais ou parecidos, deve colocar outro nome que os diferencie."
+        self.fields['first_name'].help_text = "<br><ul><li>Recomendado apenas um nome. Se tiver atletas com nomes iguais ou parecidos, deve colocar outro nome que os diferencie.</li></uL>"
 
 
 class FilterForm(forms.ModelForm):
