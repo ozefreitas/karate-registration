@@ -86,22 +86,32 @@ def form(request):
 
 @login_required()
 def home(request):
-    not_fount = False
+    not_found = False
     if request.method == "POST":
         filter_form = FilterForm(request.POST)
         if filter_form.is_valid():
             athletes = Athlete.objects.filter(dojo=request.user)
-            if filter_form.cleaned_data["order"] != None:
+            if filter_form.cleaned_data["filter"] != None and filter_form.cleaned_data["search"] == None:
+                messages.error(request, 'Adicione um termo de procura em "Procurar')
+            elif filter_form.cleaned_data["filter"] == None and filter_form.cleaned_data["search"] != None:
+                messages.error(request, 'Selecione o campo que quer procurar em "Filtrar por"')
+            elif filter_form.cleaned_data["filter"] != None and filter_form.cleaned_data["order"] != None and filter_form.cleaned_data["search"] != None:
+                filter_kwargs = {f'{filter_form.cleaned_data["filter"]}__icontains': filter_form.cleaned_data["search"]}
+                athletes = athletes.filter(**filter_kwargs).order_by(filter_form.cleaned_data["order"])
+                if len(athletes) == 0:
+                    not_found = True
+            elif filter_form.cleaned_data["order"] != None:
                 athletes = athletes.order_by(filter_form.cleaned_data["order"])
             elif filter_form.cleaned_data["filter"] != None and filter_form.cleaned_data["search"] != None:
-                filter_kwargs = {f"{filter_form.cleaned_data["filter"]}": filter_form.cleaned_data["search"]}
+                filter_kwargs = {f'{filter_form.cleaned_data["filter"]}__icontains': filter_form.cleaned_data["search"]}
                 athletes = athletes.filter(**filter_kwargs)
                 if len(athletes) == 0:
-                    not_fount = True
+                    not_found = True
     else:
         filter_form = FilterForm()
         athletes = Athlete.objects.filter(dojo=request.user)
-    return render(request, 'registration/home.html', {"athletes": athletes, "filters": filter_form, "not_found": not_fount})
+    number_athletes = len(athletes)
+    return render(request, 'registration/home.html', {"athletes": athletes, "filters": filter_form, "not_found": not_found, "number_athletes": number_athletes})
 
 def help(request):
     return render(request, 'registration/help.html')

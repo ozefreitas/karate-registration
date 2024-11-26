@@ -8,6 +8,35 @@ body {
   font-family: "Trebuchet MS", "Arial";
 }
 
+select, input {
+  border-radius: 0.35rem;
+  -webkit-border-radius: 0.35rem;
+  -moz-border-radius: 0.35rem;
+  -ms-border-radius: 0.35rem;
+  -o-border-radius: 0.35rem;
+  border: 1px solid black;
+  height: 25px;
+}
+
+select option {
+  font-size: larger;
+}
+
+.alert-error {
+  background-color: #df6060;
+  border-radius: 8px;
+  color: white;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
+  margin-bottom: 10px;
+}
+
 .logos_container {
   display: flex;
   align-items: center;
@@ -44,20 +73,36 @@ body {
 }
 
 .filter-options-container {
-  height: 30px;
-  border-bottom: 1px solid black;
+  font-size: 1.1rem;
   display: flex;
-  justify-content: flex-end;
-  align-items: center;
+  border-bottom: 2px double black;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  gap: 10px;
 }
 
+
 .filter-options-container form {
+  height: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.filter_form {
   display: flex;
   gap: 20px;
+  align-items: center;
+  /* justify-content: ; */
+}
+
+.filter_form label {
+  margin-right: 5px;
 }
 
 .athlete_info_options {
-  margin-top: 10px;
+  margin-top: 25px;
   height: 50px;
   display: flex;
   justify-content: space-between;
@@ -77,6 +122,12 @@ body {
   float: right;
 }
 
+.athlete_info .athlete_name {
+  min-width: 300px;
+  display: inline-block;
+  overflow: auto;
+}
+
 .athlete-details {
   display: none;
   flex-direction: column;
@@ -86,6 +137,31 @@ body {
 .buttons-container {
   display: flex;
   gap: 10px;
+}
+
+.default-button {
+  font-size: 15px;
+  height: 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  border-radius: 5px;
+  border: 1px solid #e62222;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
+  background: white;
+  font-weight: bold;
+}
+
+.default-button:active {
+  transform: scale(0.9);
+  -webkit-transform: scale(0.9);
+  -moz-transform: scale(0.9);
+  -ms-transform: scale(0.9);
+  -o-transform: scale(0.9);
+}
+
+.default-button:hover {
+  box-shadow: 0px 0px 10px 1px rgba(0,0,0,0.2);
 }
 
 .delete_button {
@@ -106,13 +182,14 @@ body {
 }
 
 .delete_button .text {
-  transform: translateX(35px);
+  font-size: 15px;
+  transform: translateX(25px);
   color: white;
   font-weight: bold;
-  -webkit-transform: translateX(35px);
-  -moz-transform: translateX(35px);
-  -ms-transform: translateX(35px);
-  -o-transform: translateX(35px);
+  -webkit-transform: translateX(25px);
+  -moz-transform: translateX(25px);
+  -ms-transform: translateX(25px);
+  -o-transform: translateX(25px);
 }
 
 .delete_button .icon {
@@ -163,7 +240,7 @@ body {
 
 .add_button {
   width: 150px;
-  height: 30px;
+  height: 40px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -180,13 +257,14 @@ body {
 }
 
 .add_button .text {
-  transform: translateX(25px);
+  font-size: 15px;
+  transform: translateX(20px);
   color: white;
   font-weight: bold;
-  -webkit-transform: translateX(25px);
-  -moz-transform: translateX(25px);
-  -ms-transform: translateX(25px);
-  -o-transform: translateX(25px);
+  -webkit-transform: translateX(20px);
+  -moz-transform: translateX(20px);
+  -ms-transform: translateX(20px);
+  -o-transform: translateX(20px);
 }
 
 .add_button .icon {
@@ -229,10 +307,6 @@ body {
 
 .add_button:focus {
   outline: none;
-}
-
-.add_button:active .icon svg {
-  transform: scale(0.8);
 }
 
 .buttonSpan {
