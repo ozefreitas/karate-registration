@@ -23,8 +23,64 @@ select option {
   font-size: larger;
 }
 
+/* Login page */
+
+.login-container {
+  border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -o-border-radius: 10px;
+  border: 2px solid #e62222;
+  padding: 30px;
+  text-align: center;
+  margin-top: 50px;
+}
+
+.login-container h2 {
+  margin-top: 0;
+  margin-bottom: 30px;
+}
+
+.login-container form {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.login-container form p {
+  margin-bottom: 10px;
+}
+
+.login-container form input {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.forgotten-password {
+  font-size: small;
+  margin-right: auto;
+  margin-left: 25px;
+  margin-bottom: 20px;
+}
+
 .alert-error {
   background-color: #df6060;
+  border-radius: 8px;
+  color: white;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.alert-success {
+  background-color: #7dfd6de8;
   border-radius: 8px;
   color: white;
   height: 50px;
@@ -479,4 +535,12 @@ select option {
 
 .view_button:active .icon svg {
   transform: scale(0.8);
+}
+
+.footer-container {
+  height: 200px;
+  max-width: 100%;
+  background-color: brown;
+  position: absolute;
+  bottom: 0;
 }

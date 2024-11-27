@@ -1,11 +1,16 @@
 {% extends "registration/base.html" %} 
 {% block content%}
-<h2>Login</h2>
+<div style="display: flex; justify-content: center;">
+  <div class="login-container">
+    <h2>Login</h2>
 
-<form action="" method="post">
-  {% csrf_token %} 
-  {{form.as_p}}
-  <button class="default-button">Entrar</button>
-</form>
-<div style="margin-top: 20px;">Não tem uma conta? <a href="{% url 'dojos-register' %}"> Clique aqui para criar.</a></div>
+    <form action="" method="post">
+      {% csrf_token %} 
+      {{form.as_p}}
+      <a href=""  class="forgotten-password">Esqueceu-se da Palavra Passe?</a>
+      <button class="default-button">Entrar</button>
+    </form>
+    <div style="margin-top: 40px; font-size: smaller;">Não tem uma conta? <a href="{% url 'dojos-register' %}"> Clique aqui para criar.</a></div>
+  </div>
+</div>
 {% endblock content %}

@@ -126,16 +126,21 @@ def thanks(request):
     return render(request, "registration/thanks.html")
 
 def wrong(request):
+    if not request.session.get('can_access_target_page', False):
+        return HttpResponseRedirect('/')
+    request.session['can_access_target_page'] = False
     context = {"errors": errors}
     return render(request, "registration/wrong.html", context)
 
 def delete(request, athlete_id):
     if request.method == "POST":
         athlete = get_object_or_404(Athlete, id=athlete_id)
+        messages.success(request, f'Atleta com o nome {athlete.first_name} {athlete.last_name} eliminado com sucesso!')
         athlete.delete()
         athletes = Athlete.objects.filter(dojo=request.user)
-        return render(request, 'registration/home.html', {"athlets": athletes})
-    
+        number_athletes = len(athletes)
+        return render(request, 'registration/home.html', {"athletes": athletes, "number_athletes": number_athletes})
+
 def update(request, athlete_id):
     athlete = get_object_or_404(Athlete, id=athlete_id)
     if request.method == "POST":
@@ -144,7 +149,7 @@ def update(request, athlete_id):
             new_athlete = form.save(commit=False) 
             new_athlete.dojo = request.user
             new_athlete.save()
-            # add one time message indicating a successful update
+            messages.success(request, f'Informações de {athlete.first_name} {athlete.last_name} atualizadas!')
             return HttpResponseRedirect("/")
     else:
         form = AthleteForm(instance=athlete)

@@ -20,11 +20,17 @@ from django.contrib.auth import views as auth_views
 from django.contrib.auth import logout
 from dojos import views as dojo_views
 
+class CustomLoginView(auth_views.LoginView):
+    def form_invalid(self, form):
+        # Change the default error message
+        form.add_error(None, "Custom error message: Invalid login credentials.")
+        return super().form_invalid(form)
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("registration.urls")),
     path('register/', include("dojos.urls")),
-    path('login/', auth_views.LoginView.as_view(template_name="dojos/login.html"), name='login'),
+    path('login/', CustomLoginView.as_view(template_name="dojos/login.html"), name='login'),
     path('logout/', dojo_views.logout_user, name="dojos-logout"),
     path('profile/', dojo_views.profile, name="dojos-profile"),
     ]
