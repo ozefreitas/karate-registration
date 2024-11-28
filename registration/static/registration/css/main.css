@@ -169,6 +169,7 @@ select option {
 
 .athlete_info {
   width: 600px;
+  margin-left: 20px;
 }
 
 .athlete_info .athlete_match_type {
@@ -192,9 +193,16 @@ select option {
   gap: 10px;
 }
 
-.buttons-container {
+.buttons-settings-wrapper {
   display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.buttons-container {
+  display: none;
   gap: 10px;
+  /* padding-left: 200px; */
 }
 
 .default-button {
@@ -535,6 +543,55 @@ select option {
 
 .view_button:active .icon svg {
   transform: scale(0.8);
+}
+ 
+.setting-btn {
+  width: 35px;
+  height: 35px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background-color: rgb(19, 11, 51);
+  border-radius: 10px;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0px 0px 0px 2px rgb(212, 209, 255);
+  margin-right: 20px;
+}
+.bar {
+  width: 60%;
+  height: 2px;
+  background-color: rgb(229, 229, 229);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border-radius: 2px;
+}
+.bar::before {
+  content: "";
+  width: 2px;
+  height: 2px;
+  background-color: rgb(126, 117, 255);
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid white;
+  transition: all 0.3s;
+  box-shadow: 0px 0px 5px white;
+}
+.bar1::before {
+  transform: translateX(-4px);
+}
+.bar2::before {
+  transform: translateX(4px);
+}
+.setting-btn:hover .bar1::before {
+  transform: translateX(4px);
+}
+.setting-btn:hover .bar2::before {
+  transform: translateX(-4px);
 }
 
 .footer-container {
