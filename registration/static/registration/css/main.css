@@ -124,15 +124,15 @@ select option {
 }
 
 .dojos-actions {
-  width: 200px;
+  width: fit-content;
   display: flex;
-  justify-content: space-around;
+  gap: 20px;
 }
 
 .filter-options-container {
   font-size: 1.1rem;
   display: flex;
-  border-bottom: 2px double black;
+  border-bottom: 2px double rgb(170, 39, 39);
   margin-bottom: 10px;
   margin-top: 40px;
   padding-bottom: 10px;
@@ -191,6 +191,44 @@ select option {
   display: none;
   flex-direction: column;
   gap: 10px;
+}
+
+.login-buttons {
+  border: none;
+  color: #fff;
+  background-image: linear-gradient(30deg, #ff2222, #ec9090);
+  border-radius: 12px;
+  background-size: 100% auto;
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: bold;
+  padding: 0.6em 1.5em;
+  text-decoration: none;
+  -webkit-border-radius: 12px;
+  -moz-border-radius: 12px;
+  -ms-border-radius: 12px;
+  -o-border-radius: 12px;
+}
+ 
+.login-buttons:hover {
+  background-position: right center;
+  background-size: 200% auto;
+  -webkit-animation: pulse 2s infinite;
+  animation: pulse512 1.5s infinite;
+}
+ 
+@keyframes pulse512 {
+  0% {
+   box-shadow: 0 0 0 0 #05bada66;
+  }
+ 
+  70% {
+   box-shadow: 0 0 0 10px rgb(218 103 68 / 0%);
+  }
+ 
+  100% {
+   box-shadow: 0 0 0 0 rgb(218 103 68 / 0%);
+  }
 }
 
 .buttons-settings-wrapper {
@@ -557,7 +595,7 @@ select option {
   border-radius: 10px;
   cursor: pointer;
   border: none;
-  box-shadow: 0px 0px 0px 2px rgb(212, 209, 255);
+  box-shadow: 0px 0px 0px 2px rgb(255, 209, 209);
   margin-right: 20px;
 }
 .bar {
@@ -574,7 +612,7 @@ select option {
   content: "";
   width: 2px;
   height: 2px;
-  background-color: rgb(126, 117, 255);
+  background-color: rgb(255, 255, 255);
   position: absolute;
   border-radius: 50%;
   border: 2px solid white;

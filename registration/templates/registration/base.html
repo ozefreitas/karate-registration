@@ -24,11 +24,11 @@
       
       <div class="dojos-actions">
         {% if user.is_authenticated %}
-        <a href="{% url 'dojos-logout' %}">Logout</a>
-        <a href="{% url 'dojos-profile' %}">Perfil</a>
+        <a class="login-buttons" href="{% url 'dojos-logout' %}">Logout</a>
+        <a class="login-buttons" href="{% url 'dojos-profile' %}">Perfil</a>
         {% else %}
-        <a href="{% url 'login' %}">Login</a>
-        <a href="{% url 'dojos-register' %}">Criar Conta</a>
+        <a class="login-buttons" href="{% url 'login' %}">Login</a>
+        <a class="login-buttons" href="{% url 'dojos-register' %}">Criar Conta</a>
         {% endif %}
       </div>
     </div>
