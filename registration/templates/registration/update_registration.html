@@ -1,6 +1,6 @@
 {% extends "registration/base.html" %} 
 {% block content%}
-<h1>Atualizar inscrição de {{athlete_id}}</h1>
+<h1>Atualizar inscrição</h1>
 {% if messages %}
     {% for message in messages %}
         {{message}}
@@ -10,6 +10,9 @@
 <form action="{% url 'registration-update' athlete_id %}" method="post">
     {% csrf_token %}
     {{form.as_p}}
-    <button class="default-button">Submeter</button>
+    <div style="display: flex; gap: 20px; margin-top: 30px;">
+        <button class="default-button">Submeter</button>
+        <button type="button" class="default-button" onclick="location.href='/'">Voltar</button>
+    </div>
 </form>
 {% endblock %}

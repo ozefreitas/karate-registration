@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -6,20 +7,24 @@
     <title></title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'registration/css/main.css' %}"
+    />
   </head>
   <body>
     <h3>Algo correu mal, retroceda e verifique a inscrição novamente</h3>
-    <h4>Descrição dos erros</h4>
+    <h4>Descrição dos erros:</h4>
     <p>
         {% if messages %}
             <div class="messages">
                 {% for message in messages %}
-                    <div class="alert {{ message.tags }}">{{ message }}</div>
+                    <div class="alert-{{ message.tags }}">{{ message }}</div>
                 {% endfor %}
             </div>
         {% endif %}
     </p>
-    <!-- <button onclick="location.href='/form/'">Voltar ao formulário</button> -->
+    <button class="default-button" onclick="location.href='/form/'">Voltar ao formulário</button>
   </body>
 </html>

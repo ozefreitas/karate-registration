@@ -6,7 +6,6 @@ body {
   width: 80%;
   margin: auto;
   font-family: "Trebuchet MS", "Arial";
-  margin-bottom: 20px;
 }
 
 select, input {
@@ -111,6 +110,10 @@ select option {
   font-size: 1.2em;
 }
 
+.main-content {
+  min-height: 65dvb;
+}
+
 .header-container {
   display: flex;
   justify-content: space-between;
@@ -127,6 +130,19 @@ select option {
   width: fit-content;
   display: flex;
   gap: 20px;
+}
+
+.main-form p:nth-child(11) {
+  margin-bottom: 0;
+}
+
+.main-form  div:first-of-type {
+  display: flex;
+  gap: 20px;
+}
+
+.main-form div div input {
+  margin: 0;
 }
 
 .filter-options-container {
@@ -191,6 +207,7 @@ select option {
   display: none;
   flex-direction: column;
   gap: 10px;
+  padding-bottom: 10px;
 }
 
 .login-buttons {
@@ -633,9 +650,17 @@ select option {
 }
 
 .footer-container {
-  height: 200px;
-  max-width: 100%;
-  background-color: brown;
-  position: absolute;
-  bottom: 0;
+  height: fit-content;
+  width: 100%;
+  margin-top: 50px;
+  border-top: 2px double rgb(170, 39, 39);
+  font-size: smaller;
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.bureaucracy {
+  width: 80%;
+  height: fit-content;
 }

@@ -19,14 +19,14 @@ age_graduation_rules = {
 }
 
 age_category_rules = {
-    "0-9": "infantil",
-    "10-11": "iniciado",
-    "12-13": "juvenil",
-    "14-15": "cadete",
-    "16-17": "junior",
-    "18-34": "senior",
-    # "35-49": "Veterano +35",
-    # "50-99": "Veterano +50"
+    "0-9": "Infantil",
+    "10-11": "Iniciado",
+    "12-13": "Juvenil",
+    "14-15": "Cadete",
+    "16-17": "Júnior",
+    "18-34": "Sénior",
+    "35-49": "Veterano +35",
+    "50-99": "Veterano +50"
 }
 
 errors = []
@@ -68,12 +68,14 @@ def form(request):
                     errors.append("Por favor selecione um peso")
             
             if len(errors) != 0:
+                request.session['can_access_target_page'] = True
                 for error in errors:
                     messages.error(request, error)
                 return HttpResponseRedirect("/wrong")
             
             new_athlete = form.save(commit=False) 
             new_athlete.dojo = request.user
+            new_athlete.age = age_at_comp
             new_athlete.save()
             # form will allow thanks to open
             request.session['can_access_target_page'] = True
@@ -135,11 +137,12 @@ def wrong(request):
 def delete(request, athlete_id):
     if request.method == "POST":
         athlete = get_object_or_404(Athlete, id=athlete_id)
-        messages.success(request, f'Atleta com o nome {athlete.first_name} {athlete.last_name} eliminado com sucesso!')
+        messages.success(request, f'Atleta com o nome {athlete.first_name} {athlete.last_name} eliminad@ com sucesso!')
         athlete.delete()
-        athletes = Athlete.objects.filter(dojo=request.user)
-        number_athletes = len(athletes)
-        return render(request, 'registration/home.html', {"athletes": athletes, "number_athletes": number_athletes})
+        # athletes = Athlete.objects.filter(dojo=request.user)
+        # number_athletes = len(athletes)
+        return HttpResponseRedirect("/")
+        # return render(request, 'registration/home.html', {"athletes": athletes, "number_athletes": number_athletes})
 
 def update(request, athlete_id):
     athlete = get_object_or_404(Athlete, id=athlete_id)

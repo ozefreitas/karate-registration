@@ -5,19 +5,24 @@
 {% endif %}
 <h1>Interface de registo</h1>
 
+{% if messages %}
+    <div class="messages" id="messages">
+      {% for message in messages %}
+        <div class="alert-{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    <script>
+      hideMessagesAfterTimeout({{ message.tags }}); // 10 seconds
+    </script>
+{% endif %}
+
 {% if athletes %}
     <h3>Atletas inscritos:</h3>
-    {% if messages %}
-      <div class="messages">
-        {% for message in messages %}
-          <div class="alert-{{ message.tags }}">{{ message }}</div>
-        {% endfor %}
-      </div>
-    {% endif %}
+    
     <div class="filter-options-container">
       <form action="" method="post">
         <div class="number_athletes_info">
-          <span>{{ number_athletes }} atletas</span>
+          <span>{{ number_athletes }} atleta{% if number_athletes > 1 %}s{% endif %}</span>
         </div>
         <div class="filter_form">
           {% csrf_token %}
@@ -87,6 +92,7 @@
               <span class="athlete_name">Nº SKI-P: {{athlete.skip_number}}</span>
               <span class="athlete_match_type">Data de nascimento: {{athlete.birth_date|date:"d-m-Y"}}</span>
               <span class="athlete_category">Peso: {{athlete.weight|default:"Não especificado"}}{% if athlete.weight != None %}Kg{% endif %}</span>
+              <span class="athlete_category">Idade (no início do ano): {{athlete.age}}</span>
             </div>
             <hr>
         </div>
@@ -94,6 +100,7 @@
 {% else %}
     <div>Ainda sem atletas inscritos</div>
 {% endif %}
+
 {% if not_found %}
   <h2>Não foram encontrados atletas para esse filtro</h2>
   <button onclick="location.href='/'">Voltar</button>

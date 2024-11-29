@@ -34,13 +34,14 @@ class Athlete(models.Model):
     }
 
     CATEGORIES = {
-        "infantil": "Infantil",
-        "iniciado": "Iniciado",
-        "juvenil": "Juvenil",
-        "cadete": "Cadete",
-        "junior": "Júnior",
-        "senior": "Sénior",
-        "veterano": "Veterano"
+        "Infantil": "Infantil",
+        "Iniciado": "Iniciado",
+        "Juvenil": "Juvenil",
+        "Cadete": "Cadete",
+        "Júnior": "Júnior",
+        "Sénior": "Sénior",
+        "Veterano +35": "Veterano +35",
+        "Veterano +50": "Veterano +50"
     }
 
     MATCHES = {
@@ -71,6 +72,7 @@ class Athlete(models.Model):
     last_name = models.CharField("Último Nome", max_length=200)
     graduation = models.CharField("Graduação", max_length=4, choices=GRADUATIONS)
     birth_date = models.DateField("Data de Nascimento")
+    age = models.IntegerField("Idade")
     gender = models.CharField("Género", choices=GENDERS, max_length=10)
     skip_number = models.IntegerField("Nº SKI-P", blank=True, null=True)
     category = models.CharField("Escalão", choices=CATEGORIES, max_length=99)

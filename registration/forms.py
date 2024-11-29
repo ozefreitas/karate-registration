@@ -2,6 +2,20 @@ from django import forms
 from .models import Athlete, Filters
 
 class AthleteForm(forms.ModelForm):
+
+    # MATCHES = {
+    #     "kata": "Kata",
+    #     "kumite": "Kumite"
+    # }
+
+    # match_type = forms.MultipleChoiceField(
+    #     choices=MATCHES,
+    #     widget=forms.CheckboxSelectMultiple,
+    #     label="Prova",
+    #     # initial=['kata'],
+    #     required=False  # Set to True if the field is mandatory
+    # )
+
     class Meta:
         model = Athlete
         fields = ["first_name", 
