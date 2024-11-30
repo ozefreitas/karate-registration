@@ -1,5 +1,5 @@
 from django import forms
-from .models import Athlete, Filters
+from .models import Athlete, Filters, Teams
 
 class AthleteForm(forms.ModelForm):
 
@@ -22,10 +22,10 @@ class AthleteForm(forms.ModelForm):
                     "last_name",
                     "graduation",
                     "birth_date",
-                    "gender",
                     "skip_number",
                     "category",
                     "match_type",
+                    "gender",
                     "weight",
                     "additional_emails"]
         widgets = {
@@ -47,3 +47,19 @@ class FilterForm(forms.ModelForm):
     class Meta:
         model = Filters
         fields = "__all__"
+
+
+class TeamForm(forms.ModelForm):
+    class Meta:
+        model = Teams
+        fields = ["category", "match_type", "gender", "additional_emails", "athlete1", "athlete2", "athlete3", "athlete4", "athlete5"]
+    
+    def __init__(self, *args, **kwargs):
+        dojo = kwargs.pop('dojo', None)  # Get the user from kwargs
+        super().__init__(*args, **kwargs)
+        if dojo:
+            self.fields['athlete1'].queryset = Athlete.objects.filter(dojo=dojo)
+            self.fields['athlete2'].queryset = Athlete.objects.filter(dojo=dojo)
+            self.fields['athlete3'].queryset = Athlete.objects.filter(dojo=dojo)
+            self.fields['athlete4'].queryset = Athlete.objects.filter(dojo=dojo)
+            self.fields['athlete5'].queryset = Athlete.objects.filter(dojo=dojo)

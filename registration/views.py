@@ -1,11 +1,11 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
-from .forms import AthleteForm, FilterForm
+from .forms import AthleteForm, FilterForm, TeamForm
 from datetime import datetime
 from django.contrib import messages
 from .utils.utils import range_decoder
-from .models import Athlete
+from .models import Athlete, Teams
 
 # views for the athlets registrations
 
@@ -85,8 +85,29 @@ def form(request):
     # if a GET (or any other method) we'll create a blank form
     else:
         form = AthleteForm()
-        context = {"form": form, "title": "Inscrições"}
+        context = {"form": form, "title": "Inscrever atleta"}
         return render(request, 'registration/form.html', context)
+    
+@login_required
+def team_form(request):
+    if request.method == "POST":
+        form = TeamForm(request.POST)
+        if form.is_valid():
+            teams = Teams.objects.filter(dojo=request.user, 
+                                         category=form.cleaned_data["category"], 
+                                         match_type=form.cleaned_data["match_type"],
+                                         gender=form.cleaned_data["gender"])
+            new_team = form.save(commit=False) 
+            new_team.dojo = request.user
+            new_team.team_number = len(teams) + 1
+            new_team.save()
+            request.session['can_access_target_page'] = True
+            # redirect to a new URL:
+            return HttpResponseRedirect("/thanks/")
+    else:
+        form = TeamForm(dojo=request.user)
+        context = {"form": form, "title": "Inscriver Equipa"}
+        return render(request, 'registration/teams_form.html', context)
 
 @login_required()
 def home(request):
@@ -114,8 +135,15 @@ def home(request):
     else:
         filter_form = FilterForm()
         athletes = Athlete.objects.filter(dojo=request.user)
+        teams = Teams.objects.filter(dojo=request.user)
     number_athletes = len(athletes)
-    return render(request, 'registration/home.html', {"athletes": athletes, "filters": filter_form, "not_found": not_found, "number_athletes": number_athletes})
+    number_teams = len(teams)
+    return render(request, 'registration/home.html', {"athletes": athletes, 
+                                                      "teams": teams, 
+                                                      "filters": filter_form, 
+                                                      "not_found": not_found, 
+                                                      "number_athletes": number_athletes,
+                                                      "number_teams": number_teams})
 
 def help(request):
     return render(request, 'registration/help.html')
@@ -134,11 +162,16 @@ def wrong(request):
     context = {"errors": errors}
     return render(request, "registration/wrong.html", context)
 
-def delete(request, athlete_id):
+def delete(request, type, id):
     if request.method == "POST":
-        athlete = get_object_or_404(Athlete, id=athlete_id)
-        messages.success(request, f'Atleta com o nome {athlete.first_name} {athlete.last_name} eliminad@ com sucesso!')
-        athlete.delete()
+        if type == "athlete":
+            object_of = get_object_or_404(Athlete, id=id)
+            message = f'Atleta com o nome {object_of.first_name} {object_of.last_name} eliminad@ com sucesso!'
+        else:
+            object_of = get_object_or_404(Teams, id=id)
+            message = f'Equipa com o número {object_of.team_number} eliminada com sucesso'
+        messages.success(request, message)
+        object_of.delete()
         # athletes = Athlete.objects.filter(dojo=request.user)
         # number_athletes = len(athletes)
         return HttpResponseRedirect("/")

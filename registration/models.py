@@ -3,6 +3,22 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
+CATEGORIES = {
+    "Infantil": "Infantil",
+    "Iniciado": "Iniciado",
+    "Juvenil": "Juvenil",
+    "Cadete": "Cadete",
+    "Júnior": "Júnior",
+    "Sénior": "Sénior",
+    "Veterano +35": "Veterano +35",
+    "Veterano +50": "Veterano +50"
+}
+
+MATCHES = {
+        "kata": "Kata",
+        "kumite": "Kumite"
+}
+
 class Athlete(models.Model):
     GRADUATIONS = {
         "15": "9º Kyu",
@@ -33,22 +49,6 @@ class Athlete(models.Model):
         "feminino": "Feminino"
     }
 
-    CATEGORIES = {
-        "Infantil": "Infantil",
-        "Iniciado": "Iniciado",
-        "Juvenil": "Juvenil",
-        "Cadete": "Cadete",
-        "Júnior": "Júnior",
-        "Sénior": "Sénior",
-        "Veterano +35": "Veterano +35",
-        "Veterano +50": "Veterano +50"
-    }
-
-    MATCHES = {
-        "kata": "Kata",
-        "kumite": "Kumite"
-    }
-
     WEIGHTS = {
         'Juvenil': [
             ('-47', '-47Kg'),
@@ -73,10 +73,10 @@ class Athlete(models.Model):
     graduation = models.CharField("Graduação", max_length=4, choices=GRADUATIONS)
     birth_date = models.DateField("Data de Nascimento")
     age = models.IntegerField("Idade")
-    gender = models.CharField("Género", choices=GENDERS, max_length=10)
     skip_number = models.IntegerField("Nº SKI-P", blank=True, null=True)
     category = models.CharField("Escalão", choices=CATEGORIES, max_length=99)
     match_type = models.CharField("Prova", choices=MATCHES, max_length=10)
+    gender = models.CharField("Género", choices=GENDERS, max_length=10)
     weight = models.CharField("Peso", choices=WEIGHTS, max_length=10, blank=True, null=True)
     dojo = models.ForeignKey(User, on_delete=models.CASCADE)
     additional_emails = models.EmailField("Emails adicionais")
@@ -91,7 +91,33 @@ class Dojo(models.Model):
 
     def __str__(self):
         return self.dojo
+
+
+class Teams(models.Model):
+
+    GENDERS = {
+        "masculino": "Masculino",
+        "feminino": "Feminino",
+        "misto": "Misto"
+    }
+
+    dojo = models.ForeignKey(User, on_delete=models.CASCADE)
+    athlete1 = models.ForeignKey(Athlete, verbose_name="Atleta 1", related_name="first_element", on_delete=models.CASCADE)
+    athlete2 = models.ForeignKey(Athlete, verbose_name="Atleta 2", related_name="second_element", on_delete=models.CASCADE)
+    athlete3 = models.ForeignKey(Athlete, verbose_name="Atleta 3", related_name="third_element", on_delete=models.CASCADE, blank=True, null=True)
+    athlete4 = models.ForeignKey(Athlete, verbose_name="Atleta 4", related_name="forth_element", on_delete=models.CASCADE, blank=True, null=True)
+    athlete5 = models.ForeignKey(Athlete, verbose_name="Atleta 5", related_name="fifth_element", on_delete=models.CASCADE, blank=True, null=True)
+    category = models.CharField("Escalão", choices=CATEGORIES, max_length=99)
+    match_type = models.CharField("Prova", choices=MATCHES, max_length=10)
+    gender = models.CharField("Género", choices=GENDERS, max_length=10)
+    additional_emails = models.EmailField("Emails adicionais")
+    team_number = models.IntegerField("Nº Equipa")
+
+    def __str__(self):
+        return "{} {} {}".format(self.match_type, self.category, self.gender)
     
+
+
 class Filters(models.Model):
     ORDER_BY = {
         "first_name": "Primeiro Nome",

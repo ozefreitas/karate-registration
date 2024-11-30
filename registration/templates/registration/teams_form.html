@@ -1,0 +1,13 @@
+{% extends "registration/base.html" %}
+{% block content%}
+    <h2>Registo de Equipa</h2>
+
+    <form action="" method="post" id="athlete_form" class="main-form">
+        {% csrf_token %}
+        {{form.as_p}}
+    </form>
+    <div style="display: flex; gap: 20px; margin-top: 30px;">
+      <button form="athlete_form" type="submit" class="default-button">Submeter</button>
+      <button type="button" class="default-button" onclick="location.href='/'">Voltar</button>   
+    </div>
+{% endblock content %}
