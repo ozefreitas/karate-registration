@@ -208,6 +208,14 @@ select option {
   flex-direction: column;
   gap: 10px;
   padding-bottom: 10px;
+  padding-top: 10px;
+}
+
+.team_athlete_details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: fit-content;
 }
 
 .login-buttons {

@@ -177,17 +177,26 @@ def delete(request, type, id):
         return HttpResponseRedirect("/")
         # return render(request, 'registration/home.html', {"athletes": athletes, "number_athletes": number_athletes})
 
-def update(request, athlete_id):
-    athlete = get_object_or_404(Athlete, id=athlete_id)
+def update(request, type, id):
+    if type == "athlete":
+        athlete = get_object_or_404(Athlete, id=id)
+    else:
+        team = get_object_or_404(Teams, id=id)
+
     if request.method == "POST":
-        form = AthleteForm(request.POST, instance=athlete)
+        if type == "athlete":
+            message = f'Informações de {athlete.first_name} {athlete.last_name} atualizadas!'
+            form = AthleteForm(request.POST, instance=athlete)
+        else:
+            message = f'Informações da equipa nº {team.team_number} atualizadas!'
+            form = TeamForm(request.POST, instance=team)
         if form.is_valid():
-            new_athlete = form.save(commit=False) 
-            new_athlete.dojo = request.user
-            new_athlete.save()
-            messages.success(request, f'Informações de {athlete.first_name} {athlete.last_name} atualizadas!')
+            new_form = form.save(commit=False) 
+            new_form.dojo = request.user
+            new_form.save()
+            messages.success(request, message)
             return HttpResponseRedirect("/")
     else:
-        form = AthleteForm(instance=athlete)
+        form = AthleteForm(instance=athlete) if type == "athlete" else TeamForm(instance=team, dojo=request.user)
         # athletes = Athlete.objects.filter(dojo=request.user)
-        return render(request, 'registration/update_registration.html', {"form": form, "athlete_id": athlete_id})
+        return render(request, 'registration/update_registration.html', {"form": form, "type": type, "id": id})

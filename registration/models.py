@@ -115,7 +115,6 @@ class Teams(models.Model):
 
     def __str__(self):
         return "{} {} {}".format(self.match_type, self.category, self.gender)
-    
 
 
 class Filters(models.Model):
