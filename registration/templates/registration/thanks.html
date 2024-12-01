@@ -16,14 +16,17 @@
   <body>
     <h2>Obrigado! Inscrição guardada com sucesso</h2>
     <div style="display: flex; gap: 20px;">
-        <button class="default-button" onclick="location.href='/'">
-        Página de Início
-        </button>
         {% if from_where == "athlete" %}
+          <button class="default-button" onclick="location.href='/athletes'">
+          Página de Início
+          </button>
           <button class="default-button" onclick="location.href='/form/'">
           Nova Inscrição
           </button>
         {% else %}
+          <button class="default-button" onclick="location.href='/teams'">
+          Página de Início
+          </button>
           <button class="default-button" onclick="location.href='/teams_form/'">
           Nova Inscrição
           </button>

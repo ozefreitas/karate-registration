@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import AthleteForm, FilterAthleteForm, TeamForm, FilterTeamForm
 from datetime import datetime
 from django.contrib import messages
-from .utils.utils import range_decoder
+from .utils.utils import check_athlete_data, get_comp_age
 from .models import Athlete, Teams
 
 # views for the athlets registrations
@@ -29,43 +29,24 @@ age_category_rules = {
     "50-99": "Veterano +50"
 }
 
-errors = []
-
 @login_required()
 def form(request):
     # if this is a POST request we need to process the form data
     if request.method == "POST":
         # create a form instance and populate it with data from the request:
         form = AthleteForm(request.POST)
-        print(request.POST)
         errors = []
         # check whether it's valid:
         if form.is_valid():
             # process the data in form.cleaned_data as required
             birth_date = form.cleaned_data["birth_date"]
-            year_of_birth = birth_date.year
-            date_now = datetime.now()
-            age_at_comp = (date_now.year) - year_of_birth
+            age_at_comp = get_comp_age(birth_date)
 
             if Athlete.objects.filter(first_name=form.cleaned_data["first_name"], birth_date=birth_date, match_type=form.cleaned_data.get("match_type")).exists():
                 errors.append("Um atleta com as mesmas credenciais já está inscrito. Verifique se a quer inscrever a mesma pessoa noutra prova")
 
             else:
-                for age_range, grad in age_graduation_rules.items():
-                    age_range = range_decoder(age_range)
-                    if age_at_comp in age_range and int(form.cleaned_data["graduation"]) > grad:
-                        errors.append("Atleta não dispõe da graduação mínima para a idade")
-                
-                for age_range, cat in age_category_rules.items():
-                    age_range = range_decoder(age_range)
-                    if age_at_comp in age_range and form.cleaned_data["category"] != cat:
-                        errors.append("Idade do atleta não corresponde à categoria selecionada")
-                
-                if form.cleaned_data["match_type"] == "kumite" and form.cleaned_data["category"] in ["infantil", "iniciado"]:
-                    errors.append("Não existe prova de Kumite para esse escalão")
-                
-                if form.cleaned_data["match_type"] == "kumite" and form.cleaned_data["weight"] is None and form.cleaned_data["gender"] == "masculino":
-                    errors.append("Por favor selecione um peso")
+                errors = check_athlete_data(form, age_at_comp, age_graduation_rules, age_category_rules)
             
             if len(errors) != 0:
                 request.session['can_access_target_page'] = True
@@ -92,11 +73,15 @@ def form(request):
 def team_form(request):
     if request.method == "POST":
         form = TeamForm(request.POST)
+        print(request.POST)
         if form.is_valid():
             teams = Teams.objects.filter(dojo=request.user, 
                                          category=form.cleaned_data["category"], 
                                          match_type=form.cleaned_data["match_type"],
                                          gender=form.cleaned_data["gender"])
+            for key, value in form.cleaned_data.items():
+                if key.startswith("athlete"):
+                    print(value)
             new_team = form.save(commit=False) 
             new_team.dojo = request.user
             new_team.team_number = len(teams) + 1
@@ -140,7 +125,8 @@ def athletes(request):
     return render(request, 'registration/athletes.html', {"athletes": athletes,
                                                       "filters": filter_form, 
                                                       "not_found": not_found, 
-                                                      "number_athletes": number_athletes})
+                                                      "number_athletes": number_athletes,
+                                                      "title": "Atletas"})
 
 @login_required
 def teams(request):
@@ -172,7 +158,8 @@ def teams(request):
     return render(request, 'registration/teams.html', {"teams": teams, 
                                                       "filters": filter_form, 
                                                       "not_found": not_found,
-                                                      "number_teams": number_teams})
+                                                      "number_teams": number_teams,
+                                                      "title": "Equipas"})
 
 def home(request):
     return render(request, 'registration/home.html')
@@ -188,7 +175,6 @@ def thanks(request):
     if not request.session.get('team', False):
         from_where = "athlete"
     else: from_where = "team"
-    print(from_where)
     request.session['team'] = False
     return render(request, "registration/thanks.html", {"from_where": from_where})
 
@@ -196,8 +182,7 @@ def wrong(request):
     if not request.session.get('can_access_target_page', False):
         return HttpResponseRedirect('/')
     request.session['can_access_target_page'] = False
-    context = {"errors": errors}
-    return render(request, "registration/wrong.html", context)
+    return render(request, "registration/wrong.html")
 
 def delete(request, type, id):
     if request.method == "POST":
@@ -209,10 +194,7 @@ def delete(request, type, id):
             message = f'Equipa com o número {object_of.team_number} eliminada com sucesso'
         messages.success(request, message)
         object_of.delete()
-        # athletes = Athlete.objects.filter(dojo=request.user)
-        # number_athletes = len(athletes)
-        return HttpResponseRedirect("/")
-        # return render(request, 'registration/home.html', {"athletes": athletes, "number_athletes": number_athletes})
+        return HttpResponseRedirect("/athletes/") if type == "athlete" else HttpResponseRedirect("/teams/")
 
 def update(request, type, id):
     if type == "athlete":
@@ -221,18 +203,37 @@ def update(request, type, id):
         team = get_object_or_404(Teams, id=id)
 
     if request.method == "POST":
+        errors = []
         if type == "athlete":
             message = f'Informações de {athlete.first_name} {athlete.last_name} atualizadas!'
             form = AthleteForm(request.POST, instance=athlete)
+            if form.is_valid():
+                birth_date = form.cleaned_data["birth_date"]
+                age_at_comp = get_comp_age(birth_date)
+
+            if Athlete.objects.filter(first_name=form.cleaned_data["first_name"], birth_date=birth_date, match_type=form.cleaned_data.get("match_type")).exists():
+                athlete_test = Athlete.objects.filter(first_name=form.cleaned_data["first_name"], birth_date=birth_date, match_type=form.cleaned_data.get("match_type"))
+                if athlete_test[0].id != athlete.id:
+                    errors.append("Um atleta com as mesmas credenciais já está inscrito. Verifique se a quer inscrever a mesma pessoa noutra prova")
+                else:
+                    errors = check_athlete_data(form, age_at_comp, age_graduation_rules, age_category_rules)
+            else:
+                errors = check_athlete_data(form, age_at_comp, age_graduation_rules, age_category_rules)
         else:
             message = f'Informações da equipa nº {team.team_number} atualizadas!'
             form = TeamForm(request.POST, instance=team)
-        if form.is_valid():
+        # if form.is_valid():
+        if len(errors) > 0:
+            messages.error(request, "Não foi possível atualizar")
+            for error in errors:
+                messages.error(request, error)
+            return HttpResponseRedirect("/wrong")
+        else:
             new_form = form.save(commit=False) 
             new_form.dojo = request.user
             new_form.save()
             messages.success(request, message)
-            return HttpResponseRedirect("/")
+        return HttpResponseRedirect("/athletes/") if type == "athlete" else HttpResponseRedirect("/teams/")
     else:
         form = AthleteForm(instance=athlete) if type == "athlete" else TeamForm(instance=team, dojo=request.user)
         # athletes = Athlete.objects.filter(dojo=request.user)

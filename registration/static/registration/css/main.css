@@ -124,6 +124,7 @@ select option {
 .page-selection {
   display: flex;
   gap: 20px;
+  margin-left: 50px;
 }
 
 .current_user {
@@ -135,6 +136,7 @@ select option {
   width: fit-content;
   display: flex;
   gap: 20px;
+  align-items: center;
 }
 
 .main-form p:nth-child(11) {
