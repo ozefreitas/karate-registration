@@ -19,9 +19,15 @@
         <button class="default-button" onclick="location.href='/'">
         Página de Início
         </button>
-        <button class="default-button" onclick="location.href='/form/'">
-        Nova Inscrição
-        </button>
+        {% if from_where == "athlete" %}
+          <button class="default-button" onclick="location.href='/form/'">
+          Nova Inscrição
+          </button>
+        {% else %}
+          <button class="default-button" onclick="location.href='/teams_form/'">
+          Nova Inscrição
+          </button>
+        {% endif %}
     </div>
   </body>
 </html>

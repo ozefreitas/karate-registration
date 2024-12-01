@@ -31,6 +31,13 @@
           >Karate Score App</a
         >
       </div>
+      
+      {% if user.is_authenticated %}
+      <div class="page-selection">
+        <button class="default-button" onclick="location.href='/athletes/'">Atletas</button>
+        <button class="default-button" onclick="location.href='/teams/'">Equipas</button>
+      </div>
+      {% endif %}
 
       <div class="dojos-actions">
         {% if user.is_authenticated %}
@@ -44,6 +51,9 @@
         {% endif %}
       </div>
     </div>
+    {% if user.is_authenticated %}
+      <p class="current_user">Autenticado como <strong>{{user.username}}</strong></p>
+    {% endif %}
     <div class="main-content">{% block content %}{% endblock %}</div>
     <div class="footer-container">
       <div class="bureaucracy">

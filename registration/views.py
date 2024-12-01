@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
-from .forms import AthleteForm, FilterForm, TeamForm
+from .forms import AthleteForm, FilterAthleteForm, TeamForm, FilterTeamForm
 from datetime import datetime
 from django.contrib import messages
 from .utils.utils import range_decoder
@@ -102,6 +102,7 @@ def team_form(request):
             new_team.team_number = len(teams) + 1
             new_team.save()
             request.session['can_access_target_page'] = True
+            request.session['team'] = True
             # redirect to a new URL:
             return HttpResponseRedirect("/thanks/")
     else:
@@ -109,11 +110,11 @@ def team_form(request):
         context = {"form": form, "title": "Inscriver Equipa"}
         return render(request, 'registration/teams_form.html', context)
 
-@login_required()
-def home(request):
+@login_required
+def athletes(request):
     not_found = False
     if request.method == "POST":
-        filter_form = FilterForm(request.POST)
+        filter_form = FilterAthleteForm(request.POST)
         if filter_form.is_valid():
             athletes = Athlete.objects.filter(dojo=request.user)
             if filter_form.cleaned_data["filter"] != None and filter_form.cleaned_data["search"] == None:
@@ -133,17 +134,48 @@ def home(request):
                 if len(athletes) == 0:
                     not_found = True
     else:
-        filter_form = FilterForm()
+        filter_form = FilterAthleteForm()
         athletes = Athlete.objects.filter(dojo=request.user)
-        teams = Teams.objects.filter(dojo=request.user)
     number_athletes = len(athletes)
-    number_teams = len(teams)
-    return render(request, 'registration/home.html', {"athletes": athletes, 
-                                                      "teams": teams, 
+    return render(request, 'registration/athletes.html', {"athletes": athletes,
                                                       "filters": filter_form, 
                                                       "not_found": not_found, 
-                                                      "number_athletes": number_athletes,
+                                                      "number_athletes": number_athletes})
+
+@login_required
+def teams(request):
+    not_found = False
+    if request.method == "POST":
+        filter_form = FilterTeamForm(request.POST)
+        if filter_form.is_valid():
+            teams = Teams.objects.filter(dojo=request.user)
+            if filter_form.cleaned_data["filter"] != None and filter_form.cleaned_data["search"] == None:
+                messages.error(request, 'Adicione um termo de procura em "Procurar')
+            elif filter_form.cleaned_data["filter"] == None and filter_form.cleaned_data["search"] != None:
+                messages.error(request, 'Selecione o campo que quer procurar em "Filtrar por"')
+            elif filter_form.cleaned_data["filter"] != None and filter_form.cleaned_data["order"] != None and filter_form.cleaned_data["search"] != None:
+                filter_kwargs = {f'{filter_form.cleaned_data["filter"]}__icontains': filter_form.cleaned_data["search"]}
+                teams = Teams.filter(**filter_kwargs).order_by(filter_form.cleaned_data["order"])
+                if len(teams) == 0:
+                    not_found = True
+            elif filter_form.cleaned_data["order"] != None:
+                teams = Teams.order_by(filter_form.cleaned_data["order"])
+            elif filter_form.cleaned_data["filter"] != None and filter_form.cleaned_data["search"] != None:
+                filter_kwargs = {f'{filter_form.cleaned_data["filter"]}__icontains': filter_form.cleaned_data["search"]}
+                teams = Teams.filter(**filter_kwargs)
+                if len(teams) == 0:
+                    not_found = True
+    else:
+        filter_form = FilterTeamForm()
+        teams = Teams.objects.filter(dojo=request.user)
+    number_teams = len(teams)
+    return render(request, 'registration/teams.html', {"teams": teams, 
+                                                      "filters": filter_form, 
+                                                      "not_found": not_found,
                                                       "number_teams": number_teams})
+
+def home(request):
+    return render(request, 'registration/home.html')
 
 def help(request):
     return render(request, 'registration/help.html')
@@ -153,7 +185,12 @@ def thanks(request):
     if not request.session.get('can_access_target_page', False):
         return HttpResponseRedirect('/')
     request.session['can_access_target_page'] = False
-    return render(request, "registration/thanks.html")
+    if not request.session.get('team', False):
+        from_where = "athlete"
+    else: from_where = "team"
+    print(from_where)
+    request.session['team'] = False
+    return render(request, "registration/thanks.html", {"from_where": from_where})
 
 def wrong(request):
     if not request.session.get('can_access_target_page', False):

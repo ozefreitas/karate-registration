@@ -1,5 +1,5 @@
 from django import forms
-from .models import Athlete, Filters, Teams
+from .models import Athlete, Teams, AthleteFilters, TeamFilters
 
 class AthleteForm(forms.ModelForm):
 
@@ -43,9 +43,15 @@ class AthleteForm(forms.ModelForm):
         self.fields['first_name'].help_text = "<br><ul><li>Recomendado apenas um nome. Se tiver atletas com nomes iguais ou parecidos, deve colocar outro nome que os diferencie.</li></uL>"
 
 
-class FilterForm(forms.ModelForm):
+class FilterAthleteForm(forms.ModelForm):
     class Meta:
-        model = Filters
+        model = AthleteFilters
+        fields = "__all__"
+
+
+class FilterTeamForm(forms.ModelForm):
+    class Meta:
+        model = TeamFilters
         fields = "__all__"
 
 

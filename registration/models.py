@@ -117,11 +117,23 @@ class Teams(models.Model):
         return "{} {} {}".format(self.match_type, self.category, self.gender)
 
 
-class Filters(models.Model):
+class AthleteFilters(models.Model):
     ORDER_BY = {
         "first_name": "Primeiro Nome",
         "last_name": "Último Nome",
         "birth_date": "Idade",
+        "category": "Categoria",
+        "gender": "Género",
+        "match_type": "Prova"
+    }
+
+    order = models.CharField("Ordenar por", choices=ORDER_BY, max_length=20, blank=True, null=True)
+    filter = models.CharField("Filtrar por", choices=ORDER_BY, max_length=20, blank=True, null=True)
+    search = models.CharField("Procurar", max_length=99, blank=True, null=True)
+
+
+class TeamFilters(models.Model):
+    ORDER_BY = {
         "category": "Categoria",
         "gender": "Género",
         "match_type": "Prova"

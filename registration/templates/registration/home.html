@@ -1,8 +1,5 @@
 {% extends "registration/base.html" %} 
 {% block content %}
-{% if user.is_authenticated %}
-    <p class="current_user">Autenticado como <strong>{{user.username}}</strong></p>
-{% endif %}
 <h1>Interface de registo</h1>
 
 {% if messages %}
@@ -15,86 +12,5 @@
       hideMessagesAfterTimeout({{ message.tags }}); // 10 seconds
     </script>
 {% endif %}
-
-{% if athletes %}
-    <h3>Atletas inscritos:</h3>
-    
-    <div class="filter-options-container">
-      <form action="" method="post">
-        <div class="number_athletes_info">
-          <span>{{ number_athletes }} atleta{% if number_athletes > 1 %}s{% endif %}</span>
-        </div>
-        <div class="filter_form">
-          {% csrf_token %}
-          {{filters}}
-        <button class="default-button">Filtrar</button>
-      </div>
-        
-      </form>
-      <button class="default-button" onclick="location.href='/'">Limpar</button>
-    </div>
-      
-    {% for athlete in athletes %}
-      {% include 'components/athletes_list.html' %}
-    {% endfor %}
-{% else %}
-    <div>Ainda sem atletas inscritos</div>
-{% endif %}
-
-{% if not_found %}
-  <h2>Não foram encontrados atletas para esse filtro</h2>
-  <button onclick="location.href='/'">Voltar</button>
-{% else %}
-  <button class="add_button" onclick="location.href='/form/'">
-    <span class="text">Adicionar</span
-    ><span class="icon"
-      ><svg
-        viewBox="0 0 24 24"
-        height="24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      ></svg>
-      <span class="buttonSpan">+</span>
-    </span>
-  </button>
-{% endif %}
-
-{% if teams %}
-  <h3 style="margin-top: 50px;">Equipas inscritas:</h3>
-
-  <div class="filter-options-container">
-    <form action="" method="post">
-      <div class="number_athletes_info">
-        <span>{{ number_teams }} equipa{% if number_teams > 1 %}s{% endif %}</span>
-      </div>
-      <div class="filter_form">
-        {% csrf_token %}
-        {{filters}}
-      <button class="default-button">Filtrar</button>
-    </div>
-      
-    </form>
-    <button class="default-button" onclick="location.href='/'">Limpar</button>
-  </div>
-
-  {% for team in teams %}
-    {% include 'components/teams_list.html' %}
-  {% endfor %}
-{% else %}
-  <div>Ainda sem equipas inscritas</div>
-{% endif %}
-
-<button class="add_button" onclick="location.href='/teams_form/'">
-  <span class="text">Adicionar</span
-  ><span class="icon"
-    ><svg
-      viewBox="0 0 24 24"
-      height="24"
-      width="24"
-      xmlns="http://www.w3.org/2000/svg"
-    ></svg>
-    <span class="buttonSpan">+</span>
-  </span>
-</button>
 
 {% endblock content %}

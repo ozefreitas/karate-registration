@@ -1,0 +1,59 @@
+{% extends "registration/base.html" %} 
+{% block content %}
+<h1>Interface de registos</h1>
+
+{% if messages %}
+    <div class="messages" id="messages">
+      {% for message in messages %}
+        <div class="alert-{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    <script>
+      hideMessagesAfterTimeout({{ message.tags }}); // 10 seconds
+    </script>
+{% endif %}
+
+{% if athletes %}
+    <h3>Atletas inscritos:</h3>
+    
+    <div class="filter-options-container">
+      <form action="" method="post">
+        <div class="number_athletes_info">
+          <span>{{ number_athletes }} atleta{% if number_athletes > 1 %}s{% endif %}</span>
+        </div>
+        <div class="filter_form">
+          {% csrf_token %}
+          {{filters}}
+        <button class="default-button">Filtrar</button>
+      </div>
+        
+      </form>
+      <button class="default-button" onclick="location.href='/athletes'">Limpar</button>
+    </div>
+      
+    {% for athlete in athletes %}
+      {% include 'components/athletes_list.html' %}
+    {% endfor %}
+{% else %}
+    <div>Ainda sem atletas inscritos</div>
+{% endif %}
+
+{% if not_found %}
+  <h2>Não foram encontrados atletas para esse filtro</h2>
+  <button onclick="location.href='/'">Voltar</button>
+{% else %}
+  <button class="add_button" onclick="location.href='/form/'">
+    <span class="text">Adicionar</span
+    ><span class="icon"
+      ><svg
+        viewBox="0 0 24 24"
+        height="24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      ></svg>
+      <span class="buttonSpan">+</span>
+    </span>
+  </button>
+{% endif %}
+
+{% endblock content %}

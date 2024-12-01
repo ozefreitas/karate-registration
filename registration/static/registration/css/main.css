@@ -121,6 +121,11 @@ select option {
   margin-top: 40px;
 }
 
+.page-selection {
+  display: flex;
+  gap: 20px;
+}
+
 .current_user {
   text-align: right;
   margin: 0;
