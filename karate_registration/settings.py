@@ -49,7 +49,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'karate_registration.middleware.RegistrationClosedMiddleware'
+    'karate_registration.middleware.RegistrationClosedMiddleware',
+    'karate_registration.middleware.TeamsNotAvailableMiddleware'
 ]
 
 ROOT_URLCONF = 'karate_registration.urls'
@@ -129,4 +130,6 @@ LOGIN_REDIRECT_URL = 'registration-home'
 
 LOGIN_URL = 'login'
 
-REGISTRATION_DEADLINE = '2025-01-28'  
+REGISTRATION_DEADLINE = '2025-01-28'
+
+NEXT_COMPETITION = 'Liga'
