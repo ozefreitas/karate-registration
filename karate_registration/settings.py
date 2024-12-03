@@ -49,8 +49,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'karate_registration.middleware.RegistrationClosedMiddleware',
-    'karate_registration.middleware.TeamsNotAvailableMiddleware'
+    'dojos.middleware.RegistrationClosedMiddleware',
+    'dojos.middleware.TeamsNotAvailableMiddleware'
 ]
 
 ROOT_URLCONF = 'karate_registration.urls'
