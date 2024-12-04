@@ -79,7 +79,7 @@ class Athlete(models.Model):
     gender = models.CharField("Género", choices=GENDERS, max_length=10)
     weight = models.CharField("Peso", choices=WEIGHTS, max_length=10, blank=True, null=True)
     dojo = models.ForeignKey(User, on_delete=models.CASCADE)
-    additional_emails = models.EmailField("Emails adicionais")
+    additional_emails = models.EmailField("Emails adicionais", blank=True)
 
     def __str__(self): 
         return "{} {}".format(self.first_name, self.last_name)
