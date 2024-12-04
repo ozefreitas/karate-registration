@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import DojoRegisterForm
+from .forms import DojoRegisterForm, FeedbackForm
 from django.contrib.auth import logout
 
 # Create your views here.
@@ -33,3 +33,19 @@ def logout_user(request):
 @login_required
 def profile(request):
     return render(request, 'dojos/profile.html')
+
+def feedback(request):
+    if request.method == "POST":
+        # create a form instance and populate it with data from the request:
+        form = FeedbackForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("/login/")
+        else:
+            messages.error(request, form.errors)
+            return HttpResponseRedirect("/wrong")
+            
+    else:
+        form = FeedbackForm()
+        return render(request, 'dojos/feedback.html', {"form": form})
