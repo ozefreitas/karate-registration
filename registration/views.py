@@ -58,6 +58,7 @@ def form(request):
             new_athlete.dojo = request.user
             new_athlete.age = age_at_comp
             new_athlete.save()
+            messages.success(request, f'{new_athlete.first_name} {new_athlete.last_name} registad@ com sucesso!')
             # form will allow thanks to open
             request.session['can_access_target_page'] = True
             # redirect to a new URL:
@@ -163,9 +164,6 @@ def teams(request):
 
 def home(request):
     return render(request, 'registration/home.html')
-
-def help(request):
-    return render(request, 'registration/help.html')
 
 def thanks(request):
     # if not from form, cannot access this url

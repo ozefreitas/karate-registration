@@ -16,14 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.contrib.auth import views as auth_views 
-from django.contrib.auth import logout
+from django.contrib.auth import views as auth_views
 from dojos import views as dojo_views
 
 class CustomLoginView(auth_views.LoginView):
     def form_invalid(self, form):
         # Change the default error message
-        form.add_error(None, "Custom error message: Invalid login credentials.")
+        # form.add_error(None, "Credenciais incorretas.")
         return super().form_invalid(form)
 
 urlpatterns = [

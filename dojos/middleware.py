@@ -17,6 +17,18 @@ def get_next_competition():
     next_comp = CompetitionsDetails.objects.filter(name=next_comp)
     return next_comp
 
+class NoListedCompetitions:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        competition_details = CompetitionsDetails.objects.all()
+        if request.path == "/athletes/" and request.path == "/teams/":
+            if len(competition_details) == 0:
+                return render(request, 'error/no_comps_error.html', status=403)
+        return self.get_response(request)
+
+
 class RegistrationClosedMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
@@ -24,10 +36,10 @@ class RegistrationClosedMiddleware:
     def __call__(self, request):
         today = datetime.date.today()
         next_comp = get_next_competition()
-        
-        if next_comp[0].start_registration > today and today > next_comp[0].end_registration:
-            # Render a custom page for registration closure
-            return render(request, 'templates/error/registrations_closed.html', status=403)
+        if request.path == "/athletes/" and request.path == "/teams/":
+            if next_comp[0].start_registration > today and today > next_comp[0].end_registration:
+                # Render a custom page for registration closure
+                return render(request, 'error/registrations_closed.html', status=403)
 
         return self.get_response(request)
 
@@ -38,10 +50,10 @@ class TeamsNotAvailableMiddleware:
 
     def __call__(self, request):
         next_comp = get_next_competition()
-        print(next_comp)
         if request.path == "/teams/":
+
             if "Liga" in next_comp[0].name:
                 # Render a custom page for registration not available
-                return render(request, 'templates/error/teams_not_available.html', status=403)
+                return render(request, 'error/teams_not_available.html', status=403)
 
         return self.get_response(request)
