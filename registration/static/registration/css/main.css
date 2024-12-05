@@ -24,6 +24,36 @@ select option {
 
 /* Login page */
 
+.info-container {
+  width: 70%;
+  margin-top: 30px;
+  border: 2px solid #0064cf;
+  border-radius: 8px;
+  font-size: 1rem;
+  padding: 0 20px 0 20px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
+}
+
+.info-container p:first-of-type {
+  margin-top: 0;
+}
+
+.important {
+  border: 2px solid #ff2222;
+}
+
+.containers-label {
+  background-color: white; 
+  position: relative; 
+  top: -15px; 
+  left: 20px;
+  padding: 0 10px 0 10px;
+  font-size: larger;
+}
+
 .login-container {
   border-radius: 10px;
   -webkit-border-radius: 10px;
