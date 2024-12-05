@@ -23,7 +23,7 @@ class NoListedCompetitions:
 
     def __call__(self, request):
         competition_details = CompetitionsDetails.objects.all()
-        if request.path == "/athletes/" and request.path == "/teams/":
+        if request.path == "/athletes/" or request.path == "/teams/" or request.path == "/":
             if len(competition_details) == 0:
                 return render(request, 'error/no_comps_error.html', status=403)
         return self.get_response(request)
@@ -36,7 +36,7 @@ class RegistrationClosedMiddleware:
     def __call__(self, request):
         today = datetime.date.today()
         next_comp = get_next_competition()
-        if request.path == "/athletes/" and request.path == "/teams/":
+        if request.path == "/athletes/" or request.path == "/teams/":
             if next_comp[0].start_registration > today and today > next_comp[0].end_registration:
                 # Render a custom page for registration closure
                 return render(request, 'error/registrations_closed.html', status=403)

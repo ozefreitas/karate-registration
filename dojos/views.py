@@ -20,7 +20,7 @@ def register_user(request):
         else:
             messages.error(request, form.errors)
             return HttpResponseRedirect("/wrong")
-            
+
     else:
         form = DojoRegisterForm()
         return render(request, 'dojos/register_user.html', {"form": form})
