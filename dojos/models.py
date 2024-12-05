@@ -16,3 +16,6 @@ class FeedbackData(models.Model):
     last_name = models.CharField("Último Nome", max_length=100)
     email = models.EmailField()
     feedback = models.TextField()
+
+    def __str__(self):
+        return '{} {}'.format(self.first_name, self.last_name)

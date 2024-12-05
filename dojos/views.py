@@ -41,7 +41,8 @@ def feedback(request):
         # check whether it's valid:
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect("/login/")
+            messages.success(request, "Obrigado pelo feedback. Entrarei em contacto brevemente ")
+            return HttpResponseRedirect("/")
         else:
             messages.error(request, form.errors)
             return HttpResponseRedirect("/wrong")

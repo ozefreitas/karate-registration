@@ -12,17 +12,22 @@
       type="text/css"
       href="{% static 'registration/css/main.css' %}"
     />
+    <script src="{% static 'registration/js/main.js' %}"></script>
   </head>
+
   <body>
     <h3>Algo correu mal, retroceda e verifique a inscrição novamente</h3>
     <h4>Descrição dos erros:</h4>
     <p>
         {% if messages %}
-            <div class="messages">
-                {% for message in messages %}
-                    <div class="alert-{{ message.tags }}">{{ message }}</div>
-                {% endfor %}
-            </div>
+          <div class="messages" id="messages">
+              {% for message in messages %}
+                  <div class="alert-{{ message.tags }}">{{ message }}</div>
+              {% endfor %}
+          </div>
+          <script>
+            // hideMessagesAfterTimeout({{ message.tags }}); // 10 seconds
+          </script>
         {% endif %}
     </p>
     <button class="default-button" onclick="location.href='/form/'">Voltar ao formulário</button>

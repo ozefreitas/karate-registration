@@ -35,20 +35,29 @@
     {% include 'components/teams_list.html' %}
   {% endfor %}
 {% else %}
-  <div style="margin-top: 30px;">Ainda sem equipas inscritas</div>
+  {% if not not_found %}
+    <div style="margin-top: 30px;">Ainda sem equipas inscritas</div>
+  {% endif %}
 {% endif %}
 
-<button class="add_button" onclick="location.href='/teams_form/'">
-  <span class="text">Adicionar</span
-  ><span class="icon"
-    ><svg
-      viewBox="0 0 24 24"
-      height="24"
-      width="24"
-      xmlns="http://www.w3.org/2000/svg"
-    ></svg>
-    <span class="buttonSpan">+</span>
-  </span>
-</button>
+{% if not_found %}
+  <h2>Não foram encontradas equipas para esse filtro</h2>
+  <button onclick="location.href='/teams/'">Voltar</button>
+{% else %}
+
+  <button class="add_button" onclick="location.href='/teams_form/'">
+    <span class="text">Adicionar</span
+    ><span class="icon"
+      ><svg
+        viewBox="0 0 24 24"
+        height="24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      ></svg>
+      <span class="buttonSpan">+</span>
+    </span>
+  </button>
+
+{% endif %}
 
 {% endblock content %}
