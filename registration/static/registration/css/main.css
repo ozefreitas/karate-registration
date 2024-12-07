@@ -221,13 +221,13 @@ select option {
 }
 
 .athlete_info {
-  width: 600px;
+  width: 500px;
   margin-left: 20px;
 }
 
 .athlete_info .athlete_match_type {
   position: absolute;
-  left: 450px;
+  left: 400px;
 }
 
 .athlete_info .athlete_category {

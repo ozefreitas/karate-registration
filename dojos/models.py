@@ -1,6 +1,14 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
+
+class Profile(models.Model):
+    dojo = models.OneToOneField(User, on_delete=models.CASCADE)
+    image = models.ImageField("Imagem de perfil", default='skip-logo.png', upload_to='profile_pictures')
+
+    def __str__(self):
+        return f'{self.dojo.username} profile'
 
 class CompetitionsDetails(models.Model):
     name = models.CharField("Nome", max_length=99)

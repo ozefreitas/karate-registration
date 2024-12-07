@@ -57,6 +57,11 @@ class DojoRegisterForm(UserCreationForm):
         return user
 
 
+class DojoUpdateForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = "__all__"
+
 class FeedbackForm(forms.ModelForm):
     class Meta:
         model = FeedbackData

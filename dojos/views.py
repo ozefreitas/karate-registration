@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import DojoRegisterForm, FeedbackForm
+from .models import Profile
 from django.contrib.auth import logout
 
 # Create your views here.
