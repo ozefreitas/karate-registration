@@ -141,7 +141,8 @@ select option {
 }
 
 .main-content {
-  min-height: 65dvb;
+  min-height: 60dvb;
+  margin-top: 50px;
 }
 
 .header-container {
@@ -157,6 +158,10 @@ select option {
   margin-left: 50px;
 }
 
+.appname_span:hover {
+  color: red;
+}
+
 .current_user {
   text-align: right;
   margin: 0;
@@ -167,6 +172,37 @@ select option {
   display: flex;
   gap: 20px;
   align-items: center;
+}
+
+.profile-container {
+  display: flex;
+  margin-top: 70px;
+  justify-content: space-evenly;
+}
+
+.profile-info {
+  width: 800px
+}
+
+.profile-pic-container {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid red;
+  position: relative;
+}
+
+.profile-pic-container img {
+  width: 160px;
+  height: 160px;
+  position: absolute;
+  top: -5px;
+  left: -5px;
 }
 
 .main-form p:nth-child(11) {
@@ -194,7 +230,7 @@ select option {
 
 
 .filter-options-container form {
-  height: 30px;
+  height: fit-content;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -708,4 +744,58 @@ select option {
 .bureaucracy {
   width: 80%;
   height: fit-content;
+}
+
+/* medias */
+
+@media (width < 1500px) {
+  body {
+    width: 90%;
+  }
+
+  .athlete_info {
+    width: 480px;
+  }
+
+  .athlete_info .athlete_name {
+    min-width: 200px;
+  }
+
+  .athlete_info .athlete_match_type {
+    left: 300px;
+  }
+}
+
+@media (width < 1300px) {
+  body {
+    width: 90%;
+  }
+
+  .athlete_info_options {
+    width: 60%;
+    margin: auto;
+    display: block;
+    height: fit-content;
+  }
+
+  .buttons-settings-wrapper {
+    margin-top: 10px;
+    width: 650px;
+    justify-content: right;
+  }
+  
+  .athlete_info .athlete_match_type {
+    left: 500px
+  }
+
+  .athlete-details {
+    text-align: center;
+  }
+}
+
+@media (width < 1150px) {
+  .filter_form {
+    width: 500px;
+    justify-content: right;
+  }
 }
