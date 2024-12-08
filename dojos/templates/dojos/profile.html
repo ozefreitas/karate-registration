@@ -6,22 +6,25 @@
         <p>Dojo: {{ user.username }}</p>
         <p>Responsável: {{ user.first_name}} {{ user.last_name }}</p>
         <p>Email associado: {{user.email}}</p>
+        <p>Palavra passe: {{ user.password1 }}</p>
         <h4 style="width: fit-content">Últimos registos:</h4>
-        <ul>
+        <ul style="margin-bottom: 50px;">
             <li>1ª Jornada Liga Soshinkai</li>
             <li>2ª Jornada Liga Soshinkai</li>
             <li>3ª Jornada Liga Soshinkai</li>
-            <li>Torneio Shihan Mária Águas</li>
+            <li>Torneio Shihan Mário Águas</li>
         </ul>
         <div class="info-container important">
-            <span class="containers-label">Importante</span>
-            <p>Pedir anulação de conta</p>
-            <p>Pedir renovação de conta</p>
-            
+            <span class="containers-label">Pedidos</span>
+            <br>
+            As ações feitas dentro desta secção são IRREVERSÍVEIS! Terá ainda uma hipótese de decidir após carregar uma primeira vez.
+            <p><a href="{% url 'dojos-delete-account' %}">Pedir anulação de conta</a></p>
+            <p><a href="{% url 'dojos-delete-account' %}">Pedir renovação de conta</a></p>
+            <p><a href="{% url 'dojos-delete-account' %}">Recuperação de palavra passe</a></p>
         </div>
     </div>
     <div class="profile-pic-container">
-        <img class="profile-pic" src="{{ user.profile.image.url }}" alt="foto de perfil">
+        <img src="{{ user.profile.image.url }}" alt="foto de perfil">
     </div>
 </div>
 {% endblock content %}

@@ -185,8 +185,9 @@ select option {
 }
 
 .profile-pic-container {
-  width: 130px;
-  height: 130px;
+  margin-top: 50px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
   -webkit-border-radius: 50%;
   -moz-border-radius: 50%;
@@ -198,11 +199,15 @@ select option {
 }
 
 .profile-pic-container img {
-  width: 160px;
-  height: 160px;
+  width: 220px;
+  height: 220px;
   position: absolute;
   top: -5px;
   left: -5px;
+}
+
+.profile-info .info-container p {
+  
 }
 
 .main-form p:nth-child(11) {

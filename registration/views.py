@@ -98,6 +98,7 @@ def team_form(request):
 
 @login_required
 def athletes(request):
+    not_found = False
     if request.method == "POST":
         filter_form = FilterAthleteForm(request.POST)
         if filter_form.is_valid():
@@ -115,6 +116,7 @@ def athletes(request):
 
 @login_required
 def teams(request):
+    not_found = False
     if request.method == "POST":
         filter_form = FilterTeamForm(request.POST)
         if filter_form.is_valid():

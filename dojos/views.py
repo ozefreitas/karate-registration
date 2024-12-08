@@ -51,3 +51,6 @@ def feedback(request):
     else:
         form = FeedbackForm()
         return render(request, 'dojos/feedback.html', {"form": form})
+    
+def delete_dojo_account(request):
+    return render(request, 'error/wip.html')

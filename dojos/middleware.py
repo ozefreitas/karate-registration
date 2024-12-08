@@ -37,7 +37,7 @@ class RegistrationClosedMiddleware:
         today = datetime.date.today()
         next_comp = get_next_competition()
         if next_comp != None and (request.path == "/athletes/" or request.path == "/teams/"):
-            if next_comp.start_registration > today and today > next_comp[0].end_registration:
+            if next_comp.start_registration > today and today > next_comp.end_registration:
                 # Render a custom page for registration closure
                 return render(request, 'error/registrations_closed.html', status=403)
 
