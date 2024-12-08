@@ -1,13 +1,27 @@
 {% extends "registration/base.html" %} 
 {% block content%}
 
-<div style="display: flex;">
-    <div>
-        <h1>{{ user.username }}</h1>
-        <h3>{{ user.first_name}}</h3>   
+<div class="profile-container">
+    <div class="profile-info">
+        <p>Dojo: {{ user.username }}</p>
+        <p>Responsável: {{ user.first_name}} {{ user.last_name }}</p>
+        <p>Email associado: {{user.email}}</p>
+        <h4 style="width: fit-content">Últimos registos:</h4>
+        <ul>
+            <li>1ª Jornada Liga Soshinkai</li>
+            <li>2ª Jornada Liga Soshinkai</li>
+            <li>3ª Jornada Liga Soshinkai</li>
+            <li>Torneio Shihan Mária Águas</li>
+        </ul>
+        <div class="info-container important">
+            <span class="containers-label">Importante</span>
+            <p>Pedir anulação de conta</p>
+            <p>Pedir renovação de conta</p>
+            
+        </div>
     </div>
-    <div>
-        <img src="{{user.profile.image.url}}" alt="">
+    <div class="profile-pic-container">
+        <img class="profile-pic" src="{{ user.profile.image.url }}" alt="foto de perfil">
     </div>
 </div>
 {% endblock content %}

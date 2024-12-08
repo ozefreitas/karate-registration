@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import AthleteForm, FilterAthleteForm, TeamForm, FilterTeamForm
 from datetime import datetime
 from django.contrib import messages
-from .utils.utils import check_athlete_data, get_comp_age
+from .utils.utils import check_athlete_data, get_comp_age, check_filter_data
 from .models import Athlete, Teams
 
 # views for the athlets registrations
@@ -98,27 +98,11 @@ def team_form(request):
 
 @login_required
 def athletes(request):
-    not_found = False
     if request.method == "POST":
         filter_form = FilterAthleteForm(request.POST)
         if filter_form.is_valid():
             athletes = Athlete.objects.filter(dojo=request.user)
-            if filter_form.cleaned_data["filter"] != None and filter_form.cleaned_data["search"] == None:
-                messages.error(request, 'Adicione um termo de procura em "Procurar')
-            elif filter_form.cleaned_data["filter"] == None and filter_form.cleaned_data["search"] != None:
-                messages.error(request, 'Selecione o campo que quer procurar em "Filtrar por"')
-            elif filter_form.cleaned_data["filter"] != None and filter_form.cleaned_data["order"] != None and filter_form.cleaned_data["search"] != None:
-                filter_kwargs = {f'{filter_form.cleaned_data["filter"]}__icontains': filter_form.cleaned_data["search"]}
-                athletes = athletes.filter(**filter_kwargs).order_by(filter_form.cleaned_data["order"])
-                if len(athletes) == 0:
-                    not_found = True
-            elif filter_form.cleaned_data["order"] != None:
-                athletes = athletes.order_by(filter_form.cleaned_data["order"])
-            elif filter_form.cleaned_data["filter"] != None and filter_form.cleaned_data["search"] != None:
-                filter_kwargs = {f'{filter_form.cleaned_data["filter"]}__icontains': filter_form.cleaned_data["search"]}
-                athletes = athletes.filter(**filter_kwargs)
-                if len(athletes) == 0:
-                    not_found = True
+            athletes, not_found = check_filter_data(request, filter_form, athletes)
     else:
         filter_form = FilterAthleteForm()
         athletes = Athlete.objects.filter(dojo=request.user)
@@ -131,27 +115,11 @@ def athletes(request):
 
 @login_required
 def teams(request):
-    not_found = False
     if request.method == "POST":
         filter_form = FilterTeamForm(request.POST)
         if filter_form.is_valid():
             teams = Teams.objects.filter(dojo=request.user)
-            if filter_form.cleaned_data["filter"] != None and filter_form.cleaned_data["search"] == None:
-                messages.error(request, 'Adicione um termo de procura em "Procurar')
-            elif filter_form.cleaned_data["filter"] == None and filter_form.cleaned_data["search"] != None:
-                messages.error(request, 'Selecione o campo que quer procurar em "Filtrar por"')
-            elif filter_form.cleaned_data["filter"] != None and filter_form.cleaned_data["order"] != None and filter_form.cleaned_data["search"] != None:
-                filter_kwargs = {f'{filter_form.cleaned_data["filter"]}__icontains': filter_form.cleaned_data["search"]}
-                teams = Teams.filter(**filter_kwargs).order_by(filter_form.cleaned_data["order"])
-                if len(teams) == 0:
-                    not_found = True
-            elif filter_form.cleaned_data["order"] != None:
-                teams = Teams.order_by(filter_form.cleaned_data["order"])
-            elif filter_form.cleaned_data["filter"] != None and filter_form.cleaned_data["search"] != None:
-                filter_kwargs = {f'{filter_form.cleaned_data["filter"]}__icontains': filter_form.cleaned_data["search"]}
-                teams = Teams.filter(**filter_kwargs)
-                if len(teams) == 0:
-                    not_found = True
+            teams, not_found = check_filter_data(request, filter_form, teams)
     else:
         filter_form = FilterTeamForm()
         teams = Teams.objects.filter(dojo=request.user)
