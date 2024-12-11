@@ -55,3 +55,16 @@ class TeamsNotAvailableMiddleware:
             return render(request, 'error/teams_not_available.html', status=403)
 
         return self.get_response(request)
+    
+class CompetitionEnded:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        today = datetime.date.today()
+        competition_details = CompetitionsDetails.objects.filter(competition_date__lt=today, has_ended=False)
+        for comp_detail in competition_details:
+                comp_detail.has_ended=True
+                comp_detail.save()
+
+        return self.get_response(request)

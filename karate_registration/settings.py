@@ -54,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'dojos.middleware.CompetitionEnded',
     'dojos.middleware.NoListedCompetitions',
     'dojos.middleware.RegistrationClosedMiddleware',
     'dojos.middleware.TeamsNotAvailableMiddleware'
