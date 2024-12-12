@@ -1,0 +1,10 @@
+{% extends "registration/base.html" %} 
+{% block content%}
+
+<form action="{% url 'dojos-update-account' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{form_dojo.as_p}}
+    {{form_profile.as_p}}
+    <button type="submit" class="default-button">Submeter</button>
+</form>
+{% endblock content %}

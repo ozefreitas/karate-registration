@@ -4,5 +4,6 @@ from . import views
 urlpatterns = [
     path('register_user/', views.register_user, name="dojos-register"),
     path('feedback/', views.feedback, name="dojos-feedback"),
+    path('update_profile/', views.update_dojo_account, name="dojos-update-account"),
     path('delete_account/', views.delete_dojo_account, name="dojos-delete-account")
 ]

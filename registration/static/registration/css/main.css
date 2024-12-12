@@ -1,6 +1,8 @@
 :root {
 }
 
+/* default elements */
+
 body {
   font-size: 1.2rem;
   width: 80%;
@@ -20,6 +22,10 @@ select, input {
 
 select option {
   font-size: larger;
+}
+
+li {
+  margin-bottom: 10px;
 }
 
 /* Login page */

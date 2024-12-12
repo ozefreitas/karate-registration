@@ -29,6 +29,7 @@ age_category_rules = {
     "50-99": "Veterano +50"
 }
 
+
 @login_required()
 def form(request):
     # if this is a POST request we need to process the form data
@@ -70,6 +71,7 @@ def form(request):
         context = {"form": form, "title": "Inscrever atleta"}
         return render(request, 'registration/form.html', context)
     
+
 @login_required
 def team_form(request):
     if request.method == "POST":
@@ -96,6 +98,7 @@ def team_form(request):
         context = {"form": form, "title": "Inscriver Equipa"}
         return render(request, 'registration/teams_form.html', context)
 
+
 @login_required
 def athletes(request):
     not_found = False
@@ -113,6 +116,7 @@ def athletes(request):
                                                       "not_found": not_found, 
                                                       "number_athletes": number_athletes,
                                                       "title": "Atletas"})
+
 
 @login_required
 def teams(request):
@@ -132,8 +136,10 @@ def teams(request):
                                                       "number_teams": number_teams,
                                                       "title": "Equipas"})
 
+
 def home(request):
     return render(request, 'registration/home.html')
+
 
 def thanks(request):
     # if not from form, cannot access this url
@@ -146,11 +152,13 @@ def thanks(request):
     request.session['team'] = False
     return render(request, "registration/thanks.html", {"from_where": from_where})
 
+
 def wrong(request):
     if not request.session.get('can_access_target_page', False):
         return HttpResponseRedirect('/')
     request.session['can_access_target_page'] = False
     return render(request, "registration/wrong.html")
+
 
 def delete(request, type, id):
     if request.method == "POST":
@@ -163,6 +171,7 @@ def delete(request, type, id):
         messages.success(request, message)
         object_of.delete()
         return HttpResponseRedirect("/athletes/") if type == "athlete" else HttpResponseRedirect("/teams/")
+
 
 def update(request, type, id):
     if type == "athlete":
@@ -204,5 +213,4 @@ def update(request, type, id):
         return HttpResponseRedirect("/athletes/") if type == "athlete" else HttpResponseRedirect("/teams/")
     else:
         form = AthleteForm(instance=athlete) if type == "athlete" else TeamForm(instance=team, dojo=request.user)
-        # athletes = Athlete.objects.filter(dojo=request.user)
         return render(request, 'registration/update_registration.html', {"form": form, "type": type, "id": id})

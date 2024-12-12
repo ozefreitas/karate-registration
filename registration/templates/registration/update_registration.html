@@ -1,11 +1,6 @@
 {% extends "registration/base.html" %} 
 {% block content%}
 <h1>Atualizar inscrição</h1>
-{% if messages %}
-    {% for message in messages %}
-        {{message}}
-    {% endfor %}
-{% endif %}
 
 <form action="{% url 'registration-update' type id %}" method="post">
     {% csrf_token %}
