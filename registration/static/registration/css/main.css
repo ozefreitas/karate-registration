@@ -180,6 +180,11 @@ li {
   align-items: center;
 }
 
+.help-container {
+  line-height: 1.9rem;
+  max-width: 1000px;
+}
+
 .profile-container {
   display: flex;
   margin-top: 70px;
