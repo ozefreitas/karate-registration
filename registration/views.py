@@ -53,7 +53,7 @@ def form(request):
                 request.session['can_access_target_page'] = True
                 for error in errors:
                     messages.error(request, error)
-                return HttpResponseRedirect("/wrong")
+                return HttpResponseRedirect("/form")
             
             new_athlete = form.save(commit=False) 
             new_athlete.dojo = request.user
@@ -200,17 +200,18 @@ def update(request, type, id):
             message = f'Informações da equipa nº {team.team_number} atualizadas!'
             form = TeamForm(request.POST, instance=team)
         # if form.is_valid():
+        print(errors)
         if len(errors) > 0:
             messages.error(request, "Não foi possível atualizar")
             for error in errors:
                 messages.error(request, error)
-            return HttpResponseRedirect("/wrong")
+            return HttpResponseRedirect(f"/update_registration/{type}/{id}")
         else:
             new_form = form.save(commit=False) 
             new_form.dojo = request.user
             new_form.save()
             messages.success(request, message)
-        return HttpResponseRedirect("/athletes/") if type == "athlete" else HttpResponseRedirect("/teams/")
+            return HttpResponseRedirect("/athletes/") if type == "athlete" else HttpResponseRedirect("/teams/")
     else:
         form = AthleteForm(instance=athlete) if type == "athlete" else TeamForm(instance=team, dojo=request.user)
         return render(request, 'registration/update_registration.html', {"form": form, "type": type, "id": id})
