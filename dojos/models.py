@@ -16,8 +16,8 @@ class CompetitionsDetails(models.Model):
     name = models.CharField("Nome", max_length=99)
     start_registration = models.DateField("Início das inscrições")
     end_registration = models.DateField("Fim das inscrições")
-    competition_date = models.DateField("Dia da prova")
     retifications_deadline = models.DateField("Fim do periodo de retificações")
+    competition_date = models.DateField("Dia da prova")
     has_ended = models.BooleanField(default=False)
 
     def __str__(self):
