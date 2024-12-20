@@ -42,6 +42,7 @@ def form(request):
             # process the data in form.cleaned_data as required
             birth_date = form.cleaned_data["birth_date"]
             age_at_comp = get_comp_age(birth_date)
+            print(age_at_comp)
 
             if Athlete.objects.filter(first_name=form.cleaned_data["first_name"], birth_date=birth_date, match_type=form.cleaned_data.get("match_type")).exists():
                 errors.append("Um atleta com as mesmas credenciais já está inscrito. Verifique se a quer inscrever a mesma pessoa noutra prova")
@@ -200,7 +201,6 @@ def update(request, type, id):
             message = f'Informações da equipa nº {team.team_number} atualizadas!'
             form = TeamForm(request.POST, instance=team)
         # if form.is_valid():
-        print(errors)
         if len(errors) > 0:
             messages.error(request, "Não foi possível atualizar")
             for error in errors:
@@ -209,6 +209,7 @@ def update(request, type, id):
         else:
             new_form = form.save(commit=False) 
             new_form.dojo = request.user
+            new_form.age = age_at_comp
             new_form.save()
             messages.success(request, message)
             return HttpResponseRedirect("/athletes/") if type == "athlete" else HttpResponseRedirect("/teams/")
