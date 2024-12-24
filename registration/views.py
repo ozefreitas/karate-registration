@@ -183,7 +183,7 @@ def update(request, type, id):
     if request.method == "POST":
         errors = []
         if type == "athlete":
-            message = f'Informações de {athlete.first_name} {athlete.last_name} atualizadas!'
+            message = f'Informação de {athlete.first_name} {athlete.last_name} atualizada!'
             form = AthleteForm(request.POST, instance=athlete)
             if form.is_valid():
                 birth_date = form.cleaned_data["birth_date"]
@@ -198,7 +198,7 @@ def update(request, type, id):
             else:
                 errors = check_athlete_data(form, age_at_comp, age_graduation_rules, age_category_rules)
         else:
-            message = f'Informações da equipa nº {team.team_number} atualizadas!'
+            message = f'Informação da equipa nº {team.team_number} atualizada!'
             form = TeamForm(request.POST, instance=team)
         # if form.is_valid():
         if len(errors) > 0:
@@ -215,4 +215,7 @@ def update(request, type, id):
             return HttpResponseRedirect("/athletes/") if type == "athlete" else HttpResponseRedirect("/teams/")
     else:
         form = AthleteForm(instance=athlete) if type == "athlete" else TeamForm(instance=team, dojo=request.user)
-        return render(request, 'registration/update_registration.html', {"form": form, "type": type, "id": id})
+        return render(request, 'registration/update_registration.html', {"form": form, 
+                                                                         "type": type, 
+                                                                         "id": id, 
+                                                                         "title": "Atualizar Atleta" if type == "athlete" else "Atualizar Equipa"})

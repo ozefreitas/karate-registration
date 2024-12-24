@@ -24,6 +24,11 @@ select option {
   font-size: larger;
 }
 
+h4 {
+  margin-top: 30px;
+  margin-bottom: 15px;
+}
+
 li {
   margin-bottom: 10px;
 }
@@ -129,6 +134,26 @@ li {
   margin-bottom: 10px;
 }
 
+.alert {
+  background-color: #7dfd6de8;
+  border-radius: 8px;
+  color: white;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.alert-info {
+  background-color: yellow;
+  color: black;
+}
+
 .logos_container {
   display: flex;
   align-items: center;
@@ -171,6 +196,7 @@ li {
 .current_user {
   text-align: right;
   margin: 0;
+  margin-bottom: 10px;
 }
 
 .dojos-actions {
@@ -181,8 +207,10 @@ li {
 }
 
 .help-container {
+  font-size: smaller;
   line-height: 1.9rem;
   max-width: 1000px;
+  padding-left: 20px;
 }
 
 .profile-container {

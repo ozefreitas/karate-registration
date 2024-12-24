@@ -14,6 +14,7 @@ class Profile(models.Model):
 
 class CompetitionsDetails(models.Model):
     name = models.CharField("Nome", max_length=99)
+    location = models.CharField("Local", max_length=99)
     start_registration = models.DateField("Início das inscrições")
     end_registration = models.DateField("Fim das inscrições")
     retifications_deadline = models.DateField("Fim do periodo de retificações")

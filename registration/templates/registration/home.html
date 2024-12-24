@@ -29,7 +29,7 @@
           <img 
             src="{% static 'registration/images/icons8-coffee-48.png' %}"
             alt="buy me a coffee"
-            style="cursor: pointer; display: block;">
+            style="cursor: pointer; display: block; padding-left: 10px;">
         </a>
       </div>
       <h4>Periodo de inscrições</h4>
@@ -37,7 +37,7 @@
         A plataforma abrirá a inscrição 1 mês antes do dia da prova, fecha 2 semana antes, e dará 1 semana para retificar.
         Ou seja, o periodo fecha definitivamente na segunda-feira anterior à realização da prova. A semana de retificação não permitirá
         inscrever novos atletas, apenas alterar/editar inscrições existentes. Findo este periodo, será impossível inscrever via plataforma.
-        Caso surja algum problema, <a href="">contacte</a>.
+        Caso surja algum problema, <a style="cursor: pointer;" onclick="window.scrollTo(0, document.body.scrollHeight);">contacte</a>.
       </p>
       <h4>Criar Conta</h4>
       <p>Antes de iniciar qualquer ação, deve criar uma conta. Para aceder, basta clicar em "Criar Conta" no canto superior direito
@@ -56,7 +56,7 @@
       </p>
       <h4>Acesso aos registos</h4>
       <p>Deduzo que neste momento já tenha sessão iniciada, e por isso já consegue ver dois butões - "Atletas" e "Equipas",
-        na parte central do cabeçalho. Caso não consiga ver nada, inicie sessão. Se persistir, <a href="">contacte</a>.
+        na parte central do cabeçalho. Caso não consiga ver nada, inicie sessão. Se persistir, <a style="cursor: pointer;" onclick="window.scrollTo(0, document.body.scrollHeight);">contacte</a>.
         Mesmo tendo Login feito, o conteúdo destas páginas apenas estará visível nos periodos de inscrição ligados a cada prova.
       </p>
       <h4>Registo de Atletas</h4>
@@ -76,6 +76,11 @@
       <h4>Registo de Equipas</h4>
       <p>As <a href="{% url 'registration-teams' %}">Equipas</a> funcionam de maneira semelhante aos Atletas. No entanto, ao invés de 
         inscrever novamente cada atleta, terá uma área de seleção de cada um dos elementos, a partir dos atletas inscritos anteriormente.</p>
+      <h4>Geral</h4>
+      <p>Em cada página de registo, terá uma linha de filtros para ordernar da forma ou filtrar os resultados que quiser.
+        Quando efetuada uma inscrição, irá aparecer uma nova linha na página. POderá também ver um quadradinho de opções. Se carregar,
+        terá as opções de <i>Consultar</i>, <i>Editar</i> e <i>Eliminar</i>.
+      </p>
     </div>
       
 {% endblock content %}

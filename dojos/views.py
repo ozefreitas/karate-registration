@@ -26,7 +26,7 @@ def register_user(request):
 
     else:
         form = DojoRegisterForm()
-        return render(request, 'dojos/register_user.html', {"form": form})
+        return render(request, 'dojos/register_user.html', {"form": form, "title": "Criar Conta"})
     
 
 def logout_user(request):
@@ -35,7 +35,7 @@ def logout_user(request):
 
 @login_required
 def profile(request):
-    return render(request, 'dojos/profile.html')
+    return render(request, 'dojos/profile.html', {"title": "Perfil"})
 
 def feedback(request):
     if request.method == "POST":
@@ -52,7 +52,7 @@ def feedback(request):
             
     else:
         form = FeedbackForm()
-        return render(request, 'dojos/feedback.html', {"form": form})
+        return render(request, 'dojos/feedback.html', {"form": form, "title": "Feedback"})
     
 def update_dojo_account(request):
     if request.method == "POST":
@@ -74,10 +74,10 @@ def update_dojo_account(request):
     else:
         form_dojo = DojoUpdateForm(instance=request.user)
         form_profile = ProfileUpdateForm(instance=request.user.profile)
-        context = {"form_dojo": form_dojo, "form_profile": form_profile}
+        context = {"form_dojo": form_dojo, "form_profile": form_profile, "title": "Atualizar Perfil"}
     return render(request, 'dojos/update_user.html', context)
 
-    
+
 def delete_dojo_account(request):
     if request.method == "GET":
         if not request.user.is_superuser:
