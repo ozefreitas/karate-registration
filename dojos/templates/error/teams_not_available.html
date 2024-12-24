@@ -1,4 +1,16 @@
 {% extends "registration/base.html" %} 
 {% block content %}
-<div>A inscrição de equipas não está disponível para provas da Liga Soshinkai! Não foste ler as regras?</div>
+<div>A inscrição de equipas não está disponível para provas da Liga Soshinkai!</div>
+<table style="margin-top: 50px;">
+    <tr>
+        <th>Nome</th>
+        <th>Data</th>
+    </tr>
+    {% for comp in calendar %}
+        <tr>
+        <td>{{ comp.name }}</td>
+        <td>{{ comp.competition_date }}</td>
+        </tr>
+    {% endfor %}
+</table>
 {% endblock %}

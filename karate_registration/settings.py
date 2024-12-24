@@ -54,8 +54,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'dojos.middleware.CompetitionEnded',
-    'dojos.middleware.NoListedCompetitions',
+    'dojos.middleware.CompetitionEndedMiddleware',
+    'dojos.middleware.NoListedCompetitionsMiddleware',
     'dojos.middleware.RegistrationClosedMiddleware',
     'dojos.middleware.TeamsNotAvailableMiddleware'
 ]
@@ -73,6 +73,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'dojos.context_processors.upcoming_dates',
             ],
         },
     },
