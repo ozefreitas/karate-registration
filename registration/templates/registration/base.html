@@ -33,7 +33,7 @@
         {% if user.is_authenticated %}
         <div class="page-selection">
           <a class="appname_span" href="{% url 'registration-athletes' %}">Atletas</a>
-          <a class="  appname_span" href="{% url 'registration-teams' %}">Equipas</a>
+          <a class="appname_span" href="{% url 'registration-teams' %}">Equipas</a>
         </div>
         {% endif %}
       </div>
@@ -54,7 +54,15 @@
     {% if user.is_authenticated %}
       <p class="current_user">Autenticado como <strong>{{user.username}}</strong></p>
     {% endif %}
-    <div class="main-content">{% block content %}{% endblock %}</div>
+    {% if upcoming_message %}
+      <div class="alert alert-info">
+          Encontra-se no periodo de retificações! As incrições fecharão em breve.
+      </div>
+    {% endif %}
+    <div class="main-content">
+      {% block content %}
+      {% endblock %}
+    </div>
     <div class="footer-container">
       <div class="bureaucracy">
         <p>
