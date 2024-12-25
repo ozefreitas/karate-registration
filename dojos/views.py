@@ -3,9 +3,9 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import DojoRegisterForm, DojoUpdateForm, ProfileUpdateForm, FeedbackForm
-from .models import Profile
+from .models import Profile, CompetitionsDetails
 from django.contrib.auth.models import User
-from registration.models import Dojo
+from registration.models import Dojo, ArchivedAthlete
 from django.contrib.auth import logout
 
 # Create your views here.
@@ -35,7 +35,11 @@ def logout_user(request):
 
 @login_required
 def profile(request):
-    return render(request, 'dojos/profile.html', {"title": "Perfil"})
+    comps = CompetitionsDetails.objects.all()
+    archived_athletes = ArchivedAthlete.objects.all()
+    return render(request, 'dojos/profile.html', {"title": "Perfil",
+                                                  "archived_athletes": archived_athletes,
+                                                  "comps": comps})
 
 def feedback(request):
     if request.method == "POST":

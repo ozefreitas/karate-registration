@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from dojos.models import CompetitionsDetails
 
 # Create your models here.
 
@@ -19,7 +20,7 @@ MATCHES = {
         "kumite": "Kumite"
 }
 
-class Athlete(models.Model):
+class AthleteBase(models.Model):
     GRADUATIONS = {
         "15": "9º Kyu",
         "14.5": "8º Kyu Karie",
@@ -83,6 +84,19 @@ class Athlete(models.Model):
 
     def __str__(self): 
         return "{} {}".format(self.first_name, self.last_name)
+    
+    class Meta:
+        abstract = True
+
+
+# declaration to be registered in admin panel
+class Athlete(AthleteBase):
+    pass
+
+
+class ArchivedAthlete(Athlete):
+    competition = models.ForeignKey(CompetitionsDetails, on_delete=models.PROTECT)
+    archived_date = models.DateTimeField(auto_now_add=True)
 
 
 class Dojo(models.Model):

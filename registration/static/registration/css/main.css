@@ -249,6 +249,17 @@ li {
   
 }
 
+.archived-athletes-container {
+  display: none;
+  flex-direction: column;
+  margin-top: 20px;
+}
+
+.archived-athletes-container div {
+  padding: 5px;
+  border-bottom: 1px solid black;
+}
+
 .main-form p:nth-child(11) {
   margin-bottom: 0;
 }
@@ -793,10 +804,6 @@ li {
 /* medias */
 
 @media (width < 1500px) {
-  body {
-    width: 90%;
-  }
-
   .athlete_info {
     width: 480px;
   }
@@ -813,6 +820,11 @@ li {
 @media (width < 1300px) {
   body {
     width: 90%;
+  }
+
+  .main-content {
+    width: 80%;
+    margin: auto;
   }
 
   .athlete_info_options {

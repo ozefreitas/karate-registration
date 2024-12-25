@@ -13,8 +13,28 @@ class Profile(models.Model):
         return f'{self.dojo.username} profile'
 
 class CompetitionsDetails(models.Model):
+    SEASONS = {
+        "2425": "2024/2025",
+        "2526": "2025/2026",
+        "2627": "2026/2027",
+        "2728": "2027/2028",
+        "2829": "2028/2029",
+        "2930": "2029/2030",
+        "3031": "2030/2031",
+        "3132": "2031/2032",
+        "3233": "2032/2033",
+        "3334": "2033/2034",
+        "3435": "2034/2035",
+        "3536": "2035/2036",
+        "3637": "2036/2037",
+        "3738": "2037/2038",
+        "3839": "2038/2039",
+        "3940": "2039/2040",
+    }
+
     name = models.CharField("Nome", max_length=99)
     location = models.CharField("Local", max_length=99)
+    season = models.CharField("Época", choices=SEASONS, max_length=15)
     start_registration = models.DateField("Início das inscrições")
     end_registration = models.DateField("Fim das inscrições")
     retifications_deadline = models.DateField("Fim do periodo de retificações")

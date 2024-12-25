@@ -22,6 +22,15 @@ const toggleRegistrationOptions = (athleteID) => {
   }
 };
 
+const toggleArchivedAthletes = (compID) => {
+  const athleteDiv = document.getElementById(`archived-athletes-container-${compID}`);
+  if (athleteDiv.style.display === "none" || athleteDiv.style.display === "") {
+    athleteDiv.style.display = "flex";
+  } else {
+    athleteDiv.style.display = "none";
+  }
+};
+
 function hideMessagesAfterTimeout(messageType) {
   let timeout
   if (messageType === "success") {

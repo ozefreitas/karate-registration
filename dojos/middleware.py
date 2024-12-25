@@ -2,6 +2,7 @@ import datetime
 from django.conf import settings
 from django.shortcuts import render
 from .models import CompetitionsDetails
+from registration.models import Athlete, ArchivedAthlete
 from .utils.utils import get_next_competition
 
 
@@ -60,5 +61,15 @@ class CompetitionEndedMiddleware:
                 if comp_detail.competition_date < today:
                     comp_detail.has_ended=True
                     comp_detail.save()
+
+                    athletes = Athlete.objects.all()
+                    for athlete in athletes:
+                        athlete_data = {"competition": comp_detail}
+                        for field in athlete._meta.fields:
+                            if field != "id":
+                                athlete_data[field.name] = getattr(athlete, field.name)
+                        ArchivedAthlete.objects.create(**athlete_data)
+                    
+                    # athletes.delete()
 
         return self.get_response(request)
