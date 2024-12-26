@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-from dojos.models import CompetitionsDetails
+from dojos.models import CompetitionDetail
+import django
 
 # Create your models here.
 
@@ -73,14 +74,13 @@ class AthleteBase(models.Model):
     last_name = models.CharField("Último Nome", max_length=200)
     graduation = models.CharField("Graduação", max_length=4, choices=GRADUATIONS)
     birth_date = models.DateField("Data de Nascimento")
-    age = models.IntegerField("Idade")
+    age = models.IntegerField("Idade", default=25)
     skip_number = models.IntegerField("Nº SKI-P", blank=True, null=True)
     category = models.CharField("Escalão", choices=CATEGORIES, max_length=99)
     match_type = models.CharField("Prova", choices=MATCHES, max_length=10)
     gender = models.CharField("Género", choices=GENDERS, max_length=10)
     weight = models.CharField("Peso", choices=WEIGHTS, max_length=10, blank=True, null=True)
     dojo = models.ForeignKey(User, on_delete=models.CASCADE)
-    additional_emails = models.EmailField("Emails adicionais", blank=True)
 
     def __str__(self): 
         return "{} {}".format(self.first_name, self.last_name)
@@ -94,8 +94,8 @@ class Athlete(AthleteBase):
     pass
 
 
-class ArchivedAthlete(Athlete):
-    competition = models.ForeignKey(CompetitionsDetails, on_delete=models.PROTECT)
+class ArchivedAthlete(AthleteBase):
+    competition = models.ForeignKey(CompetitionDetail, on_delete=models.CASCADE)
     archived_date = models.DateTimeField(auto_now_add=True)
 
 
@@ -107,7 +107,7 @@ class Dojo(models.Model):
         return self.dojo
 
 
-class Teams(models.Model):
+class Team(models.Model):
 
     GENDERS = {
         "masculino": "Masculino",
@@ -124,14 +124,14 @@ class Teams(models.Model):
     category = models.CharField("Escalão", choices=CATEGORIES, max_length=99)
     match_type = models.CharField("Prova", choices=MATCHES, max_length=10)
     gender = models.CharField("Género", choices=GENDERS, max_length=10)
-    additional_emails = models.EmailField("Emails adicionais")
+    additional_emails = models.EmailField("Emails adicionais", blank=True, null=True)
     team_number = models.IntegerField("Nº Equipa")
 
     def __str__(self):
         return "{} {} {}".format(self.match_type, self.category, self.gender)
 
 
-class AthleteFilters(models.Model):
+class AthleteFilter(models.Model):
     ORDER_BY = {
         "first_name": "Primeiro Nome",
         "last_name": "Último Nome",
@@ -146,7 +146,7 @@ class AthleteFilters(models.Model):
     search = models.CharField("Procurar", max_length=99, blank=True, null=True)
 
 
-class TeamFilters(models.Model):
+class TeamFilter(models.Model):
     ORDER_BY = {
         "category": "Categoria",
         "gender": "Género",

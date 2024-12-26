@@ -12,7 +12,7 @@ class Profile(models.Model):
     def __str__(self):
         return f'{self.dojo.username} profile'
 
-class CompetitionsDetails(models.Model):
+class CompetitionDetail(models.Model):
     SEASONS = {
         "2425": "2024/2025",
         "2526": "2025/2026",
