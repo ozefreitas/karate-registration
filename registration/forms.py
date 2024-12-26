@@ -1,5 +1,5 @@
 from django import forms
-from .models import Athlete, Teams, AthleteFilters, TeamFilters
+from .models import Athlete, Team, AthleteFilter, TeamFilter
 
 class AthleteForm(forms.ModelForm):
 
@@ -26,8 +26,7 @@ class AthleteForm(forms.ModelForm):
                     "category",
                     "match_type",
                     "gender",
-                    "weight",
-                    "additional_emails"]
+                    "weight"]
         widgets = {
             'birth_date': forms.DateInput(
                 attrs={
@@ -45,19 +44,19 @@ class AthleteForm(forms.ModelForm):
 
 class FilterAthleteForm(forms.ModelForm):
     class Meta:
-        model = AthleteFilters
+        model = AthleteFilter
         fields = "__all__"
 
 
 class FilterTeamForm(forms.ModelForm):
     class Meta:
-        model = TeamFilters
+        model = TeamFilter
         fields = "__all__"
 
 
 class TeamForm(forms.ModelForm):
     class Meta:
-        model = Teams
+        model = Team
         fields = ["category", "match_type", "gender", "additional_emails", "athlete1", "athlete2", "athlete3", "athlete4", "athlete5"]
     
     def __init__(self, *args, **kwargs):

@@ -1,7 +1,7 @@
 import datetime
 from django.conf import settings
 from django.shortcuts import render
-from .models import CompetitionsDetails
+from .models import CompetitionDetail
 from registration.models import Athlete, ArchivedAthlete
 from .utils.utils import get_next_competition
 
@@ -11,7 +11,7 @@ class NoListedCompetitionsMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        competition_details = CompetitionsDetails.objects.all()
+        competition_details = CompetitionDetail.objects.all()
         if not settings.DEBUG:
             if request.path == "/athletes/" or request.path == "/teams/" or request.path == "/":
                 if len(competition_details) == 0:
@@ -43,7 +43,7 @@ class TeamsNotAvailableMiddleware:
         if not settings.DEBUG:
             if next_comp != None and request.path == "/teams/" and "Liga" in next_comp.name:
                 # Render a custom page for registration not available
-                competition_details = CompetitionsDetails.objects.all()
+                competition_details = CompetitionDetail.objects.all()
                 return render(request, 'error/teams_not_available.html', {"calendar": competition_details}, status=403)
 
         return self.get_response(request)
@@ -55,7 +55,7 @@ class CompetitionEndedMiddleware:
 
     def __call__(self, request):
         today = datetime.date.today()
-        competition_details = CompetitionsDetails.objects.filter(has_ended=False)
+        competition_details = CompetitionDetail.objects.filter(has_ended=False)
         for comp_detail in competition_details:
                 # if competition day passes by, has ended go true
                 if comp_detail.competition_date < today:
@@ -70,6 +70,6 @@ class CompetitionEndedMiddleware:
                                 athlete_data[field.name] = getattr(athlete, field.name)
                         ArchivedAthlete.objects.create(**athlete_data)
                     
-                    # athletes.delete()
+                    athletes.delete()
 
         return self.get_response(request)
