@@ -3,9 +3,9 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import DojoRegisterForm, DojoUpdateForm, ProfileUpdateForm, FeedbackForm
-from .models import Profile, CompetitionsDetails
+from .models import Profile, CompetitionDetail
 from django.contrib.auth.models import User
-from registration.models import Dojo, ArchivedAthlete
+from registration.models import Dojo, ArchivedAthlete, Athlete
 from django.contrib.auth import logout
 
 # Create your views here.
@@ -35,7 +35,7 @@ def logout_user(request):
 
 @login_required
 def profile(request):
-    comps = CompetitionsDetails.objects.all()
+    comps = CompetitionDetail.objects.all()
     archived_athletes = ArchivedAthlete.objects.all()
     return render(request, 'dojos/profile.html', {"title": "Perfil",
                                                   "archived_athletes": archived_athletes,
@@ -63,7 +63,6 @@ def update_dojo_account(request):
         # create a form instance and populate it with data from the request:
         form_dojo = DojoUpdateForm(request.POST, instance=request.user)
         form_profile = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
-        print(request.POST)
         # check whether it's valid:
         if form_dojo.is_valid() and form_profile.is_valid():
             form_dojo.save()
@@ -92,3 +91,17 @@ def delete_dojo_account(request):
             Dojo.objects.filter(dojo=request.user.username).update(is_registered=False)
             return HttpResponseRedirect("/register/register_user/")
     return HttpResponseRedirect("/")
+
+
+def clone_athletes(request, comp_id):
+    if request.method == "POST":
+        comp = get_object_or_404(CompetitionDetail, id=comp_id)
+        archived = ArchivedAthlete.objects.filter(competition=comp_id)
+        for athlete in archived:
+            athlete_data = {}
+            for field in athlete._meta.fields:
+                if field.name not in ["id", "competition", "archived_date"]:
+                    athlete_data[field.name] = getattr(athlete, field.name)
+            Athlete.objects.create(**athlete_data)
+        messages.success(request, f'Os atletas da/do {comp.name} foram copiados para o registo atual')
+    return HttpResponseRedirect("/athletes")

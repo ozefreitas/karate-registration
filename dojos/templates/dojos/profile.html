@@ -30,13 +30,16 @@
         <ul style="margin-bottom: 50px; width: fit-content;">
           {% for comp in comps %}
             <li style="cursor: pointer;" onclick='toggleArchivedAthletes({{comp.id|safe}})'>{{comp}}</li>
-            <div class="archived-athletes-container" id="archived-athletes-container-{{comp.id}}">
+            <form class="archived-athletes-container" id="archived-athletes-container-{{comp.id}}" 
+            action="{% url 'dojos-clone-athlete' comp.id %}" method="POST">
+              {% csrf_token %}
               {% for athlete in archived_athletes %}
                 {% if athlete.competition.name == comp.name %}
-                <div>{{athlete.first_name}} {{athlete.last_name}} </div>
+                <div style="margin-bottom: 8px;">{{athlete.first_name}} {{athlete.last_name}} </div>
                 {% endif %}
               {% endfor %}
-            </div>
+              <button type="submit" class="default-button">Clonar</button>
+            </form>
           {% endfor %}
         </ul>
         <div class="info-container important">
