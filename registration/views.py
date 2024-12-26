@@ -5,7 +5,7 @@ from .forms import AthleteForm, FilterAthleteForm, TeamForm, FilterTeamForm
 from datetime import datetime
 from django.contrib import messages
 from .utils.utils import check_athlete_data, get_comp_age, check_filter_data
-from .models import Athlete, Teams
+from .models import Athlete, Team
 
 # views for the athlets registrations
 
@@ -79,7 +79,7 @@ def team_form(request):
         form = TeamForm(request.POST)
         print(request.POST)
         if form.is_valid():
-            teams = Teams.objects.filter(dojo=request.user, 
+            teams = Team.objects.filter(dojo=request.user, 
                                          category=form.cleaned_data["category"], 
                                          match_type=form.cleaned_data["match_type"],
                                          gender=form.cleaned_data["gender"])
@@ -125,11 +125,11 @@ def teams(request):
     if request.method == "POST":
         filter_form = FilterTeamForm(request.POST)
         if filter_form.is_valid():
-            teams = Teams.objects.filter(dojo=request.user)
+            teams = Team.objects.filter(dojo=request.user)
             teams, not_found = check_filter_data(request, filter_form, teams)
     else:
         filter_form = FilterTeamForm()
-        teams = Teams.objects.filter(dojo=request.user)
+        teams = Team.objects.filter(dojo=request.user)
     number_teams = len(teams)
     return render(request, 'registration/teams.html', {"teams": teams, 
                                                       "filters": filter_form, 
@@ -163,14 +163,21 @@ def wrong(request):
 
 def delete(request, type, id):
     if request.method == "POST":
-        if type == "athlete":
-            object_of = get_object_or_404(Athlete, id=id)
-            message = f'Atleta com o nome {object_of.first_name} {object_of.last_name} eliminad@ com sucesso!'
+        if id != 0:
+            if type == "athlete":
+                object_of = get_object_or_404(Athlete, id=id)
+                message = f'Atleta com o nome {object_of.first_name} {object_of.last_name} eliminad@ com sucesso!'
+            else:
+                object_of = get_object_or_404(Team, id=id)
+                message = f'Equipa com o número {object_of.team_number} eliminada com sucesso'
+            messages.success(request, message)
+            object_of.delete()
         else:
-            object_of = get_object_or_404(Teams, id=id)
-            message = f'Equipa com o número {object_of.team_number} eliminada com sucesso'
-        messages.success(request, message)
-        object_of.delete()
+            if type == "athlete":
+                Athlete.objects.all().delete()
+            else:
+                Team.objects.all().delete()
+            messages.success(request, 'Atletas eliminados' if type == "athlete" else 'Equipas eliminadas')
         return HttpResponseRedirect("/athletes/") if type == "athlete" else HttpResponseRedirect("/teams/")
 
 
@@ -178,7 +185,7 @@ def update(request, type, id):
     if type == "athlete":
         athlete = get_object_or_404(Athlete, id=id)
     else:
-        team = get_object_or_404(Teams, id=id)
+        team = get_object_or_404(Team, id=id)
 
     if request.method == "POST":
         errors = []

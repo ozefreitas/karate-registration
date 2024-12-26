@@ -220,7 +220,7 @@ li {
 }
 
 .profile-info {
-  width: 800px
+  width: 700px
 }
 
 .profile-pic-container {
@@ -238,11 +238,11 @@ li {
 }
 
 .profile-pic-container img {
-  width: 220px;
-  height: 220px;
+  width: 250px;
+  height: 250px;
   position: absolute;
-  top: -5px;
-  left: -5px;
+  top: -15px;
+  left: -15px;
 }
 
 .profile-info .info-container p {
@@ -390,6 +390,15 @@ li {
   align-items: center;
 }
 
+.main-ops {
+  display: flex;
+  justify-content: space-between;
+}
+
+.main-ops .delete_button {
+  margin-top: 30px;
+}
+
 .buttons-container {
   display: none;
   gap: 10px;
@@ -399,6 +408,7 @@ li {
 .default-button {
   font-size: 15px;
   height: 30px;
+  width: fit-content;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -826,12 +836,22 @@ li {
     width: 80%;
     margin: auto;
   }
+  
+  .filter_form {}
+
+  .filter_form div {
+    width: 150px;
+  }
 
   .athlete_info_options {
-    width: 60%;
+    width: 80%;
     margin: auto;
     display: block;
     height: fit-content;
+  }
+
+  .athlete_info {
+    margin-left: 50px;
   }
 
   .buttons-settings-wrapper {
@@ -841,7 +861,7 @@ li {
   }
   
   .athlete_info .athlete_match_type {
-    left: 500px
+    left: 550px
   }
 
   .athlete-details {
