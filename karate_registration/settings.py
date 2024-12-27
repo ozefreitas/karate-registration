@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,6 +25,10 @@ SECRET_KEY = 'django-insecure-onbqve@ah_t*!3%7wf+#b9#nj+qpft0g$e-%daxg-xue%%^fg1
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'jpsfreitas12@gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 
 ALLOWED_HOSTS = []
 
@@ -49,6 +54,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'dojos.middleware.CompetitionEndedMiddleware',
+    'dojos.middleware.NoListedCompetitionsMiddleware',
+    'dojos.middleware.RegistrationClosedMiddleware',
+    'dojos.middleware.TeamsNotAvailableMiddleware'
 ]
 
 ROOT_URLCONF = 'karate_registration.urls'
@@ -56,7 +65,7 @@ ROOT_URLCONF = 'karate_registration.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "karate_registration"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -64,6 +73,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'dojos.context_processors.upcoming_dates',
             ],
         },
     },
@@ -119,6 +129,9 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
@@ -127,3 +140,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'registration-home'
 
 LOGIN_URL = 'login'
+
+REGISTRATION_DEADLINE = '2025-01-28'
+
+NEXT_COMPETITION = 'Liga'

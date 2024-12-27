@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from registration.models import Dojo
+from .models import FeedbackData, Profile
+
 
 class DojoRegisterForm(UserCreationForm):
     username = forms.ModelChoiceField(queryset=Dojo.objects.filter(is_registered = False),
@@ -54,3 +56,34 @@ class DojoRegisterForm(UserCreationForm):
             # Mark the team as registered
             Dojo.objects.filter(dojo=self.cleaned_data['username']).update(is_registered=True)
         return user
+
+
+class DojoUpdateForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ["first_name", "last_name", "email"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Customize the attributes of each field
+
+        # first_name
+        self.fields['first_name'].label = "Primeiro Nome"
+
+        # last_name
+        self.fields['last_name'].label = "Último Nome"
+
+        # emaik
+        self.fields['email'].label = "Email"
+
+
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ["image", "dojo_contact", "cellphone_number"]
+
+
+class FeedbackForm(forms.ModelForm):
+    class Meta:
+        model = FeedbackData
+        fields = "__all__"

@@ -1,13 +1,19 @@
 {% extends "registration/base.html" %} 
 {% block content%}
 <h1>Atualizar inscrição</h1>
+
 {% if messages %}
-    {% for message in messages %}
-        {{message}}
-    {% endfor %}
+    <div class="messages" id="messages">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    <script>
+      hideMessagesAfterTimeout({{ message.tags }}); // 10 seconds
+    </script>
 {% endif %}
 
-<form action="{% url 'registration-update' athlete_id %}" method="post">
+<form action="{% url 'registration-update' type id %}" method="post">
     {% csrf_token %}
     {{form.as_p}}
     <div style="display: flex; gap: 20px; margin-top: 30px;">

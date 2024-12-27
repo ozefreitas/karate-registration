@@ -1,13 +1,24 @@
 {% extends "registration/base.html" %}
 {% block content%}
     <h2>Registo de Atleta</h2>
+    
+    {% if messages %}
+        <div class="messages" id="messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        <script>
+            hideMessagesAfterTimeout({{ message.tags }}); // 10 seconds
+        </script>
+    {% endif %}
 
     <form action="" method="post" class="main-form">
         {% csrf_token %}
         {{form.as_p}}
         <div style="display: flex; gap: 20px; margin-top: 30px;">
             <button class="default-button">Submeter</button>
-            <button type="button" class="default-button" onclick="location.href='/'">Voltar</button>   
+            <button type="button" class="default-button" onclick="location.href='/athletes/'">Voltar</button>   
         </div>
     </form>
 {% endblock content %}

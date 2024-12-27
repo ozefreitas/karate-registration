@@ -1,6 +1,8 @@
 :root {
 }
 
+/* default elements */
+
 body {
   font-size: 1.2rem;
   width: 80%;
@@ -8,7 +10,8 @@ body {
   font-family: "Trebuchet MS", "Arial";
 }
 
-select, input {
+select,
+input {
   border-radius: 0.35rem;
   -webkit-border-radius: 0.35rem;
   -moz-border-radius: 0.35rem;
@@ -22,7 +25,46 @@ select option {
   font-size: larger;
 }
 
+h4 {
+  margin-top: 30px;
+  margin-bottom: 15px;
+}
+
+li {
+  margin-bottom: 10px;
+}
+
 /* Login page */
+
+.info-container {
+  width: 70%;
+  margin-top: 30px;
+  border: 2px solid #0064cf;
+  border-radius: 8px;
+  font-size: 1rem;
+  padding: 0 20px 0 20px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
+}
+
+.info-container p:first-of-type {
+  margin-top: 0;
+}
+
+.important {
+  border: 2px solid #ff2222;
+}
+
+.containers-label {
+  background-color: white;
+  position: relative;
+  top: -15px;
+  left: 20px;
+  padding: 0 10px 0 10px;
+  font-size: larger;
+}
 
 .login-container {
   border-radius: 10px;
@@ -63,22 +105,7 @@ select option {
   margin-bottom: 20px;
 }
 
-.alert-error {
-  background-color: #df6060;
-  border-radius: 8px;
-  color: white;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  -webkit-border-radius: 8px;
-  -moz-border-radius: 8px;
-  -ms-border-radius: 8px;
-  -o-border-radius: 8px;
-  margin-bottom: 10px;
-}
-
-.alert-success {
+.alert {
   background-color: #7dfd6de8;
   border-radius: 8px;
   color: white;
@@ -86,11 +113,27 @@ select option {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 10px 40px;
   -webkit-border-radius: 8px;
   -moz-border-radius: 8px;
   -ms-border-radius: 8px;
   -o-border-radius: 8px;
   margin-bottom: 10px;
+}
+
+.alert-info {
+  background-color: yellow;
+  color: black;
+}
+
+.alert-error {
+  background-color: #df6060;
+  color: white;
+}
+
+.alert-success {
+  background-color: #7dfd6de8;
+  color: white;
 }
 
 .logos_container {
@@ -111,7 +154,8 @@ select option {
 }
 
 .main-content {
-  min-height: 65dvb;
+  min-height: 60dvb;
+  margin-top: 50px;
 }
 
 .header-container {
@@ -121,22 +165,125 @@ select option {
   margin-top: 40px;
 }
 
+.page-selection {
+  display: flex;
+  gap: 20px;
+  margin-left: 50px;
+}
+
+.appname_span:hover {
+  color: red;
+}
+
 .current_user {
   text-align: right;
   margin: 0;
+  margin-bottom: 10px;
 }
 
 .dojos-actions {
   width: fit-content;
   display: flex;
   gap: 20px;
+  align-items: center;
+}
+
+.help-container {
+  font-size: smaller;
+  line-height: 1.9rem;
+  max-width: 1000px;
+  padding-left: 20px;
+}
+
+.profile-container {
+  display: flex;
+  margin-top: 70px;
+  justify-content: space-evenly;
+}
+
+.profile-info {
+  width: 700px;
+}
+
+.profile-pic-container {
+  margin-top: 50px;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid red;
+  position: relative;
+}
+
+.profile-pic-container img {
+  width: 250px;
+  height: 250px;
+  position: absolute;
+  top: -15px;
+  left: -15px;
+}
+
+.profile-info .info-container p {
+}
+
+.archived-athletes-container {
+  display: none;
+  flex-direction: column;
+  margin-top: 20px;
+}
+
+.archived-athletes-container div {
+  padding: 5px;
+  border-bottom: 1px solid black;
+}
+
+.span-links {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.span-links:hover {
+  color: tomato;
+}
+
+.delete-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.delete-modal div:first-child {
+  border-radius: 10px;
+  border: 2px solid red;
+  background: white;
+  width: 400px;
+  margin: 200px auto;
+  padding: 2px 40px 20px 40px;
+  text-align: center;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -o-border-radius: 10px;
+}
+
+.modal-options {
+  display: flex;
+  justify-content: space-evenly;
 }
 
 .main-form p:nth-child(11) {
   margin-bottom: 0;
 }
 
-.main-form  div:first-of-type {
+.main-form div:first-of-type {
   display: flex;
   gap: 20px;
 }
@@ -155,9 +302,8 @@ select option {
   gap: 10px;
 }
 
-
 .filter-options-container form {
-  height: 30px;
+  height: fit-content;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -184,13 +330,13 @@ select option {
 }
 
 .athlete_info {
-  width: 600px;
+  width: 500px;
   margin-left: 20px;
 }
 
 .athlete_info .athlete_match_type {
   position: absolute;
-  left: 450px;
+  left: 400px;
 }
 
 .athlete_info .athlete_category {
@@ -208,6 +354,14 @@ select option {
   flex-direction: column;
   gap: 10px;
   padding-bottom: 10px;
+  padding-top: 10px;
+}
+
+.team_athlete_details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: fit-content;
 }
 
 .login-buttons {
@@ -226,25 +380,25 @@ select option {
   -ms-border-radius: 12px;
   -o-border-radius: 12px;
 }
- 
+
 .login-buttons:hover {
   background-position: right center;
   background-size: 200% auto;
   -webkit-animation: pulse 2s infinite;
   animation: pulse512 1.5s infinite;
 }
- 
+
 @keyframes pulse512 {
   0% {
-   box-shadow: 0 0 0 0 #05bada66;
+    box-shadow: 0 0 0 0 #05bada66;
   }
- 
+
   70% {
-   box-shadow: 0 0 0 10px rgb(218 103 68 / 0%);
+    box-shadow: 0 0 0 10px rgb(218 103 68 / 0%);
   }
- 
+
   100% {
-   box-shadow: 0 0 0 0 rgb(218 103 68 / 0%);
+    box-shadow: 0 0 0 0 rgb(218 103 68 / 0%);
   }
 }
 
@@ -252,6 +406,15 @@ select option {
   display: flex;
   gap: 20px;
   align-items: center;
+}
+
+.main-ops {
+  display: flex;
+  justify-content: space-between;
+}
+
+.main-ops .delete_button {
+  margin-top: 30px;
 }
 
 .buttons-container {
@@ -263,6 +426,7 @@ select option {
 .default-button {
   font-size: 15px;
   height: 30px;
+  width: fit-content;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -284,7 +448,7 @@ select option {
 }
 
 .default-button:hover {
-  box-shadow: 0px 0px 10px 1px rgba(0,0,0,0.2);
+  box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.2);
 }
 
 .delete_button {
@@ -449,7 +613,7 @@ select option {
   border: none;
   border-radius: 5px;
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
-  text-decoration: none; 
+  text-decoration: none;
   text-align: center;
 }
 
@@ -486,7 +650,7 @@ select option {
 
 .update_button svg {
   width: 15px;
-  fill: #eee
+  fill: #eee;
 }
 
 .update_button:hover {
@@ -530,7 +694,7 @@ select option {
   border: none;
   border-radius: 5px;
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
-  text-decoration: none; 
+  text-decoration: none;
   text-align: center;
 }
 
@@ -567,7 +731,7 @@ select option {
 
 .view_button svg {
   width: 15px;
-  fill: #eee
+  fill: #eee;
 }
 
 .view_button:hover {
@@ -599,7 +763,7 @@ select option {
 .view_button:active .icon svg {
   transform: scale(0.8);
 }
- 
+
 .setting-btn {
   width: 35px;
   height: 35px;
@@ -663,4 +827,70 @@ select option {
 .bureaucracy {
   width: 80%;
   height: fit-content;
+}
+
+/* medias */
+
+@media (width < 1500px) {
+  .athlete_info {
+    width: 480px;
+  }
+
+  .athlete_info .athlete_name {
+    min-width: 200px;
+  }
+
+  .athlete_info .athlete_match_type {
+    left: 300px;
+  }
+}
+
+@media (width < 1300px) {
+  body {
+    width: 90%;
+  }
+
+  .main-content {
+    width: 80%;
+    margin: auto;
+  }
+
+  .filter_form {
+  }
+
+  .filter_form div {
+    width: 150px;
+  }
+
+  .athlete_info_options {
+    width: 80%;
+    margin: auto;
+    display: block;
+    height: fit-content;
+  }
+
+  .athlete_info {
+    margin-left: 50px;
+  }
+
+  .buttons-settings-wrapper {
+    margin-top: 10px;
+    width: 650px;
+    justify-content: right;
+  }
+
+  .athlete_info .athlete_match_type {
+    left: 550px;
+  }
+
+  .athlete-details {
+    text-align: center;
+  }
+}
+
+@media (width < 1150px) {
+  .filter_form {
+    width: 500px;
+    justify-content: right;
+  }
 }

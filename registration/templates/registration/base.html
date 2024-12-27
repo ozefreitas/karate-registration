@@ -23,19 +23,26 @@
     <div class="header-container">
       <div class="logos_container">
         <img
-          src="./../../static/registration/images/skip-logo.png"
+          src="{% static 'registration/images/skip-logo.png' %}"
           alt="SKI-P logo"
           class="main_skip_logo"
         />
         <a class="appname_span" href="{% url 'registration-home' %}"
           >Karate Score App</a
         >
+        {% if user.is_authenticated %}
+        <div class="page-selection">
+          <a class="appname_span" href="{% url 'registration-athletes' %}">Atletas</a>
+          <a class="appname_span" href="{% url 'registration-teams' %}">Equipas</a>
+        </div>
+        {% endif %}
       </div>
 
       <div class="dojos-actions">
+        <a class="appname_span" href="{% url 'dojos-feedback' %}">Feedback</a>
         {% if user.is_authenticated %}
-        <a class="login-buttons" href="{% url 'dojos-logout' %}">Logout</a>
-        <a class="login-buttons" href="{% url 'dojos-profile' %}">Perfil</a>
+          <a class="login-buttons" href="{% url 'dojos-logout' %}">Logout</a>
+          <a class="login-buttons" href="{% url 'dojos-profile' %}">Perfil</a>
         {% else %}
         <a class="login-buttons" href="{% url 'login' %}">Login</a>
         <a class="login-buttons" href="{% url 'dojos-register' %}"
@@ -44,7 +51,18 @@
         {% endif %}
       </div>
     </div>
-    <div class="main-content">{% block content %}{% endblock %}</div>
+    {% if user.is_authenticated %}
+      <p class="current_user">Autenticado como <strong>{{user.username}}</strong></p>
+    {% endif %}
+    {% if upcoming_message %}
+      <div class="alert alert-info">
+          Encontra-se no periodo de retificações! As incrições fecharão em breve.
+      </div>
+    {% endif %}
+    <div class="main-content">
+      {% block content %}
+      {% endblock %}
+    </div>
     <div class="footer-container">
       <div class="bureaucracy">
         <p>
@@ -52,7 +70,7 @@
           <a href="https://karate-score-app.netlify.app/">Karate Score App</a>.
         </p>
         <p>Todos os direitos reservados ao autor.</p>
-        <p>Para mais informações, contactar.</p>
+        <p>Para mais informações, contactar pelo 917479331 ou <a href="mailto:jpsfreitas12@gmail.com">jpsfreitas12@gmail.com</a></p>
       </div>
       <div class="contacts">
         <p></p>

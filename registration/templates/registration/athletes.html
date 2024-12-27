@@ -1,0 +1,84 @@
+{% extends "registration/base.html" %} 
+{% block content %}
+<h1>Interface de registos</h1>
+
+{% if messages %}
+    <div class="messages" id="messages">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    <script>
+      hideMessagesAfterTimeout({{ message.tags }}); // 10 seconds
+    </script>
+{% endif %}
+
+{% if athletes %}
+    <h3>Atletas inscritos:</h3>
+    
+    <div class="filter-options-container">
+      <form action="" method="post">
+        <div class="number_athletes_info">
+          <span>{{ number_athletes }} atleta{% if number_athletes > 1 %}s{% endif %}</span>
+        </div>
+        <div class="filter_form">
+          {% csrf_token %}
+          {{filters}}
+        <button class="default-button">Filtrar</button>
+        <button class="default-button" onclick="location.href='/athletes'">Limpar</button>
+      </div>
+      </form>
+    </div>
+      
+    {% for athlete in athletes %}
+      {% include 'components/athletes_list.html' %}
+    {% endfor %}
+{% else %}
+    <div>Ainda sem atletas inscritos</div>
+{% endif %}
+
+{% if not_found %}
+  <h2>Não foram encontrados atletas para esse filtro</h2>
+  <button onclick="location.href='/athletes/'">Voltar</button>
+{% else %}
+  <div class="main-ops">
+    <button class="add_button" onclick="location.href='/form/'">
+      <span class="text">Adicionar</span
+      ><span class="icon"
+        ><svg
+          viewBox="0 0 24 24"
+          height="24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        ></svg>
+        <span class="buttonSpan">+</span>
+      </span>
+    </button>
+    {% if athletes %}
+      <button id="delete-account-span" class="delete_button" type="submit">
+        <span class="text">Eliminar todos</span>
+        <span class="icon">
+          <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24">
+            <path
+              d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z"
+            ></path>
+          </svg>
+        </span>
+      </button>
+    {% endif %}
+  </div>
+  <!-- Modal window -->
+  <div id="deleteModal" class="delete-modal">
+    <div>
+      <p>Tem a certeza que quer eliminar todas as inscrições? Esta ação não pode ser desfeita.</p>
+        <a id="confirm-delete" href="{% url 'registration-delete' 'athlete' 0 %}">Confirmar</a>
+        <a id="cancel-delete" href="{% url 'registration-athletes' %}">Cancelar</a>
+    </div>
+  </div>
+{% endif %}
+
+{% endblock content %}

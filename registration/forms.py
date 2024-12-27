@@ -1,5 +1,5 @@
 from django import forms
-from .models import Athlete, Filters
+from .models import Athlete, Team, AthleteFilter, TeamFilter
 
 class AthleteForm(forms.ModelForm):
 
@@ -22,12 +22,11 @@ class AthleteForm(forms.ModelForm):
                     "last_name",
                     "graduation",
                     "birth_date",
-                    "gender",
                     "skip_number",
                     "category",
                     "match_type",
-                    "weight",
-                    "additional_emails"]
+                    "gender",
+                    "weight"]
         widgets = {
             'birth_date': forms.DateInput(
                 attrs={
@@ -43,7 +42,29 @@ class AthleteForm(forms.ModelForm):
         self.fields['first_name'].help_text = "<br><ul><li>Recomendado apenas um nome. Se tiver atletas com nomes iguais ou parecidos, deve colocar outro nome que os diferencie.</li></uL>"
 
 
-class FilterForm(forms.ModelForm):
+class FilterAthleteForm(forms.ModelForm):
     class Meta:
-        model = Filters
+        model = AthleteFilter
         fields = "__all__"
+
+
+class FilterTeamForm(forms.ModelForm):
+    class Meta:
+        model = TeamFilter
+        fields = "__all__"
+
+
+class TeamForm(forms.ModelForm):
+    class Meta:
+        model = Team
+        fields = ["category", "match_type", "gender", "additional_emails", "athlete1", "athlete2", "athlete3", "athlete4", "athlete5"]
+    
+    def __init__(self, *args, **kwargs):
+        dojo = kwargs.pop('dojo', None)  # Get the user from kwargs
+        super().__init__(*args, **kwargs)
+        if dojo:
+            self.fields['athlete1'].queryset = Athlete.objects.filter(dojo=dojo)
+            self.fields['athlete2'].queryset = Athlete.objects.filter(dojo=dojo)
+            self.fields['athlete3'].queryset = Athlete.objects.filter(dojo=dojo)
+            self.fields['athlete4'].queryset = Athlete.objects.filter(dojo=dojo)
+            self.fields['athlete5'].queryset = Athlete.objects.filter(dojo=dojo)

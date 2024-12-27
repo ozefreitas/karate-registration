@@ -1,0 +1,14 @@
+{% extends "registration/base.html" %} 
+{% block content%}
+<div style="display: flex; justify-content: center;">
+  <div class="">
+    <h2>Feedback</h2>
+
+    <form action="" method="post">
+      {% csrf_token %} 
+      {{form.as_p}}
+      <button class="default-button">Enviar</button>
+    </form>
+  </div>
+</div>
+{% endblock content %}

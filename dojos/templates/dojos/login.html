@@ -1,5 +1,15 @@
 {% extends "registration/base.html" %} 
 {% block content%}
+{% if messages %}
+  <div class="messages" id="messages">
+      {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+  </div>
+  <script>
+    hideMessagesAfterTimeout({{ message.tags }}); // 10 seconds
+  </script>
+{% endif %} 
 <div style="display: flex; justify-content: center;">
   <div class="login-container">
     <h2>Login</h2>
