@@ -10,7 +10,8 @@ body {
   font-family: "Trebuchet MS", "Arial";
 }
 
-select, input {
+select,
+input {
   border-radius: 0.35rem;
   -webkit-border-radius: 0.35rem;
   -moz-border-radius: 0.35rem;
@@ -57,9 +58,9 @@ li {
 }
 
 .containers-label {
-  background-color: white; 
-  position: relative; 
-  top: -15px; 
+  background-color: white;
+  position: relative;
+  top: -15px;
   left: 20px;
   padding: 0 10px 0 10px;
   font-size: larger;
@@ -104,36 +105,6 @@ li {
   margin-bottom: 20px;
 }
 
-.alert-error {
-  background-color: #df6060;
-  border-radius: 8px;
-  color: white;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  -webkit-border-radius: 8px;
-  -moz-border-radius: 8px;
-  -ms-border-radius: 8px;
-  -o-border-radius: 8px;
-  margin-bottom: 10px;
-}
-
-.alert-success {
-  background-color: #7dfd6de8;
-  border-radius: 8px;
-  color: white;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  -webkit-border-radius: 8px;
-  -moz-border-radius: 8px;
-  -ms-border-radius: 8px;
-  -o-border-radius: 8px;
-  margin-bottom: 10px;
-}
-
 .alert {
   background-color: #7dfd6de8;
   border-radius: 8px;
@@ -142,6 +113,7 @@ li {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 10px 40px;
   -webkit-border-radius: 8px;
   -moz-border-radius: 8px;
   -ms-border-radius: 8px;
@@ -152,6 +124,16 @@ li {
 .alert-info {
   background-color: yellow;
   color: black;
+}
+
+.alert-error {
+  background-color: #df6060;
+  color: white;
+}
+
+.alert-success {
+  background-color: #7dfd6de8;
+  color: white;
 }
 
 .logos_container {
@@ -220,7 +202,7 @@ li {
 }
 
 .profile-info {
-  width: 700px
+  width: 700px;
 }
 
 .profile-pic-container {
@@ -246,7 +228,6 @@ li {
 }
 
 .profile-info .info-container p {
-  
 }
 
 .archived-athletes-container {
@@ -260,11 +241,49 @@ li {
   border-bottom: 1px solid black;
 }
 
+.span-links {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.span-links:hover {
+  color: tomato;
+}
+
+.delete-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.delete-modal div:first-child {
+  border-radius: 10px;
+  border: 2px solid red;
+  background: white;
+  width: 400px;
+  margin: 200px auto;
+  padding: 2px 40px 20px 40px;
+  text-align: center;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -o-border-radius: 10px;
+}
+
+.modal-options {
+  display: flex;
+  justify-content: space-evenly;
+}
+
 .main-form p:nth-child(11) {
   margin-bottom: 0;
 }
 
-.main-form  div:first-of-type {
+.main-form div:first-of-type {
   display: flex;
   gap: 20px;
 }
@@ -282,7 +301,6 @@ li {
   padding-bottom: 10px;
   gap: 10px;
 }
-
 
 .filter-options-container form {
   height: fit-content;
@@ -362,25 +380,25 @@ li {
   -ms-border-radius: 12px;
   -o-border-radius: 12px;
 }
- 
+
 .login-buttons:hover {
   background-position: right center;
   background-size: 200% auto;
   -webkit-animation: pulse 2s infinite;
   animation: pulse512 1.5s infinite;
 }
- 
+
 @keyframes pulse512 {
   0% {
-   box-shadow: 0 0 0 0 #05bada66;
+    box-shadow: 0 0 0 0 #05bada66;
   }
- 
+
   70% {
-   box-shadow: 0 0 0 10px rgb(218 103 68 / 0%);
+    box-shadow: 0 0 0 10px rgb(218 103 68 / 0%);
   }
- 
+
   100% {
-   box-shadow: 0 0 0 0 rgb(218 103 68 / 0%);
+    box-shadow: 0 0 0 0 rgb(218 103 68 / 0%);
   }
 }
 
@@ -430,7 +448,7 @@ li {
 }
 
 .default-button:hover {
-  box-shadow: 0px 0px 10px 1px rgba(0,0,0,0.2);
+  box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.2);
 }
 
 .delete_button {
@@ -595,7 +613,7 @@ li {
   border: none;
   border-radius: 5px;
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
-  text-decoration: none; 
+  text-decoration: none;
   text-align: center;
 }
 
@@ -632,7 +650,7 @@ li {
 
 .update_button svg {
   width: 15px;
-  fill: #eee
+  fill: #eee;
 }
 
 .update_button:hover {
@@ -676,7 +694,7 @@ li {
   border: none;
   border-radius: 5px;
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
-  text-decoration: none; 
+  text-decoration: none;
   text-align: center;
 }
 
@@ -713,7 +731,7 @@ li {
 
 .view_button svg {
   width: 15px;
-  fill: #eee
+  fill: #eee;
 }
 
 .view_button:hover {
@@ -745,7 +763,7 @@ li {
 .view_button:active .icon svg {
   transform: scale(0.8);
 }
- 
+
 .setting-btn {
   width: 35px;
   height: 35px;
@@ -836,8 +854,9 @@ li {
     width: 80%;
     margin: auto;
   }
-  
-  .filter_form {}
+
+  .filter_form {
+  }
 
   .filter_form div {
     width: 150px;
@@ -859,9 +878,9 @@ li {
     width: 650px;
     justify-content: right;
   }
-  
+
   .athlete_info .athlete_match_type {
-    left: 550px
+    left: 550px;
   }
 
   .athlete-details {

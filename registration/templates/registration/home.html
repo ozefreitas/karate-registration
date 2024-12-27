@@ -5,7 +5,7 @@
 {% if messages %}
     <div class="messages" id="messages">
       {% for message in messages %}
-        <div class="alert-{{ message.tags }}">{{ message }}</div>
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
       {% endfor %}
     </div>
     <script>
@@ -55,10 +55,14 @@
       tentar enquanto a paciência ainda existir.
       </p>
       <h4>Acesso aos registos</h4>
-      <p>Deduzo que neste momento já tenha sessão iniciada, e por isso já consegue ver dois butões - "Atletas" e "Equipas",
-        na parte central do cabeçalho. Caso não consiga ver nada, inicie sessão. Se persistir, <a style="cursor: pointer;" onclick="window.scrollTo(0, document.body.scrollHeight);">contacte</a>.
+      <p>Com a sessão iniciada, já consegue ver dois butões - "Atletas" e "Equipas",
+        na parte central do cabeçalho. Caso não consiga ver nada, inicie sessão. Se persistir, 
+        <a style="cursor: pointer;" onclick="window.scrollTo(0, document.body.scrollHeight);">contacte</a>.
         Mesmo tendo Login feito, o conteúdo destas páginas apenas estará visível nos periodos de inscrição ligados a cada prova.
       </p>
+      <h4>Perfil</h4>
+      <p>Na secção do perfil pode consultar e editar as informações do seu dojo. Pode também consultar as inscrições nas provas
+        anteriores, e copiar essas para o registo atual, clicando em <i>Clonar</i>.</p>
       <h4>Registo de Atletas</h4>
       <p>Na página <a href="{% url 'registration-athletes' %}">Atletas</a>, pode adicionar atletas através do botão <strong>Adicionar</strong>.
         <ul><li>Formulário de inscrição</li>
