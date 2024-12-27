@@ -23,7 +23,9 @@ const toggleRegistrationOptions = (athleteID) => {
 };
 
 const toggleArchivedAthletes = (compID) => {
-  const athleteDiv = document.getElementById(`archived-athletes-container-${compID}`);
+  const athleteDiv = document.getElementById(
+    `archived-athletes-container-${compID}`
+  );
   if (athleteDiv.style.display === "none" || athleteDiv.style.display === "") {
     athleteDiv.style.display = "flex";
   } else {
@@ -32,10 +34,10 @@ const toggleArchivedAthletes = (compID) => {
 };
 
 function hideMessagesAfterTimeout(messageType) {
-  let timeout
+  let timeout;
   if (messageType === "success") {
-    timeout = 5000
-  } else timeout = 10000
+    timeout = 5000;
+  } else timeout = 10000;
   setTimeout(function () {
     const messageContainer = document.getElementById("messages");
     if (messageContainer) {
@@ -43,3 +45,30 @@ function hideMessagesAfterTimeout(messageType) {
     }
   }, timeout);
 }
+
+// modal windows
+
+document.addEventListener("DOMContentLoaded", function () {
+  const deleteAccountTrigger = document.getElementById("delete-account-span");
+  const deleteModal = document.getElementById("deleteModal");
+  const cancelDelete = document.getElementById("cancel-delete");
+  const confirmDelete = document.getElementById("confirm-delete");
+
+  if (deleteAccountTrigger) {
+    deleteAccountTrigger.addEventListener("click", function () {
+      deleteModal.style.display = "block";
+    });
+  }
+
+  if (cancelDelete) {
+    cancelDelete.addEventListener("click", function () {
+      deleteModal.style.display = "none";
+    });
+  }
+
+  if (confirmDelete) {
+    cancelDelete.addEventListener("click", function () {
+      deleteModal.style.display = "none";
+    });
+  }
+});

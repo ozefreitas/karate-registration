@@ -4,7 +4,7 @@
 {% if messages %}
     <div class="messages" id="messages">
       {% for message in messages %}
-        <div class="alert-{{ message.tags }}">{{ message }}</div>
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
       {% endfor %}
     </div>
     <script>
@@ -12,7 +12,7 @@
     </script>
 {% endif %}
 
-<div class="profile-container">
+  <div class="profile-container">
     <div class="profile-info">
         <p>Dojo: {{ user.username }}</p>
         <p>Responsável: {{ user.first_name}} {{ user.last_name }}</p>
@@ -25,7 +25,15 @@
               <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
             </svg>
           </span>
-      </a>
+        </a>
+        <div class="info-container">
+          <span class="containers-label">Ajuda</span>
+          <br>
+          Aqui poderá encontrar as inscrições que realizou em provas anteriores, e copiá-las para a próxima prova.
+          <br>
+          Cada nome de prova é clicável, e aparecerão todos os nomes inscritos na mesma.
+          <p></p>
+        </div>
         <h4 style="width: fit-content">Últimos registos:</h4>
         <ul style="margin-bottom: 50px; width: fit-content;">
           {% for comp in comps %}
@@ -47,13 +55,23 @@
             <br>
             As ações feitas dentro desta secção são IRREVERSÍVEIS! Terá ainda uma hipótese de decidir após carregar uma primeira vez.
             <p></p>
-            <p><a href="{% url 'dojos-delete-account' %}">Pedir anulação de conta</a></p>
-            <p><a href="{% url 'dojos-delete-account' %}">Pedir renovação de conta</a></p>
-            <p><a href="{% url 'dojos-delete-account' %}">Recuperação de palavra passe</a></p>
+            <p><span id="delete-account-span" class="span-links">Pedir anulação de conta</span></p>
+            <p><span id="request-account-span" class="span-links">Pedir renovação de conta</span></p>
+            <p><span class="span-links">Recuperação de palavra passe</span></p>
         </div>
     </div>
     <div class="profile-pic-container">
         <img src="{{ user.profile.image.url }}" alt="foto de perfil">
     </div>
-</div>
+    <!-- Modal window -->
+    <div id="deleteModal" class="delete-modal">
+      <div>
+        <p>Tem a certeza que quer eliminar a sua conta? Esta ação não pode ser desfeita e todos os dados da sua conta serão perdidos.</p>
+        <div class="modal-options">
+          <a id="confirm-delete" href="{% url 'dojos-delete-account' %}">Confirmar</a>
+          <a id="cancel-delete" class="span-links">Cancelar</a>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock content %}
