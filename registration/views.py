@@ -42,8 +42,7 @@ def form(request):
             # process the data in form.cleaned_data as required
             birth_date = form.cleaned_data["birth_date"]
             age_at_comp = get_comp_age(birth_date)
-            print(age_at_comp)
-
+    
             if Athlete.objects.filter(first_name=form.cleaned_data["first_name"], birth_date=birth_date, match_type=form.cleaned_data.get("match_type")).exists():
                 errors.append("Um atleta com as mesmas credenciais já está inscrito. Verifique se a quer inscrever a mesma pessoa noutra prova")
 
@@ -54,7 +53,8 @@ def form(request):
                 request.session['can_access_target_page'] = True
                 for error in errors:
                     messages.error(request, error)
-                return HttpResponseRedirect("/form")
+                context = {"form": form, "title": "Inscrever atleta"}
+                return render(request, 'registration/form.html', context)
             
             new_athlete = form.save(commit=False) 
             new_athlete.dojo = request.user
@@ -163,22 +163,21 @@ def wrong(request):
 
 def delete(request, type, id):
     if request.method == "POST":
-        if id != 0:
-            if type == "athlete":
-                object_of = get_object_or_404(Athlete, id=id)
-                message = f'Atleta com o nome {object_of.first_name} {object_of.last_name} eliminad@ com sucesso!'
-            else:
-                object_of = get_object_or_404(Team, id=id)
-                message = f'Equipa com o número {object_of.team_number} eliminada com sucesso'
-            messages.success(request, message)
-            object_of.delete()
+        if type == "athlete":
+            object_of = get_object_or_404(Athlete, id=id)
+            message = f'Atleta com o nome {object_of.first_name} {object_of.last_name} eliminad@ com sucesso!'
         else:
-            if type == "athlete":
-                Athlete.objects.all().delete()
-            else:
-                Team.objects.all().delete()
-            messages.success(request, 'Atletas eliminados' if type == "athlete" else 'Equipas eliminadas')
-        return HttpResponseRedirect("/athletes/") if type == "athlete" else HttpResponseRedirect("/teams/")
+            object_of = get_object_or_404(Team, id=id)
+            message = f'Equipa com o número {object_of.team_number} eliminada com sucesso'
+        messages.success(request, message)
+        object_of.delete()
+    else:
+        if type == "athlete":
+            Athlete.objects.all().delete()
+        else:
+            Team.objects.all().delete()
+        messages.success(request, 'Atletas eliminados' if type == "athlete" else 'Equipas eliminadas')
+    return HttpResponseRedirect("/athletes/") if type == "athlete" else HttpResponseRedirect("/teams/")
 
 
 def update(request, type, id):
