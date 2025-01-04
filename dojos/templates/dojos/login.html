@@ -15,8 +15,11 @@
     <h2>Login</h2>
 
     <form action="" method="post">
-      {% csrf_token %} 
-      {{form.as_p}}
+      {% csrf_token %}
+      <label for="id_username">Nome de utilizador (Dojo):</label>
+      <input type="text" id="id_username" name="username">
+      <label for="id_password">Palavra passe:</label>
+      <input type="password" id="id_password" name="password">
       <a href=""  class="forgotten-password">Esqueceu-se da Palavra Passe?</a>
       <button class="default-button">Entrar</button>
     </form>

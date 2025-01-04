@@ -21,17 +21,12 @@ from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from dojos import views as dojo_views
 
-class CustomLoginView(auth_views.LoginView):
-    def form_invalid(self, form):
-        # Change the default error message
-        # form.add_error(None, "Credenciais incorretas.")
-        return super().form_invalid(form)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("registration.urls")),
     path('register/', include("dojos.urls")),
-    path('login/', CustomLoginView.as_view(template_name="dojos/login.html"), name='login'),
+    path('register/', include('django.contrib.auth.urls')),
     path('logout/', dojo_views.logout_user, name="dojos-logout"),
     path('profile/', dojo_views.profile, name="dojos-profile"),
     ]

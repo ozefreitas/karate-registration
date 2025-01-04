@@ -80,7 +80,7 @@ li {
 
 .login-container h2 {
   margin-top: 0;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .login-container form {
@@ -89,8 +89,9 @@ li {
   flex-direction: column;
 }
 
-.login-container form p {
-  margin-bottom: 10px;
+.login-container form label {
+  margin-top: 20px;
+  font-size: smaller;
 }
 
 .login-container form input {
@@ -101,14 +102,12 @@ li {
 .forgotten-password {
   font-size: small;
   margin-right: auto;
-  margin-left: 25px;
+  margin-top: 8px;
   margin-bottom: 20px;
 }
 
 .alert {
-  background-color: #7dfd6de8;
   border-radius: 8px;
-  color: white;
   height: 50px;
   display: flex;
   align-items: center;
@@ -134,6 +133,68 @@ li {
 .alert-success {
   background-color: #7dfd6de8;
   color: white;
+}
+
+.spinning-wheel {
+  width: 30px;
+  height: 30px;
+  font-size: 500%;
+  position: relative;
+  border-radius: 50%;
+  display: inline-block;
+  --color: green;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.filler-wheel {
+  height: 22px;
+  width: 22px;
+  background-color: #7dfd6de8;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+  z-index: 99;
+}
+
+.spinning-wheel::before,
+.spinning-wheel::after {
+  content: "";
+  width: 50%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  border-radius: 0.5em 0 0 0.5em;
+  transform-origin: center right;
+  animation-iteration-count: 1;
+  animation-duration: 10s;
+}
+
+.spinning-wheel::before {
+  z-index: 1;
+  background-color: #7dfd6de8;
+  animation-name: mask;
+  animation-timing-function: steps(1);
+}
+
+.spinning-wheel::after {
+  background-color: var(--color);
+  animation-name: rotate;
+  animation-timing-function: linear;
+}
+
+@keyframes rotate {
+  to { transform: rotate(1turn); }
+}
+
+@keyframes mask {
+  50%, 100% {
+    background-color: var(--color);
+    transform: rotate(0.5turn);
+  }
 }
 
 .logos_container {
