@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 from dojos.models import CompetitionDetail
-import django
 
 # Create your models here.
 
@@ -41,9 +40,9 @@ class AthleteBase(models.Model):
         "6": "1º Dan",
         "5": "2º Dan",
         "4": "3º Dan",
-        "3": "5º Dan",
-        "2": "6º Dan",
-        "1": "7º Dan",
+        "3": "4º Dan",
+        "2": "5º Dan",
+        "1": "6º Dan",
     }
 
     GENDERS = {

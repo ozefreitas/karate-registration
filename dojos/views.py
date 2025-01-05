@@ -3,7 +3,8 @@ from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import DojoRegisterForm, DojoUpdateForm, ProfileUpdateForm, FeedbackForm
-from .models import Profile, CompetitionDetail
+from .models import CompetitionDetail
+from django.template.loader import render_to_string
 from django.contrib.auth.models import User
 from registration.models import Dojo, ArchivedAthlete, Athlete
 from django.contrib.auth import authenticate, login, logout
