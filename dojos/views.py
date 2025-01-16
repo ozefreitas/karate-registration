@@ -1,14 +1,15 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import DojoRegisterForm, DojoUpdateForm, ProfileUpdateForm, FeedbackForm
-from .models import Profile, CompetitionDetail
+from .models import CompetitionDetail
+from django.template.loader import render_to_string
 from django.contrib.auth.models import User
 from registration.models import Dojo, ArchivedAthlete, Athlete
-from django.contrib.auth import logout
+from django.contrib.auth import authenticate, login, logout
 
-# Create your views here.
+
 
 def register_user(request):
     if request.method == "POST":
@@ -19,7 +20,7 @@ def register_user(request):
             form.save()
             dojo = form.cleaned_data.get("username")
             messages.success(request, f'Sucesso! Conta criada para o dojo {dojo}')
-            return HttpResponseRedirect("/login/")
+            return HttpResponseRedirect("/register/login/")
         else:
             messages.error(request, form.errors)
             return HttpResponseRedirect("/wrong")
@@ -27,8 +28,26 @@ def register_user(request):
     else:
         form = DojoRegisterForm()
         return render(request, 'dojos/register_user.html', {"form": form, "title": "Criar Conta"})
-    
 
+
+def login_user(request):
+    if request.method == "POST":
+        username = request.POST["username"]
+        password = request.POST["password"]
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            messages.success(request, "Login efetuado com sucesso")
+            return HttpResponseRedirect("/")
+        else:
+            messages.error(request, "Credênciais inválidas")
+            messages.error(request, "Pista: O nome de utilizador tem o nome do Dojo que selecionou aquando da criação da conta")
+            return HttpResponseRedirect("/register/login/")
+    else:
+        return render(request, "dojos/login.html", {})
+
+
+@login_required
 def logout_user(request):
     logout(request)
     return render(request, "dojos/logout.html")

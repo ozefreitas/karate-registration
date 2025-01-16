@@ -10,6 +10,8 @@ def get_comp_age(date_of_birth):
     year_of_birth = date_of_birth.year
     date_now = datetime.now()
     age_at_comp = (date_now.year) - year_of_birth
+    if (date_now.month, date_now.day) < (date_of_birth.month, date_of_birth.day):
+        age_at_comp -= 1
     return age_at_comp
 
 def check_athlete_data(data, age_at_comp, grad_rules, category_rules):
