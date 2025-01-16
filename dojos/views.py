@@ -35,9 +35,11 @@ def login_user(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
+            messages.success(request, "Login efetuado com sucesso")
             return HttpResponseRedirect("/")
         else:
             messages.error(request, "Credênciais inválidas")
+            messages.error(request, "Pista: O nome de utilizador tem o nome do Dojo que selecionou aquando da criação da conta")
             return HttpResponseRedirect("/register/login/")
     else:
         return render(request, "dojos/login.html", {})
