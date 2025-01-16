@@ -10,6 +10,7 @@ from registration.models import Dojo, ArchivedAthlete, Athlete
 from django.contrib.auth import authenticate, login, logout
 
 
+
 def register_user(request):
     if request.method == "POST":
         # create a form instance and populate it with data from the request:
@@ -28,6 +29,7 @@ def register_user(request):
         form = DojoRegisterForm()
         return render(request, 'dojos/register_user.html', {"form": form, "title": "Criar Conta"})
 
+
 def login_user(request):
     if request.method == "POST":
         username = request.POST["username"]
@@ -43,6 +45,7 @@ def login_user(request):
             return HttpResponseRedirect("/register/login/")
     else:
         return render(request, "dojos/login.html", {})
+
 
 @login_required
 def logout_user(request):
