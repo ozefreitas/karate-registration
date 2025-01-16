@@ -27,14 +27,14 @@ SECRET_KEY = 'django-insecure-onbqve@ah_t*!3%7wf+#b9#nj+qpft0g$e-%daxg-xue%%^fg1
 DEBUG = True
 
 # Email settings
-EMAIL_HOST = 'smtp.sendgrid.net'
-EMAIL_HOST_USER = 'apikey'
-EMAIL_HOST_PASSWORD = os.environ.get("SENDGRID_API_KEY")
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+# EMAIL_HOST = 'smtp.sendgrid.net'
+# EMAIL_HOST_USER = 'apikey'
+# EMAIL_HOST_PASSWORD = os.environ.get("SENDGRID_API_KEY")
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
 
-ALLOWED_HOSTS = []
 
+ALLOWED_HOSTS = ['karatescorappregistration.pythonanywhere.com', "127.0.0.1"]
 
 # Application definition
 
@@ -130,8 +130,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / "registration/static"]
+if DEBUG:
+    STATIC_URL = 'static/'
+    STATICFILES_DIRS = [BASE_DIR / "registration/static"]
+else:
+    STATIC_URL = 'static_root/registration/'
+    STATIC_ROOT = '/home/karatescorappregistration/karate-registration/static_root/registration/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
