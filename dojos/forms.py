@@ -15,13 +15,13 @@ class DojoRegisterForm(UserCreationForm):
     class Meta:
         model = User
         fields = ["username", "first_name", "last_name", "email", "password1", "password2"]
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Customize the attributes of each field
 
         # username
-        self.fields['username'].help_text = "Escolha um dojo disponível."
+        self.fields['username'].help_text = " \t Escolha um dojo disponível. Copie e guarde este nome, pois será o que vai usar para fazer login."
         self.fields['username'].label = "Nome de utilizador (dojo)"
         self.fields['username'].widget.attrs.update({'placeholder': 'Inserir nome'})
 
@@ -47,7 +47,7 @@ class DojoRegisterForm(UserCreationForm):
         # password2
         self.fields['password2'].help_text = None
         self.fields['password2'].label = "Repetir Palavra Passe"
-    
+
     def save(self, commit=True):
         user = super().save(commit=False)
         user.username = self.cleaned_data['username']  # Use the team name as the username
