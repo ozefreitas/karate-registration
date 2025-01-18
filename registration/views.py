@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import AthleteForm, FilterAthleteForm, TeamForm, FilterTeamForm
 from datetime import datetime
 from django.contrib import messages
-from .utils.utils import check_athlete_data, get_comp_age, check_filter_data
+from .utils.utils import check_athlete_data, get_comp_age, check_filter_data, check_match_type
 from .models import Athlete, Team
 
 # views for the athlets registrations
@@ -42,12 +42,17 @@ def form(request):
             # process the data in form.cleaned_data as required
             birth_date = form.cleaned_data["birth_date"]
             age_at_comp = get_comp_age(birth_date)
-    
-            if Athlete.objects.filter(first_name=form.cleaned_data["first_name"], birth_date=birth_date, match_type=form.cleaned_data.get("match_type")).exists():
-                errors.append("Um atleta com as mesmas credenciais já está inscrito. Verifique se a quer inscrever a mesma pessoa noutra prova")
+            matches, match_type_error = check_match_type(request)
 
-            else:
-                errors = check_athlete_data(form, age_at_comp, age_graduation_rules, age_category_rules)
+            if len(match_type_error) > 0:
+                errors.append(match_type_error)
+            
+            for match in matches:
+                if Athlete.objects.filter(first_name=form.cleaned_data["first_name"], birth_date=birth_date, match_type=match).exists():
+                    errors.append("Um atleta com as mesmas credenciais já está inscrito. Verifique se a quer inscrever a mesma pessoa noutra prova")
+
+                else:
+                    errors = check_athlete_data(form, matches, age_at_comp, age_graduation_rules, age_category_rules)
             
             if len(errors) != 0:
                 request.session['can_access_target_page'] = True
@@ -56,10 +61,12 @@ def form(request):
                 context = {"form": form, "title": "Inscrever atleta"}
                 return render(request, 'registration/form.html', context)
             
-            new_athlete = form.save(commit=False) 
-            new_athlete.dojo = request.user
-            new_athlete.age = age_at_comp
-            new_athlete.save()
+            for match in matches:
+                new_athlete = form.save(commit=False) 
+                new_athlete.dojo = request.user
+                new_athlete.age = age_at_comp
+                new_athlete.match_type = match
+                new_athlete.save()
             messages.success(request, f'{new_athlete.first_name} {new_athlete.last_name} registad@ com sucesso!')
             # form will allow thanks to open
             request.session['can_access_target_page'] = True

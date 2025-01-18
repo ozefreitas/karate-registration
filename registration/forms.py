@@ -24,7 +24,6 @@ class AthleteForm(forms.ModelForm):
                     "birth_date",
                     "skip_number",
                     "category",
-                    "match_type",
                     "gender",
                     "weight"]
         widgets = {

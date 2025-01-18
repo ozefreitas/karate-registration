@@ -1,4 +1,4 @@
-{% extends "registration/base.html" %} 
+{% extends "registration/base.html" %}
 {% load static %}
 {% block content %}
 
@@ -23,17 +23,17 @@
       <p>Nesta página pode encontrar todas as informações e ajudas que irá necessitar para o preenchimento dos formulários e navegação nesta plataforma.
         Vamos começar!
       </p>
-      <div style="display: flex; align-items: center;">
-        <p style="margin: 0;">Se quiser suportar o meu trabalho para continuar a melhorar este sítio, clique neste café </p>
-        <a href="https://buymeacoffee.com/ozefreitas">
-          <img 
-            src="{% static 'registration/images/icons8-coffee-48.png' %}"
-            alt="buy me a coffee"
-            style="cursor: pointer; display: block; padding-left: 10px;">
-        </a>
-      </div>
+      <!--<div style="display: flex; align-items: center;">-->
+      <!--  <p style="margin: 0;">Se quiser suportar o meu trabalho para continuar a melhorar este sítio, clique neste café </p>-->
+      <!--  <a href="https://buymeacoffee.com/ozefreitas">-->
+      <!--    <img -->
+      <!--      src="{% static 'registration/images/icons8-coffee-48.png' %}"-->
+      <!--      alt="buy me a coffee"-->
+      <!--      style="cursor: pointer; display: block; padding-left: 10px;">-->
+      <!--  </a>-->
+      <!--</div>-->
       <h4>Periodo de inscrições</h4>
-      <p>Cada prova do calendário terá datas e intervalos de tempo próprios para cada dojo inscrever os seus atletas. 
+      <p>Cada prova do calendário terá datas e intervalos de tempo próprios para cada dojo inscrever os seus atletas.
         A plataforma abrirá a inscrição 1 mês antes do dia da prova, fecha 2 semana antes, e dará 1 semana para retificar.
         Ou seja, o periodo fecha definitivamente na segunda-feira anterior à realização da prova. A semana de retificação não permitirá
         inscrever novos atletas, apenas alterar/editar inscrições existentes. Findo este periodo, será impossível inscrever via plataforma.
@@ -56,7 +56,7 @@
       </p>
       <h4>Acesso aos registos</h4>
       <p>Com a sessão iniciada, já consegue ver dois butões - "Atletas" e "Equipas",
-        na parte central do cabeçalho. Caso não consiga ver nada, inicie sessão. Se persistir, 
+        na parte central do cabeçalho. Caso não consiga ver nada, inicie sessão. Se persistir,
         <a style="cursor: pointer;" onclick="window.scrollTo(0, document.body.scrollHeight);">contacte</a>.
         Mesmo tendo Login feito, o conteúdo destas páginas apenas estará visível nos periodos de inscrição ligados a cada prova.
       </p>
@@ -78,7 +78,7 @@
         Lembre-se que aqui também devem ser inscritos os atletas que irão ser parte de equipas, mesmo que não participem em nenhum evento individual.
       </p>
       <h4>Registo de Equipas</h4>
-      <p>As <a href="{% url 'registration-teams' %}">Equipas</a> funcionam de maneira semelhante aos Atletas. No entanto, ao invés de 
+      <p>As <a href="{% url 'registration-teams' %}">Equipas</a> funcionam de maneira semelhante aos Atletas. No entanto, ao invés de
         inscrever novamente cada atleta, terá uma área de seleção de cada um dos elementos, a partir dos atletas inscritos anteriormente.</p>
       <h4>Geral</h4>
       <p>Em cada página de registo, terá uma linha de filtros para ordernar da forma ou filtrar os resultados que quiser.
@@ -86,5 +86,4 @@
         terá as opções de <i>Consultar</i>, <i>Editar</i> e <i>Eliminar</i>.
       </p>
     </div>
-      
 {% endblock content %}
