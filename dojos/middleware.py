@@ -73,3 +73,18 @@ class CompetitionEndedMiddleware:
                     athletes.delete()
 
         return self.get_response(request)
+
+
+class MaintenanceModeMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        # Check if maintenance mode is enabled
+        try:
+            with open('/home/karatescorappregistration/karate-registration/maintenance.flag', 'r') as flag:
+                if flag.read().strip() == 'on':
+                    return render(request, 'error/maintenance.html')
+        except FileNotFoundError:
+            pass
+        return self.get_response(request)

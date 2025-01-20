@@ -60,7 +60,8 @@ MIDDLEWARE = [
     'dojos.middleware.CompetitionEndedMiddleware',
     'dojos.middleware.NoListedCompetitionsMiddleware',
     'dojos.middleware.RegistrationClosedMiddleware',
-    'dojos.middleware.TeamsNotAvailableMiddleware'
+    'dojos.middleware.TeamsNotAvailableMiddleware',
+    'dojos.middleware.MaintenanceModeMiddleware'
 ]
 
 ROOT_URLCONF = 'karate_registration.urls'
@@ -151,7 +152,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'registration-home'
 
 LOGIN_URL = 'login'
-
-REGISTRATION_DEADLINE = '2025-01-28'
-
-NEXT_COMPETITION = 'Liga'
