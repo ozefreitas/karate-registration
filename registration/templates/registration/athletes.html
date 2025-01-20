@@ -2,17 +2,6 @@
 {% block content %}
 <h1>Interface de registos</h1>
 
-{% if messages %}
-    <div class="messages" id="messages">
-      {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-      {% endfor %}
-    </div>
-    <script>
-      hideMessagesAfterTimeout({{ message.tags }}); // 10 seconds
-    </script>
-{% endif %}
-
 {% if athletes %}
     <h3>Atletas inscritos:</h3>
     

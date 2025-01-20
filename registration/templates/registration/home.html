@@ -2,16 +2,6 @@
 {% load static %}
 {% block content %}
 
-{% if messages %}
-    <div class="messages" id="messages">
-      {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-      {% endfor %}
-    </div>
-    <script>
-      hideMessagesAfterTimeout({{ message.tags }}); // 10 seconds
-    </script>
-{% endif %}
     <div class="help-container">
       <h2>Bem-vind@ à interface de registo para as provas da SKI-Portugal</h2>
       <p>Esta plataforma foi desenvolvida com o objetivo de simplicar e tornar a experiência de inscrever os seus atletas nas provas mais fácil e amigável.

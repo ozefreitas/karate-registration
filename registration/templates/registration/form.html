@@ -1,17 +1,6 @@
 {% extends "registration/base.html" %}
 {% block content%}
     <h2>Registo de Atleta</h2>
-    
-    {% if messages %}
-        <div class="messages" id="messages">
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-            {% endfor %}
-        </div>
-        <script>
-            hideMessagesAfterTimeout({{ message.tags }}); // 10 seconds
-        </script>
-    {% endif %}
 
     <form action="" method="post" class="main-form">
         {% csrf_token %}
