@@ -96,7 +96,6 @@ def update_dojo_account(request):
         context = {"form_dojo": form_dojo, "form_profile": form_profile, "title": "Atualizar Perfil"}
     return render(request, 'dojos/update_user.html', context)
 
-
 def delete_dojo_account(request):
     if request.method == "GET":
         if not request.user.is_superuser:
@@ -107,7 +106,6 @@ def delete_dojo_account(request):
             Dojo.objects.filter(dojo=request.user.username).update(is_registered=False)
             return HttpResponseRedirect("/register/register_user/")
     return HttpResponseRedirect("/")
-
 
 def clone_athletes(request, comp_id):
     if request.method == "POST":
@@ -121,3 +119,12 @@ def clone_athletes(request, comp_id):
             Athlete.objects.create(**athlete_data)
         messages.success(request, f'Os atletas da/do {comp.name} foram copiados para o registo atual')
     return HttpResponseRedirect("/athletes")
+
+def custom_404(request, exception):
+    return render(request, 'error/404.html', status=500)
+
+def custom_500(request):
+    return render(request, 'error/500.html', status=500)
+
+def test_500_error(request):
+    raise("This is a test error")

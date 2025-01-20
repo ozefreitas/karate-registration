@@ -890,6 +890,17 @@ li {
   height: fit-content;
 }
 
+.http-error-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.http-error-container h2 {
+  color: #c41b1b
+}
+
 /* medias */
 
 @media (width < 1500px) {
