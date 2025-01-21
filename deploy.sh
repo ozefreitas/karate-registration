@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# stop the script if an error occurs
+set -e
+
 # Pull changes
 echo "Pulling the latest changes from the main branch..."
 git pull origin main
