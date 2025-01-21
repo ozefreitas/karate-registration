@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-onbqve@ah_t*!3%7wf+#b9#nj+qpft0g$e-%daxg-xue%%^fg1'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 # Email settings
 # EMAIL_HOST = 'smtp.sendgrid.net'
@@ -60,7 +60,8 @@ MIDDLEWARE = [
     'dojos.middleware.CompetitionEndedMiddleware',
     'dojos.middleware.NoListedCompetitionsMiddleware',
     'dojos.middleware.RegistrationClosedMiddleware',
-    'dojos.middleware.TeamsNotAvailableMiddleware'
+    'dojos.middleware.TeamsNotAvailableMiddleware',
+    'dojos.middleware.MaintenanceModeMiddleware'
 ]
 
 ROOT_URLCONF = 'karate_registration.urls'
@@ -151,7 +152,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'registration-home'
 
 LOGIN_URL = 'login'
-
-REGISTRATION_DEADLINE = '2025-01-28'
-
-NEXT_COMPETITION = 'Liga'

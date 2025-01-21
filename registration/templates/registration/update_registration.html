@@ -2,17 +2,6 @@
 {% block content%}
 <h1>Atualizar inscrição</h1>
 
-{% if messages %}
-    <div class="messages" id="messages">
-      {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-      {% endfor %}
-    </div>
-    <script>
-      hideMessagesAfterTimeout({{ message.tags }}); // 10 seconds
-    </script>
-{% endif %}
-
 <form action="{% url 'registration-update' type id %}" method="post">
     {% csrf_token %}
     {{form.as_p}}

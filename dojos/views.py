@@ -10,7 +10,6 @@ from registration.models import Dojo, ArchivedAthlete, Athlete
 from django.contrib.auth import authenticate, login, logout
 
 
-
 def register_user(request):
     if request.method == "POST":
         # create a form instance and populate it with data from the request:
@@ -29,7 +28,6 @@ def register_user(request):
         form = DojoRegisterForm()
         return render(request, 'dojos/register_user.html', {"form": form, "title": "Criar Conta"})
 
-
 def login_user(request):
     if request.method == "POST":
         username = request.POST["username"]
@@ -45,7 +43,6 @@ def login_user(request):
             return HttpResponseRedirect("/register/login/")
     else:
         return render(request, "dojos/login.html", {})
-
 
 @login_required
 def logout_user(request):
@@ -99,7 +96,6 @@ def update_dojo_account(request):
         context = {"form_dojo": form_dojo, "form_profile": form_profile, "title": "Atualizar Perfil"}
     return render(request, 'dojos/update_user.html', context)
 
-
 def delete_dojo_account(request):
     if request.method == "GET":
         if not request.user.is_superuser:
@@ -110,7 +106,6 @@ def delete_dojo_account(request):
             Dojo.objects.filter(dojo=request.user.username).update(is_registered=False)
             return HttpResponseRedirect("/register/register_user/")
     return HttpResponseRedirect("/")
-
 
 def clone_athletes(request, comp_id):
     if request.method == "POST":
@@ -124,3 +119,12 @@ def clone_athletes(request, comp_id):
             Athlete.objects.create(**athlete_data)
         messages.success(request, f'Os atletas da/do {comp.name} foram copiados para o registo atual')
     return HttpResponseRedirect("/athletes")
+
+def custom_404(request, exception):
+    return render(request, 'error/404.html', status=500)
+
+def custom_500(request):
+    return render(request, 'error/500.html', status=500)
+
+def test_500_error(request):
+    raise("This is a test error")
