@@ -23,17 +23,17 @@ MATCHES = {
 class AthleteBase(models.Model):
     GRADUATIONS = {
         "15": "9º Kyu",
-        "14.5": "8º Kyu Karie",
+        "14.5": "8º Kyu Kari",
         "14": "8º Kyu",
-        "13.5": "7º Kyu Karie",
+        "13.5": "7º Kyu Kari",
         "13": "7º Kyu",
-        "12.5": "6º Kyu Karie",
+        "12.5": "6º Kyu Kari",
         "12": "6º Kyu",
-        "11.5": "5º Kyu Karie",
+        "11.5": "5º Kyu Kari",
         "11": "5º Kyu",
-        "10.5": "4º Kyu Karie",
+        "10.5": "4º Kyu Kari",
         "10": "4º Kyu",
-        "9.5": "3º Kyu Karie",
+        "9.5": "3º Kyu Kari",
         "9": "3º Kyu",
         "8": "2º Kyu",
         "7": "1º Kyu",
@@ -80,6 +80,7 @@ class AthleteBase(models.Model):
     gender = models.CharField("Género", choices=GENDERS, max_length=10)
     weight = models.CharField("Peso", choices=WEIGHTS, max_length=10, blank=True, null=True)
     dojo = models.ForeignKey(User, on_delete=models.CASCADE)
+    creation_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self): 
         return "{} {}".format(self.first_name, self.last_name)
@@ -125,6 +126,7 @@ class Team(models.Model):
     gender = models.CharField("Género", choices=GENDERS, max_length=10)
     additional_emails = models.EmailField("Emails adicionais", blank=True, null=True)
     team_number = models.IntegerField("Nº Equipa")
+    creation_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return "{} {} {}".format(self.match_type, self.category, self.gender)
