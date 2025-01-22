@@ -8,6 +8,7 @@ from django.template.loader import render_to_string
 from django.contrib.auth.models import User
 from registration.models import Dojo, ArchivedAthlete, Athlete
 from django.contrib.auth import authenticate, login, logout
+from django.core.mail import send_mail
 
 
 def register_user(request):
@@ -63,6 +64,9 @@ def feedback(request):
         form = FeedbackForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
+
+            # TODO: add notification to admin that a feedback message has just arrived
+            
             form.save()
             messages.success(request, "Obrigado pelo feedback. Entrarei em contacto brevemente ")
             return HttpResponseRedirect("/")
