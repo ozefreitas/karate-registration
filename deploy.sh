@@ -19,6 +19,8 @@ python manage.py migrate
 echo "Removing previous static_root folder"
 rm -r /home/karatescorappregistration/karate-registration/static_root/
 
+# make sure settings DBEUG is set to False
+
 # Collect static
 echo "Collecting static files..."
 python manage.py collectstatic
