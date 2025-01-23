@@ -49,10 +49,10 @@ def form(request):
             
             for match in matches:
                 if Athlete.objects.filter(first_name=form.cleaned_data["first_name"], birth_date=birth_date, match_type=match).exists():
-                    errors.append("Um atleta com as mesmas credenciais já está inscrito. Verifique se a quer inscrever a mesma pessoa noutra prova")
+                    errors.append("Um atleta com as mesmas credenciais já está inscrito. Verifique se quer inscrever a mesma pessoa noutra prova")
 
                 else:
-                    errors = check_athlete_data(form, matches, age_at_comp, age_graduation_rules, age_category_rules)
+                    errors = check_athlete_data(form, age_at_comp, age_graduation_rules, age_category_rules, matches)
             
             if len(errors) != 0:
                 request.session['can_access_target_page'] = True
@@ -66,7 +66,19 @@ def form(request):
                 new_athlete.dojo = request.user
                 new_athlete.age = age_at_comp
                 new_athlete.match_type = match
+                
+                # if "kata", weight is set to None
+                if match == "kata":
+                    new_athlete.weight = None
+                else:
+                    new_athlete.weight = request.POST.dict().get("weight")
+
+                # reset id to prevent overwrite
+                new_athlete.pk = None
+
+                # save
                 new_athlete.save()
+
             messages.success(request, f'{new_athlete.first_name} {new_athlete.last_name} registad@ com sucesso!')
             # form will allow thanks to open
             request.session['can_access_target_page'] = True
@@ -205,7 +217,7 @@ def update(request, type, id):
             if Athlete.objects.filter(first_name=form.cleaned_data["first_name"], birth_date=birth_date, match_type=form.cleaned_data.get("match_type")).exists():
                 athlete_test = Athlete.objects.filter(first_name=form.cleaned_data["first_name"], birth_date=birth_date, match_type=form.cleaned_data.get("match_type"))
                 if athlete_test[0].id != athlete.id:
-                    errors.append("Um atleta com as mesmas credenciais já está inscrito. Verifique se a quer inscrever a mesma pessoa noutra prova")
+                    errors.append("Um atleta com as mesmas credenciais já está inscrito. Verifique se quer inscrever a mesma pessoa noutra prova")
                 else:
                     errors = check_athlete_data(form, age_at_comp, age_graduation_rules, age_category_rules)
             else:

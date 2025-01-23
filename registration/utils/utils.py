@@ -14,7 +14,7 @@ def check_match_type(response):
     else:
         if response.POST.dict().get("match_type_kata", 0) == "on":
             matches_list.append("kata")
-        elif response.POST.dict().get("match_type_kumite", 0) == "on":
+        if response.POST.dict().get("match_type_kumite", 0) == "on":
             matches_list.append("kumite")
     return matches_list, error
 
@@ -22,11 +22,13 @@ def get_comp_age(date_of_birth):
     year_of_birth = date_of_birth.year
     date_now = datetime.now()
     age_at_comp = (date_now.year) - year_of_birth
-    if (date_now.month, date_now.day) < (date_of_birth.month, date_of_birth.day):
-        age_at_comp -= 1
-    return age_at_comp
+    return age_at_comp - 1
+    ### methodology to date of birth as reference
+    # if (date_now.month, date_now.day) < (date_of_birth.month, date_of_birth.day):
+    #     age_at_comp -= 1
+    # return age_at_comp
 
-def check_athlete_data(data, extra_data, age_at_comp, grad_rules, category_rules):
+def check_athlete_data(data, age_at_comp, grad_rules, category_rules, extra_data = None):
     errors = []
     for age_range, grad in grad_rules.items():
         age_range = range_decoder(age_range)
@@ -37,15 +39,16 @@ def check_athlete_data(data, extra_data, age_at_comp, grad_rules, category_rules
         age_range = range_decoder(age_range)
         if age_at_comp in age_range and data.cleaned_data["category"] != cat:
             errors.append("Idade do atleta não corresponde à categoria selecionada")
-    
-    if "kumite" in extra_data and data.cleaned_data["category"] in ["infantil", "iniciado"]:
-        errors.append("Não existe prova de Kumite para esse escalão")
-    
-    if "kumite" in extra_data and data.cleaned_data["weight"] is None and data.cleaned_data["gender"] == "masculino":
-        errors.append("Por favor selecione um peso")
 
-    if "kumite" in extra_data and data.cleaned_data["weight"] is not None and data.cleaned_data["gender"] == "feminino":
-        errors.append("Os escalões femininos não são dividos por pesos")
+    if extra_data is not None:
+        if "kumite" in extra_data and data.cleaned_data["category"] in ["infantil", "iniciado"]:
+            errors.append("Não existe prova de Kumite para esse escalão")
+        
+        if "kumite" in extra_data and data.cleaned_data["weight"] is None and data.cleaned_data["gender"] == "masculino":
+            errors.append("Por favor selecione um peso")
+
+        if "kumite" in extra_data and data.cleaned_data["weight"] is not None and data.cleaned_data["gender"] == "feminino":
+            errors.append("Os escalões femininos não são dividos por pesos")
 
     return errors
 
