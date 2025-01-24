@@ -80,6 +80,10 @@ class MaintenanceModeMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
+        # if admin panels this is ignored
+        if request.path.startswith('/admin/'):
+            return self.get_response(request)
+        
         # Check if maintenance mode is enabled
         try:
             with open('/home/karatescorappregistration/karate-registration/maintenance.flag', 'r') as flag:
