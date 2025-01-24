@@ -353,6 +353,20 @@ li {
   margin: 0;
 }
 
+.form-selection-boxes {
+  display: flex;
+  align-content: center;
+  align-items: center;
+}
+
+.form-selection-boxes label {
+  margin-right: 10px;
+}
+
+.form-selection-boxes input {
+  width: 18px;
+}
+
 .filter-options-container {
   font-size: 1.1rem;
   display: flex;
