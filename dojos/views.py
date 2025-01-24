@@ -10,7 +10,6 @@ from registration.models import Dojo, ArchivedAthlete, Athlete
 from django.contrib.auth import authenticate, login, logout
 from django.core.mail import send_mail
 
-
 def register_user(request):
     if request.method == "POST":
         # create a form instance and populate it with data from the request:
