@@ -80,7 +80,7 @@ class AthleteBase(models.Model):
     gender = models.CharField("Género", choices=GENDERS, max_length=10)
     weight = models.CharField("Peso", choices=WEIGHTS, max_length=10, blank=True, null=True)
     dojo = models.ForeignKey(User, on_delete=models.CASCADE)
-    creation_date = models.DateTimeField(auto_now_add=True)
+    # creation_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self): 
         return "{} {}".format(self.first_name, self.last_name)
@@ -126,7 +126,7 @@ class Team(models.Model):
     gender = models.CharField("Género", choices=GENDERS, max_length=10)
     additional_emails = models.EmailField("Emails adicionais", blank=True, null=True)
     team_number = models.IntegerField("Nº Equipa")
-    creation_date = models.DateTimeField(auto_now_add=True)
+    # creation_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return "{} {} {}".format(self.match_type, self.category, self.gender)

@@ -14,7 +14,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         today = now().date()
-        next_week = today + timedelta(days=17)
+        next_week = today + timedelta(days=10)
 
         # Find competitions happening next week
         competitions = CompetitionDetail.objects.filter(competition_date=next_week)
