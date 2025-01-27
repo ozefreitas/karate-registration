@@ -17,6 +17,9 @@ from django.conf import settings
 from smtplib import SMTPException
 from django.contrib.auth import update_session_auth_hash
 
+
+### User loging account actions ###
+
 def register_user(request):
     if request.method == "POST":
         # create a form instance and populate it with data from the request:
@@ -29,7 +32,7 @@ def register_user(request):
             return HttpResponseRedirect("/register/login/")
         else:
             messages.error(request, form.errors)
-            return HttpResponseRedirect("/wrong")
+            return HttpResponseRedirect("/register/register_user/")
 
     else:
         form = DojoRegisterForm()
@@ -64,6 +67,9 @@ def profile(request):
                                                   "archived_athletes": archived_athletes,
                                                   "comps": comps})
 
+
+### Feedback view ###
+
 def feedback(request):
     if request.method == "POST":
         # create a form instance and populate it with data from the request:
@@ -78,11 +84,14 @@ def feedback(request):
             return HttpResponseRedirect("/")
         else:
             messages.error(request, form.errors)
-            return HttpResponseRedirect("/wrong")
+            return HttpResponseRedirect("/register/feedback/")
             
     else:
         form = FeedbackForm()
         return render(request, 'dojos/feedback.html', {"form": form, "title": "Feedback"})
+    
+
+### Dojo accounts management ###
     
 def update_dojo_account(request):
     if request.method == "POST":
@@ -98,7 +107,7 @@ def update_dojo_account(request):
         else:
             messages.error(request, form_dojo.errors)
             messages.error(request, form_profile.errors)
-            return HttpResponseRedirect("/wrong")
+            return HttpResponseRedirect("/register/update_profile/")
             
     else:
         form_dojo = DojoUpdateForm(instance=request.user)
@@ -116,6 +125,9 @@ def delete_dojo_account(request):
             Dojo.objects.filter(dojo=request.user.username).update(is_registered=False)
             return HttpResponseRedirect("/register/register_user/")
     return HttpResponseRedirect("/")
+
+
+### Password management ###
 
 @login_required
 def change_password(request):
@@ -190,6 +202,8 @@ def password_reset_confirmation(request,
             return render(request, "Invalid link.", status=400)
     else:
         return render(request, "password/reset_password_confirm.html", {"form": form})
+    
+### Comp ended processing ###
 
 def clone_athletes(request, comp_id):
     if request.method == "POST":
@@ -203,6 +217,9 @@ def clone_athletes(request, comp_id):
             Athlete.objects.create(**athlete_data)
         messages.success(request, f'Os atletas da/do {comp.name} foram copiados para o registo atual')
     return HttpResponseRedirect("/athletes")
+
+
+### Custom error page views ###
 
 def custom_404(request, exception):
     return render(request, 'error/404.html', status=500)

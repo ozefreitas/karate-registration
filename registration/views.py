@@ -29,6 +29,7 @@ age_category_rules = {
     "50-99": "Veterano +50"
 }
 
+### Athletes processing ###
 
 @login_required()
 def form(request):
@@ -90,7 +91,28 @@ def form(request):
         form = AthleteForm()
         context = {"form": form, "title": "Inscrever atleta"}
         return render(request, 'registration/form.html', context)
+
+
+@login_required
+def athletes(request):
+    not_found = False
+    if request.method == "POST":
+        filter_form = FilterAthleteForm(request.POST)
+        if filter_form.is_valid():
+            athletes = Athlete.objects.filter(dojo=request.user)
+            athletes, not_found = check_filter_data(request, filter_form, athletes)
+    else:
+        filter_form = FilterAthleteForm()
+        athletes = Athlete.objects.filter(dojo=request.user)
+    number_athletes = len(athletes)
+    return render(request, 'registration/athletes.html', {"athletes": athletes,
+                                                      "filters": filter_form, 
+                                                      "not_found": not_found, 
+                                                      "number_athletes": number_athletes,
+                                                      "title": "Atletas"})
     
+
+### Teams processing ###
 
 @login_required
 def team_form(request):
@@ -120,25 +142,6 @@ def team_form(request):
 
 
 @login_required
-def athletes(request):
-    not_found = False
-    if request.method == "POST":
-        filter_form = FilterAthleteForm(request.POST)
-        if filter_form.is_valid():
-            athletes = Athlete.objects.filter(dojo=request.user)
-            athletes, not_found = check_filter_data(request, filter_form, athletes)
-    else:
-        filter_form = FilterAthleteForm()
-        athletes = Athlete.objects.filter(dojo=request.user)
-    number_athletes = len(athletes)
-    return render(request, 'registration/athletes.html', {"athletes": athletes,
-                                                      "filters": filter_form, 
-                                                      "not_found": not_found, 
-                                                      "number_athletes": number_athletes,
-                                                      "title": "Atletas"})
-
-
-@login_required
 def teams(request):
     not_found = False
     if request.method == "POST":
@@ -156,6 +159,8 @@ def teams(request):
                                                       "number_teams": number_teams,
                                                       "title": "Equipas"})
 
+
+### Auxiliar pages ###
 
 def home(request):
     return render(request, 'registration/home.html')
@@ -179,6 +184,8 @@ def wrong(request):
     request.session['can_access_target_page'] = False
     return render(request, "registration/wrong.html")
 
+
+### Registrations operations ###
 
 def delete(request, type, id):
     if request.method == "POST":
