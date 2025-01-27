@@ -125,10 +125,12 @@ def change_password(request):
             user = form.save()
             # Important: Update the session to prevent logging out after password change
             update_session_auth_hash(request, user)
+            messages.success(request, "Palavra Passe atualizada com sucesso!")
             return HttpResponseRedirect('/profile/')
-    else:
-        form = DojoPasswordChangeForm(user=request.user)
-        return render(request, 'password/change_password.html', {"form": form})
+        else:
+            messages.error(request, form.errors)
+    form = DojoPasswordChangeForm(user=request.user)
+    return render(request, 'password/change_password.html', {"form": form})
 
 def reset_password(request):
     if request.method == "POST":
