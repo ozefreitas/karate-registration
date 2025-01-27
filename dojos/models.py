@@ -12,6 +12,7 @@ class Profile(models.Model):
     def __str__(self):
         return f'{self.dojo.username} profile'
 
+
 class CompetitionDetail(models.Model):
     SEASONS = {
         "2425": "2024/2025",
@@ -43,7 +44,8 @@ class CompetitionDetail(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+
 class FeedbackData(models.Model):
     first_name = models.CharField("Primeiro Nome", max_length=100)
     last_name = models.CharField("Último Nome", max_length=100)
@@ -52,3 +54,8 @@ class FeedbackData(models.Model):
 
     def __str__(self):
         return '{} {}'.format(self.first_name, self.last_name)
+
+
+class PasswordConfirmReset(models.Model):
+    new_password1 = models.CharField("Palavra Passe", max_length=36)
+    new_password2 = models.CharField("Repetir Palavra Passe", max_length=36)

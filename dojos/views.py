@@ -2,13 +2,20 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import DojoRegisterForm, DojoUpdateForm, ProfileUpdateForm, FeedbackForm
+from .forms import DojoRegisterForm, DojoUpdateForm, ProfileUpdateForm, FeedbackForm, DojoPasswordResetForm, DojoPasswordConfirmForm, DojoPasswordChangeForm
 from .models import CompetitionDetail
 from django.template.loader import render_to_string
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.contrib.auth.hashers import make_password
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
 from django.contrib.auth.models import User
 from registration.models import Dojo, ArchivedAthlete, Athlete
 from django.contrib.auth import authenticate, login, logout
 from django.core.mail import send_mail
+from django.conf import settings
+from smtplib import SMTPException
+from django.contrib.auth import update_session_auth_hash
 
 def register_user(request):
     if request.method == "POST":
@@ -42,7 +49,7 @@ def login_user(request):
             messages.error(request, "Pista: O nome de utilizador tem o nome do Dojo que selecionou aquando da criação da conta")
             return HttpResponseRedirect("/register/login/")
     else:
-        return render(request, "dojos/login.html", {})
+        return render(request, "dojos/login.html", {"title": "Plataforma Login"})
 
 @login_required
 def logout_user(request):
@@ -109,6 +116,78 @@ def delete_dojo_account(request):
             Dojo.objects.filter(dojo=request.user.username).update(is_registered=False)
             return HttpResponseRedirect("/register/register_user/")
     return HttpResponseRedirect("/")
+
+@login_required
+def change_password(request):
+    if request.method == "POST":
+        form = DojoPasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            user = form.save()
+            # Important: Update the session to prevent logging out after password change
+            update_session_auth_hash(request, user)
+            return HttpResponseRedirect('/profile/')
+    else:
+        form = DojoPasswordChangeForm(user=request.user)
+        return render(request, 'password/change_password.html', {"form": form})
+
+def reset_password(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        form = DojoPasswordResetForm(request.POST)
+        if form.is_valid():
+            user = get_object_or_404(User, email=email)
+            user = User.objects.get(email=email)
+            token = PasswordResetTokenGenerator().make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+            reset_url = request.build_absolute_uri(f"/register/password_reset_confirm/{uid}/{token}/")
+            try:
+                send_mail(
+                    subject="Recuperação de Password - Karate Score App",
+                    message="Está a receber este email porque pediu a recuperação da sua conta na plaforma de registos da SKI-Portugal.\n\n"
+                            "Por favor, aceda ao link seguinte para continuar o processo, e escolher uma nova palavra passe.\n\n"
+                            f"{reset_url}\n\n"
+                            f"O seu nome de utilizador, caso se tenha esquecido, é   {user.username}.\n\n"
+                            "Obrigado por usar a Karate Score App.\n"
+                            "A equipa da Karate Score App:\n"
+                            "José Freitas\n\n"
+                            "Contactos:\n- jpsfreitas12@gmail.com / 917479331\n- info@skiportugal.pt",
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[email],
+                    fail_silently=False,
+                )
+            except Exception as exc:
+                raise SMTPException(exc)
+
+            return HttpResponseRedirect("/register/password_reset/done/")
+    else:
+        form = DojoPasswordResetForm()
+        return render(request, 'password/reset_password.html', {"form": form})
+    
+def password_reset_confirmation(request, 
+                                uidb64, 
+                                token
+                                ):
+    form = DojoPasswordConfirmForm()
+    if request.method == "POST":
+        new_password1 = request.POST.get("new_password1")
+        new_password2 = request.POST.get("new_password2")
+        if new_password1 != new_password2:
+            messages.error(request, "Palavras passe inseridas não são iguais!")
+            return render(request, "dojos/reset_password_confirm.html", {"form": form})
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = User.objects.get(pk=uid)
+            if PasswordResetTokenGenerator().check_token(user, token):
+                user.password = make_password(new_password1)
+                user.save()
+                return render(request, "dojos/password_reset_complete.html")
+            else:
+                return render(request, "Invalid or expired token.", status=400)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            return render(request, "Invalid link.", status=400)
+    else:
+        return render(request, "password/reset_password_confirm.html", {"form": form})
 
 def clone_athletes(request, comp_id):
     if request.method == "POST":
