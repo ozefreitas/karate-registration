@@ -294,7 +294,8 @@ li {
 .archived-athletes-container {
   display: none;
   flex-direction: column;
-  margin-top: 20px;
+  margin-top: 10px;
+  margin-bottom: 20px;
 }
 
 .archived-athletes-container div {

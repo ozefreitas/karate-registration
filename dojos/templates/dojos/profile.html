@@ -35,7 +35,11 @@
                 <div style="margin-bottom: 8px;">{{athlete.first_name}} {{athlete.last_name}} </div>
                 {% endif %}
               {% endfor %}
-              <button type="submit" class="default-button">Clonar</button>
+              {% if archived_athletes %}
+                <button type="submit" class="default-button">Clonar</button>
+              {% else %}
+                <span style="font-size: 15px;">Esta prova ainda não foi realizada.</span>
+              {% endif %}
             </form>
           {% endfor %}
         </ul>
@@ -46,13 +50,13 @@
             <p></p>
             <p><span id="delete-account-span" class="span-links">Pedir anulação de conta</span></p>
             <p><span id="request-account-span" class="span-links">Pedir renovação de conta</span></p>
-            <p><span class="span-links">Recuperação de palavra passe</span></p>
+            <p><a id="confirm-delete" href="{% url 'dojos-change-password' %}">Recuperação de palavra passe</a></p>
         </div>
     </div>
     <div class="profile-pic-container">
         <img src="{{ user.profile.image.url }}" alt="foto de perfil">
     </div>
-    <!-- Modal window -->
+    <!-- Modal windows -->
     <div id="deleteModal" class="delete-modal">
       <div>
         <p>Tem a certeza que quer eliminar a sua conta? Esta ação não pode ser desfeita e todos os dados da sua conta serão perdidos.</p>
