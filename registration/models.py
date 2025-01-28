@@ -20,8 +20,7 @@ MATCHES = {
         "kumite": "Kumite"
 }
 
-class AthleteBase(models.Model):
-    GRADUATIONS = {
+GRADUATIONS = {
         "15": "9º Kyu",
         "14.5": "8º Kyu Kari",
         "14": "8º Kyu",
@@ -44,6 +43,11 @@ class AthleteBase(models.Model):
         "2": "5º Dan",
         "1": "6º Dan",
     }
+
+
+# Athletes models ###
+
+class AthleteBase(models.Model):
 
     GENDERS = {
         "masculino": "Masculino",
@@ -99,13 +103,22 @@ class ArchivedAthlete(AthleteBase):
     archived_date = models.DateTimeField(auto_now_add=True)
 
 
-class Dojo(models.Model):
-    dojo = models.CharField("Dojo", max_length=99, unique=True)
-    is_registered = models.BooleanField(default=False)
+class AthleteFilter(models.Model):
+    ORDER_BY = {
+        "first_name": "Primeiro Nome",
+        "last_name": "Último Nome",
+        "birth_date": "Idade",
+        "category": "Categoria",
+        "gender": "Género",
+        "match_type": "Prova"
+    }
 
-    def __str__(self):
-        return self.dojo
+    order = models.CharField("Ordenar por", choices=ORDER_BY, max_length=20, blank=True, null=True)
+    filter = models.CharField("Filtrar por", choices=ORDER_BY, max_length=20, blank=True, null=True)
+    search = models.CharField("Procurar", max_length=99, blank=True, null=True)
 
+
+### Teams models ###
 
 class Team(models.Model):
 
@@ -132,21 +145,6 @@ class Team(models.Model):
         return "{} {} {}".format(self.match_type, self.category, self.gender)
 
 
-class AthleteFilter(models.Model):
-    ORDER_BY = {
-        "first_name": "Primeiro Nome",
-        "last_name": "Último Nome",
-        "birth_date": "Idade",
-        "category": "Categoria",
-        "gender": "Género",
-        "match_type": "Prova"
-    }
-
-    order = models.CharField("Ordenar por", choices=ORDER_BY, max_length=20, blank=True, null=True)
-    filter = models.CharField("Filtrar por", choices=ORDER_BY, max_length=20, blank=True, null=True)
-    search = models.CharField("Procurar", max_length=99, blank=True, null=True)
-
-
 class TeamFilter(models.Model):
     ORDER_BY = {
         "category": "Categoria",
@@ -157,3 +155,41 @@ class TeamFilter(models.Model):
     order = models.CharField("Ordenar por", choices=ORDER_BY, max_length=20, blank=True, null=True)
     filter = models.CharField("Filtrar por", choices=ORDER_BY, max_length=20, blank=True, null=True)
     search = models.CharField("Procurar", max_length=99, blank=True, null=True)
+
+
+### Coaches models ###
+
+class CoachBase(models.Model):
+    first_name = models.CharField("Primeiro Nome", max_length=200)
+    last_name = models.CharField("Último Nome", max_length=200)
+    graduation = models.CharField("Graduação", max_length=4, choices=GRADUATIONS)
+    birth_date = models.DateField("Data de Nascimento")
+    age = models.IntegerField("Idade", default=25)
+    skip_number = models.IntegerField("Nº SKI-P", blank=True, null=True)
+    # creation_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self): 
+        return "{} {}".format(self.first_name, self.last_name)
+
+    class Meta:
+        abstract = True
+
+
+# declaration to be registered in admin panel
+class Coach(CoachBase):
+    pass
+
+
+class ArchivedCoach(CoachBase):
+    competition = models.ForeignKey(CompetitionDetail, on_delete=models.CASCADE)
+    archived_date = models.DateTimeField(auto_now_add=True)
+
+
+### Dojos models ###
+
+class Dojo(models.Model):
+    dojo = models.CharField("Dojo", max_length=99, unique=True)
+    is_registered = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.dojo
