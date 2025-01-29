@@ -5,6 +5,7 @@ from karate_registration import settings
 import django
 from django.contrib.auth import get_user_model
 import os
+import pandas as pd
 
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "karate_registration.settings")
@@ -56,9 +57,14 @@ try:
     # serialize to JSON
     json_athletes = json.dumps(sorted_data, cls=DjangoJSONEncoder, ensure_ascii=False, indent=4)
 
-    # Save to a file
+    # Save to a JSON file
     with open("athlete_data.json", "w", encoding="utf-8") as f:
         f.write(json_athletes)
+
+    # Save to a CSV file
+    with open("athlete_data.json", encoding='utf-8') as inputfile:
+        df = pd.read_json(inputfile)
+    df.to_csv('registrations.csv', encoding='utf-8', index=False)
 
 except Exception as exc:
     # Running the echo command
