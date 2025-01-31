@@ -237,7 +237,7 @@ def update(request, type, id):
             messages.error(request, "Não foi possível atualizar")
             for error in errors:
                 messages.error(request, error)
-            return HttpResponseRedirect(f"/update_registration/{type}/{id}")
+            return HttpResponseRedirect(f"/update_registration/{type}/{id}/")
         else:
             new_form = form.save(commit=False) 
             new_form.dojo = request.user

@@ -103,7 +103,7 @@ def update_dojo_account(request):
             form_dojo.save()
             form_profile.save()
             messages.success(request, "Perfil atualizado com sucesso! ")
-            return HttpResponseRedirect("/profile")
+            return HttpResponseRedirect("/profile/")
         else:
             messages.error(request, form_dojo.errors)
             messages.error(request, form_profile.errors)
@@ -216,7 +216,10 @@ def clone_athletes(request, comp_id):
                     athlete_data[field.name] = getattr(athlete, field.name)
             Athlete.objects.create(**athlete_data)
         messages.success(request, f'Os atletas da/do {comp.name} foram copiados para o registo atual')
-    return HttpResponseRedirect("/athletes")
+    return HttpResponseRedirect("/athletes/")
+
+
+### Custom error page views ###
 
 
 ### Custom error page views ###
