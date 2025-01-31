@@ -5,11 +5,11 @@
     <form action="" method="post" class="main-form">
         {% csrf_token %}
         {{form.as_p}}
-        <p>
+        <p class="form-selection-boxes">
             <label for="id_match_type_kata">Kata: </label>
             <input type="checkbox" id="id_match_type_kata" name="match_type_kata">
         </p>
-        <p>
+        <p class="form-selection-boxes">
             <label for="id_match_type_kumite">Kumite: </label>
             <input type="checkbox" id="id_match_type_kumite" name="match_type_kumite">
         </p>

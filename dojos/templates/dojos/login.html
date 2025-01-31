@@ -12,7 +12,7 @@
       <input type="text" id="id_username" name="username">
       <label for="id_password">Palavra passe:</label>
       <input type="password" id="id_password" name="password">
-      <a href=""  class="forgotten-password">Esqueceu-se da Palavra Passe?</a>
+      <a href="{% url 'dojos-reset-password' %}" class="forgotten-password">Esqueceu-se da Palavra Passe?</a>
       <button class="default-button">Entrar</button>
     </form>
     <div style="margin-top: 40px; font-size: smaller;">Não tem uma conta? <a href="{% url 'dojos-register' %}"> Clique aqui para criar.</a></div>

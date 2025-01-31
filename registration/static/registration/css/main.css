@@ -294,7 +294,8 @@ li {
 .archived-athletes-container {
   display: none;
   flex-direction: column;
-  margin-top: 20px;
+  margin-top: 10px;
+  margin-bottom: 20px;
 }
 
 .archived-athletes-container div {
@@ -351,6 +352,20 @@ li {
 
 .main-form div div input {
   margin: 0;
+}
+
+.form-selection-boxes {
+  display: flex;
+  align-content: center;
+  align-items: center;
+}
+
+.form-selection-boxes label {
+  margin-right: 10px;
+}
+
+.form-selection-boxes input {
+  width: 18px;
 }
 
 .filter-options-container {
@@ -676,6 +691,27 @@ li {
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
   text-decoration: none;
   text-align: center;
+}
+
+.update_button.update_password {
+  margin-top: 20px;
+  width: 250px;
+}
+
+.update_button.update_password .icon {
+  transform: translateX(200px);
+  -webkit-transform: translateX(200px);
+  -moz-transform: translateX(200px);
+  -ms-transform: translateX(200px);
+  -o-transform: translateX(200px);
+}
+
+.update_button.update_password:hover .icon {
+  transform: translateX(50px);
+  -webkit-transform: translateX(50px);
+  -moz-transform: translateX(50px);
+  -ms-transform: translateX(50px);
+  -o-transform: translateX(50px);
 }
 
 .update_button,

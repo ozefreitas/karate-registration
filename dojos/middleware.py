@@ -57,7 +57,7 @@ class CompetitionEndedMiddleware:
         today = datetime.date.today()
         competition_details = CompetitionDetail.objects.filter(has_ended=False)
         for comp_detail in competition_details:
-                # if competition day passes by, has ended go true
+                # if competition day passes by, "has ended" go true
                 if comp_detail.competition_date < today:
                     comp_detail.has_ended=True
                     comp_detail.save()
@@ -68,6 +68,10 @@ class CompetitionEndedMiddleware:
                         for field in athlete._meta.fields:
                             if field != "id":
                                 athlete_data[field.name] = getattr(athlete, field.name)
+                        # exists = ArchivedAthlete.objects.filter(
+                        #             **{k: v for k, v in athlete_data.items() if k != "id"}
+                        #         ).exists()
+                        # if not exists:
                         ArchivedAthlete.objects.create(**athlete_data)
                     
                     athletes.delete()
