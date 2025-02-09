@@ -26,10 +26,11 @@ class RegistrationClosedMiddleware:
     def __call__(self, request):
         today = datetime.date.today()
         next_comp = get_next_competition()
-        if next_comp != None and (request.path == "/athletes/" or request.path == "/teams/"):
-            if next_comp.start_registration > today and today > next_comp.retifications_deadline:
-                # Render a custom page for registration closure
-                return render(request, 'error/registrations_closed.html', status=403)
+        if not settings.DEBUG:
+            if next_comp != None and (request.path == "/athletes/" or request.path == "/teams/"):
+                if today > next_comp.retifications_deadline:
+                    # Render a custom page for registration closure
+                    return render(request, 'error/registrations_closed.html', status=403)
 
         return self.get_response(request)
 
