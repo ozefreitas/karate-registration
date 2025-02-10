@@ -2,78 +2,19 @@
 {% load static %}
 {% block content %}
 
-    <div class="help-container">
-      <h2>Bem-vind@ à interface de registo para as provas da SKI-Portugal</h2>
-      <p>Esta plataforma foi desenvolvida com o objetivo de simplicar e tornar a experiência de inscrever os seus atletas nas provas mais fácil e amigável.
-        Está inserida dentro da <a href="https://karate-score-app.netlify.app/">Karate Score App</a>, onde se inclui a Interface de Resultados da SKI-P.
-      </p>
-      <p>Está disponível no cabeçalho da página, uma aba de "Feedback", onde agradecia desde já que submetessem as vossas sugestões,
-        reclamações, ou eventuais erros que encontrem durante a utilização deste site.
-      </p>
-      <p>Nesta página pode encontrar todas as informações e ajudas que irá necessitar para o preenchimento dos formulários e navegação nesta plataforma.
-        Vamos começar!
-      </p>
-      <!--<div style="display: flex; align-items: center;">-->
-      <!--  <p style="margin: 0;">Se quiser suportar o meu trabalho para continuar a melhorar este sítio, clique neste café </p>-->
-      <!--  <a href="https://buymeacoffee.com/ozefreitas">-->
-      <!--    <img -->
-      <!--      src="{% static 'registration/images/icons8-coffee-48.png' %}"-->
-      <!--      alt="buy me a coffee"-->
-      <!--      style="cursor: pointer; display: block; padding-left: 10px;">-->
-      <!--  </a>-->
-      <!--</div>-->
-      <h4>Periodo de inscrições</h4>
-      <p>Cada prova do calendário terá datas e intervalos de tempo próprios para cada dojo inscrever os seus atletas.
-        A plataforma abrirá a inscrição 1 mês antes do dia da prova, fecha 2 semana antes, e dará 1 semana para retificar.
-        Ou seja, o periodo fecha definitivamente na segunda-feira anterior à realização da prova. A semana de retificação não permitirá
-        inscrever novos atletas, apenas alterar/editar inscrições existentes. Findo este periodo, será impossível inscrever via plataforma.
-        Caso surja algum problema, <a style="cursor: pointer;" onclick="window.scrollTo(0, document.body.scrollHeight);">contacte</a>.
-      </p>
-      <h4>Criar Conta</h4>
-      <p>Antes de iniciar qualquer ação, deve criar uma conta. Para aceder, basta clicar em "Criar Conta" no canto superior direito
-        do ecrã. Apenas pode ser criada uma conta por Dojo.
-        Os Dojos que podem criar conta estão listados sobre o "Nome de utilizador (dojo)".
-        A partir do momento que uma conta é criada, esse Dojo irá desaparecer desta lista. Por enquanto, este processo
-        decorrerá à base da confiança, sendo que estou a trabalhar num método próprio de autenticação, de modo a verificar
-        a real identidade do Dojo por detrás de cada computador. Poderá encontrar mais informações na página correspondente.
-      </p>
-      <h4>Login</h4>
-      <p>
-        Após criar conta, será automaticamente direcionado para a página de Login. Se já tiver uma conta e quiser entrar, clique em "Login",
-      também no canto superior esquerdo. Terá de introduzir o nome <strong>exato</strong> do seu Dojo, o mesmo nome que selecionou
-      no menu. Qualquer desvio não irá permitir iniciar sessão. Não dispõe de limite de tentativas, pelo que pode continuar a
-      tentar enquanto a paciência ainda existir.
-      </p>
-      <h4>Acesso aos registos</h4>
-      <p>Com a sessão iniciada, já consegue ver dois butões - "Atletas" e "Equipas",
-        na parte central do cabeçalho. Caso não consiga ver nada, inicie sessão. Se persistir,
-        <a style="cursor: pointer;" onclick="window.scrollTo(0, document.body.scrollHeight);">contacte</a>.
-        Mesmo tendo Login feito, o conteúdo destas páginas apenas estará visível nos periodos de inscrição ligados a cada prova.
-      </p>
-      <h4>Perfil</h4>
-      <p>Na secção do perfil pode consultar e editar as informações do seu dojo. Pode também consultar as inscrições nas provas
-        anteriores, e copiar essas para o registo atual, clicando em <i>Clonar</i>.</p>
-      <h4>Registo de Atletas</h4>
-      <p>Na página <a href="{% url 'registration-athletes' %}">Atletas</a>, pode adicionar atletas através do botão <strong>Adicionar</strong>.
-        <ul><li>Formulário de inscrição</li>
-          Aqui terá de preencher toda a informação necessária para a identificação do atleta:
-          <ol>
-            <li>Todos os campos são obrigatórios, excepto: Nº SKI-P, Peso e Emails adicionais.</li>
-            <li>No caso de atletas que fazem ambas provas, deverá efeturar uma inscrição para Kata, e outra para Kumite.</li>
-            <li>A plataforma fará a validação dos dados inseridos automaticamente, segundo as regras em vigor para cada competição.</li>
-            <li>Caso algum campo não estiver de acordo com as regras, a inscrição não será consumada, e uma mensagem de erro será mostrada.</li>
-            <li>Pelo contrário, se estiver correta, será direcionado para uma página de sucesso, de onde poderá imediatamente inscrever outro atleta.</li>
-          </ol>
-        </ul>
-        Lembre-se que aqui também devem ser inscritos os atletas que irão ser parte de equipas, mesmo que não participem em nenhum evento individual.
-      </p>
-      <h4>Registo de Equipas</h4>
-      <p>As <a href="{% url 'registration-teams' %}">Equipas</a> funcionam de maneira semelhante aos Atletas. No entanto, ao invés de
-        inscrever novamente cada atleta, terá uma área de seleção de cada um dos elementos, a partir dos atletas inscritos anteriormente.</p>
-      <h4>Geral</h4>
-      <p>Em cada página de registo, terá uma linha de filtros para ordernar da forma ou filtrar os resultados que quiser.
-        Quando efetuada uma inscrição, irá aparecer uma nova linha na página. POderá também ver um quadradinho de opções. Se carregar,
-        terá as opções de <i>Consultar</i>, <i>Editar</i> e <i>Eliminar</i>.
-      </p>
-    </div>
+<h1>Interface de registos</h1>
+<p>Escolha uma prova para inscrever os seus atletas:</p>
+
+  <div class="competition-card-selector">
+    {% for comp in comps%}
+      <div class="competition-card">
+        {{comp}} {{comp.season}}
+        {% if not comp.has_ended %}
+          <button class="default-button">Inscrever</button>
+        {% else %}
+          <p style="font-size: smaller;">O prazo para as inscrições terminou!</p>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
 {% endblock content %}

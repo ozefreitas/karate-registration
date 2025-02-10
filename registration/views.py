@@ -6,6 +6,7 @@ from datetime import datetime
 from django.contrib import messages
 from .utils.utils import check_athlete_data, get_comp_age, check_filter_data, check_match_type
 from .models import Athlete, Team
+from dojos.models import CompetitionDetail
 
 # views for the athlets registrations
 
@@ -163,7 +164,12 @@ def teams(request):
 ### Auxiliar pages ###
 
 def home(request):
-    return render(request, 'registration/home.html')
+    comp_details = CompetitionDetail.objects.all()
+    return render(request, 'registration/home.html', {"comps": comp_details})
+
+
+def help(request):
+    return render(request, 'registration/help.html')
 
 
 def thanks(request):
