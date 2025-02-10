@@ -2,6 +2,18 @@
 {% block content%}
     <h2>Registo de Atleta</h2>
 
+    <div class="info-container">
+        <span class="containers-label">Info</span>
+        <p>A regras em vigor ditam que a idade considerada para determinação de escalão
+            é a idade que uma atleta tem no primeiro dia do último ano da presente época.
+        </p>
+        <p>Por exemplo: Um atleta nascido no dia 16 de dezembro de 2010 terá, para todas as provas da época 2024/2025,
+            <strong>14 anos</strong>, independentemente da idade a que se apresentar a dada prova. Isto é, havendo uma prova
+            no dia 02 de novembro de 2024, o atleta terá na realidade 13 anos e por isso seria Juvenil, no entanto, essa não é 
+            a idade tida em conta, mas sim a do dia 1 de janeiro de 2025, onde terá 14 anos e será Cadete.
+        </p>
+    </div>
+
     <form action="" method="post" class="main-form">
         {% csrf_token %}
         {{form.as_p}}
