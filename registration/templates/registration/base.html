@@ -31,25 +31,26 @@
         <a class="appname_span" href="{% url 'registration-home' %}"
           >Karate Score App</a
         >
-        {% if user.is_authenticated %}
-        <div class="page-selection">
-          <a class="appname_span" href="{% url 'registration-athletes' %}">Atletas</a>
-          <a class="appname_span" href="{% url 'registration-teams' %}">Equipas</a>
-        </div>
-        {% endif %}
       </div>
-
-      <div class="dojos-actions">
-        <a class="appname_span" href="{% url 'dojos-feedback' %}">Feedback</a>
-        {% if user.is_authenticated %}
-          <a class="login-buttons" href="{% url 'dojos-logout' %}">Logout</a>
-          <a class="login-buttons" href="{% url 'dojos-profile' %}">Perfil</a>
-        {% else %}
-        <a class="login-buttons" href="{% url 'dojos-login' %}">Login</a>
-        <a class="login-buttons" href="{% url 'dojos-register' %}"
-          >Criar Conta</a
-        >
-        {% endif %}
+      <div class="options">
+        <div class="dojos-actions">
+          {% if user.is_authenticated %}
+            <a class="login-buttons" href="{% url 'dojos-logout' %}">Logout</a>
+            <a class="login-buttons" href="{% url 'dojos-profile' %}">Perfil</a>
+          {% else %}
+          <a class="login-buttons" href="{% url 'dojos-login' %}">Login</a>
+          <a class="login-buttons" href="{% url 'dojos-register' %}"
+            >Criar Conta</a
+          >
+          {% endif %}
+        </div>
+        <div>
+          <img onclick="toggleOptionsContainer()" 
+            style="cursor: pointer;" 
+            width="32" 
+            height="32" 
+            src="https://img.icons8.com/windows/32/menu--v1.png" alt="menu--v1"/>
+        </div>
       </div>
     </div>
     {% if user.is_authenticated %}
@@ -70,9 +71,30 @@
         hideMessagesAfterTimeout({{ message.tags }}); // 10 seconds
       </script>
     {% endif %}
-    <div class="main-content">
-    {% block content %}
-    {% endblock %}
+    <div style="display: flex;">
+      <div style=" border-right: 1px solid grey; margin-right: 30px; padding-right: 10px; padding-top: 10px;">
+        <div>
+          <img onclick="toggleOptionsContainer()" 
+            style="cursor: pointer;" 
+            width="32" 
+            height="32" 
+            src="https://img.icons8.com/windows/32/menu--v1.png" alt="menu--v1"/>
+        </div>
+        <nav class="options-nav-menu" id="options-nav-menu">
+          <div class="page-selection">
+            {% if user.is_authenticated %}
+            <a class="appname_span" href="{% url 'registration-athletes' %}">Atletas</a>
+            <a class="appname_span" href="{% url 'registration-teams' %}">Equipas</a>
+            {% endif %}
+            <a class="appname_span" href="{% url 'registration-help' %}">Ajuda</a>
+            <a class="appname_span" href="{% url 'dojos-feedback' %}">Feedback</a>
+          </div>
+        </nav>
+      </div>
+      <div class="main-content">
+      {% block content %}
+      {% endblock %}
+      </div>
     </div>
     <div class="footer-container">
       <div class="bureaucracy">
