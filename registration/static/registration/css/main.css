@@ -25,6 +25,10 @@ select option {
   font-size: larger;
 }
 
+h2 {
+  width: fit-content;
+}
+
 h4 {
   margin-top: 30px;
   margin-bottom: 15px;
@@ -200,23 +204,25 @@ li {
 .logos_container {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 30px;
 }
 
 .main_skip_logo {
   width: 100px;
   height: 100px;
+  /* margin-left: 30px; */
 }
 
 .appname_span {
   text-decoration: none;
   color: black;
   font-size: 1.2em;
+  border-bottom: 1px solid red;
 }
 
 .main-content {
   min-height: 60dvb;
-  margin-top: 50px;
+  width: 100%;
 }
 
 .header-container {
@@ -228,8 +234,10 @@ li {
 
 .page-selection {
   display: flex;
-  gap: 20px;
-  margin-left: 50px;
+  flex-direction: column;
+  gap: 30px;
+  align-items: flex-start;
+  margin-top: 30px;
 }
 
 .appname_span:hover {
@@ -240,6 +248,12 @@ li {
   text-align: right;
   margin: 0;
   margin-bottom: 10px;
+}
+
+.options {
+  align-items: center;
+  display: flex;
+  gap: 30px;
 }
 
 .dojos-actions {
@@ -277,6 +291,15 @@ li {
   -moz-border-radius: 10px;
   -ms-border-radius: 10px;
   -o-border-radius: 10px;
+}
+
+.options-nav-menu {
+  height: 600px;
+  width: 120px;
+  margin-top: 20px;
+  left: 10%;
+  display: none;
+  z-index: 1;
 }
 
 .help-container {
@@ -369,6 +392,10 @@ li {
 .modal-options {
   display: flex;
   justify-content: space-evenly;
+}
+
+.main-form {
+  width: 100%;
 }
 
 .main-form p:nth-child(11) {
@@ -941,7 +968,7 @@ li {
 }
 
 .footer-container {
-  height: fit-content;
+  height: 100px;
   width: 100%;
   margin-top: 50px;
   border-top: 2px double rgb(170, 39, 39);
