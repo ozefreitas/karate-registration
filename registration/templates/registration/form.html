@@ -14,7 +14,7 @@
         </p>
     </div>
 
-    <form action="" method="post" class="main-form">
+    <form method="post" class="main-form">
         {% csrf_token %}
         {{form.as_p}}
         <p class="form-selection-boxes">
@@ -26,8 +26,9 @@
             <input type="checkbox" id="id_match_type_kumite" name="match_type_kumite">
         </p>
         <div style="display: flex; gap: 20px; margin-top: 30px;">
-            <button class="default-button">Submeter</button>
-            <button type="button" class="default-button" onclick="location.href='/athletes/'">Voltar</button>   
+            <button type="submit" name="action" value="save_back"class="default-button">Submeter e Voltar</button>
+            <button type="submit" name="action" value="save_add" class="default-button">Submeter e Adicionar Novo</button>
+            <button type="button" name="action" value="back" class="default-button" onclick="location.href='/athletes/'">Voltar</button>   
         </div>
     </form>
 {% endblock content %}
