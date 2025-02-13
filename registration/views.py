@@ -85,7 +85,11 @@ def form(request):
             # form will allow thanks to open
             request.session['can_access_target_page'] = True
             # redirect to a new URL:
-            return HttpResponseRedirect("/thanks/")
+            action = request.POST.get("action")
+            if action == "save_back":
+                return HttpResponseRedirect("/athletes/")
+            elif action == "save_add":
+                return HttpResponseRedirect("/form/")
 
     # if a GET (or any other method) we'll create a blank form
     else:
@@ -111,7 +115,7 @@ def athletes(request):
                                                       "not_found": not_found, 
                                                       "number_athletes": number_athletes,
                                                       "title": "Atletas"})
-    
+
 
 ### Teams processing ###
 
@@ -119,7 +123,6 @@ def athletes(request):
 def team_form(request):
     if request.method == "POST":
         form = TeamForm(request.POST)
-        print(request.POST)
         if form.is_valid():
             teams = Team.objects.filter(dojo=request.user, 
                                          category=form.cleaned_data["category"], 
@@ -134,8 +137,13 @@ def team_form(request):
             new_team.save()
             request.session['can_access_target_page'] = True
             request.session['team'] = True
-            # redirect to a new URL:
-            return HttpResponseRedirect("/thanks/")
+
+            action = request.POST.get("action")
+            if action == "save_back":
+                return HttpResponseRedirect("/athletes/")
+            elif action == "save_add":
+                return HttpResponseRedirect("/form/")
+
     else:
         form = TeamForm(dojo=request.user)
         context = {"form": form, "title": "Inscriver Equipa"}
@@ -170,18 +178,6 @@ def home(request):
 
 def help(request):
     return render(request, 'registration/help.html')
-
-
-def thanks(request):
-    # if not from form, cannot access this url
-    if not request.session.get('can_access_target_page', False):
-        return HttpResponseRedirect('/')
-    request.session['can_access_target_page'] = False
-    if not request.session.get('team', False):
-        from_where = "athlete"
-    else: from_where = "team"
-    request.session['team'] = False
-    return render(request, "registration/thanks.html", {"from_where": from_where})
 
 
 def wrong(request):
