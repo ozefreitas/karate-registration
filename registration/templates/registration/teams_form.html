@@ -2,6 +2,14 @@
 {% block content%}
     <h2>Registo de Equipa</h2>
 
+    <div class="info-container">
+      <span class="containers-label">Info</span>
+      <p>Apenas um elemento de cada equipa pode vir de um escalão inferior, mas nenhum pode vir de um escalão superior.</p>
+      <p>Por exemplo, uma equipa de Kata Júnior Masculino, só poderá trazer um elemento Cadete, e nunca um elemento Sénior.
+        Os escalões de cada atleta são calculados de acordo com a idade.
+      </p>
+    </div>
+
     <form method="post" id="athlete_form" class="main-form">
         {% csrf_token %}
         {{form.as_p}}
