@@ -35,7 +35,7 @@
                 <div style="margin-bottom: 8px;">{{athlete.first_name}} {{athlete.last_name}} </div>
                 {% endif %}
               {% endfor %}
-              {% if archived_athletes %}
+              {% if comp.has_ended %}
                 <button type="submit" class="default-button">Clonar</button>
               {% else %}
                 <span style="font-size: 15px;">Esta prova ainda não foi realizada.</span>
