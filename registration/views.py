@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import AthleteForm, FilterAthleteForm, TeamForm, FilterTeamForm
 from datetime import datetime
 from django.contrib import messages
-from .utils.utils import check_athlete_data, get_comp_age, check_filter_data, check_match_type
+from .utils.utils import check_athlete_data, get_comp_age, check_filter_data, check_match_type, check_teams_data
 from .models import Athlete, Team
 from dojos.models import CompetitionDetail
 
@@ -120,19 +120,26 @@ def athletes(request):
 ### Teams processing ###
 
 @login_required
-def team_form(request):
+def team_form(request, match_type):
     if request.method == "POST":
         form = TeamForm(request.POST)
         if form.is_valid():
-            teams = Team.objects.filter(dojo=request.user, 
+            errors = check_teams_data(form)
+
+            if len(errors) != 0:
+                request.session['can_access_target_page'] = True
+                for error in errors:
+                    messages.error(request, error)
+                context = {"form": form, "title": "Inscrever Equipa"}
+                return render(request, 'registration/teams_form.html', context)
+            
+            teams = Team.objects.filter(dojo=request.user,
                                          category=form.cleaned_data["category"], 
-                                         match_type=form.cleaned_data["match_type"],
+                                         match_type=match_type,
                                          gender=form.cleaned_data["gender"])
-            for key, value in form.cleaned_data.items():
-                if key.startswith("athlete"):
-                    print(value)
-            new_team = form.save(commit=False) 
+            new_team = form.save(commit=False)
             new_team.dojo = request.user
+            new_team.match_type = match_type
             new_team.team_number = len(teams) + 1
             new_team.save()
             request.session['can_access_target_page'] = True
@@ -140,13 +147,13 @@ def team_form(request):
 
             action = request.POST.get("action")
             if action == "save_back":
-                return HttpResponseRedirect("/athletes/")
+                return HttpResponseRedirect("/teams/")
             elif action == "save_add":
-                return HttpResponseRedirect("/form/")
+                return HttpResponseRedirect("/teams_form/")
 
     else:
-        form = TeamForm(dojo=request.user)
-        context = {"form": form, "title": "Inscriver Equipa"}
+        form = TeamForm(dojo=request.user, match_type=match_type)
+        context = {"form": form, "title": "Inscriver Equipa", "match_type": match_type}
         return render(request, 'registration/teams_form.html', context)
 
 

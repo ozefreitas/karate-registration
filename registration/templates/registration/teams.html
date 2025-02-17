@@ -34,8 +34,21 @@
   <button onclick="location.href='/teams/'">Voltar</button>
 {% else %}
 
-  <button class="add_button" onclick="location.href='/teams_form/'">
-    <span class="text">Adicionar</span
+  <button class="add_button teams" onclick="location.href='{% url 'registration-teams-form' 'kata' %}'">
+    <span class="text">Adicionar Kata</span
+    ><span class="icon"
+      ><svg
+        viewBox="0 0 24 24"
+        height="24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      ></svg>
+      <span class="buttonSpan">+</span>
+    </span>
+  </button>
+
+  <button class="add_button teams" onclick="location.href='{% url 'registration-teams-form' 'kumite' %}'">
+    <span class="text">Adicionar Kumite</span
     ><span class="icon"
       ><svg
         viewBox="0 0 24 24"

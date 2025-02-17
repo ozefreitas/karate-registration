@@ -39,7 +39,8 @@ class AthleteForm(forms.ModelForm):
         # Customize the attributes of each field
         
         self.fields['first_name'].help_text = "<br><ul><li>Recomendado apenas um nome. Se tiver atletas com nomes iguais ou parecidos, deve colocar outro nome que os diferencie.</li></uL>"
-
+        
+        self.fields['weight'].help_text = "<br><ul><li>Pesos apenas se aplicam aos escalões masculinos.</li><li>Séniores masculinos passarão a ser 'Open' a partir da 3ª Jornada da Liga Soshinkai.</li></uL>"
 
 class FilterAthleteForm(forms.ModelForm):
     class Meta:
@@ -56,14 +57,15 @@ class FilterTeamForm(forms.ModelForm):
 class TeamForm(forms.ModelForm):
     class Meta:
         model = Team
-        fields = ["category", "match_type", "gender", "additional_emails", "athlete1", "athlete2", "athlete3", "athlete4", "athlete5"]
+        fields = ["category", "gender", "additional_emails", "athlete1", "athlete2", "athlete3", "athlete4", "athlete5"]
     
     def __init__(self, *args, **kwargs):
-        dojo = kwargs.pop('dojo', None)  # Get the user from kwargs
+        dojo = kwargs.pop('dojo', None)
+        match_type = kwargs.pop('match_type', None) 
         super().__init__(*args, **kwargs)
         if dojo:
-            self.fields['athlete1'].queryset = Athlete.objects.filter(dojo=dojo)
-            self.fields['athlete2'].queryset = Athlete.objects.filter(dojo=dojo)
-            self.fields['athlete3'].queryset = Athlete.objects.filter(dojo=dojo)
-            self.fields['athlete4'].queryset = Athlete.objects.filter(dojo=dojo)
-            self.fields['athlete5'].queryset = Athlete.objects.filter(dojo=dojo)
+            self.fields['athlete1'].queryset = Athlete.objects.filter(dojo=dojo, match_type=match_type)
+            self.fields['athlete2'].queryset = Athlete.objects.filter(dojo=dojo, match_type=match_type)
+            self.fields['athlete3'].queryset = Athlete.objects.filter(dojo=dojo, match_type=match_type)
+            self.fields['athlete4'].queryset = Athlete.objects.filter(dojo=dojo, match_type=match_type)
+            self.fields['athlete5'].queryset = Athlete.objects.filter(dojo=dojo, match_type=match_type)

@@ -6,8 +6,12 @@
     {% csrf_token %}
     {{form.as_p}}
     <div style="display: flex; gap: 20px; margin-top: 30px;">
-        <button class="default-button">Submeter</button>
-        <button type="button" class="default-button" onclick="location.href='/'">Voltar</button>
+        <button type="submit" class="default-button">Submeter</button>
+        {% if type == "athlete" %}
+            <button type="button" class="default-button" onclick="location.href='/athletes/'">Voltar</button>
+        {% else %}
+            <button type="button" class="default-button" onclick="location.href='/teams/'">Voltar</button>
+        {% endif %}
     </div>
 </form>
 {% endblock %}

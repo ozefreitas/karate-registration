@@ -43,6 +43,7 @@ li {
 .info-container {
   width: 70%;
   margin-top: 30px;
+  margin-bottom: 30px;
   border: 2px solid #0064cf;
   border-radius: 8px;
   font-size: 1rem;
@@ -483,7 +484,7 @@ li {
 }
 
 .athlete_info {
-  width: 500px;
+  width: 600px;
   margin-left: 20px;
 }
 
@@ -497,7 +498,7 @@ li {
 }
 
 .athlete_info .athlete_name {
-  min-width: 300px;
+  min-width: 275px;
   display: inline-block;
   overflow: auto;
 }
@@ -508,6 +509,13 @@ li {
   gap: 10px;
   padding-bottom: 10px;
   padding-top: 10px;
+}
+
+.team_composition {
+  display: flex; 
+  flex-wrap: wrap; 
+  gap: 10px;
+  justify-content: space-around;
 }
 
 .team_athlete_details {
@@ -747,6 +755,27 @@ li {
 
 .add_button:focus {
   outline: none;
+}
+
+
+.add_button.teams {
+  width: 200px;
+}
+
+.add_button.teams .icon {
+  transform: translateX(160px);
+  -webkit-transform: translateX(160px);
+  -moz-transform: translateX(160px);
+  -ms-transform: translateX(160px);
+  -o-transform: translateX(160px);
+}
+
+.add_button.teams:hover .icon {
+  transform: translateX(25px);
+  -webkit-transform: translateX(25px);
+  -moz-transform: translateX(25px);
+  -ms-transform: translateX(25px);
+  -o-transform: translateX(25px);
 }
 
 .buttonSpan {
@@ -1189,10 +1218,6 @@ li {
     justify-content: center;
   }
 
-  .buttons-container {
-    display: flex;
-  }
-
   .setting-btn {
     margin: 0;
   }
@@ -1259,6 +1284,14 @@ li {
 
   .view_button:not(:hover) {
     transform: none !important;
+  }
+
+  .team_athlete_details {
+    padding-bottom: 5px;
+  }
+
+  .team_athlete_details:not(:nth-last-child(1)) {
+    border-bottom: 1px solid gray;
   }
 
 
