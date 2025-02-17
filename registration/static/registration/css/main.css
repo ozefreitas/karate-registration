@@ -1223,7 +1223,7 @@ li {
   }
 
   .view_button .text,
-  .delete_button .text,
+  .single .text,
   .update_button .text {
     display: none;
     will-change: transform;
@@ -1246,7 +1246,7 @@ li {
       -o-transform: none;
   }
 
-    .delete_button .icon {
+    .single .icon {
       width: 40px;
       will-change: transform;
       border: none;
@@ -1258,7 +1258,7 @@ li {
   }
 
     .view_button,
-    .delete_button,
+    .single,
     .update_button {
       width: 50px;
   }
@@ -1273,7 +1273,7 @@ li {
       -o-transform: translateX(-50px);
   }
 
-  .delete_button:hover .icon {
+  .single:hover .icon {
     will-change: transform;
     transform: translateX(-55px);
     -webkit-transform: translateX(-55px);
@@ -1293,7 +1293,6 @@ li {
   .team_athlete_details:not(:nth-last-child(1)) {
     border-bottom: 1px solid gray;
   }
-
 
   .main-ops {
     display: block;

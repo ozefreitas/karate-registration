@@ -117,16 +117,24 @@ def check_teams_data(data) -> list:
     errors = []
     category_up = 0
     team_cat = data.cleaned_data.get("category", 0)
+    team_gender = data.cleaned_data.get("gender", 0)
     for athlete in athletes_set:
+        # check for category jumps
         if athlete.category != team_cat and CATEGORY_RULES[team_cat] != athlete.category:
             errors.append(f"{athlete.first_name} {athlete.last_name} não pode participar nesta prova")
 
+        # check for wrong gender
+        if team_cat in ["Iniciado", "Infantil"] and athlete.gender != "misto":
+            return ["Categorias de Infantil e Iniciado não se dividem em género"]
+
+        if team_cat not in ["Iniciado", "Infantil"] and athlete.gender != team_gender:
+            return [f"Géneros não coincidem: {athlete.first_name} {athlete.last_name}"]
+
         if athlete.category != team_cat and CATEGORY_RULES[team_cat] == athlete.category:
             category_up += 1
-        
         if category_up > 1:
             errors.append("Não pode ter mais do que um atleta a subir de escalão")
-    print(errors)
+        
     return errors
 
 
