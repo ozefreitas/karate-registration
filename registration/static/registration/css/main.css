@@ -202,6 +202,17 @@ li {
   }
 }
 
+.top-header-container {
+  width: 100%; 
+  background-color: red; 
+  position: absolute; 
+  top: 0; 
+  left: 0;
+  font-size: smaller;
+  height: 22px;
+  text-align: center;
+}
+
 .logos_container {
   display: flex;
   align-items: center;

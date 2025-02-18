@@ -21,7 +21,11 @@
     <script src="{% static 'registration/js/main.js' %}"></script>
   </head>
   <body>
-    <div style="width: 100%; background-color: red; position: absolute; top: 0; left: 0;">Ola</div>
+    {% if path == "/" %}
+      <div class="top-header-container">
+        Novas atualizações! Recomendado ler a Ajuda!
+      </div>
+    {% endif %}
     <div class="header-container">
       <div class="logos_container">
         <img

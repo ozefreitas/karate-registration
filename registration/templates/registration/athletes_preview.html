@@ -1,0 +1,15 @@
+{% extends "registration/base.html" %} 
+{% block content %}
+
+<h1>Selecione os atletas</h1>
+<form action="" method="post">
+    {% for athlete in athletes %}
+    <label for={{athlete.id}}></label>
+    <input type="checkbox" name="{{athlete.id}}" id="{{athlete.id}}">
+        {% csrf_token %}
+        {{athlete}}
+    {% endfor %}
+    <button type="submit">Submeter</button>
+</form>
+
+{% endblock content %}
