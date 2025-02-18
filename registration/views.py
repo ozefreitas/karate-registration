@@ -5,7 +5,7 @@ from .forms import AthleteForm, FilterAthleteForm, TeamForm, FilterTeamForm
 from datetime import datetime
 from django.contrib import messages
 from .utils.utils import check_athlete_data, get_comp_age, check_filter_data, check_match_type, check_teams_data
-from .models import Athlete, Team
+from .models import Athlete, Team, Individual
 from dojos.models import CompetitionDetail
 
 # views for the athlets registrations
@@ -121,7 +121,25 @@ def athletes(request):
 
 @login_required
 def individual(request):
-    return render(request, 'registration/individuals.html')
+    individuals = Individual.objects.all()
+    number_individuals = len(individuals)
+    return render(request, 'registration/individuals.html', {"individuals": individuals,
+                                                             "number_indiv": number_individuals})
+
+@login_required
+def athletes_preview(request):
+    if request.method == "POST":
+        positive_ids = [k for k, v in request.POST.dict().items() if v == "on"]
+        for pos_id in positive_ids:
+            athlete_instance = get_object_or_404(Athlete, id=pos_id)
+            Individual.objects.create(dojo=request.user, athlete=athlete_instance)
+        return HttpResponseRedirect("/individual/")
+    else:
+        athletes = Athlete.objects.filter(dojo=request.user)
+        number_athletes = len(athletes)
+        context = {"athletes": athletes,
+                "number_athletes": number_athletes}
+        return render(request, 'registration/athletes_preview.html', context=context)
 
 ### Teams processing ###
 

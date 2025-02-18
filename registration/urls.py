@@ -6,6 +6,7 @@ urlpatterns = [
     path('help/', views.help, name="registration-help"),
     path('athletes/', views.athletes, name="registration-athletes"),
     path('individual/', views.individual, name="registration-individual"),
+    path('individual/athletes_preview/', views.athletes_preview, name="registration-athletes-preview"),
     path('teams/', views.teams, name="registration-teams"),
     path('form/', views.form, name="registration-form"),
     path('teams_form/<str:match_type>', views.team_form, name="registration-teams-form"),

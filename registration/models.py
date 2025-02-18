@@ -124,7 +124,7 @@ class Individual(models.Model):
     athlete = models.ForeignKey(Athlete, on_delete=models.CASCADE)
 
     def __str__(self): 
-        return "{} {}".format(Athlete.first_name, Athlete.last_name)
+        return "{} {}".format(self.athlete.first_name, self.athlete.last_name)
 
 
 ### Teams models ###
