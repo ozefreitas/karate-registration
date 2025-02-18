@@ -98,6 +98,14 @@ class ArchivedAthlete(AthleteBase):
     archived_date = models.DateTimeField(auto_now_add=True)
 
 
+class Individual(models.Model):
+    dojo = models.ForeignKey(User, on_delete=models.CASCADE)
+    athlete = models.ForeignKey(Athlete, on_delete=models.CASCADE)
+
+    def __str__(self): 
+        return "{} {}".format(Athlete.first_name, Athlete.last_name)
+
+
 class Dojo(models.Model):
     dojo = models.CharField("Dojo", max_length=99, unique=True)
     is_registered = models.BooleanField(default=False)
