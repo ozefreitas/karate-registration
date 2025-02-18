@@ -62,7 +62,7 @@
 
     {% if teams %}
       <button id="delete-account-span" class="delete_button" type="submit">
-        <span class="text">Eliminar todos</span>
+        <span class="text">Eliminar todas</span>
         <span class="icon">
           <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -76,6 +76,14 @@
         </span>
       </button>
     {% endif %}
+  </div>
+  <!-- Modal window -->
+  <div id="deleteModal" class="delete-modal">
+    <div>
+      <p>Tem a certeza que quer eliminar todas as equipas? Esta ação não pode ser desfeita.</p>
+        <a id="confirm-delete" href="{% url 'registration-delete' 'team' 0 %}">Confirmar</a>
+        <a id="cancel-delete" href="{% url 'registration-athletes' %}">Cancelar</a>
+    </div>
   </div>
 
 {% endif %}
