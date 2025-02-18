@@ -53,7 +53,7 @@
       <span class="athlete_name">Dojo: {{athlete.dojo}}</span>
       <span class="athlete_name">Nº SKI-P: {{athlete.skip_number|default:"Não atribuído"}}</span>
       <span class="athlete_match_type">Data de nascimento: {{athlete.birth_date|date:"d-m-Y"}}</span>
-      <span class="athlete_category">Peso: {{athlete.weight|default:"Não especificado"}}{% if athlete.weight != None %}Kg{% endif %}</span>
+      <span class="athlete_category">Peso: {{athlete.weight|default:"Não especificado"}}{% if athlete.weight != None and athlete.weight != "open" %}Kg{% endif %}</span>
       <span class="athlete_category">Idade (no início do ano): {{athlete.age}}</span>
     </div>
     <hr>

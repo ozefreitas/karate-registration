@@ -141,7 +141,7 @@ def check_teams_data(data) -> list:
         if athlete.category != team_cat and CATEGORY_RULES[team_cat] == athlete.category:
             category_up += 1
         if category_up > 1:
-            errors.append("Não pode ter mais do que um atleta a subir de escalão")
+            errors.append("Não pode haver mais do que um atleta a subir de escalão")
         
     return errors
 
