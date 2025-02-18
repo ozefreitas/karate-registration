@@ -1,6 +1,7 @@
 from datetime import datetime
 from django.contrib import messages
 import requests
+from collections import Counter
 
 def range_decoder(some_range: list):
     """Function that returns a range 
@@ -100,7 +101,7 @@ def check_teams_data(data) -> list:
         data (form): The form data
 
     Returns:
-        list: _description_
+        list: A list of the errors that occured
     """
     CATEGORY_RULES = {
         "Veterano +35": "Sénior",
@@ -114,6 +115,10 @@ def check_teams_data(data) -> list:
     }
 
     athletes_set = [value for key, value in data.cleaned_data.items() if key.startswith("athlete") and value is not None]
+    athlete_ids = Counter([athlete.id for athlete in athletes_set])
+    for number_ids in athlete_ids.values():
+        if number_ids > 1:
+            return ["Pelo menos um dos atletas está repetido"]
     errors = []
     category_up = 0
     team_cat = data.cleaned_data.get("category", 0)
@@ -126,6 +131,9 @@ def check_teams_data(data) -> list:
         # check for wrong gender
         if team_cat in ["Iniciado", "Infantil"] and athlete.gender != "misto":
             return ["Categorias de Infantil e Iniciado não se dividem em género"]
+
+        if team_cat not in ["Iniciado", "Infantil"] and athlete.gender == "misto":
+            return ["Categorias acima de Iniciado não são mistas"]
 
         if team_cat not in ["Iniciado", "Infantil"] and athlete.gender != team_gender:
             return [f"Géneros não coincidem: {athlete.first_name} {athlete.last_name}"]
