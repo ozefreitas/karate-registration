@@ -117,6 +117,16 @@ class AthleteFilter(models.Model):
     search = models.CharField("Procurar", max_length=99, blank=True, null=True)
 
 
+### Individual models ###
+
+class Individual(models.Model):
+    dojo = models.ForeignKey(User, on_delete=models.CASCADE)
+    athlete = models.ForeignKey(Athlete, on_delete=models.CASCADE)
+
+    def __str__(self): 
+        return "{} {}".format(Athlete.first_name, Athlete.last_name)
+
+
 ### Teams models ###
 
 class Team(models.Model):

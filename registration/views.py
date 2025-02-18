@@ -117,6 +117,12 @@ def athletes(request):
                                                       "title": "Atletas"})
 
 
+### Individuals processing ###
+
+@login_required
+def individual(request):
+    return render(request, 'registration/individuals.html')
+
 ### Teams processing ###
 
 @login_required
