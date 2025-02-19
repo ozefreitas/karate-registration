@@ -7,7 +7,7 @@
       <p>Esta plataforma foi desenvolvida com o objetivo de simplicar e tornar a experiência de inscrever os seus atletas nas provas mais fácil e amigável.
         Está inserida dentro da <a href="https://karate-score-app.netlify.app/">Karate Score App</a>, onde se inclui a Interface de Resultados da SKI-P.
       </p>
-      <p>Está disponível no cabeçalho da página, uma aba de "Feedback", onde agradecia desde já que submetessem as vossas sugestões,
+      <p>Está disponível no menu lateral, uma aba de "Feedback", onde agradecia desde já que submetessem as vossas sugestões,
         reclamações, ou eventuais erros que encontrem durante a utilização deste site.
       </p>
       <p>Nesta página pode encontrar todas as informações e ajudas que irá necessitar para o preenchimento dos formulários e navegação nesta plataforma.
@@ -23,7 +23,7 @@
       <!--  </a>-->
       <!--</div>-->
       <h4>Periodo de inscrições</h4>
-      <p>Cada prova do calendário terá datas e intervalos de tempo próprios para cada dojo inscrever os seus atletas.
+      <p>Cada prova do calendário terá datas e intervalos de tempo definidos para cada dojo inscrever os seus atletas.
         A plataforma abrirá a inscrição 1 mês antes do dia da prova, fecha 2 semana antes, e dará 1 semana para retificar.
         Ou seja, o periodo fecha definitivamente na segunda-feira anterior à realização da prova. A semana de retificação não permitirá
         inscrever novos atletas, apenas alterar/editar inscrições existentes. Findo este periodo, será impossível inscrever via plataforma.
@@ -44,30 +44,51 @@
       no menu. Qualquer desvio não irá permitir iniciar sessão. Não dispõe de limite de tentativas, pelo que pode continuar a
       tentar enquanto a paciência ainda existir.
       </p>
+      <h4>Menu Lateral</h4>
+      <p>Em todas as páginas da plataforma, do lado esquerdo, estará sempre disponível um menu com atalhos para aceder aos diferentes sítios,
+        sendo acessível carregando nos três tracinhos em baixo do símbolo da SKI-P.
+      </p>
       <h4>Acesso aos registos</h4>
-      <p>Com a sessão iniciada, já consegue ver dois butões - "Atletas" e "Equipas",
-        na parte central do cabeçalho. Caso não consiga ver nada, inicie sessão. Se persistir,
+      <p>Com a sessão iniciada, já consegue ver novos botões:
+        <ul>
+          <li>Atletas</li>
+          <li>Competições</li>
+          <li>Individual</li>
+          <li>Equipas</li>
+        </ul>
+        Caso não consiga ver nada, inicie sessão. Se persistir,
         <a style="cursor: pointer;" onclick="window.scrollTo(0, document.body.scrollHeight);">contacte</a>.
         Mesmo tendo Login feito, o conteúdo destas páginas apenas estará visível nos periodos de inscrição ligados a cada prova.
       </p>
       <h4>Perfil</h4>
       <p>Na secção do perfil pode consultar e editar as informações do seu dojo. Pode também consultar as inscrições nas provas
-        anteriores, e copiar essas para o registo atual, clicando em <i>Clonar</i>.</p>
+        anteriores.</p>
       <h4>Registo de Atletas</h4>
       <p>Na página <a href="{% url 'registration-athletes' %}">Atletas</a>, pode adicionar atletas através do botão <strong>Adicionar</strong>.
-        <ul><li>Formulário de inscrição</li>
+        O registo destes é único e servem como uma base de dados de identificação dos seus atletas. Não servem como registo numa determinada prova.
+      <p>A um atleta ficará sempre associado a prova onde participa, o seu escalão, idade, género, entre outros. Ou seja, O mesmo atleta terá duas linhas
+        no caso de fazer Kata e Kumite.
+      </p>
+        <ul>
+          <li>Formulário de registo</li>
           Aqui terá de preencher toda a informação necessária para a identificação do atleta:
           <ol>
             <li>Todos os campos são obrigatórios, excepto: Nº SKI-P, Peso e Emails adicionais.</li>
-            <li>No caso de atletas que fazem ambas provas, deverá efeturar uma inscrição para Kata, e outra para Kumite.</li>
-            <li>A plataforma fará a validação dos dados inseridos automaticamente, segundo as regras em vigor para cada competição.</li>
-            <li>Caso algum campo não estiver de acordo com as regras, a inscrição não será consumada, e uma mensagem de erro será mostrada.</li>
-            <li>Pelo contrário, se estiver correta, será direcionado para uma página de sucesso, de onde poderá imediatamente inscrever outro atleta.</li>
+            <li>No caso de atletas que fazem ambas provas, deverá selecionar ambas caixas.</li>
+            <li>A plataforma fará a validação dos dados inseridos automaticamente, segundo as regras em vigor para cada competição/época.</li>
+            <li>Caso algum campo não estiver de acordo com as regras, o registo não será consumado, e uma mensagem de erro será mostrada.</li>
+            <li>Pelo contrário, se estiver correta, um novo atleta será adiciono por cada prova selecionada no formúlario.</li>
           </ol>
         </ul>
-        Lembre-se que aqui também devem ser inscritos os atletas que irão ser parte de equipas, mesmo que não participem em nenhum evento individual.
+        Lembre-se que aqui também devem ser inscritos todos os atletas que queira fazer parte em qualquer prova, seja ela individual ou em equipas.
       </p>
-      <h4>Registo de Equipas</h4>
+      <h4>Inscrições em provas Individuais</h4>
+      <p>Na página <a href="{% url 'registration-individual' %}">Individual</a>, pode selecionar os atletas que pretende levar em provas individuais
+        através do botão <strong>Adicionar</strong>. Serlhe-á apresentada uma página de Seleção de Atletas, com a listagem completa dos mesmos atletas
+        que registou.
+      </p>
+      <p>Atenção que não poderá adicionar o mesmo atleta mais que uma vez.</p>
+      <h4>Inscrições em provas de Equipas</h4>
       <p>As <a href="{% url 'registration-teams' %}">Equipas</a> funcionam de maneira semelhante aos Atletas. No entanto, ao invés de
         inscrever novamente cada atleta, terá uma área de seleção de cada um dos elementos, a partir dos atletas inscritos anteriormente.</p>
       <h4>Geral</h4>

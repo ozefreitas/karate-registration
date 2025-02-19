@@ -140,7 +140,7 @@ def athletes_preview(request):
                 if len(positive_ids) <= 2:
                     messages.success(request, f"{athlete_instance.first_name} {athlete_instance.last_name} inscrito em {athlete_instance.match_type.capitalize()} {athlete_instance.category} {athlete_instance.gender.capitalize()}")
             else:
-                messages.error(request, f"{athlete_instance.first_name} {athlete_instance.last_name} já está inscrito")
+                messages.error(request, f"{athlete_instance.first_name} {athlete_instance.last_name} já está inscrito em {athlete_instance.match_type.capitalize()} {athlete_instance.category} {athlete_instance.gender.capitalize()}")
         if len(positive_ids) > 2:
             messages.success(request, f"{len(positive_ids)} atletas inscritos em individual")  
         return HttpResponseRedirect("/individuals/")
