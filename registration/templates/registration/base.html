@@ -22,7 +22,7 @@
   </head>
   <body>
     <div class="top-header-container" id="top-header-container">
-      Novas atualizações feitas depois da 2ª Liga! Recomendado ler a <a href="/help/">Ajuda</a>!
+      <span class="scrolling-text">Novas atualizações feitas depois da 2ª Liga! Recomendado ler a <a href="/help/">Ajuda</a>!</span>
       <span class="icon" onclick="toggleTopHeaderContainer()">
         <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -44,7 +44,7 @@
         />
         <a class="appname_span" href="{% url 'registration-home' %}"
           >Karate Score App</a
-        >
+        > Época {{current_season}}
       </div>
         <div class="dojos-actions">
           {% if user.is_authenticated %}
