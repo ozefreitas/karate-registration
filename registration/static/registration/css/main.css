@@ -1174,7 +1174,8 @@ li {
     margin-top: 20px;
   }
 
-  .logos_container a {
+  .logos_container a,
+  .logos_container span {
     display: none;
   }
 
