@@ -547,6 +547,7 @@ li {
 }
 
 .athlete-details-preview {
+  max-width: 800px;
   display: flex;
   align-items: center;
   justify-content: space-between;
