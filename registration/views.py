@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
+from .templatetags.team_extras import valid_athletes
 from django.contrib.auth.decorators import login_required
 from .forms import AthleteForm, FilterAthleteForm, TeamForm, FilterTeamForm
 from datetime import datetime
@@ -223,8 +224,24 @@ def wrong(request):
 def delete(request, type, id):
     if request.method == "POST":
         if type == "athlete":
-            object_of = get_object_or_404(Athlete, id=id)
-            message = f'Atleta com o nome {object_of.first_name} {object_of.last_name} eliminad@ com sucesso!'
+            object_of_athlete = Athlete.objects.filter(id=id)[0]
+
+            # check if there's an individual with the athlete to be removed
+            if Individual.objects.filter(athlete=object_of_athlete).exists():
+                messages.error(request, f"{object_of_athlete.first_name} {object_of_athlete.last_name} está inscrit@ numa prova Individual. Elimine a inscrião correspondente em primeiro lugar")
+                return HttpResponseRedirect("/individual/")
+            
+            # check if there's a team with the the athlete to be removed
+            teams = Team.objects.all()
+            for team in teams:
+                valid = valid_athletes(team)
+                for athlete in valid:
+                    if Individual.objects.filter(athlete=athlete).exists():
+                        messages.error(request, f"{athlete.first_name} {athlete.last_name} está inscrit@ numa prova de Equipas. Elimine a inscrião correspondente em primeiro lugar")
+                        return HttpResponseRedirect("/teams/")
+            
+            # if none, delete the athlete
+            message = f'Atleta com o nome {object_of_athlete.first_name} {object_of_athlete.last_name} eliminad@ com sucesso!'
         else:
             object_of = get_object_or_404(Team, id=id)
             message = f'Equipa com o número {object_of.team_number} eliminada com sucesso'
