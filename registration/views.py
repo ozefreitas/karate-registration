@@ -153,6 +153,7 @@ def athletes_preview(request):
                 "title": "Seleção de atletas"}
         return render(request, 'registration/athletes_preview.html', context=context)
 
+
 ### Teams processing ###
 
 @login_required
@@ -223,13 +224,6 @@ def help(request):
     return render(request, 'registration/help.html')
 
 
-def wrong(request):
-    if not request.session.get('can_access_target_page', False):
-        return HttpResponseRedirect('/')
-    request.session['can_access_target_page'] = False
-    return render(request, "registration/wrong.html")
-
-
 ### Registrations operations ###
 
 def delete(request, type, id):
@@ -237,11 +231,11 @@ def delete(request, type, id):
 
         # deletes an athlete
         if type == "athlete":
-            object_of_athlete = Athlete.objects.filter(id=id)[0]
+            object_of = Athlete.objects.filter(id=id)[0]
 
             # check if there's an individual with the athlete to be removed
-            if Individual.objects.filter(athlete=object_of_athlete).exists():
-                messages.error(request, f"{object_of_athlete.first_name} {object_of_athlete.last_name} está inscrit@ numa prova Individual. Elimine a inscrião correspondente em primeiro lugar")
+            if Individual.objects.filter(athlete=object_of).exists():
+                messages.error(request, f"{object_of.first_name} {object_of.last_name} está inscrit@ numa prova Individual. Elimine a inscrião correspondente em primeiro lugar")
                 return HttpResponseRedirect("/individuals/")
             
             # check if there's a team with the the athlete to be removed
@@ -254,7 +248,7 @@ def delete(request, type, id):
                         return HttpResponseRedirect("/teams/")
             
             # if none, delete the athlete
-            message = f'Atleta com o nome {object_of_athlete.first_name} {object_of_athlete.last_name} eliminad@ com sucesso!'
+            message = f'Atleta com o nome {object_of.first_name} {object_of.last_name} eliminad@ com sucesso!'
         
         # deletes a team
         elif type == "team":

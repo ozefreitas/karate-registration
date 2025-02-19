@@ -68,12 +68,19 @@ function hideMessagesAfterTimeout(messageType) {
 document.addEventListener("DOMContentLoaded", function () {
   const deleteAccountTrigger = document.getElementById("delete-account-span");
   const deleteModal = document.getElementById("deleteModal");
+  const deleteModalIndividual = document.getElementById("deleteModalIndividual");
   const cancelDelete = document.getElementById("cancel-delete");
   const confirmDelete = document.getElementById("confirm-delete");
 
   if (deleteAccountTrigger) {
     deleteAccountTrigger.addEventListener("click", function () {
       deleteModal.style.display = "block";
+    });
+  }
+
+  if (deleteAccountTrigger) {
+    deleteAccountTrigger.addEventListener("click", function () {
+      deleteModalIndividual.style.display = "block";
     });
   }
 

@@ -224,6 +224,7 @@ li {
   top: 0;
   padding-right: 30px;
   background-color: red;
+  cursor: pointer;
 }
 
 .logos_container {
@@ -1132,6 +1133,13 @@ li {
 }
 
 @media (width < 1150px) {
+  .filter_form {
+    width: 500px;
+    justify-content: right;
+  }
+}
+
+@media (width < 1000px) {
   .filter_form {
     width: 500px;
     justify-content: right;
