@@ -135,14 +135,22 @@ def athletes_preview(request):
         positive_ids = [k for k, v in request.POST.dict().items() if v == "on"]
         for pos_id in positive_ids:
             athlete_instance = get_object_or_404(Athlete, id=pos_id)
-            Individual.objects.create(dojo=request.user, athlete=athlete_instance, competition=get_next_competition())
-        return HttpResponseRedirect("/individual/")
+            if not Individual.objects.filter(athlete=athlete_instance).exists():
+                Individual.objects.create(dojo=request.user, athlete=athlete_instance, competition=get_next_competition())
+                if len(positive_ids) <= 2:
+                    messages.success(request, f"{athlete_instance.first_name} {athlete_instance.last_name} inscrito em {athlete_instance.match_type.capitalize()} {athlete_instance.category} {athlete_instance.gender.capitalize()}")
+            else:
+                messages.error(request, f"{athlete_instance.first_name} {athlete_instance.last_name} já está inscrito")
+        if len(positive_ids) > 2:
+            messages.success(request, f"{len(positive_ids)} atletas inscritos em individual")  
+        return HttpResponseRedirect("/individuals/")
     else:
         athletes = Athlete.objects.filter(dojo=request.user)
         number_athletes = len(athletes)
         athletes = sorted(athletes, key = lambda x: x.first_name)
         context = {"athletes": athletes,
-                "number_athletes": number_athletes}
+                "number_athletes": number_athletes,
+                "title": "Seleção de atletas"}
         return render(request, 'registration/athletes_preview.html', context=context)
 
 ### Teams processing ###
@@ -226,13 +234,15 @@ def wrong(request):
 
 def delete(request, type, id):
     if request.method == "POST":
+
+        # deletes an athlete
         if type == "athlete":
             object_of_athlete = Athlete.objects.filter(id=id)[0]
 
             # check if there's an individual with the athlete to be removed
             if Individual.objects.filter(athlete=object_of_athlete).exists():
                 messages.error(request, f"{object_of_athlete.first_name} {object_of_athlete.last_name} está inscrit@ numa prova Individual. Elimine a inscrião correspondente em primeiro lugar")
-                return HttpResponseRedirect("/individual/")
+                return HttpResponseRedirect("/individuals/")
             
             # check if there's a team with the the athlete to be removed
             teams = Team.objects.all()
@@ -245,18 +255,30 @@ def delete(request, type, id):
             
             # if none, delete the athlete
             message = f'Atleta com o nome {object_of_athlete.first_name} {object_of_athlete.last_name} eliminad@ com sucesso!'
-        else:
+        
+        # deletes a team
+        elif type == "team":
             object_of = get_object_or_404(Team, id=id)
             message = f'Equipa com o número {object_of.team_number} eliminada com sucesso'
+        
+        # deletes an individual
+        else:
+            object_of = get_object_or_404(Individual, id=id)
+            message = f'Inscrição d@ {object_of.athlete.first_name} {object_of.athlete.last_name} eliminad@ com sucesso!'
+
         messages.success(request, message)
         object_of.delete()
+    
+    # GET will delete all objects
     else:
         if type == "athlete":
             Athlete.objects.all().delete()
-        else:
+        elif type == "team":
             Team.objects.all().delete()
-        messages.success(request, 'Atletas eliminados' if type == "athlete" else 'Equipas eliminadas')
-    return HttpResponseRedirect("/athletes/") if type == "athlete" else HttpResponseRedirect("/teams/")
+        else:
+            Individual.objects.all().delete()
+        messages.success(request, 'Atletas eliminados' if type == "athlete" or type == "individual" else 'Equipas eliminadas')
+    return HttpResponseRedirect(f"/{type}s/")
 
 
 def update(request, type, id):

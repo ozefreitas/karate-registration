@@ -14,7 +14,7 @@
           {% csrf_token %}
           {{filters}}
         <button class="default-button">Filtrar</button>
-        <button class="default-button" onclick="location.href='/individual/'">Limpar</button>
+        <button class="default-button" onclick="location.href='/individuals/'">Limpar</button>
       </div>
       </form>
     </div>
@@ -26,17 +26,43 @@
     <div>Ainda sem atletas inscritos</div>
 {% endif %}
 
-<button class="add_button" onclick="location.href='/individual/athletes_preview/'">
-    <span class="text">Adicionar</span
-    ><span class="icon"
-        ><svg
-        viewBox="0 0 24 24"
-        height="24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-        ></svg>
-        <span class="buttonSpan">+</span>
-    </span>
-</button>
+<div class="main-ops">
+  <button class="add_button" onclick="location.href='/individuals/athletes_preview/'">
+      <span class="text">Adicionar</span
+      ><span class="icon"
+          ><svg
+          viewBox="0 0 24 24"
+          height="24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+          ></svg>
+          <span class="buttonSpan">+</span>
+      </span>
+  </button>
+  {% if individuals %}
+      <button id="delete-account-span" class="delete_button" type="submit">
+        <span class="text">Eliminar todos</span>
+        <span class="icon">
+          <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24">
+            <path
+              d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z"
+            ></path>
+          </svg>
+        </span>
+      </button>
+  {% endif %}
+</div>
+<!-- Modal window -->
+<div id="deleteModal" class="delete-modal">
+  <div>
+    <p>Tem a certeza que quer eliminar todas as inscrições? Esta ação não pode ser desfeita.</p>
+      <a id="confirm-delete" href="{% url 'registration-delete' 'individual' 0 %}">Confirmar</a>
+      <a id="cancel-delete" href="{% url 'registration-individual' %}">Cancelar</a>
+  </div>
+</div>
 
 {% endblock content %}
