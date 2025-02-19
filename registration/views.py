@@ -6,6 +6,7 @@ from .forms import AthleteForm, FilterAthleteForm, TeamForm, FilterTeamForm
 from datetime import datetime
 from django.contrib import messages
 from .utils.utils import check_athlete_data, get_comp_age, check_filter_data, check_match_type, check_teams_data
+from dojos.utils.utils import get_next_competition
 from .models import Athlete, Team, Individual
 from dojos.models import CompetitionDetail
 
@@ -125,6 +126,7 @@ def individual(request):
     individuals = Individual.objects.all()
     number_individuals = len(individuals)
     return render(request, 'registration/individuals.html', {"individuals": individuals,
+                                                             "title": "Individual",
                                                              "number_indiv": number_individuals})
 
 @login_required
@@ -133,11 +135,12 @@ def athletes_preview(request):
         positive_ids = [k for k, v in request.POST.dict().items() if v == "on"]
         for pos_id in positive_ids:
             athlete_instance = get_object_or_404(Athlete, id=pos_id)
-            Individual.objects.create(dojo=request.user, athlete=athlete_instance)
+            Individual.objects.create(dojo=request.user, athlete=athlete_instance, competition=get_next_competition())
         return HttpResponseRedirect("/individual/")
     else:
         athletes = Athlete.objects.filter(dojo=request.user)
         number_athletes = len(athletes)
+        athletes = sorted(athletes, key = lambda x: x.first_name)
         context = {"athletes": athletes,
                 "number_athletes": number_athletes}
         return render(request, 'registration/athletes_preview.html', context=context)
