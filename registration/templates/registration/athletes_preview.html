@@ -3,13 +3,25 @@
 
 <h1>Selecione os atletas</h1>
 <form action="" method="post">
-    {% for athlete in athletes %}
-    <label for={{athlete.id}}></label>
-    <input type="checkbox" name="{{athlete.id}}" id="{{athlete.id}}">
-        {% csrf_token %}
-        {{athlete}}
-    {% endfor %}
-    <button type="submit">Submeter</button>
+    {% csrf_token %}
+    <div style="margin-bottom: 20px;">
+        {% for athlete in athletes %}
+            <div class="athlete-details-preview">
+                <label for={{athlete.id}}>{{athlete}} 
+                    {{athlete.match_type|title}} 
+                    {{athlete.category|title}} 
+                    {{athlete.gender|title}}
+                    {% if athlete.weight is not None and athlete.weight != "" and athlete.weight != "open"  %}
+                        {{athlete.weight}}Kg
+                    {% elif athlete.weight == "open" %}
+                        Open
+                    {% endif %}
+                </label>
+                <input type="checkbox" name="{{athlete.id}}" id="{{athlete.id}}">
+            </div>
+        {% endfor %}
+    </div>
+    <button type="submit" class="default-button">Submeter</button>
 </form>
 
 {% endblock content %}
