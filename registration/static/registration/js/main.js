@@ -1,12 +1,19 @@
 const toggleOptionsContainer = () => {
   const optionsContainer = document.getElementById(`options-nav-menu`);
-  if (optionsContainer.style.display === "none" || optionsContainer.style.display === "") {
+  if (
+    optionsContainer.style.display === "none" ||
+    optionsContainer.style.display === ""
+  ) {
     optionsContainer.style.display = "block";
   } else {
     optionsContainer.style.display = "none";
   }
 };
 
+const toggleTopHeaderContainer = () => {
+  const athleteDiv = document.getElementById(`top-header-container`);
+  athleteDiv.style.display = "none";
+};
 
 const toggleAthleteDetails = (athleteID) => {
   const athleteDiv = document.getElementById(`athlete-details-${athleteID}`);

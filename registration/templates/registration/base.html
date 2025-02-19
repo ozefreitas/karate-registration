@@ -21,8 +21,19 @@
     <script src="{% static 'registration/js/main.js' %}"></script>
   </head>
   <body>
-    <div class="top-header-container">
+    <div class="top-header-container" id="top-header-container">
       Novas atualizações feitas depois da 2ª Liga! Recomendado ler a <a href="/help/">Ajuda</a>!
+      <span class="icon" onclick="toggleTopHeaderContainer()">
+        <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="12"
+        height="12"
+        viewBox="0 0 24 24">
+          <path
+            d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z"
+          ></path>
+        </svg>
+      </span>
     </div>
     <div class="header-container">
       <div class="logos_container">
@@ -75,8 +86,8 @@
         <nav class="options-nav-menu" id="options-nav-menu">
           <div class="page-selection">
             {% if user.is_authenticated %}
-              <a class="appname_span" href="{% url 'registration-home' %}">Competições</a>
               <a class="appname_span" href="{% url 'registration-athletes' %}">Atletas</a>
+              <a class="appname_span" href="{% url 'registration-home' %}">Competições</a>
               <a class="appname_span" href="{% url 'registration-individual' %}">Individual</a>
               <a class="appname_span" href="{% url 'registration-teams' %}">Equipas</a>
             {% endif %}

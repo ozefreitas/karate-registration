@@ -21,6 +21,10 @@ input {
   height: 25px;
 }
 
+input[type="checkbox"] {
+  width: 18px;
+}
+
 select option {
   font-size: larger;
 }
@@ -205,12 +209,17 @@ li {
 .top-header-container {
   width: 100%; 
   background-color: red; 
-  position: absolute; 
+  position: fixed; 
   top: 0; 
   left: 0;
   font-size: smaller;
   height: 22px;
   text-align: center;
+}
+
+.top-header-container .icon {
+  float: right;
+  margin-right: 30px;
 }
 
 .logos_container {
@@ -447,10 +456,6 @@ li {
   margin-right: 10px;
 }
 
-.form-selection-boxes input {
-  width: 18px;
-}
-
 .form-submit-options {
   display: flex; 
   gap: 20px; 
@@ -534,6 +539,13 @@ li {
   flex-direction: column;
   gap: 10px;
   width: fit-content;
+}
+
+.athlete-details-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px
 }
 
 .login-buttons {
@@ -993,6 +1005,7 @@ li {
   box-shadow: 0px 0px 0px 2px rgb(255, 209, 209);
   margin-right: 20px;
 }
+
 .bar {
   width: 60%;
   height: 2px;
@@ -1003,6 +1016,7 @@ li {
   position: relative;
   border-radius: 2px;
 }
+
 .bar::before {
   content: "";
   width: 2px;
