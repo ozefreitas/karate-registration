@@ -80,6 +80,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'dojos.context_processors.upcoming_dates',
+                'dojos.context_processors.current_season'
             ],
         },
     },

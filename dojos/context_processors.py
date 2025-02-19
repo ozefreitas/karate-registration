@@ -1,5 +1,5 @@
 from datetime import date
-from .utils.utils import get_next_competition
+from .utils.utils import get_next_competition, change_current_season
 
 
 def upcoming_dates(request):
@@ -13,3 +13,7 @@ def upcoming_dates(request):
             upcoming_message = True
     
     return {'upcoming_message': upcoming_message}
+
+
+def current_season(request):
+    return {'current_season': change_current_season()}
