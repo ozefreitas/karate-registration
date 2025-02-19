@@ -101,6 +101,7 @@ class ArchivedAthlete(AthleteBase):
 class Individual(models.Model):
     dojo = models.ForeignKey(User, on_delete=models.CASCADE)
     athlete = models.ForeignKey(Athlete, on_delete=models.CASCADE)
+    competition = models.ForeignKey(CompetitionDetail, on_delete=models.CASCADE)
 
     def __str__(self): 
         return "{} {}".format(self.athlete.first_name, self.athlete.last_name)
