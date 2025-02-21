@@ -12,4 +12,5 @@ urlpatterns = [
     path('teams_form/<str:match_type>', views.team_form, name="registration-teams-form"),
     path('delete/<str:type>/<int:id>/', views.delete, name="registration-delete"),
     path('update_registration/<str:type>/<int:id>/', views.update, name="registration-update"),
+    path('comp_detail/<int:id>', views.comp_details, name="registration-comp"),
 ]

@@ -216,8 +216,15 @@ def teams(request):
 ### Auxiliar pages ###
 
 def home(request):
+    next_comp = get_next_competition()
     comp_details = CompetitionDetail.objects.all()
-    return render(request, 'registration/home.html', {"comps": comp_details})
+    return render(request, 'registration/home.html', {"comps": comp_details,
+                                                      "next_comp": next_comp})
+
+
+def comp_details(request, id):
+    comp_detail = CompetitionDetail.objects.filter(id=id)
+    return render(request, 'registration/comp_details.html', {"comp_detail": comp_detail})
 
 
 def help(request):

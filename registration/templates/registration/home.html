@@ -8,11 +8,13 @@
   <div class="competition-card-selector">
     {% for comp in comps%}
       <div class="competition-card">
-        {{comp}} {{comp.season}}
-        {% if not comp.has_ended %}
-          <button class="default-button">Inscrever</button>
-        {% else %}
+        <span>{{comp}} {{comp.season}}</span>
+        {% if comp.has_ended %}
           <p style="font-size: smaller;">O prazo para as inscrições terminou!</p>
+        {% elif not comp.has_ended and next_comp == comp %}
+          <button class="default-button" onclick="location.href='{% url 'registration-comp' comp.id %}'">Inscrever</button>
+        {% else %}
+          <button class="default-button">Consultar</button>
         {% endif %}
       </div>
     {% endfor %}
