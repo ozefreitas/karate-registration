@@ -285,11 +285,10 @@ li {
 
 .competition-card-selector{
   display: flex; 
-  justify-content: space-evenly; 
   align-items: center;
   align-content: center;
   margin-top: 50px;
-  gap: 50px;
+  gap: 20px;
   flex-wrap: wrap;
 }
 
@@ -298,11 +297,12 @@ li {
 }
 
 .competition-card {
-  width: 200px;
-  height: fit-content;
+  width: 42%;
+  min-height: 100px;
   text-align: center;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   align-items: center;
   padding: 20px;
   border: 2px solid red;
@@ -311,6 +311,10 @@ li {
   -moz-border-radius: 10px;
   -ms-border-radius: 10px;
   -o-border-radius: 10px;
+}
+
+.competition-card span {
+  margin-top: 10px;
 }
 
 .nav-options-button {
@@ -1224,6 +1228,10 @@ li {
     height: fit-content;
     padding-bottom: 20px;
     border-bottom: 1px solid gray;
+  }
+
+  .competition-card {
+    width: 100%;
   }
 
   .profile-info {

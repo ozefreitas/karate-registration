@@ -1,0 +1,7 @@
+{% extends "registration/base.html" %}
+{% load static %}
+{% block content %}
+{% for comp in comp_detail%}
+    <h2>{{comp}}</h2>
+{% endfor %}
+{% endblock %}
