@@ -15,7 +15,7 @@
               </svg>
             </span>
           </a>
-          <form action="{% url 'registration-delete' 'individual' individual.id %}" method="post">
+          <form action="{% url 'registration-delete' 'individual' individual.id comp_id %}" method="post">
             {% csrf_token %}
             <button class="delete_button single" type="submit">
               <span class="text">Eliminar inscrição</span>

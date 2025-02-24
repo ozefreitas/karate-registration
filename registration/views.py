@@ -122,15 +122,16 @@ def athletes(request):
 ### Individuals processing ###
 
 @login_required
-def individual(request):
-    individuals = Individual.objects.all()
+def individual(request, comp_id):
+    individuals = Individual.objects.filter(competition=comp_id)
     number_individuals = len(individuals)
     return render(request, 'registration/individuals.html', {"individuals": individuals,
                                                              "title": "Individual",
-                                                             "number_indiv": number_individuals})
+                                                             "number_indiv": number_individuals,
+                                                             "comp_id": comp_id})
 
 @login_required
-def athletes_preview(request):
+def athletes_preview(request, comp_id):
     if request.method == "POST":
         positive_ids = [k for k, v in request.POST.dict().items() if v == "on"]
         for pos_id in positive_ids:
@@ -143,7 +144,7 @@ def athletes_preview(request):
                 messages.error(request, f"{athlete_instance.first_name} {athlete_instance.last_name} já está inscrito em {athlete_instance.match_type.capitalize()} {athlete_instance.category} {athlete_instance.gender.capitalize()}")
         if len(positive_ids) > 2:
             messages.success(request, f"{len(positive_ids)} atletas inscritos em individual")  
-        return HttpResponseRedirect("/individuals/")
+        return HttpResponseRedirect(f"/individuals/{comp_id}")
     else:
         athletes = Athlete.objects.filter(dojo=request.user)
         number_athletes = len(athletes)
@@ -222,8 +223,8 @@ def home(request):
                                                       "next_comp": next_comp})
 
 
-def comp_details(request, id):
-    comp_detail = CompetitionDetail.objects.filter(id=id)
+def comp_details(request, comp_id):
+    comp_detail = CompetitionDetail.objects.filter(id=comp_id)
     return render(request, 'registration/comp_details.html', {"comp_detail": comp_detail})
 
 
@@ -233,7 +234,7 @@ def help(request):
 
 ### Registrations operations ###
 
-def delete(request, type, id):
+def delete(request, type, id, comp_id):
     if request.method == "POST":
 
         # deletes an athlete
@@ -243,7 +244,7 @@ def delete(request, type, id):
             # check if there's an individual with the athlete to be removed
             if Individual.objects.filter(athlete=object_of).exists():
                 messages.error(request, f"{object_of.first_name} {object_of.last_name} está inscrit@ numa prova Individual. Elimine a inscrião correspondente em primeiro lugar")
-                return HttpResponseRedirect("/individuals/")
+                return HttpResponseRedirect(f"/individuals/{comp_id}")
             
             # check if there's a team with the the athlete to be removed
             teams = Team.objects.all()
@@ -265,12 +266,12 @@ def delete(request, type, id):
         # deletes an individual
         else:
             object_of = get_object_or_404(Individual, id=id)
-            message = f'Inscrição d@ {object_of.athlete.first_name} {object_of.athlete.last_name} eliminad@ com sucesso!'
+            message = f'Inscrição d@ {object_of.athlete.first_name} {object_of.athlete.last_name} eliminada com sucesso!'
 
         messages.success(request, message)
         object_of.delete()
     
-    # GET will delete all objects
+    # GET will delete all objects, id should always equal to 0
     else:
         if type == "athlete":
             Athlete.objects.all().delete()
@@ -279,7 +280,7 @@ def delete(request, type, id):
         else:
             Individual.objects.all().delete()
         messages.success(request, 'Atletas eliminados' if type == "athlete" or type == "individual" else 'Equipas eliminadas')
-    return HttpResponseRedirect(f"/{type}s/")
+    return HttpResponseRedirect(f"/individuals/{comp_id}") if type == "individual" else HttpResponseRedirect(f"/{type}s/")
 
 
 def update(request, type, id):

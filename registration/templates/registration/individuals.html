@@ -27,7 +27,7 @@
 {% endif %}
 
 <div class="main-ops">
-  <button class="add_button" onclick="location.href='/individuals/athletes_preview/'">
+  <button class="add_button" onclick="location.href='{% url 'registration-athletes-preview' comp_id %}'">
       <span class="text">Adicionar</span
       ><span class="icon"
           ><svg
@@ -60,8 +60,8 @@
 <div id="deleteModalIndividual" class="delete-modal">
   <div>
     <p>Tem a certeza que quer eliminar todas as inscrições? Esta ação não pode ser desfeita.</p>
-      <a id="confirm-delete" href="{% url 'registration-delete' 'individual' 0 %}">Confirmar</a>
-      <a id="cancel-delete" href="{% url 'registration-individual' %}">Cancelar</a>
+      <a id="confirm-delete" href="{% url 'registration-delete' 'individual' 0 comp_id %}">Confirmar</a>
+      <a id="cancel-delete" href="{% url 'registration-individual' comp_id %}">Cancelar</a>
   </div>
 </div>
 
