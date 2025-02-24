@@ -2,6 +2,12 @@
 {% load static %}
 {% block content %}
 {% for comp in comp_detail%}
-    <h2>{{comp}}</h2>
+    <h2>{{comp.name}}</h2>
+    <p>Época: {{comp.season}}</p>
+    <p>Localização: {{comp.location}}</p>
+    <p>Data: {{comp.competition_date}}</p>
+    <p>Início das inscrições: {{comp.start_registration}}</p>
+    <p>Fim do período regular de inscrições: {{comp.end_registration}}</p>
+    <p>Fim do período de retificações: {{comp.retifications_deadline}}</p>
 {% endfor %}
 {% endblock %}
