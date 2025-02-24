@@ -11,10 +11,8 @@
         <span>{{comp}} {{comp.season}}</span>
         {% if comp.has_ended %}
           <p style="font-size: smaller;">O prazo para as inscrições terminou!</p>
-        {% elif not comp.has_ended and next_comp == comp %}
-          <button class="default-button" onclick="location.href='{% url 'registration-individual' comp.id %}'">Inscrever</button>
         {% else %}
-          <button class="default-button" onclick="location.href='{% url 'registration-comp' comp.id %}'">Consultar</button>
+          <button class="default-button" onclick="location.href='{% url 'registration-comp' comp.id %}'">Informações</button>
         {% endif %}
       </div>
     {% endfor %}

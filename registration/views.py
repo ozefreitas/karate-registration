@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from .templatetags.team_extras import valid_athletes
 from django.contrib.auth.decorators import login_required
 from .forms import AthleteForm, FilterAthleteForm, TeamForm, FilterTeamForm
-from datetime import datetime
+import datetime
 from django.contrib import messages
 from .utils.utils import check_athlete_data, get_comp_age, check_filter_data, check_match_type, check_teams_data
 from dojos.utils.utils import get_next_competition
@@ -217,15 +217,20 @@ def teams(request):
 ### Auxiliar pages ###
 
 def home(request):
-    next_comp = get_next_competition()
     comp_details = CompetitionDetail.objects.all()
-    return render(request, 'registration/home.html', {"comps": comp_details,
-                                                      "next_comp": next_comp})
+    return render(request, 'registration/home.html', {"comps": comp_details})
 
 
 def comp_details(request, comp_id):
-    comp_detail = CompetitionDetail.objects.filter(id=comp_id)
-    return render(request, 'registration/comp_details.html', {"comp_detail": comp_detail})
+    comp_detail = CompetitionDetail.objects.filter(id=comp_id).first()
+    # check registrations status
+    is_open = datetime.date.today() > comp_detail.start_registration and datetime.date.today() < comp_detail.end_registration
+    is_retification = datetime.date.today() > comp_detail.end_registration and datetime.date.today() < comp_detail.retifications_deadline
+    is_closed = datetime.date.today() > comp_detail.retifications_deadline and not comp_detail.has_ended
+    return render(request, 'registration/comp_details.html', {"comp_detail": comp_detail,
+                                                              "is_open": is_open,
+                                                              "is_retification": is_retification,
+                                                              "is_closed": is_closed})
 
 
 def help(request):
