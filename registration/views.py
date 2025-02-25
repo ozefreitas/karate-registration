@@ -124,11 +124,14 @@ def athletes(request):
 @login_required
 def individual(request, comp_id):
     individuals = Individual.objects.filter(competition=comp_id)
+    comp_detail = CompetitionDetail.objects.filter(id=comp_id).first()
     number_individuals = len(individuals)
+    is_closed = datetime.date.today() > comp_detail.retifications_deadline and not comp_detail.has_ended
     return render(request, 'registration/individuals.html', {"individuals": individuals,
                                                              "title": "Individual",
                                                              "number_indiv": number_individuals,
-                                                             "comp_id": comp_id})
+                                                             "comp_id": comp_id,
+                                                             "is_closed": is_closed})
 
 @login_required
 def athletes_preview(request, comp_id):
@@ -158,7 +161,7 @@ def athletes_preview(request, comp_id):
 ### Teams processing ###
 
 @login_required
-def team_form(request, match_type):
+def team_form(request, match_type, comp_id):
     if request.method == "POST":
         form = TeamForm(request.POST)
         if form.is_valid():
@@ -185,18 +188,18 @@ def team_form(request, match_type):
 
             action = request.POST.get("action")
             if action == "save_back":
-                return HttpResponseRedirect("/teams/")
+                return HttpResponseRedirect(f"/teams/{comp_id}")
             elif action == "save_add":
-                return HttpResponseRedirect("/teams_form/")
+                return HttpResponseRedirect(f"/teams_form/{match_type}/{comp_id}")
 
     else:
         form = TeamForm(dojo=request.user, match_type=match_type)
-        context = {"form": form, "title": "Inscriver Equipa", "match_type": match_type}
+        context = {"form": form, "title": "Inscriver Equipa", "match_type": match_type, "comp_id": comp_id}
         return render(request, 'registration/teams_form.html', context)
 
 
 @login_required
-def teams(request):
+def teams(request, comp_id):
     not_found = False
     if request.method == "POST":
         filter_form = FilterTeamForm(request.POST)
@@ -210,6 +213,7 @@ def teams(request):
     return render(request, 'registration/teams.html', {"teams": teams, 
                                                       "filters": filter_form, 
                                                       "not_found": not_found,
+                                                      "comp_id": comp_id,
                                                       "number_teams": number_teams,
                                                       "title": "Equipas"})
 
@@ -218,19 +222,24 @@ def teams(request):
 
 def home(request):
     comp_details = CompetitionDetail.objects.all()
+    comp_details = sorted(comp_details, key = lambda x: x.competition_date)
     return render(request, 'registration/home.html', {"comps": comp_details})
 
 
 def comp_details(request, comp_id):
     comp_detail = CompetitionDetail.objects.filter(id=comp_id).first()
+    today = datetime.date.today()
     # check registrations status
-    is_open = datetime.date.today() > comp_detail.start_registration and datetime.date.today() < comp_detail.end_registration
-    is_retification = datetime.date.today() > comp_detail.end_registration and datetime.date.today() < comp_detail.retifications_deadline
-    is_closed = datetime.date.today() > comp_detail.retifications_deadline and not comp_detail.has_ended
+    is_open = today > comp_detail.start_registration and today < comp_detail.end_registration
+    is_retification = today > comp_detail.end_registration and today < comp_detail.retifications_deadline
+    is_closed = today > comp_detail.retifications_deadline and not comp_detail.has_ended
+    has_teams = "Torneio" in comp_detail.name
+    print(has_teams)
     return render(request, 'registration/comp_details.html', {"comp_detail": comp_detail,
                                                               "is_open": is_open,
                                                               "is_retification": is_retification,
-                                                              "is_closed": is_closed})
+                                                              "is_closed": is_closed,
+                                                              "has_teams": has_teams})
 
 
 def help(request):
@@ -285,7 +294,7 @@ def delete(request, type, id, comp_id):
         else:
             Individual.objects.all().delete()
         messages.success(request, 'Atletas eliminados' if type == "athlete" or type == "individual" else 'Equipas eliminadas')
-    return HttpResponseRedirect(f"/individuals/{comp_id}") if type == "individual" else HttpResponseRedirect(f"/{type}s/")
+    return HttpResponseRedirect(f"/{type}s/{comp_id}") if type == "individual" or type == "team" else HttpResponseRedirect(f"/{type}s/")
 
 
 def update(request, type, id):

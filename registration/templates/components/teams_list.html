@@ -48,7 +48,7 @@
             </svg>
           </span>
         </a>
-        <form action="{% url 'registration-delete' 'team' team.id %}" method="post">
+        <form action="{% url 'registration-delete' 'team' team.id comp_id %}" method="post">
           {% csrf_token %}
           <button class="delete_button single" type="submit">
             <span class="text">Eliminar inscrição</span>

@@ -17,7 +17,7 @@
       </div>
       
     </form>
-    <button class="default-button" onclick="location.href='/teams/'">Limpar</button>
+    <button class="default-button" onclick="location.href='{% url 'registration-teams' comp_id %}'">Limpar</button>
   </div>
 
   {% for team in teams %}
@@ -34,7 +34,7 @@
   <button onclick="location.href='/teams/'">Voltar</button>
 {% else %}
   <div class="main-ops">
-    <button class="add_button teams" onclick="location.href='{% url 'registration-teams-form' 'kata' %}'">
+    <button class="add_button teams" onclick="location.href='{% url 'registration-teams-form' 'kata' comp_id %}'">
       <span class="text">Adicionar Kata</span
       ><span class="icon"
         ><svg
@@ -47,7 +47,7 @@
       </span>
     </button>
 
-    <button class="add_button teams" onclick="location.href='{% url 'registration-teams-form' 'kumite' %}'">
+    <button class="add_button teams" onclick="location.href='{% url 'registration-teams-form' 'kumite' comp_id %}'">
       <span class="text">Adicionar Kumite</span
       ><span class="icon"
         ><svg
@@ -81,8 +81,8 @@
   <div id="deleteModal" class="delete-modal">
     <div>
       <p>Tem a certeza que quer eliminar todas as equipas? Esta ação não pode ser desfeita.</p>
-        <a id="confirm-delete" href="{% url 'registration-delete' 'team' 0 %}">Confirmar</a>
-        <a id="cancel-delete" href="{% url 'registration-athletes' %}">Cancelar</a>
+        <a id="confirm-delete" href="{% url 'registration-delete' 'team' 0 0 %}">Confirmar</a>
+        <a id="cancel-delete" href="{% url 'registration-teams' comp_id %}">Cancelar</a>
     </div>
   </div>
 

@@ -16,7 +16,7 @@
         <div class="form-submit-options">
           <button type="submit" form="athlete_form" name="action" value="save_back" class="default-button">Submeter e Voltar</button>
           <button type="submit" form="athlete_form" name="action" value="save_add" class="default-button">Submeter e Adicionar Novo</button>
-          <button type="button" name="action" value="back" class="default-button" onclick="location.href='/teams/'">Voltar</button> 
+          <button type="button" name="action" value="back" class="default-button" onclick="location.href='{% url 'registration-teams' comp_id %}'">Voltar</button> 
         </div>
     </form>
 {% endblock content %}
