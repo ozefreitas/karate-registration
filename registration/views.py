@@ -171,7 +171,7 @@ def team_form(request, match_type, comp_id):
                 request.session['can_access_target_page'] = True
                 for error in errors:
                     messages.error(request, error)
-                context = {"form": form, "title": "Inscrever Equipa"}
+                context = {"form": form, "title": "Inscrever Equipa", "comp_id": comp_id}
                 return render(request, 'registration/teams_form.html', context)
             
             teams = Team.objects.filter(dojo=request.user,
