@@ -80,7 +80,6 @@ def check_athlete_data(data, age_at_comp: int, grad_rules: dict, category_rules:
         age_range = range_decoder(age_range)
         if age_at_comp in age_range and data.cleaned_data["category"] != cat:
             errors.append("Idade do atleta não corresponde à categoria selecionada")
-
     if extra_data is not None:
         if "kumite" in extra_data and data.cleaned_data["category"] in ["infantil", "iniciado"]:
             errors.append("Não existe prova de Kumite para esse escalão")

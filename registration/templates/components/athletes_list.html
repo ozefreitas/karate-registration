@@ -15,7 +15,7 @@
               </svg>
             </span>
           </a>
-          <a href="{% url 'registration-update' 'athlete' 'all' athlete.id 0 %}" class="update_button">
+          <a href="{% url 'registration-update' 'athlete' athlete.match_type athlete.id 0 %}" class="update_button">
             <span class="text">Editar</span>
             <span class="icon">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">

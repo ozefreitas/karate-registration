@@ -29,7 +29,7 @@
           </span>
         </a>
         <a
-          href="{% url 'registration-update' 'team' team.match_type team.id comp_id %}"
+          href="{% url 'registration-update' 'team' team.match_type team.id comp.id %}"
           class="update_button"
         >
           <span class="text">Editar</span>
@@ -48,7 +48,7 @@
             </svg>
           </span>
         </a>
-        <form action="{% url 'registration-delete' 'team' team.id comp_id %}" method="post">
+        <form action="{% url 'registration-delete' 'team' team.id comp.id %}" method="post">
           {% csrf_token %}
           <button class="delete_button single" type="submit">
             <span class="text">Eliminar inscrição</span>

@@ -1,6 +1,13 @@
 {% extends "registration/base.html" %} 
 {% block content %}
-<h1>Provas de Equipas</h1>
+{% if upcoming_message %}
+    <div class="alert alert-info">
+        Encontra-se no periodo de retificações! As incrições fecharão em breve.
+    </div>
+{% endif %}
+
+<h1>{{comp}}</h1>
+<h2>Provas de Equipas</h2>
 
 {% if teams %}
   <h3>Equipas inscritas:</h3>
@@ -17,7 +24,7 @@
       </div>
       
     </form>
-    <button class="default-button" onclick="location.href='{% url 'registration-teams' comp_id %}'">Limpar</button>
+    <button class="default-button" onclick="location.href='{% url 'registration-teams' comp.id %}'">Limpar</button>
   </div>
 
   {% for team in teams %}
@@ -34,7 +41,7 @@
   <button onclick="location.href='/teams/'">Voltar</button>
 {% else %}
   <div class="main-ops">
-    <button class="add_button teams" onclick="location.href='{% url 'registration-teams-form' 'kata' comp_id %}'">
+    <button class="add_button teams" onclick="location.href='{% url 'registration-teams-form' 'kata' comp.id %}'">
       <span class="text">Adicionar Kata</span
       ><span class="icon"
         ><svg
@@ -47,7 +54,7 @@
       </span>
     </button>
 
-    <button class="add_button teams" onclick="location.href='{% url 'registration-teams-form' 'kumite' comp_id %}'">
+    <button class="add_button teams" onclick="location.href='{% url 'registration-teams-form' 'kumite' comp.id %}'">
       <span class="text">Adicionar Kumite</span
       ><span class="icon"
         ><svg
@@ -81,8 +88,8 @@
   <div id="deleteModal" class="delete-modal">
     <div>
       <p>Tem a certeza que quer eliminar todas as equipas? Esta ação não pode ser desfeita.</p>
-        <a id="confirm-delete" href="{% url 'registration-delete' 'team' 0 0 %}">Confirmar</a>
-        <a id="cancel-delete" href="{% url 'registration-teams' comp_id %}">Cancelar</a>
+        <a id="confirm-delete" href="{% url 'registration-delete' 'team' 0 comp.id %}">Confirmar</a>
+        <a id="cancel-delete" href="{% url 'registration-teams' comp.id %}">Cancelar</a>
     </div>
   </div>
 
