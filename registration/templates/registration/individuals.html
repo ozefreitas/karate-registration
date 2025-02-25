@@ -1,5 +1,10 @@
 {% extends "registration/base.html" %} 
 {% block content %}
+{% if upcoming_message %}
+    <div class="alert alert-info">
+        Encontra-se no periodo de retificações! As incrições fecharão em breve.
+    </div>
+{% endif %}
 <h1>Provas Individuais</h1>
 
 {% if individuals %}
@@ -26,6 +31,7 @@
     <div>Ainda sem atletas inscritos</div>
 {% endif %}
 
+{% if not is_closed %}
 <div class="main-ops">
   <button class="add_button" onclick="location.href='{% url 'registration-athletes-preview' comp_id %}'">
       <span class="text">Adicionar</span
@@ -56,6 +62,7 @@
       </button>
   {% endif %}
 </div>
+{% endif %}
 <!-- Modal window -->
 <div id="deleteModalIndividual" class="delete-modal">
   <div>
