@@ -29,7 +29,7 @@
           </span>
         </a>
         <a
-          href="{% url 'registration-update' 'team' team.id %}"
+          href="{% url 'registration-update' 'team' team.match_type team.id comp_id %}"
           class="update_button"
         >
           <span class="text">Editar</span>

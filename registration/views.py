@@ -139,8 +139,9 @@ def athletes_preview(request, comp_id):
         positive_ids = [k for k, v in request.POST.dict().items() if v == "on"]
         for pos_id in positive_ids:
             athlete_instance = get_object_or_404(Athlete, id=pos_id)
+            comp_instance = get_object_or_404(CompetitionDetail, id=comp_id)
             if not Individual.objects.filter(athlete=athlete_instance).exists():
-                Individual.objects.create(dojo=request.user, athlete=athlete_instance, competition=get_next_competition())
+                Individual.objects.create(dojo=request.user, athlete=athlete_instance, competition=comp_instance)
                 if len(positive_ids) <= 2:
                     messages.success(request, f"{athlete_instance.first_name} {athlete_instance.last_name} inscrito em {athlete_instance.match_type.capitalize()} {athlete_instance.category} {athlete_instance.gender.capitalize()}")
             else:
@@ -234,7 +235,6 @@ def comp_details(request, comp_id):
     is_retification = today > comp_detail.end_registration and today < comp_detail.retifications_deadline
     is_closed = today > comp_detail.retifications_deadline and not comp_detail.has_ended
     has_teams = "Torneio" in comp_detail.name
-    print(has_teams)
     return render(request, 'registration/comp_details.html', {"comp_detail": comp_detail,
                                                               "is_open": is_open,
                                                               "is_retification": is_retification,
@@ -297,7 +297,7 @@ def delete(request, type, id, comp_id):
     return HttpResponseRedirect(f"/{type}s/{comp_id}") if type == "individual" or type == "team" else HttpResponseRedirect(f"/{type}s/")
 
 
-def update(request, type, id, comp_id):
+def update(request, type, match_type, id, comp_id):
     if type == "athlete":
         athlete = get_object_or_404(Athlete, id=id)
     else:
@@ -312,34 +312,51 @@ def update(request, type, id, comp_id):
                 birth_date = form.cleaned_data["birth_date"]
                 age_at_comp = get_comp_age(birth_date)
 
-            if Athlete.objects.filter(first_name=form.cleaned_data["first_name"], birth_date=birth_date, match_type=form.cleaned_data.get("match_type")).exists():
-                athlete_test = Athlete.objects.filter(first_name=form.cleaned_data["first_name"], birth_date=birth_date, match_type=form.cleaned_data.get("match_type"))
-                if athlete_test[0].id != athlete.id:
-                    errors.append("Um atleta com as mesmas credenciais já está inscrito. Verifique se quer inscrever a mesma pessoa noutra prova")
+                if Athlete.objects.filter(first_name=form.cleaned_data["first_name"], birth_date=birth_date, match_type=form.cleaned_data.get("match_type")).exists():
+                    athlete_test = Athlete.objects.filter(first_name=form.cleaned_data["first_name"], birth_date=birth_date, match_type=form.cleaned_data.get("match_type"))
+                    if athlete_test[0].id != athlete.id:
+                        errors.append("Um atleta com as mesmas credenciais já está inscrito. Verifique se quer inscrever a mesma pessoa noutra prova")
+                    else:
+                        errors = check_athlete_data(form, age_at_comp, age_graduation_rules, age_category_rules)
                 else:
                     errors = check_athlete_data(form, age_at_comp, age_graduation_rules, age_category_rules)
-            else:
-                errors = check_athlete_data(form, age_at_comp, age_graduation_rules, age_category_rules)
         else:
             message = f'Informação da equipa nº {team.team_number} atualizada!'
             form = TeamForm(request.POST, instance=team)
+            if form.is_valid():
+                errors = check_teams_data(form)
+
         # if form.is_valid():
         if len(errors) > 0:
             messages.error(request, "Não foi possível atualizar")
             for error in errors:
                 messages.error(request, error)
-            return HttpResponseRedirect(f"/update_registration/{type}/{id}/")
+            return HttpResponseRedirect(f"/update_registration/{type}/{match_type}/{id}/{comp_id}")
         else:
-            new_form = form.save(commit=False) 
-            new_form.dojo = request.user
-            new_form.age = age_at_comp
-            new_form.save()
-            messages.success(request, message)
+            if type == "athlete":
+                new_athlete = form.save(commit=False) 
+                new_athlete.dojo = request.user
+                new_athlete.age = age_at_comp
+                new_athlete.save()
+                messages.success(request, message)
+            else:
+                teams = Team.objects.filter(dojo=request.user,
+                                         category=form.cleaned_data["category"], 
+                                         match_type=match_type,
+                                         gender=form.cleaned_data["gender"])
+                new_team = form.save(commit=False)
+                new_team.dojo = request.user
+                new_team.match_type = match_type
+                new_team.team_number = len(teams) + 1
+                new_team.save()
             return HttpResponseRedirect("/athletes/") if type == "athlete" else HttpResponseRedirect(f"/teams/{comp_id}")
     else:
-        form = AthleteForm(instance=athlete) if type == "athlete" else TeamForm(instance=team, dojo=request.user)
+        form = AthleteForm(instance=athlete) if type == "athlete" else TeamForm(instance=team)
+        if type == "athlete":
+            match_type = "all"
         return render(request, 'registration/update_registration.html', {"form": form, 
                                                                          "type": type, 
-                                                                         "id": id, 
+                                                                         "match_type": match_type,
+                                                                         "id": id,
                                                                          "comp_id": comp_id,
                                                                          "title": "Atualizar Atleta" if type == "athlete" else "Atualizar Equipa"})
