@@ -267,7 +267,7 @@ def delete(request, type, id, comp_id):
                 for athlete in valid:
                     if Individual.objects.filter(athlete=athlete).exists():
                         messages.error(request, f"{athlete.first_name} {athlete.last_name} está inscrit@ numa prova de Equipas. Elimine a inscrião correspondente em primeiro lugar")
-                        return HttpResponseRedirect("/teams/")
+                        return HttpResponseRedirect(f"/teams/{comp_id}")
             
             # if none, delete the athlete
             message = f'Atleta com o nome {object_of.first_name} {object_of.last_name} eliminad@ com sucesso!'
@@ -297,7 +297,7 @@ def delete(request, type, id, comp_id):
     return HttpResponseRedirect(f"/{type}s/{comp_id}") if type == "individual" or type == "team" else HttpResponseRedirect(f"/{type}s/")
 
 
-def update(request, type, id):
+def update(request, type, id, comp_id):
     if type == "athlete":
         athlete = get_object_or_404(Athlete, id=id)
     else:
@@ -335,10 +335,11 @@ def update(request, type, id):
             new_form.age = age_at_comp
             new_form.save()
             messages.success(request, message)
-            return HttpResponseRedirect("/athletes/") if type == "athlete" else HttpResponseRedirect("/teams/")
+            return HttpResponseRedirect("/athletes/") if type == "athlete" else HttpResponseRedirect(f"/teams/{comp_id}")
     else:
         form = AthleteForm(instance=athlete) if type == "athlete" else TeamForm(instance=team, dojo=request.user)
         return render(request, 'registration/update_registration.html', {"form": form, 
                                                                          "type": type, 
                                                                          "id": id, 
+                                                                         "comp_id": comp_id,
                                                                          "title": "Atualizar Atleta" if type == "athlete" else "Atualizar Equipa"})
