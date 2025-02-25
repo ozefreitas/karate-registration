@@ -5,16 +5,16 @@
 <h1>Interface de registos</h1>
 <p>Escolha uma prova para inscrever os seus atletas:</p>
 
-  <div class="competition-card-selector">
-    {% for comp in comps%}
-      <div class="competition-card">
-        <span>{{comp}} {{comp.season}}</span>
-        {% if comp.has_ended %}
-          <p style="font-size: smaller;">O prazo para as inscrições terminou!</p>
-        {% else %}
-          <button class="default-button" onclick="location.href='{% url 'registration-comp' comp.id %}'">Informações</button>
-        {% endif %}
-      </div>
-    {% endfor %}
-  </div>
+<div class="competition-card-selector">
+  {% for comp in comps%}
+    <div class="competition-card">
+      <span>{{comp}} {{comp.season}}</span>
+      {% if comp.has_ended %}
+        <p style="font-size: smaller;">O prazo para as inscrições terminou!</p>
+      {% else %}
+        <button class="default-button" onclick="location.href='{% url 'registration-comp' comp.id %}'">Informações</button>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
 {% endblock content %}

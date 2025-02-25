@@ -131,6 +131,7 @@ def individual(request, comp_id):
                                                              "title": "Individual",
                                                              "number_indiv": number_individuals,
                                                              "comp_id": comp_id,
+                                                             "comp": comp_detail,
                                                              "is_closed": is_closed})
 
 @login_required
@@ -211,10 +212,12 @@ def teams(request, comp_id):
         filter_form = FilterTeamForm()
         teams = Team.objects.filter(dojo=request.user)
     number_teams = len(teams)
+    comp = get_object_or_404(CompetitionDetail, id=comp_id)
+    print(comp.id)
     return render(request, 'registration/teams.html', {"teams": teams, 
                                                       "filters": filter_form, 
                                                       "not_found": not_found,
-                                                      "comp_id": comp_id,
+                                                      "comp": comp,
                                                       "number_teams": number_teams,
                                                       "title": "Equipas"})
 
@@ -326,7 +329,6 @@ def update(request, type, match_type, id, comp_id):
             if form.is_valid():
                 errors = check_teams_data(form)
 
-        # if form.is_valid():
         if len(errors) > 0:
             messages.error(request, "Não foi possível atualizar")
             for error in errors:
@@ -352,8 +354,6 @@ def update(request, type, match_type, id, comp_id):
             return HttpResponseRedirect("/athletes/") if type == "athlete" else HttpResponseRedirect(f"/teams/{comp_id}")
     else:
         form = AthleteForm(instance=athlete) if type == "athlete" else TeamForm(instance=team)
-        if type == "athlete":
-            match_type = "all"
         return render(request, 'registration/update_registration.html', {"form": form, 
                                                                          "type": type, 
                                                                          "match_type": match_type,
