@@ -25,7 +25,7 @@
     {% elif is_closed %}
         <p>Inscrições fechadas</p>
         <button class="default-button" onclick="location.href='{% url 'registration-individual' comp_detail.id %}'">Consultar Individual</button>
-        {% if has_teams %}
+        {% if comp_detail.has_teams %}
             <br>
             <button class="default-button" onclick="location.href='{% url 'registration-teams' comp_detail.id %}'">Consultar Equipa</button>
         {% endif %}

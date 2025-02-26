@@ -43,6 +43,7 @@ class CompetitionDetail(models.Model):
     retifications_deadline = models.DateField("Fim do periodo de retificações")
     competition_date = models.DateField("Dia da prova")
     has_ended = models.BooleanField(default=False)
+    has_teams = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if not self.id:  # Auto-generate slug only if not set
