@@ -1080,8 +1080,9 @@ li {
 .pagination {
   display: flex;
   align-items: flex-end;
-  width: 50px;
-  justify-content: space-between;
+  width: 200px;
+  justify-content: center;
+  gap: 10px;
 }
 
 .alone {
@@ -1093,8 +1094,42 @@ li {
   text-decoration: none;
 }
 
+.pagination .other-pages {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid red;
+  width: 35px;
+  height: 35px;
+  border-radius: 10%;
+  -webkit-border-radius: 10%;
+  -moz-border-radius: 10%;
+  -ms-border-radius: 10%;
+  -o-border-radius: 10%;
+  cursor: pointer;
+}
+
+.pagination .other-pages:hover {
+  background-color: red;
+  color: white;
+}
+
 .pagination .current {
   text-align: center;
+  border: 1px solid red;
+  background-color: red;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  color: white;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10%;
+  -webkit-border-radius: 10%;
+  -moz-border-radius: 10%;
+  -ms-border-radius: 10%;
+  -o-border-radius: 10%;
+  cursor: pointer;
 }
 
 .footer-container {
