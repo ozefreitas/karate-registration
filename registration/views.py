@@ -1,14 +1,17 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
-from .templatetags.team_extras import valid_athletes
-from django.contrib.auth.decorators import login_required
-from .forms import AthleteForm, FilterAthleteForm, TeamForm, FilterTeamForm
-import datetime
+from django.views import View
+from django.views.generic import TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-from .utils.utils import check_athlete_data, get_comp_age, check_filter_data, check_match_type, check_teams_data
-from dojos.utils.utils import get_next_competition
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from .forms import AthleteForm, FilterAthleteForm, TeamForm, FilterTeamForm
 from .models import Athlete, Team, Individual
+from .templatetags.team_extras import valid_athletes
+from .utils.utils import check_athlete_data, get_comp_age, check_filter_data, check_match_type, check_teams_data
 from dojos.models import CompetitionDetail
+import datetime
 
 # views for the athlets registrations
 
@@ -100,39 +103,102 @@ def form(request):
         return render(request, 'registration/form.html', context)
 
 
-@login_required
-def athletes(request):
-    not_found = False
-    if request.method == "POST":
+class AthletesView(LoginRequiredMixin, View):
+    template_name = 'registration/athletes.html'
+    paginate_by = 10
+
+    def get(self, request, *args, **kwargs):
+        # For GET requests, simply instantiate an empty form
+        filter_form = FilterAthleteForm()
+        athletes = Athlete.objects.filter(dojo=request.user)
+        not_found = False
+        paginator = Paginator(athletes, self.paginate_by)
+        page = request.GET.get('page')
+
+        try:
+            athletes_paginated = paginator.page(page)
+        except PageNotAnInteger:
+            athletes_paginated = paginator.page(1)
+        except EmptyPage:
+            athletes_paginated = paginator.page(paginator.num_pages)
+
+        number_athletes = len(athletes)
+        context = {
+            "athletes": athletes_paginated,
+            "filters": filter_form,
+            "not_found": not_found,
+            "number_athletes": number_athletes,
+            "title": "Atletas"
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        # Process the form data on POST requests
         filter_form = FilterAthleteForm(request.POST)
         if filter_form.is_valid():
             athletes = Athlete.objects.filter(dojo=request.user)
+            # check_filter_data should return a tuple (filtered athletes, not_found flag)
             athletes, not_found = check_filter_data(request, filter_form, athletes)
-    else:
-        filter_form = FilterAthleteForm()
-        athletes = Athlete.objects.filter(dojo=request.user)
-    number_athletes = len(athletes)
-    return render(request, 'registration/athletes.html', {"athletes": athletes,
-                                                      "filters": filter_form, 
-                                                      "not_found": not_found, 
-                                                      "number_athletes": number_athletes,
-                                                      "title": "Atletas"})
+        else:
+            athletes = Athlete.objects.filter(dojo=request.user)
+            not_found = False
+
+        number_athletes = len(athletes)
+
+        paginator = Paginator(athletes, self.paginate_by)
+        page = request.GET.get('page')
+
+        try:
+            athletes_paginated = paginator.page(page)
+        except PageNotAnInteger:
+            athletes_paginated = paginator.page(1)
+        except EmptyPage:
+            athletes_paginated = paginator.page(paginator.num_pages)
+        
+        context = {
+            "athletes": athletes_paginated,
+            "filters": filter_form,
+            "not_found": not_found,
+            "number_athletes": number_athletes,
+            "title": "Atletas"
+        }
+        return render(request, self.template_name, context)
 
 
 ### Individuals processing ###
 
-@login_required
-def individual(request, comp_id):
-    individuals = Individual.objects.filter(competition=comp_id)
-    comp_detail = CompetitionDetail.objects.filter(id=comp_id).first()
-    number_individuals = len(individuals)
-    is_closed = datetime.date.today() > comp_detail.retifications_deadline and not comp_detail.has_ended
-    return render(request, 'registration/individuals.html', {"individuals": individuals,
-                                                             "title": "Individual",
-                                                             "number_indiv": number_individuals,
-                                                             "comp_id": comp_id,
-                                                             "comp": comp_detail,
-                                                             "is_closed": is_closed})
+class IndividualsView(LoginRequiredMixin, TemplateView):
+    template_name = 'registration/individuals.html'
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Capture the comp_id from URL kwargs
+        comp_id = self.kwargs.get('comp_id')
+        individuals = Individual.objects.filter(competition=comp_id)
+        comp_detail = CompetitionDetail.objects.filter(id=comp_id).first()
+        number_individuals = len(individuals)
+        is_closed = datetime.date.today() > comp_detail.retifications_deadline and not comp_detail.has_ended
+
+        paginator = Paginator(individuals, self.paginate_by)
+        page = self.request.GET.get('page')
+
+        try:
+            individuals_paginated = paginator.page(page)
+        except PageNotAnInteger:
+            individuals_paginated = paginator.page(1)
+        except EmptyPage:
+            individuals_paginated = paginator.page(paginator.num_pages)
+
+        context.update({
+            "individuals": individuals_paginated,
+            "title": "Individual",
+            "number_indiv": number_individuals,
+            "comp_id": comp_id,
+            "comp": comp_detail,
+            "is_closed": is_closed
+        })
+        return context
 
 @login_required
 def athletes_preview(request, comp_id):
@@ -249,6 +315,10 @@ def help(request):
     return render(request, 'registration/help.html')
 
 
+def rules(request):
+    return render(request, 'registration/rules.html')
+
+
 ### Registrations operations ###
 
 def delete(request, type, id, comp_id):
@@ -303,6 +373,16 @@ def delete(request, type, id, comp_id):
 def update(request, type, match_type, id, comp_id):
     if type == "athlete":
         athlete = get_object_or_404(Athlete, id=id)
+
+        # Checks if there's another athlete in other match_type
+        data = {field.name: getattr(athlete, field.name) for field in athlete._meta.get_fields() if hasattr(athlete, field.name) and field.name in ["first_name", "last_name", "graduation", "birth_date", "age", "skip_number", "category", "gender"]}
+        data["match_type"] = "kumite" if match_type == "kata" else "kata"
+
+        try:
+            other_match = Athlete.objects.filter(**data).first()
+        except Exception:
+            print("This athlete is unique")
+
     else:
         team = get_object_or_404(Team, id=id)
 
@@ -315,9 +395,13 @@ def update(request, type, match_type, id, comp_id):
                 birth_date = form.cleaned_data["birth_date"]
                 age_at_comp = get_comp_age(birth_date)
 
-                if Athlete.objects.filter(first_name=form.cleaned_data["first_name"], birth_date=birth_date, match_type=form.cleaned_data.get("match_type")).exists():
-                    athlete_test = Athlete.objects.filter(first_name=form.cleaned_data["first_name"], birth_date=birth_date, match_type=form.cleaned_data.get("match_type"))
-                    if athlete_test[0].id != athlete.id:
+                if Athlete.objects.filter(first_name=form.cleaned_data["first_name"], 
+                                          birth_date=birth_date, 
+                                          match_type=form.cleaned_data.get("match_type")).exists():
+                    athlete_test = Athlete.objects.filter(first_name=form.cleaned_data["first_name"], 
+                                                          birth_date=birth_date, 
+                                                          match_type=form.cleaned_data.get("match_type")).first()
+                    if athlete_test.id != athlete.id:
                         errors.append("Um atleta com as mesmas credenciais já está inscrito. Verifique se quer inscrever a mesma pessoa noutra prova")
                     else:
                         errors = check_athlete_data(form, age_at_comp, age_graduation_rules, age_category_rules)
@@ -329,11 +413,14 @@ def update(request, type, match_type, id, comp_id):
             if form.is_valid():
                 errors = check_teams_data(form)
 
+        # Check for occured errors
         if len(errors) > 0:
             messages.error(request, "Não foi possível atualizar")
             for error in errors:
                 messages.error(request, error)
             return HttpResponseRedirect(f"/update_registration/{type}/{match_type}/{id}/{comp_id}")
+        
+        # If no erros, proceed
         else:
             if type == "athlete":
                 new_athlete = form.save(commit=False) 
@@ -341,6 +428,16 @@ def update(request, type, match_type, id, comp_id):
                 new_athlete.age = age_at_comp
                 new_athlete.save()
                 messages.success(request, message)
+
+                # If another athlete in other match_type, change it too
+                if other_match:
+                    form = AthleteForm(request.POST, instance=other_match)
+                    new_athlete = form.save(commit=False) 
+                    new_athlete.dojo = request.user
+                    new_athlete.age = age_at_comp
+                    new_athlete.save()
+                    messages.success(request, "Outr@ atleta com a mesma informação mas de outra prova encontrad@ e atualizad@!")
+                
             else:
                 teams = Team.objects.filter(dojo=request.user,
                                          category=form.cleaned_data["category"], 
@@ -354,6 +451,8 @@ def update(request, type, match_type, id, comp_id):
             return HttpResponseRedirect("/athletes/") if type == "athlete" else HttpResponseRedirect(f"/teams/{comp_id}")
     else:
         form = AthleteForm(instance=athlete) if type == "athlete" else TeamForm(instance=team)
+        if match_type == "kata":
+            del form.fields['weight']
         return render(request, 'registration/update_registration.html', {"form": form, 
                                                                          "type": type, 
                                                                          "match_type": match_type,

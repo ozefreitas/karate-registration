@@ -1039,17 +1039,36 @@ li {
   transition: all 0.3s;
   box-shadow: 0px 0px 5px white;
 }
+
 .bar1::before {
   transform: translateX(-4px);
 }
+
 .bar2::before {
   transform: translateX(4px);
 }
+
 .setting-btn:hover .bar1::before {
   transform: translateX(4px);
 }
+
 .setting-btn:hover .bar2::before {
   transform: translateX(-4px);
+}
+
+.pagination {
+  display: flex;
+  align-items: flex-end;
+  width: 50px;
+  justify-content: space-between;
+}
+
+.pagination a {
+  text-decoration: none;
+}
+
+.pagination .current {
+  text-align: center;
 }
 
 .footer-container {
