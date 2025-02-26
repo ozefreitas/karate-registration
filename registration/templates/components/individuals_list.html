@@ -6,7 +6,7 @@
       </div>
       <div class="buttons-settings-wrapper">
         <div id="buttons-container-{{individual.id}}" class="buttons-container">
-          <a onclick='toggleAthleteDetails({{individual.id|safe}})' class="view_button">
+          <a onclick="toggleAthleteDetails('{{individual.id|safe}}')" class="view_button">
             <span class="text">Consultar</span>
             <span class="icon">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
@@ -35,7 +35,7 @@
           </form>
         </div>
         <!-- options button -->
-        <button class="setting-btn" onclick="toggleRegistrationOptions({{individual.id|safe}})">
+        <button class="setting-btn" onclick="toggleRegistrationOptions('{{individual.id|safe}}')">
           <span class="bar bar1"></span>
           <span class="bar bar2"></span>
           <span class="bar bar1"></span>

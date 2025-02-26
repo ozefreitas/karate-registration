@@ -10,7 +10,7 @@
     </div>
     <div class="buttons-settings-wrapper">
       <div id="buttons-container-{{team.id}}" class="buttons-container">
-        <a onclick="toggleAthleteDetails({{team.id|safe}})" class="view_button">
+        <a onclick="toggleAthleteDetails('{{team.id|safe}}')" class="view_button">
           <span class="text">Consultar</span>
           <span class="icon">
             <svg
@@ -69,7 +69,7 @@
       </div>
       <button
         class="setting-btn"
-        onclick="toggleRegistrationOptions({{team.id|safe}})"
+        onclick="toggleRegistrationOptions('{{team.id|safe}}')"
       >
         <span class="bar bar1"></span>
         <span class="bar bar2"></span>
