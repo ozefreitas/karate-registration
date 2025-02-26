@@ -266,26 +266,62 @@ def team_form(request, match_type, comp_id):
         return render(request, 'registration/teams_form.html', context)
 
 
-@login_required
-def teams(request, comp_id):
-    not_found = False
-    if request.method == "POST":
+class TeamView(LoginRequiredMixin, View):
+    template_name = 'registration/teams.html'
+    paginate_by = 10
+
+    def get(self, request, *args, **kwargs):
+
+        comp_id = self.kwargs.get('comp_id')
+        not_found = False
+        filter_form = FilterTeamForm()
+        teams = Team.objects.filter(dojo=request.user)
+        paginator = Paginator(teams, self.paginate_by)
+        page = request.GET.get('page')
+
+        try:
+            teams_paginated = paginator.page(page)
+        except PageNotAnInteger:
+            teams_paginated = paginator.page(1)
+        except EmptyPage:
+            teams_paginated = paginator.page(paginator.num_pages)
+
+        number_teams = len(teams)
+        comp = get_object_or_404(CompetitionDetail, id=comp_id)
+        context = {"teams": teams_paginated, 
+                    "filters": filter_form, 
+                    "not_found": not_found,
+                    "comp": comp,
+                    "number_teams": number_teams,
+                    "title": "Equipas"}
+        return render(request, self.template_name, context)
+    
+    def post(self, request, *args, **kwargs):
+        comp_id = self.kwargs.get('comp_id')
+        not_found = False
         filter_form = FilterTeamForm(request.POST)
         if filter_form.is_valid():
             teams = Team.objects.filter(dojo=request.user)
             teams, not_found = check_filter_data(request, filter_form, teams)
-    else:
-        filter_form = FilterTeamForm()
-        teams = Team.objects.filter(dojo=request.user)
-    number_teams = len(teams)
-    comp = get_object_or_404(CompetitionDetail, id=comp_id)
-    print(comp.id)
-    return render(request, 'registration/teams.html', {"teams": teams, 
-                                                      "filters": filter_form, 
-                                                      "not_found": not_found,
-                                                      "comp": comp,
-                                                      "number_teams": number_teams,
-                                                      "title": "Equipas"})
+        paginator = Paginator(teams, self.paginate_by)
+        page = request.GET.get('page')
+
+        try:
+            teams_paginated = paginator.page(page)
+        except PageNotAnInteger:
+            teams_paginated = paginator.page(1)
+        except EmptyPage:
+            teams_paginated = paginator.page(paginator.num_pages)
+
+        number_teams = len(teams)
+        comp = get_object_or_404(CompetitionDetail, id=comp_id)
+        context = {"teams": teams_paginated, 
+                    "filters": filter_form, 
+                    "not_found": not_found,
+                    "comp": comp,
+                    "number_teams": number_teams,
+                    "title": "Equipas"}
+        return render(request, self.template_name, context)
 
 
 ### Auxiliar pages ###
