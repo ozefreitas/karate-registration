@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from dojos.models import CompetitionDetail
+from django.apps import apps
+from nanoid import generate
 
 # Create your models here.
 
@@ -19,6 +21,18 @@ MATCHES = {
         "kata": "Kata",
         "kumite": "Kumite"
 }
+
+def generate_unique_nanoid(model_name, app_label, size=10):
+    """
+    Generates a unique NanoID for a given model.
+    Uses `apps.get_model()` to avoid import issues.
+    """
+    model = apps.get_model(app_label, model_name)  # Dynamically get model
+    while True:
+        new_id = generate(size=size)  # Generate NanoID
+        if not model.objects.filter(id=new_id).exists():
+            return new_id
+
 
 class AthleteBase(models.Model):
     GRADUATIONS = {
@@ -68,6 +82,7 @@ class AthleteBase(models.Model):
         ],
     }
 
+    id = models.CharField(primary_key=True, max_length=10, unique=True, editable=False)
     first_name = models.CharField("Primeiro Nome", max_length=200)
     last_name = models.CharField("Último Nome", max_length=200)
     graduation = models.CharField("Graduação", max_length=4, choices=GRADUATIONS)
@@ -80,6 +95,11 @@ class AthleteBase(models.Model):
     weight = models.CharField("Peso", choices=WEIGHTS, max_length=10, blank=True, null=True)
     dojo = models.ForeignKey(User, on_delete=models.CASCADE)
     creation_date = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if not self.id:  # Generate only if no ID exists
+            self.id = generate_unique_nanoid(self.__class__.__name__, self._meta.app_label)
+        super().save(*args, **kwargs)
 
     def __str__(self): 
         return "{} {}".format(self.first_name, self.last_name)
@@ -99,9 +119,15 @@ class ArchivedAthlete(AthleteBase):
 
 
 class Individual(models.Model):
+    id = models.CharField(primary_key=True, max_length=10, unique=True, editable=False)
     dojo = models.ForeignKey(User, on_delete=models.CASCADE)
     athlete = models.ForeignKey(Athlete, on_delete=models.CASCADE)
     competition = models.ForeignKey(CompetitionDetail, on_delete=models.CASCADE)
+
+    def save(self, *args, **kwargs):
+        if not self.id:  # Generate only if no ID exists
+            self.id = generate_unique_nanoid("Individual", "registration")
+        super().save(*args, **kwargs)
 
     def __str__(self): 
         return "{} {}".format(self.athlete.first_name, self.athlete.last_name)
@@ -123,6 +149,7 @@ class Team(models.Model):
         "misto": "Misto"
     }
 
+    id = models.CharField(primary_key=True, max_length=10, unique=True, editable=False)
     dojo = models.ForeignKey(User, on_delete=models.CASCADE)
     athlete1 = models.ForeignKey(Athlete, verbose_name="Atleta 1", related_name="first_element", on_delete=models.CASCADE)
     athlete2 = models.ForeignKey(Athlete, verbose_name="Atleta 2", related_name="second_element", on_delete=models.CASCADE)
@@ -135,6 +162,11 @@ class Team(models.Model):
     additional_emails = models.EmailField("Emails adicionais", blank=True, null=True)
     team_number = models.IntegerField("Nº Equipa")
     creation_date = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if not self.id:  # Generate only if no ID exists
+            self.id = generate_unique_nanoid("Team", "registration")
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return "{} {} {}".format(self.match_type, self.category, self.gender)
