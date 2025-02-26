@@ -47,6 +47,20 @@
           <span class="buttonSpan">+</span>
       </span>
   </button>
+  <div class="pagination">
+    {% if individuals.has_previous %}
+        <!-- <a href="?page=1">&laquo; first</a> -->
+        <a href="?page={{ individuals.previous_page_number }}">{{ individuals.previous_page_number }}</a>
+    {% endif %}
+
+    <span class="current">{{ individuals.number }}</span>
+
+    {% if individuals.has_next %}
+        <a href="?page={{ individuals.next_page_number }}">{{ individuals.next_page_number }}</a>
+        <!-- <a href="?page={{ individuals.paginator.num_pages }}">last &raquo;</a> -->
+    {% endif %}
+
+  </div>
   {% if individuals %}
       <button id="delete-account-span" class="delete_button" type="submit">
         <span class="text">Eliminar todos</span>
