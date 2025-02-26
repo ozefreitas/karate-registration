@@ -232,3 +232,7 @@ def custom_500(request):
 
 def test_500_error(request):
     raise("This is a test error")
+
+
+def rules(request):
+    return render(request, 'error/wip.html')

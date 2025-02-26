@@ -351,10 +351,6 @@ def help(request):
     return render(request, 'registration/help.html')
 
 
-def rules(request):
-    return render(request, 'registration/rules.html')
-
-
 ### Registrations operations ###
 
 def delete(request, type, id, comp_id):
