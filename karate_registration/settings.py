@@ -62,8 +62,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'dojos.middleware.CompetitionEndedMiddleware',
     'dojos.middleware.NoListedCompetitionsMiddleware',
-    'dojos.middleware.RegistrationClosedMiddleware',
-    'dojos.middleware.TeamsNotAvailableMiddleware',
     'dojos.middleware.MaintenanceModeMiddleware'
 ]
 
