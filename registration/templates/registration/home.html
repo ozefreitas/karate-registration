@@ -8,7 +8,7 @@
 <div class="competition-card-selector">
   {% for comp in comps%}
     <div class="competition-card">
-      <span>{{comp}} {{comp.season}}</span>
+      <span>{{comp}}</span>
       {% if comp.has_ended %}
         <p style="font-size: smaller;">O prazo para as inscrições terminou!</p>
       {% else %}
