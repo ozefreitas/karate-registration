@@ -10,7 +10,7 @@ from django.contrib.auth.hashers import make_password
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.models import User
-from registration.models import Dojo, ArchivedAthlete, Athlete
+from registration.models import Dojo, ArchivedAthlete, Athlete, Individual
 from django.contrib.auth import authenticate, login, logout
 from django.core.mail import send_mail
 from django.conf import settings
@@ -61,11 +61,11 @@ def logout_user(request):
 
 @login_required
 def profile(request):
-    comps = CompetitionDetail.objects.all()
-    archived_athletes = ArchivedAthlete.objects.all()
+    dojo_individuals = Individual.objects.filter(dojo=request.user)
+    unique_comps = list(set([item.competition for item in dojo_individuals]))
+    
     return render(request, 'dojos/profile.html', {"title": "Perfil",
-                                                  "archived_athletes": archived_athletes,
-                                                  "comps": comps})
+                                                  "unique_comps": unique_comps})
 
 
 ### Feedback view ###
