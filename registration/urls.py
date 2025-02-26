@@ -1,10 +1,11 @@
 from django.urls import path
 from . import views
+from dojos.views import rules
 
 urlpatterns = [
     path('', views.home, name="registration-home"),
     path('help/', views.help, name="registration-help"),
-    path('rules/', views.rules, name="registration-rules"),
+    path('rules/', rules, name="registration-rules"),
     path('athletes/', views.AthletesView.as_view(), name="registration-athletes"),
     path('individuals/<str:comp_id>/', views.IndividualsView.as_view(), name="registration-individual"),
     path('individuals/athletes_preview/<str:comp_id>/', views.athletes_preview, name="registration-athletes-preview"),
