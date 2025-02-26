@@ -247,6 +247,10 @@ li {
   border-bottom: 1px solid red;
 }
 
+.appname_span.active {
+  background-color: red;
+}
+
 .main-content {
   min-height: 60dvb;
   width: 100%;
