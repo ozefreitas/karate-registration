@@ -40,19 +40,21 @@
   <h2>Não foram encontradas equipas para esse filtro</h2>
   <button onclick="location.href='/teams/'">Voltar</button>
 {% else %}
-  <div class="pagination alone">
-    {% if teams.has_previous %}
-        <!-- <a href="?page=1">&laquo; first</a> -->
-        <a href="?page={{ teams.previous_page_number }}">{{ teams.previous_page_number }}</a>
-    {% endif %}
+  {% if teams %}
+    <div class="pagination alone">
+      {% if teams.has_previous %}
+          <!-- <a class="other-pages" href="?page=1">&laquo; first</a> -->
+          <a class="other-pages" href="?page={{ teams.previous_page_number }}">{{ teams.previous_page_number }}</a>
+      {% endif %}
 
-    <span class="current">{{ teams.number }}</span>
+      <span class="current">{{ teams.number }}</span>
 
-    {% if teams.has_next %}
-        <a href="?page={{ teams.next_page_number }}">{{ teams.next_page_number }}</a>
-        <!-- <a href="?page={{ teams.paginator.num_pages }}">last &raquo;</a> -->
-    {% endif %}
-  </div>
+      {% if teams.has_next %}
+          <a class="other-pages" href="?page={{ teams.next_page_number }}">{{ teams.next_page_number }}</a>
+          <!-- <a class="other-pages" href="?page={{ teams.paginator.num_pages }}">last &raquo;</a> -->
+      {% endif %}
+    </div>
+  {% endif %}
   <div class="main-ops">
     <button class="add_button teams" onclick="location.href='{% url 'registration-teams-form' 'kata' comp.id %}'">
       <span class="text">Adicionar Kata</span

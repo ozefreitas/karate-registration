@@ -339,12 +339,10 @@ def comp_details(request, comp_id):
     is_open = today > comp_detail.start_registration and today < comp_detail.end_registration
     is_retification = today > comp_detail.end_registration and today < comp_detail.retifications_deadline
     is_closed = today > comp_detail.retifications_deadline and not comp_detail.has_ended
-    has_teams = "Torneio" in comp_detail.name
     return render(request, 'registration/comp_details.html', {"comp_detail": comp_detail,
                                                               "is_open": is_open,
                                                               "is_retification": is_retification,
-                                                              "is_closed": is_closed,
-                                                              "has_teams": has_teams})
+                                                              "is_closed": is_closed})
 
 
 def help(request):
