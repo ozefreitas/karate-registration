@@ -1063,6 +1063,11 @@ li {
   justify-content: space-between;
 }
 
+.alone {
+  margin-top: 25px;
+  margin-left:auto;
+}
+
 .pagination a {
   text-decoration: none;
 }
