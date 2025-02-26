@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.text import slugify
 from django.contrib.auth.models import User
 
 # Create your models here.
@@ -33,6 +34,7 @@ class CompetitionDetail(models.Model):
         "3940": "2039/2040",
     }
 
+    id = models.SlugField(primary_key=True, unique=True, max_length=100, blank=True)
     name = models.CharField("Nome", max_length=99)
     location = models.CharField("Local", max_length=99)
     season = models.CharField("Época", choices=SEASONS, max_length=15)
@@ -42,8 +44,13 @@ class CompetitionDetail(models.Model):
     competition_date = models.DateField("Dia da prova")
     has_ended = models.BooleanField(default=False)
 
+    def save(self, *args, **kwargs):
+        if not self.id:  # Auto-generate slug only if not set
+            self.id = slugify(f"{self.name} {self.season}")
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return self.name
+        return '{} {}'.format(self.name, self.season)
 
 
 class FeedbackData(models.Model):
