@@ -22,20 +22,7 @@ MATCHES = {
         "kumite": "Kumite"
 }
 
-def generate_unique_nanoid(model_name, app_label, size=10):
-    """
-    Generates a unique NanoID for a given model.
-    Uses `apps.get_model()` to avoid import issues.
-    """
-    model = apps.get_model(app_label, model_name)  # Dynamically get model
-    while True:
-        new_id = generate(size=size)  # Generate NanoID
-        if not model.objects.filter(id=new_id).exists():
-            return new_id
-
-
-class AthleteBase(models.Model):
-    GRADUATIONS = {
+GRADUATIONS = {
         "15": "9º Kyu",
         "14.5": "8º Kyu Kari",
         "14": "8º Kyu",
@@ -59,8 +46,17 @@ class AthleteBase(models.Model):
         "1": "6º Dan",
     }
 
+def generate_unique_nanoid(model_name, app_label, size=10):
+    """
+    Generates a unique NanoID for a given model.
+    Uses `apps.get_model()` to avoid import issues.
+    """
+    model = apps.get_model(app_label, model_name)  # Dynamically get model
+    while True:
+        new_id = generate(size=size)  # Generate NanoID
+        if not model.objects.filter(id=new_id).exists():
+            return new_id
 
-# Athletes models ###
 
 class AthleteBase(models.Model):
 
@@ -207,9 +203,9 @@ class CoachBase(models.Model):
     last_name = models.CharField("Último Nome", max_length=200)
     graduation = models.CharField("Graduação", max_length=4, choices=GRADUATIONS)
     birth_date = models.DateField("Data de Nascimento")
-    age = models.IntegerField("Idade", default=25)
+    age = models.IntegerField("Idade")
     skip_number = models.IntegerField("Nº SKI-P", blank=True, null=True)
-    # creation_date = models.DateTimeField(auto_now_add=True)
+    creation_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self): 
         return "{} {}".format(self.first_name, self.last_name)
