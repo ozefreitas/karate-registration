@@ -1,0 +1,9 @@
+{% extends "registration/base.html" %} 
+{% block content%}
+{% for individual in individuals %}
+    {{individual}}
+{% endfor %}
+{% for team in teams %}
+    {{teams}}
+{% endfor %}
+{% endblock %}

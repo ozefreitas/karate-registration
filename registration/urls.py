@@ -15,4 +15,5 @@ urlpatterns = [
     path('delete/<str:type>/<str:id>/<str:comp_id>/', views.delete, name="registration-delete"),
     path('update_registration/<str:type>/<str:match_type>/<str:id>/<str:comp_id>/', views.update, name="registration-update"),
     path('comp_detail/<str:comp_id>', views.comp_details, name="registration-comp"),
+    path('previous_registration/<str:comp_id>', views.previous_registration, name="registration-previous"),
 ]

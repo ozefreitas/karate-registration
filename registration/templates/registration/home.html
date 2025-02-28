@@ -11,6 +11,7 @@
       <span>{{comp}}</span>
       {% if comp.has_ended %}
         <p style="font-size: smaller;">O prazo para as inscrições terminou!</p>
+        <button class="default-button" onclick="location.href='{% url 'registration-previous' comp.id %}'">Consultar</button>
       {% else %}
         <button class="default-button" onclick="location.href='{% url 'registration-comp' comp.id %}'">Informações</button>
       {% endif %}

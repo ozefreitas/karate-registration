@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .forms import AthleteForm, FilterAthleteForm, TeamForm, FilterTeamForm
-from .models import Athlete, Team, Individual
+from .models import Athlete, Team, Individual, ArchivedTeam, ArchivedIndividual
 from .templatetags.team_extras import valid_athletes
 from .utils.utils import check_athlete_data, get_comp_age, check_filter_data, check_match_type, check_teams_data
 from dojos.models import CompetitionDetail
@@ -343,6 +343,13 @@ def comp_details(request, comp_id):
                                                               "is_open": is_open,
                                                               "is_retification": is_retification,
                                                               "is_closed": is_closed})
+
+@login_required
+def previous_registration(request, comp_id):
+    teams = ArchivedTeam.objects.filter(competition = comp_id)
+    individuals = ArchivedIndividual.objects.filter(competition = comp_id)
+    return render(request, "registration/previous_registrations.html", {"individuals": individuals,
+                                                                        "teams": teams})
 
 
 def help(request):
