@@ -1,21 +1,21 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
+from django.template.loader import render_to_string
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import DojoRegisterForm, DojoUpdateForm, ProfileUpdateForm, FeedbackForm, DojoPasswordResetForm, DojoPasswordConfirmForm, DojoPasswordChangeForm
-from .models import CompetitionDetail
-from django.template.loader import render_to_string
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+from django.contrib.auth.models import User
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
-from django.contrib.auth.models import User
-from registration.models import Dojo, ArchivedAthlete, Athlete, Individual
-from django.contrib.auth import authenticate, login, logout
 from django.core.mail import send_mail
 from django.conf import settings
+
+from .forms import DojoRegisterForm, DojoUpdateForm, ProfileUpdateForm, FeedbackForm, DojoPasswordResetForm, DojoPasswordConfirmForm, DojoPasswordChangeForm
+from .models import CompetitionDetail
+from registration.models import Dojo, Athlete, Individual
 from smtplib import SMTPException
-from django.contrib.auth import update_session_auth_hash
 
 
 ### User loging account actions ###
@@ -202,24 +202,22 @@ def password_reset_confirmation(request,
             return render(request, "Invalid link.", status=400)
     else:
         return render(request, "password/reset_password_confirm.html", {"form": form})
-    
+
+
 ### Comp ended processing ###
 
-def clone_athletes(request, comp_id):
-    if request.method == "POST":
-        comp = get_object_or_404(CompetitionDetail, id=comp_id)
-        archived = ArchivedAthlete.objects.filter(competition=comp_id)
-        for athlete in archived:
-            athlete_data = {}
-            for field in athlete._meta.fields:
-                if field.name not in ["id", "competition", "archived_date"]:
-                    athlete_data[field.name] = getattr(athlete, field.name)
-            Athlete.objects.create(**athlete_data)
-        messages.success(request, f'Os atletas da/do {comp.name} foram copiados para o registo atual')
-    return HttpResponseRedirect("/athletes/")
-
-
-### Custom error page views ###
+# def clone_registrations(request, comp_id):
+#     if request.method == "POST":
+#         comp = get_object_or_404(CompetitionDetail, id=comp_id)
+#         archived = ArchivedAthlete.objects.filter(competition=comp_id)
+#         for athlete in archived:
+#             athlete_data = {}
+#             for field in athlete._meta.fields:
+#                 if field.name not in ["id", "competition", "archived_date"]:
+#                     athlete_data[field.name] = getattr(athlete, field.name)
+#             Athlete.objects.create(**athlete_data)
+#         messages.success(request, f'Os atletas da/do {comp.name} foram copiados para o registo atual')
+#     return HttpResponseRedirect("/athletes/")
 
 
 ### Custom error page views ###

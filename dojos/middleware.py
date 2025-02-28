@@ -2,7 +2,7 @@ import datetime
 from django.conf import settings
 from django.shortcuts import render
 from .models import CompetitionDetail
-from registration.models import Individual, ArchivedAthlete, Team
+from registration.models import Individual, ArchivedIndividual, Team, ArchivedTeam
 from .utils.utils import get_next_competition
 
 
@@ -33,12 +33,20 @@ class CompetitionEndedMiddleware:
 
                     individuals = Individual.objects.all()
                     teams = Team.objects.all()
-                    # for athlete in athletes:
-                    #     athlete_data = {"competition": comp_detail}
-                    #     for field in athlete._meta.fields:
-                    #         if field != "id":
-                    #             athlete_data[field.name] = getattr(athlete, field.name)
-                    #     ArchivedAthlete.objects.create(**athlete_data)
+                    
+                    for individual in individuals:
+                        individual_data = {"competition": comp_detail}
+                        for field in individual._meta.fields:
+                            if field != "id":
+                                individual_data[field.name] = getattr(individual, field.name)
+                        ArchivedIndividual.objects.create(**individual_data)
+                    for team in teams:
+                        team_data = {"competition": comp_detail}
+                        for field in team._meta.fields:
+                            if field != "id":
+                                team_data[field.name] = getattr(team, field.name)
+                        ArchivedTeam.objects.create(**team_data)
+                        
                     
                     individuals.delete()
                     teams.delete()
