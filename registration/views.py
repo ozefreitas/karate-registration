@@ -7,11 +7,12 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .forms import AthleteForm, FilterAthleteForm, TeamForm, FilterTeamForm
-from .models import Athlete, Team, Individual, ArchivedTeam, ArchivedIndividual
+from .models import Athlete, Team, Individual
 from .templatetags.team_extras import valid_athletes
 from .utils.utils import check_athlete_data, get_comp_age, check_filter_data, check_match_type, check_teams_data
 from dojos.models import CompetitionDetail
 import datetime
+import json
 
 # views for the athlets registrations
 
@@ -207,7 +208,7 @@ def athletes_preview(request, comp_id):
         for pos_id in positive_ids:
             athlete_instance = get_object_or_404(Athlete, id=pos_id)
             comp_instance = get_object_or_404(CompetitionDetail, id=comp_id)
-            if not Individual.objects.filter(athlete=athlete_instance).exists():
+            if not Individual.objects.filter(athlete=athlete_instance, competition=comp_instance).exists():
                 Individual.objects.create(dojo=request.user, athlete=athlete_instance, competition=comp_instance)
                 if len(positive_ids) <= 2:
                     messages.success(request, f"{athlete_instance.first_name} {athlete_instance.last_name} inscrito em {athlete_instance.match_type.capitalize()} {athlete_instance.category} {athlete_instance.gender.capitalize()}")
@@ -346,10 +347,12 @@ def comp_details(request, comp_id):
 
 @login_required
 def previous_registration(request, comp_id):
-    teams = ArchivedTeam.objects.filter(competition = comp_id)
-    individuals = ArchivedIndividual.objects.filter(competition = comp_id)
-    return render(request, "registration/previous_registrations.html", {"individuals": individuals,
-                                                                        "teams": teams})
+    with open("archived_comps.json", "r") as file:
+        data = json.loads(file.read())
+    data = json.loads(data)
+    athletes = [Athlete.objects.filter(id=item["fields"]["athlete"]) for item in data]
+    print(athletes[0][0].first_name)
+    return render(request, "registration/previous_registrations.html", {"individuals": athletes})
 
 
 def help(request):

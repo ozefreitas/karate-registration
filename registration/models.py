@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from dojos.models import CompetitionDetail
 from django.apps import apps
+from django.utils import timezone
 from nanoid import generate
 
 # Create your models here.
@@ -109,7 +110,7 @@ class Athlete(models.Model):
 
 ### Individual models ###
 
-class IndividualBase(models.Model):
+class Individual(models.Model):
     id = models.CharField(primary_key=True, max_length=10, unique=True, editable=False)
     dojo = models.ForeignKey(User, on_delete=models.CASCADE)
     athlete = models.ForeignKey(Athlete, on_delete=models.CASCADE)
@@ -122,17 +123,6 @@ class IndividualBase(models.Model):
 
     def __str__(self): 
         return "{} {}".format(self.athlete.first_name, self.athlete.last_name)
-    
-    class Meta:
-        abstract = True
-
-
-class Individual(IndividualBase):
-    pass
-
-
-class ArchivedIndividual(Individual):
-    archived_date = models.DateTimeField(auto_now_add=True)
 
 
 ### Dojo model ###
@@ -147,7 +137,7 @@ class Dojo(models.Model):
 
 ### Teams models ###
 
-class TeamBase(models.Model):
+class Team(models.Model):
 
     GENDERS = {
         "masculino": "Masculino",
@@ -176,17 +166,6 @@ class TeamBase(models.Model):
 
     def __str__(self):
         return "{} {} {}".format(self.match_type, self.category, self.gender)
-    
-    class Meta:
-        abstract = True
-
-
-class Team(TeamBase):
-    pass
-
-
-class ArchivedTeam(Team):
-    archived_date = models.DateTimeField(auto_now_add=True)
 
 
 ### Filter models ###

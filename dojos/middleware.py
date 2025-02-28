@@ -1,9 +1,10 @@
 import datetime
 from django.conf import settings
 from django.shortcuts import render
+from django.core import serializers
 from .models import CompetitionDetail
-from registration.models import Individual, ArchivedIndividual, Team, ArchivedTeam
-from .utils.utils import get_next_competition
+import json
+from registration.models import Individual, Team, Athlete
 
 
 class NoListedCompetitionsMiddleware:
@@ -31,21 +32,15 @@ class CompetitionEndedMiddleware:
                     comp_detail.has_ended=True
                     comp_detail.save()
 
-                    individuals = Individual.objects.all()
-                    teams = Team.objects.all()
-                    
-                    for individual in individuals:
-                        individual_data = {"competition": comp_detail}
-                        for field in individual._meta.fields:
-                            if field != "id":
-                                individual_data[field.name] = getattr(individual, field.name)
-                        ArchivedIndividual.objects.create(**individual_data)
-                    for team in teams:
-                        team_data = {"competition": comp_detail}
-                        for field in team._meta.fields:
-                            if field != "id":
-                                team_data[field.name] = getattr(team, field.name)
-                        ArchivedTeam.objects.create(**team_data)
+                    individuals = Individual.objects.filter(competition=comp_detail.id)
+                    teams = Team.objects.filter(competition=comp_detail.id)
+                    data = serializers.serialize("json", individuals)
+                    with open("archived_comps.json", "w") as out:
+                        json.dump(data, out)
+                    # for individual in individuals:
+                    #     ArchivedIndividual.objects.create(individual=individual)
+                    # for team in teams:
+                    #     ArchivedTeam.objects.create(team)
                         
                     
                     individuals.delete()
