@@ -1,9 +1,40 @@
 {% extends "registration/base.html" %} 
 {% block content%}
-{% for individual in individuals %}
-    {{individual.first_name}}
-{% endfor %}
-{% for team in teams %}
-    {{teams}}
-{% endfor %}
+    <h2>Inscrições Individuais</h2>
+    <div>
+        {% if individuals %}
+            {% for individual in individuals %}
+                <div style="display: flex; justify-content: space-between;">
+                    <div>{{individual}}</div>
+                    <div>
+                        <span>{{individual.match_type|title}}</span>
+                        <span>{{individual.category}}</span>
+                        <span>{{individual.gender|title}}</span>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>Não registou qualquer Individual nesta competição.</p>
+        {% endif %}
+    </div>
+    <h2>Inscrições de Equipas</h2>
+    <div style="display: flex;">
+        {% if teams %}
+            {% for team in teams %}
+                {% for field in team %}
+                    {% if forloop.first %}
+                        <div style="margin-right: 20px;">{{field}}</div>
+                    {% else %}
+                        <div >
+                            {% for athlete in field %}
+                                <div>{{athlete}}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        {% else %}
+            <p>Não registou qualquer Equipa nesta competição.</p>
+        {% endif %}
+    </div>
 {% endblock %}

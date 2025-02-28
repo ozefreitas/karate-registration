@@ -351,18 +351,19 @@ def comp_details(request, comp_id):
 @login_required
 def previous_registration(request, comp_id):
     with open("archived_comps.json", "r") as file:
-        data = json.loads(file.read())
-    data = json.loads(data)
-    print(data)
-    indiv_ids, team_ids = [], []
-    for object in data:
-        if object["fields"]["competition"] == comp_id:
-            if "individual" in  object["model"].lower():
-                indiv_ids.append(object["fields"]["athlete"])
-            else:
-                team_ids.append(object["fields"]["athlete"])
+        json_data = json.loads(file.read())
+    indiv_ids, teams = [], []
+    for model, data in json_data.items():
+        for entry in data:
+            if entry["fields"]["competition"] == comp_id:
+                if model == "individuals":
+                    indiv_ids.append(entry["fields"]["athlete"])
+                else:
+                    team_athlete_ids = [value for field, value in entry["fields"].items() if field.startswith("athlete") and value is not None]
+                    teams_athletes = Athlete.objects.filter(id__in=team_athlete_ids)
+                    team_info = (f"{entry["fields"]["match_type"].capitalize()} {entry["fields"]["category"]} {entry["fields"]["gender"].capitalize()}", teams_athletes)
+                    teams.append(team_info)
     athletes = Athlete.objects.filter(id__in=indiv_ids)
-    teams = Team.objects.filter(id__in=team_ids)
     return render(request, "registration/previous_registrations.html", {"individuals": athletes,
                                                                         "teams": teams})
 

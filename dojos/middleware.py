@@ -36,9 +36,16 @@ class CompetitionEndedMiddleware:
                     teams = Team.objects.filter(competition=comp_detail.id)
                     indiv_data = serializers.serialize("json", individuals)
                     team_data = serializers.serialize("json", teams)
+                    
+                    combined_data = {
+                                    "individuals": json.loads(indiv_data),
+                                    "teams": json.loads(team_data)
+                                }
+                    
                     with open("archived_comps.json", "a") as out:
-                        json.dump(indiv_data, out)
-                        json.dump(team_data, out)
+                        if out.tell() > 0:  # If the file is not empty, add a separator
+                            out.write(",\n")
+                        json.dump(combined_data, out, indent=4)
                     
                     individuals.delete()
                     teams.delete()

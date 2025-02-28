@@ -50,6 +50,9 @@ class CompetitionDetail(models.Model):
             self.id = slugify(f"{self.name} {self.season}")
         super().save(*args, **kwargs)
 
+        if "torneio" in self.name.lower():
+            self.has_teams = True
+
     def __str__(self):
         return '{} {}'.format(self.name, self.season)
 
