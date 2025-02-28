@@ -11,14 +11,14 @@
     <br>
     {% if is_open %}
         <button class="default-button" onclick="location.href='{% url 'registration-individual' comp_detail.id %}'">Inscrever Individual</button>
-        {% if has_teams %}
+        {% if comp_detail.has_teams %}
             <br>
             <button class="default-button" onclick="location.href='{% url 'registration-teams' comp_detail.id %}'">Inscrever Equipa</button>
         {% endif %}
     {% elif is_retification %}
         <p>Está no periodo de retificações</p>
         <button class="default-button" onclick="location.href='{% url 'registration-individual' comp_detail.id %}'">Inscrever Individual</button>
-        {% if has_teams %}
+        {% if comp_detail.has_teams %}
             <br>
             <button class="default-button" onclick="location.href='{% url 'registration-teams' comp_detail.id %}'">Inscrever Equipa</button>
         {% endif %}

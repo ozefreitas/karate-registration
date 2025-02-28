@@ -34,14 +34,11 @@ class CompetitionEndedMiddleware:
 
                     individuals = Individual.objects.filter(competition=comp_detail.id)
                     teams = Team.objects.filter(competition=comp_detail.id)
-                    data = serializers.serialize("json", individuals)
-                    with open("archived_comps.json", "w") as out:
-                        json.dump(data, out)
-                    # for individual in individuals:
-                    #     ArchivedIndividual.objects.create(individual=individual)
-                    # for team in teams:
-                    #     ArchivedTeam.objects.create(team)
-                        
+                    indiv_data = serializers.serialize("json", individuals)
+                    team_data = serializers.serialize("json", teams)
+                    with open("archived_comps.json", "a") as out:
+                        json.dump(indiv_data, out)
+                        json.dump(team_data, out)
                     
                     individuals.delete()
                     teams.delete()

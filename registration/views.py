@@ -251,9 +251,12 @@ def team_form(request, match_type, comp_id):
             new_team.dojo = request.user
             new_team.match_type = match_type
             new_team.team_number = len(teams) + 1
+            new_team.competition = get_object_or_404(CompetitionDetail, id=comp_id)
             new_team.save()
             request.session['can_access_target_page'] = True
             request.session['team'] = True
+
+            messages.success(request, f'Equipa de {match_type.capitalize()} {form.cleaned_data["category"].capitalize()} {form.cleaned_data["gender"].capitalize()} inscrita com sucesso!')
 
             action = request.POST.get("action")
             if action == "save_back":
@@ -350,9 +353,18 @@ def previous_registration(request, comp_id):
     with open("archived_comps.json", "r") as file:
         data = json.loads(file.read())
     data = json.loads(data)
-    athletes = [Athlete.objects.filter(id=item["fields"]["athlete"]) for item in data]
-    print(athletes[0][0].first_name)
-    return render(request, "registration/previous_registrations.html", {"individuals": athletes})
+    print(data)
+    indiv_ids, team_ids = [], []
+    for object in data:
+        if object["fields"]["competition"] == comp_id:
+            if "individual" in  object["model"].lower():
+                indiv_ids.append(object["fields"]["athlete"])
+            else:
+                team_ids.append(object["fields"]["athlete"])
+    athletes = Athlete.objects.filter(id__in=indiv_ids)
+    teams = Team.objects.filter(id__in=team_ids)
+    return render(request, "registration/previous_registrations.html", {"individuals": athletes,
+                                                                        "teams": teams})
 
 
 def help(request):

@@ -1,9 +1,7 @@
 {% extends "registration/base.html" %} 
 {% block content%}
-{% for set in individuals %}
-    {% for individual in set %}
-        {{individual.name}}
-    {% endfor %}
+{% for individual in individuals %}
+    {{individual.first_name}}
 {% endfor %}
 {% for team in teams %}
     {{teams}}
