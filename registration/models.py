@@ -34,7 +34,9 @@ def generate_unique_nanoid(model_name, app_label, size=10):
             return new_id
 
 
-class AthleteBase(models.Model):
+### Athlete model ###
+
+class Athlete(models.Model):
     GRADUATIONS = {
         "15": "9º Kyu",
         "14.5": "8º Kyu Kari",
@@ -104,21 +106,10 @@ class AthleteBase(models.Model):
     def __str__(self): 
         return "{} {}".format(self.first_name, self.last_name)
     
-    class Meta:
-        abstract = True
 
+### Individual models ###
 
-# declaration to be registered in admin panel
-class Athlete(AthleteBase):
-    pass
-
-
-class ArchivedAthlete(AthleteBase):
-    competition = models.ForeignKey(CompetitionDetail, on_delete=models.CASCADE)
-    archived_date = models.DateTimeField(auto_now_add=True)
-
-
-class Individual(models.Model):
+class IndividualBase(models.Model):
     id = models.CharField(primary_key=True, max_length=10, unique=True, editable=False)
     dojo = models.ForeignKey(User, on_delete=models.CASCADE)
     athlete = models.ForeignKey(Athlete, on_delete=models.CASCADE)
@@ -131,7 +122,20 @@ class Individual(models.Model):
 
     def __str__(self): 
         return "{} {}".format(self.athlete.first_name, self.athlete.last_name)
+    
+    class Meta:
+        abstract = True
 
+
+class Individual(IndividualBase):
+    pass
+
+
+class ArchivedIndividual(Individual):
+    archived_date = models.DateTimeField(auto_now_add=True)
+
+
+### Dojo model ###
 
 class Dojo(models.Model):
     dojo = models.CharField("Dojo", max_length=99, unique=True)
@@ -141,7 +145,9 @@ class Dojo(models.Model):
         return self.dojo
 
 
-class Team(models.Model):
+### Teams models ###
+
+class TeamBase(models.Model):
 
     GENDERS = {
         "masculino": "Masculino",
@@ -159,8 +165,8 @@ class Team(models.Model):
     category = models.CharField("Escalão", choices=CATEGORIES, max_length=99)
     match_type = models.CharField("Prova", choices=MATCHES, max_length=10)
     gender = models.CharField("Género", choices=GENDERS, max_length=10)
-    additional_emails = models.EmailField("Emails adicionais", blank=True, null=True)
     team_number = models.IntegerField("Nº Equipa")
+    competition = models.ForeignKey(CompetitionDetail, on_delete=models.CASCADE)
     creation_date = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
@@ -170,7 +176,20 @@ class Team(models.Model):
 
     def __str__(self):
         return "{} {} {}".format(self.match_type, self.category, self.gender)
+    
+    class Meta:
+        abstract = True
 
+
+class Team(TeamBase):
+    pass
+
+
+class ArchivedTeam(Team):
+    archived_date = models.DateTimeField(auto_now_add=True)
+
+
+### Filter models ###
 
 class AthleteFilter(models.Model):
     ORDER_BY = {
