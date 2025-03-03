@@ -154,3 +154,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'registration-home'
 
 LOGIN_URL = 'login'
+
+LANGUAGE_CODE = 'pt'
+USE_L10N = True

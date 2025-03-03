@@ -1,8 +1,9 @@
 {% extends "registration/base.html" %}
 {% load static %}
+{% load  season_decoder %}
 {% block content %}
     <h2>{{comp_detail.name}}</h2>
-    <p>Época: {{comp_detail.season}}</p>
+    <p>Época: {{comp_detail.season|decode_season}}</p>
     <p>Localização: {{comp_detail.location}}</p>
     <p>Data: {{comp_detail.competition_date}}</p>
     <p>Início das inscrições: {{comp_detail.start_registration}}</p>
@@ -16,21 +17,21 @@
             <button class="default-button" onclick="location.href='{% url 'registration-teams' comp_detail.id %}'">Inscrever Equipa</button>
         {% endif %}
     {% elif is_retification %}
-        <p>Está no periodo de retificações</p>
+        <p>Está no periodo de retificações.</p>
         <button class="default-button" onclick="location.href='{% url 'registration-individual' comp_detail.id %}'">Inscrever Individual</button>
         {% if comp_detail.has_teams %}
             <br>
             <button class="default-button" onclick="location.href='{% url 'registration-teams' comp_detail.id %}'">Inscrever Equipa</button>
         {% endif %}
     {% elif is_closed %}
-        <p>Inscrições fechadas</p>
+        <p>Inscrições fechadas.</p>
         <button class="default-button" onclick="location.href='{% url 'registration-individual' comp_detail.id %}'">Consultar Individual</button>
         {% if comp_detail.has_teams %}
             <br>
             <button class="default-button" onclick="location.href='{% url 'registration-teams' comp_detail.id %}'">Consultar Equipa</button>
         {% endif %}
     {% else %}
-        <p>Ainda não está no período de inscrições</p>
+        <p>Ainda não está no período de inscrições.</p>
     {% endif %}
     <br>
     <button class="default-button" onclick="location.href='/'">Voltar</button>
