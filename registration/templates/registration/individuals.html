@@ -13,17 +13,9 @@
     <h3>Atletas inscritos:</h3>
     
     <div class="filter-options-container">
-      <form action="" method="post">
         <div class="number_athletes_info">
           <span>{{ number_indiv }} atleta{% if number_indiv > 1 %}s{% endif %}</span>
         </div>
-        <div class="filter_form">
-          {% csrf_token %}
-          {{filters}}
-        <button class="default-button">Filtrar</button>
-        <button class="default-button" onclick="location.href='/individuals/'">Limpar</button>
-      </div>
-      </form>
     </div>
       
     {% for individual in individuals %}
