@@ -61,11 +61,7 @@ def logout_user(request):
 
 @login_required
 def profile(request):
-    dojo_individuals = Individual.objects.filter(dojo=request.user)
-    unique_comps = list(set([item.competition for item in dojo_individuals]))
-    
-    return render(request, 'dojos/profile.html', {"title": "Perfil",
-                                                  "unique_comps": unique_comps})
+    return render(request, 'dojos/profile.html', {"title": "Perfil"})
 
 
 ### Feedback view ###
