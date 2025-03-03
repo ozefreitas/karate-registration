@@ -1231,6 +1231,21 @@ li {
     width: 500px;
     justify-content: right;
   }
+
+  .competition-card {
+    width: 100%;
+  }
+}
+
+@media (width < 800px) {
+  .logos_container span {
+    display: none;
+  }
+
+  .top-header-container {
+    font-size: 0.9rem;
+    height: fit-content;
+  }
 }
 
 @media (width < 500px) {
