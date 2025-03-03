@@ -1,12 +1,12 @@
 {% extends "registration/base.html" %} 
 {% block content%}
     <h2>Inscrições Individuais</h2>
-    <div>
+    <div style="border: 2px solid grey; border-radius: 10px;">
         {% if individuals %}
             {% for individual in individuals %}
-                <div style="display: flex; justify-content: space-between;">
-                    <div>{{individual}}</div>
-                    <div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 2px solid grey; padding-bottom: 10px; padding-top: 10px;">
+                    <div style="padding-left: 20px;">{{individual}}</div>
+                    <div style="padding-right: 20px;">
                         <span>{{individual.match_type|title}}</span>
                         <span>{{individual.category}}</span>
                         <span>{{individual.gender|title}}</span>
@@ -18,20 +18,22 @@
         {% endif %}
     </div>
     <h2>Inscrições de Equipas</h2>
-    <div style="display: flex;">
+    <div style="border: 2px solid grey; border-bottom: 2px solid grey; border-radius: 10px;">
         {% if teams %}
             {% for team in teams %}
-                {% for field in team %}
-                    {% if forloop.first %}
-                        <div style="margin-right: 20px;">{{field}}</div>
-                    {% else %}
-                        <div >
-                            {% for athlete in field %}
-                                <div>{{athlete}}</div>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                {% endfor %}
+                <div style="border-bottom: 2px solid grey; display: flex; justify-content: space-between; padding-top: 10px;">
+                    {% for field in team %}
+                        {% if forloop.first %}
+                            <div style="margin-left: 20px;">{{field}}</div>
+                        {% else %}
+                            <div>
+                                {% for athlete in field %}
+                                    <div style="margin-bottom: 10px; margin-right: 20px; border-bottom: 2px solid grey;">{{athlete}}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
             {% endfor %}
         {% else %}
             <p>Não registou qualquer Equipa nesta competição.</p>

@@ -360,10 +360,10 @@ def previous_registration(request, comp_id):
                     indiv_ids.append(entry["fields"]["athlete"])
                 else:
                     team_athlete_ids = [value for field, value in entry["fields"].items() if field.startswith("athlete") and value is not None]
-                    teams_athletes = Athlete.objects.filter(id__in=team_athlete_ids)
+                    teams_athletes = Athlete.objects.filter(id__in=team_athlete_ids).order_by("match_type")
                     team_info = (f"{entry["fields"]["match_type"].capitalize()} {entry["fields"]["category"]} {entry["fields"]["gender"].capitalize()}", teams_athletes)
                     teams.append(team_info)
-    athletes = Athlete.objects.filter(id__in=indiv_ids)
+    athletes = Athlete.objects.filter(id__in=indiv_ids).order_by("first_name")
     return render(request, "registration/previous_registrations.html", {"individuals": athletes,
                                                                         "teams": teams})
 
