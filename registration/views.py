@@ -176,8 +176,8 @@ class IndividualsView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         # Capture the comp_id from URL kwargs
         comp_id = self.kwargs.get('comp_id')
-        individuals = Individual.objects.filter(competition=comp_id)
         comp_detail = CompetitionDetail.objects.filter(id=comp_id).first()
+        individuals = Individual.objects.filter(competition=comp_id)
         number_individuals = len(individuals)
         is_closed = datetime.date.today() > comp_detail.retifications_deadline and not comp_detail.has_ended
 
@@ -277,11 +277,13 @@ class TeamView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
 
         comp_id = self.kwargs.get('comp_id')
+        comp_detail = CompetitionDetail.objects.filter(id=comp_id).first()
         not_found = False
         filter_form = FilterTeamForm()
         teams = Team.objects.filter(dojo=request.user)
         paginator = Paginator(teams, self.paginate_by)
         page = request.GET.get('page')
+        is_closed = datetime.date.today() > comp_detail.retifications_deadline and not comp_detail.has_ended
 
         try:
             teams_paginated = paginator.page(page)
@@ -297,6 +299,7 @@ class TeamView(LoginRequiredMixin, View):
                     "not_found": not_found,
                     "comp": comp,
                     "number_teams": number_teams,
+                    "is_closed": is_closed,
                     "title": "Equipas"}
         return render(request, self.template_name, context)
     
