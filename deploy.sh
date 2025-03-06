@@ -25,6 +25,9 @@ rm -r /home/karatescorappregistration/karate-registration/static_root/
 echo "Collecting static files..."
 python manage.py collectstatic
 
+# Populate with competitions
+python manage.py populate_comps
+
 # Reload server
 echo "Restarting the server..."
 touch /var/www/karatescorappregistration_pythonanywhere_com_wsgi.py

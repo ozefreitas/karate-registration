@@ -13,6 +13,7 @@ from .utils.utils import check_athlete_data, get_comp_age, check_filter_data, ch
 from dojos.models import CompetitionDetail
 import datetime
 import json
+import os
 
 # views for the athlets registrations
 
@@ -353,6 +354,8 @@ def comp_details(request, comp_id):
 
 @login_required
 def previous_registration(request, comp_id):
+    if not os.path.exists("archived_comps.json"):
+        return render(request, "error/404.html")
     with open("archived_comps.json", "r") as file:
         json_data = json.loads(file.read())
     indiv_ids, teams = [], []
