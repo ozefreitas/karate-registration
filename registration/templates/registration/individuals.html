@@ -1,0 +1,91 @@
+{% extends "registration/base.html" %} 
+{% block content %}
+{% if upcoming_message %}
+    <div class="alert alert-info">
+        Encontra-se no periodo de retificações! As incrições fecharão em breve.
+    </div>
+{% endif %}
+
+<h1>{{comp}}</h1>
+<h2>Provas Individuais</h2>
+
+{% if individuals %}
+    <h3>Atletas inscritos:</h3>
+    
+    <div class="filter-options-container">
+        <div class="number_athletes_info">
+          <span>{{ number_indiv }} atleta{% if number_indiv > 1 %}s{% endif %}</span>
+        </div>
+    </div>
+      
+    {% for individual in individuals %}
+      {% include 'components/individuals_list.html' %}
+    {% endfor %}
+{% else %}
+  {% if not is_closed %}
+    <div style="margin-top: 30px;">Ainda sem Individuais inscritos.</div>
+  {% else %}
+    <div style="margin-top: 30px;">Não inscreveu nenhum Individual para esta prova!</div>
+  {% endif %}
+{% endif %}
+
+{% if not is_closed %}
+<div class="main-ops">
+  <button class="add_button" onclick="location.href='{% url 'registration-athletes-preview' comp_id %}'">
+      <span class="text">Adicionar</span
+      ><span class="icon"
+          ><svg
+          viewBox="0 0 24 24"
+          height="24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+          ></svg>
+          <span class="buttonSpan">+</span>
+      </span>
+  </button>
+
+  {% if individuals %}
+      <div class="pagination">
+        {% if individuals.has_previous %}
+            <!-- <a class="other-pages" href="?page=1">&laquo; first</a> -->
+            <a class="other-pages" href="?page={{ individuals.previous_page_number }}">{{ individuals.previous_page_number }}</a>
+        {% endif %}
+
+        <span class="current">{{ individuals.number }}</span>
+
+        {% if individuals.has_next %}
+            <a class="other-pages" href="?page={{ individuals.next_page_number }}">{{ individuals.next_page_number }}</a>
+            <!-- <a class="other-pages" href="?page={{ individuals.paginator.num_pages }}">last &raquo;</a> -->
+        {% endif %}
+      </div>
+
+      <button id="delete-account-span" class="delete_button" type="submit">
+        <span class="text">Eliminar todos</span>
+        <span class="icon">
+          <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24">
+            <path
+              d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z"
+            ></path>
+          </svg>
+        </span>
+      </button>
+    {% endif %}
+  </div>
+{% else %}
+  <br>
+  <button class="default-button" onclick="location.href='{% url 'registration-comp' comp_id %}'">Voltar</button>
+{% endif %}
+<!-- Modal window -->
+<div id="deleteModalIndividual" class="delete-modal">
+  <div>
+    <p>Tem a certeza que quer eliminar todas as inscrições? Esta ação não pode ser desfeita.</p>
+      <a id="confirm-delete" href="{% url 'registration-delete' 'individual' 0 comp_id %}">Confirmar</a>
+      <a id="cancel-delete" href="{% url 'registration-individual' comp_id %}">Cancelar</a>
+  </div>
+</div>
+
+{% endblock content %}

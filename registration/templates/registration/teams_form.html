@@ -1,13 +1,22 @@
 {% extends "registration/base.html" %}
 {% block content%}
-    <h2>Registo de Equipa</h2>
+    <h2>Registo de Equipa de {{match_type|title}}</h2>
 
-    <form action="" method="post" id="athlete_form" class="main-form">
+    <div class="info-container">
+      <span class="containers-label">Info</span>
+      <p>Apenas um elemento de cada equipa pode vir de um escalão inferior, mas nenhum pode vir de um escalão superior.</p>
+      <p>Por exemplo, uma equipa de Kata Júnior Masculino, só poderá trazer um elemento Cadete, e nunca um elemento Sénior.
+        Os escalões de cada atleta são calculados de acordo com a idade.
+      </p>
+    </div>
+
+    <form method="post" id="athlete_form" class="main-form">
         {% csrf_token %}
         {{form.as_p}}
+        <div class="form-submit-options">
+          <button type="submit" form="athlete_form" name="action" value="save_back" class="default-button">Submeter e Voltar</button>
+          <button type="submit" form="athlete_form" name="action" value="save_add" class="default-button">Submeter e Adicionar Novo</button>
+          <button type="button" name="action" value="back" class="default-button" onclick="location.href='{% url 'registration-teams' comp_id %}'">Voltar</button> 
+        </div>
     </form>
-    <div style="display: flex; gap: 20px; margin-top: 30px;">
-      <button form="athlete_form" type="submit" class="default-button">Submeter</button>
-      <button type="button" class="default-button" onclick="location.href='/teams/'">Voltar</button>   
-    </div>
 {% endblock content %}

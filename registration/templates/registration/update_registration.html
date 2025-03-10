@@ -1,13 +1,17 @@
 {% extends "registration/base.html" %} 
 {% block content%}
-<h1>Atualizar inscrição</h1>
+<h1>Atualizar inscrição - {{match_type|title}}</h1>
 
-<form action="{% url 'registration-update' type id %}" method="post">
+<form action="{% url 'registration-update' type match_type id comp_id %}" method="post">
     {% csrf_token %}
     {{form.as_p}}
     <div style="display: flex; gap: 20px; margin-top: 30px;">
-        <button class="default-button">Submeter</button>
-        <button type="button" class="default-button" onclick="location.href='/'">Voltar</button>
+        <button type="submit" class="default-button">Submeter</button>
+        {% if type == "athlete" %}
+            <button type="button" class="default-button" onclick="location.href='/athletes/'">Voltar</button>
+        {% else %}
+            <button type="button" class="default-button" onclick="location.href='{% url 'registration-teams' comp_id %}'">Voltar</button>
+        {% endif %}
     </div>
 </form>
 {% endblock %}

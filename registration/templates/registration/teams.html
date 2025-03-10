@@ -1,6 +1,13 @@
 {% extends "registration/base.html" %} 
 {% block content %}
-<h1>Interface de registos</h1>
+{% if upcoming_message %}
+    <div class="alert alert-info">
+        Encontra-se no periodo de retificações! As incrições fecharão em breve.
+    </div>
+{% endif %}
+
+<h1>{{comp}}</h1>
+<h2>Provas de Equipas</h2>
 
 {% if teams %}
   <h3>Equipas inscritas:</h3>
@@ -17,15 +24,17 @@
       </div>
       
     </form>
-    <button class="default-button" onclick="location.href='/teams/'">Limpar</button>
+    <button class="default-button" onclick="location.href='{% url 'registration-teams' comp.id %}'">Limpar</button>
   </div>
 
   {% for team in teams %}
     {% include 'components/teams_list.html' %}
   {% endfor %}
 {% else %}
-  {% if not not_found %}
-    <div style="margin-top: 30px;">Ainda sem equipas inscritas</div>
+  {% if not is_closed %}
+    <div style="margin-top: 30px;">Ainda sem Equipas inscritas.</div>
+  {% else %}
+    <div style="margin-top: 30px;">Não inscreveu nenhuma Equipa para esta prova!</div>
   {% endif %}
 {% endif %}
 
@@ -33,19 +42,78 @@
   <h2>Não foram encontradas equipas para esse filtro</h2>
   <button onclick="location.href='/teams/'">Voltar</button>
 {% else %}
+  {% if teams %}
+    <div class="pagination alone">
+      {% if teams.has_previous %}
+          <!-- <a class="other-pages" href="?page=1">&laquo; first</a> -->
+          <a class="other-pages" href="?page={{ teams.previous_page_number }}">{{ teams.previous_page_number }}</a>
+      {% endif %}
 
-  <button class="add_button" onclick="location.href='/teams_form/'">
-    <span class="text">Adicionar</span
-    ><span class="icon"
-      ><svg
-        viewBox="0 0 24 24"
-        height="24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      ></svg>
-      <span class="buttonSpan">+</span>
-    </span>
-  </button>
+      <span class="current">{{ teams.number }}</span>
+
+      {% if teams.has_next %}
+          <a class="other-pages" href="?page={{ teams.next_page_number }}">{{ teams.next_page_number }}</a>
+          <!-- <a class="other-pages" href="?page={{ teams.paginator.num_pages }}">last &raquo;</a> -->
+      {% endif %}
+    </div>
+  {% endif %}
+  {% if not is_closed %}
+    <div class="main-ops">
+      <button class="add_button teams" onclick="location.href='{% url 'registration-teams-form' 'kata' comp.id %}'">
+        <span class="text">Adicionar Kata</span
+        ><span class="icon"
+          ><svg
+            viewBox="0 0 24 24"
+            height="24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          ></svg>
+          <span class="buttonSpan">+</span>
+        </span>
+      </button>
+
+      <button class="add_button teams" onclick="location.href='{% url 'registration-teams-form' 'kumite' comp.id %}'">
+        <span class="text">Adicionar Kumite</span
+        ><span class="icon"
+          ><svg
+            viewBox="0 0 24 24"
+            height="24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          ></svg>
+          <span class="buttonSpan">+</span>
+        </span>
+      </button>
+
+      {% if teams %}
+        <button id="delete-account-span" class="delete_button" type="submit">
+          <span class="text">Eliminar todas</span>
+          <span class="icon">
+            <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24">
+              <path
+                d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z"
+              ></path>
+            </svg>
+          </span>
+        </button>
+      {% endif %}
+    </div>
+  {% else %}
+    <br>
+    <button class="default-button" onclick="location.href='{% url 'registration-comp' comp.id %}'">Voltar</button>
+  {% endif %}
+  <!-- Modal window -->
+  <div id="deleteModal" class="delete-modal">
+    <div>
+      <p>Tem a certeza que quer eliminar todas as equipas? Esta ação não pode ser desfeita.</p>
+        <a id="confirm-delete" href="{% url 'registration-delete' 'team' 0 comp.id %}">Confirmar</a>
+        <a id="cancel-delete" href="{% url 'registration-teams' comp.id %}">Cancelar</a>
+    </div>
+  </div>
 
 {% endif %}
 

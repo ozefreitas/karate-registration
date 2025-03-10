@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'registration',
-    'dojos'
+    'dojos',
+    "view_breadcrumbs",
 ]
 
 MIDDLEWARE = [
@@ -61,8 +62,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'dojos.middleware.CompetitionEndedMiddleware',
     'dojos.middleware.NoListedCompetitionsMiddleware',
-    'dojos.middleware.RegistrationClosedMiddleware',
-    'dojos.middleware.TeamsNotAvailableMiddleware',
     'dojos.middleware.MaintenanceModeMiddleware'
 ]
 
@@ -80,6 +79,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'dojos.context_processors.upcoming_dates',
+                'dojos.context_processors.current_season'
             ],
         },
     },
@@ -154,3 +154,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'registration-home'
 
 LOGIN_URL = 'login'
+
+LANGUAGE_CODE = 'pt'
+USE_L10N = True

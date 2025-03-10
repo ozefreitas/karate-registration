@@ -17,31 +17,12 @@
         </a>
         <div class="info-container">
           <span class="containers-label">Ajuda</span>
-          <br>
-          Aqui poderá encontrar as inscrições que realizou em provas anteriores, e copiá-las para a próxima prova.
-          <br>
-          Cada nome de prova é clicável, e aparecerão todos os nomes inscritos na mesma.
-          <p></p>
+          <p>Aqui poderá encontrar informações/notificações para o seu dojo.</p>
         </div>
-        <h4 style="width: fit-content">Últimos registos:</h4>
-        <ul style="margin-bottom: 50px; width: fit-content;">
-          {% for comp in comps %}
-            <li style="cursor: pointer;" onclick='toggleArchivedAthletes({{comp.id|safe}})'>{{comp}}</li>
-            <form class="archived-athletes-container" id="archived-athletes-container-{{comp.id}}" 
-            action="{% url 'dojos-clone-athlete' comp.id %}" method="POST">
-              {% csrf_token %}
-              {% for athlete in archived_athletes %}
-                {% if athlete.competition.name == comp.name %}
-                <div style="margin-bottom: 8px;">{{athlete.first_name}} {{athlete.last_name}} </div>
-                {% endif %}
-              {% endfor %}
-              {% if archived_athletes %}
-                <button type="submit" class="default-button">Clonar</button>
-              {% else %}
-                <span style="font-size: 15px;">Esta prova ainda não foi realizada.</span>
-              {% endif %}
-            </form>
-          {% endfor %}
+        <ul>
+          <li>
+            
+          </li>
         </ul>
         <div class="info-container important">
             <span class="containers-label">Pedidos</span>

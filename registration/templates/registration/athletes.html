@@ -1,6 +1,6 @@
 {% extends "registration/base.html" %} 
 {% block content %}
-<h1>Interface de registos</h1>
+<h1>Lista de Atletas</h1>
 
 {% if athletes %}
     <h3>Atletas inscritos:</h3>
@@ -14,7 +14,7 @@
           {% csrf_token %}
           {{filters}}
         <button class="default-button">Filtrar</button>
-        <button class="default-button" onclick="location.href='/athletes'">Limpar</button>
+        <button class="default-button" onclick="location.href='/athletes/'">Limpar</button>
       </div>
       </form>
     </div>
@@ -44,6 +44,20 @@
       </span>
     </button>
     {% if athletes %}
+      <div class="pagination">
+          {% if athletes.has_previous %}
+              <!-- <a class="other-pages" href="?page=1">&laquo; first</a> -->
+              <a class="other-pages" href="?page={{ athletes.previous_page_number }}">{{ athletes.previous_page_number }}</a>
+          {% endif %}
+
+          <span class="current">{{ athletes.number }}</span>
+
+          {% if athletes.has_next %}
+              <a class="other-pages" href="?page={{ athletes.next_page_number }}">{{ athletes.next_page_number }}</a>
+              <!-- <a class="other-pages" href="?page={{ athletes.paginator.num_pages }}">last &raquo;</a> -->
+          {% endif %}
+
+      </div>
       <button id="delete-account-span" class="delete_button" type="submit">
         <span class="text">Eliminar todos</span>
         <span class="icon">
@@ -64,7 +78,7 @@
   <div id="deleteModal" class="delete-modal">
     <div>
       <p>Tem a certeza que quer eliminar todas as inscrições? Esta ação não pode ser desfeita.</p>
-        <a id="confirm-delete" href="{% url 'registration-delete' 'athlete' 0 %}">Confirmar</a>
+        <a id="confirm-delete" href="{% url 'registration-delete' 'athlete' 0 0 %}">Confirmar</a>
         <a id="cancel-delete" href="{% url 'registration-athletes' %}">Cancelar</a>
     </div>
   </div>

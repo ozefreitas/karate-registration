@@ -1,5 +1,6 @@
 import datetime
 from ..models import CompetitionDetail
+from django.utils import timezone
 
 def get_next_competition():
     today = datetime.date.today()
@@ -13,3 +14,16 @@ def get_next_competition():
             next_comp = comp_detail.name
     next_comp = CompetitionDetail.objects.filter(name=next_comp).first()
     return next_comp
+
+
+def change_current_season(date = None):
+    date = date or timezone.now().date()
+    if date.month >= 9:
+        # From September to December, season is current_year/current_year+1
+        season_start = date.year
+        season_end = date.year + 1
+    else:
+        # From January to August, season is previous_year/current_year
+        season_start = date.year - 1
+        season_end = date.year
+    return f"{season_start}/{season_end}"

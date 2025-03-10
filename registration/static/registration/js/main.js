@@ -1,3 +1,20 @@
+const toggleOptionsContainer = () => {
+  const optionsContainer = document.getElementById(`options-nav-menu`);
+  if (
+    optionsContainer.style.display === "none" ||
+    optionsContainer.style.display === ""
+  ) {
+    optionsContainer.style.display = "block";
+  } else {
+    optionsContainer.style.display = "none";
+  }
+};
+
+const toggleTopHeaderContainer = () => {
+  const athleteDiv = document.getElementById(`top-header-container`);
+  athleteDiv.style.display = "none";
+};
+
 const toggleAthleteDetails = (athleteID) => {
   const athleteDiv = document.getElementById(`athlete-details-${athleteID}`);
   if (athleteDiv.style.display === "none" || athleteDiv.style.display === "") {
@@ -51,12 +68,19 @@ function hideMessagesAfterTimeout(messageType) {
 document.addEventListener("DOMContentLoaded", function () {
   const deleteAccountTrigger = document.getElementById("delete-account-span");
   const deleteModal = document.getElementById("deleteModal");
+  const deleteModalIndividual = document.getElementById("deleteModalIndividual");
   const cancelDelete = document.getElementById("cancel-delete");
   const confirmDelete = document.getElementById("confirm-delete");
 
   if (deleteAccountTrigger) {
     deleteAccountTrigger.addEventListener("click", function () {
       deleteModal.style.display = "block";
+    });
+  }
+
+  if (deleteAccountTrigger) {
+    deleteAccountTrigger.addEventListener("click", function () {
+      deleteModalIndividual.style.display = "block";
     });
   }
 
