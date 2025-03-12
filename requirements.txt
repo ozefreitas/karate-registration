@@ -6,3 +6,5 @@ Requests==2.32.3
 seaborn==0.13.2
 django-view-breadcrumbs==2.5.1
 python-dotenv==1.0.1
+drf-nested-routers==0.94.1
+djangorestframework==3.15.2

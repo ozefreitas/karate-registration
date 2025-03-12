@@ -93,7 +93,15 @@ def check_athlete_data(data, age_at_comp: int, grad_rules: dict, category_rules:
     return errors
 
 
-def check_teams_data(data) -> list:
+def check_team_selection(data) -> list:
+    team_cat = data.cleaned_data.get("category", 0)
+    team_gender = data.cleaned_data.get("gender", 0)
+    # check for wrong gender
+    if team_cat in ["Iniciado", "Infantil"] and team_gender != "misto":
+        return ["Categorias de Infantil e Iniciado não se dividem em género"]
+
+
+def check_teams_data(data, model) -> list:
     """Receives the form from the view, processes the data to check any error or rules infrigements 
 
     Args:
@@ -114,22 +122,14 @@ def check_teams_data(data) -> list:
     }
 
     athletes_set = [value for key, value in data.cleaned_data.items() if key.startswith("athlete") and value is not None]
-    athlete_ids = Counter([athlete.id for athlete in athletes_set])
-    for number_ids in athlete_ids.values():
-        if number_ids > 1:
-            return ["Pelo menos um dos atletas está repetido"]
     errors = []
     category_up = 0
-    team_cat = data.cleaned_data.get("category", 0)
-    team_gender = data.cleaned_data.get("gender", 0)
+    team_cat = data.get("category", 0)
+    team_gender = data.get("gender", 0)
     for athlete in athletes_set:
         # check for category jumps
         if athlete.category != team_cat and CATEGORY_RULES[team_cat] != athlete.category:
             errors.append(f"{athlete.first_name} {athlete.last_name} não pode participar nesta prova")
-
-        # check for wrong gender
-        if team_cat in ["Iniciado", "Infantil"] and team_gender != "misto":
-            return ["Categorias de Infantil e Iniciado não se dividem em género"]
 
         if team_cat not in ["Iniciado", "Infantil"] and athlete.gender == "misto":
             return ["Categorias acima de Iniciado não são mistas"]
