@@ -1,10 +1,9 @@
 import datetime
-from django.conf import settings
 from django.shortcuts import render
 from django.core import serializers
 from .models import CompetitionDetail
 import json
-from registration.models import Individual, Team, Athlete
+from registration.models import Individual, Team
 
 
 class NoListedCompetitionsMiddleware:
@@ -64,9 +63,10 @@ class MaintenanceModeMiddleware:
         
         # Check if maintenance mode is enabled
         try:
-            with open('/home/karatescorappregistration/karate-registration/maintenance.flag', 'r') as flag:
-                if flag.read().strip() == 'on':
-                    return render(request, 'error/maintenance.html')
+            if not request.user.is_superuser:
+                with open('/home/karatescorappregistration/karate-registration/maintenance.flag', 'r') as flag:
+                    if flag.read().strip() == 'on':
+                        return render(request, 'error/maintenance.html')
         except FileNotFoundError:
             pass
         return self.get_response(request)
