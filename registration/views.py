@@ -15,6 +15,9 @@ import datetime
 import json
 import os
 
+from rest_framework import viewsets, filters, status
+import registration.serializers as serializers
+
 # views for the athlets registrations
 
 age_graduation_rules = {
@@ -47,6 +50,13 @@ CATEGORY_RULES = {
         "Iniciado": "Infantil",
         "Infantil": "Infantil",
     }
+
+
+class AthletesViewSet(viewsets.ModelViewSet):
+    queryset=Athlete.objects.all()
+    serializer_class = serializers.AthletesSerializer
+
+
 
 ### Athletes processing ###
 

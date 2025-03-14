@@ -1,8 +1,13 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 from dojos.views import rules
+from rest_framework import routers
+
+router = routers.DefaultRouter()
+router.register(r'athletes', views.AthletesViewSet, basename='athletes')
 
 urlpatterns = [
+    path('', include(router.urls)),
     path('', views.home, name="registration-home"),
     path('help/', views.help, name="registration-help"),
     path('rules/', rules, name="registration-rules"),
@@ -16,4 +21,9 @@ urlpatterns = [
     path('update_registration/<str:type>/<str:match_type>/<str:id>/<str:comp_id>/', views.update, name="registration-update"),
     path('comp_detail/<str:comp_id>', views.comp_details, name="registration-comp"),
     path('previous_registration/<str:comp_id>', views.previous_registration, name="registration-previous"),
+]
+
+
+urlpatterns = [
+    path('', include(router.urls)),
 ]
