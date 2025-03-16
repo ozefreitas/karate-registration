@@ -21,12 +21,17 @@ from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from dojos import views as dojo_views
 from django.conf.urls import handler500, handler404
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 handler500 = 'dojos.views.custom_500'
 handler404 = 'dojos.views.custom_404'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    path('schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    
     path('', include("registration.urls")),
     path('register/', include("dojos.urls")),
     path('logout/', dojo_views.logout_user, name="dojos-logout"),

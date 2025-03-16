@@ -6,14 +6,17 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .forms import AthleteForm, FilterAthleteForm, TeamForm, FilterTeamForm
+from .forms import AthleteForm, FilterAthleteForm, TeamForm, FilterTeamForm, TeamCategorySelection
 from .models import Athlete, Team, Individual
 from .templatetags.team_extras import valid_athletes
-from .utils.utils import check_athlete_data, get_comp_age, check_filter_data, check_match_type, check_teams_data
+from .utils.utils import check_athlete_data, get_comp_age, check_filter_data, check_match_type, check_teams_data, check_team_selection
 from dojos.models import CompetitionDetail
 import datetime
 import json
 import os
+
+from rest_framework import viewsets, filters, status
+import registration.serializers as serializers
 
 # views for the athlets registrations
 
@@ -36,6 +39,24 @@ age_category_rules = {
     "35-49": "Veterano +35",
     "50-99": "Veterano +50"
 }
+
+CATEGORY_RULES = {
+        "Veterano +35": "Sénior",
+        "Veterano +50": "Sénior",
+        "Sénior": "Júnior",
+        "Júnior": "Cadete",
+        "Cadete": "Juvenil",
+        "Juvenil": "Iniciado",
+        "Iniciado": "Infantil",
+        "Infantil": "Infantil",
+    }
+
+
+class AthletesViewSet(viewsets.ModelViewSet):
+    queryset=Athlete.objects.all()
+    serializer_class = serializers.AthletesSerializer
+
+
 
 ### Athletes processing ###
 
@@ -233,9 +254,39 @@ def athletes_preview(request, comp_id):
 @login_required
 def team_form(request, match_type, comp_id):
     if request.method == "POST":
-        form = TeamForm(request.POST)
-        if form.is_valid():
-            errors = check_teams_data(form)
+        action = request.POST.get("action")
+        if action == "search":
+            form = TeamCategorySelection(request.POST)
+
+            if form.is_valid():
+                error = check_team_selection(form)
+
+                if error is not None:
+                    messages.error(request, error)
+                    context = {"form": form, "title": "Inscriver Equipa", "match_type": match_type, "comp_id": comp_id}
+
+                    return render(request, 'registration/teams_form.html', context)
+                
+                athletes = Athlete.objects.filter(gender=form.cleaned_data["gender"], 
+                                                  category__in=[form.cleaned_data["category"], CATEGORY_RULES[form.cleaned_data["category"]]],
+                                                  match_type=match_type)
+                
+                context = {"form": form, "athletes": athletes, "title": "Inscriver Equipa", "match_type": match_type, "comp_id": comp_id}
+                return render(request, 'registration/teams_form.html', context)
+            
+        else:
+            athlete_instances = []
+            positive_ids = [k for k, v in request.POST.dict().items() if v == "on"]
+            
+            comp_instance = get_object_or_404(CompetitionDetail, id=comp_id)
+            for pos_id in positive_ids:
+                athlete_instances.append(get_object_or_404(Athlete, id=pos_id))
+
+            ola = {f"athlete{i + 1}": athlete_instance for i, athlete_instance in enumerate(athlete_instances)}
+            team_object = Team(**ola, dojo=request.user, match_type = match_type, competition=comp_instance, team_number=1)
+            
+            errors = check_teams_data(request.POST.dict(), team_object)
+            
 
             if len(errors) != 0:
                 request.session['can_access_target_page'] = True
@@ -245,9 +296,9 @@ def team_form(request, match_type, comp_id):
                 return render(request, 'registration/teams_form.html', context)
             
             teams = Team.objects.filter(dojo=request.user,
-                                         category=form.cleaned_data["category"], 
-                                         match_type=match_type,
-                                         gender=form.cleaned_data["gender"])
+                                        category=form.cleaned_data["category"], 
+                                        match_type=match_type,
+                                        gender=form.cleaned_data["gender"])
             new_team = form.save(commit=False)
             new_team.dojo = request.user
             new_team.match_type = match_type
@@ -259,14 +310,13 @@ def team_form(request, match_type, comp_id):
 
             messages.success(request, f'Equipa de {match_type.capitalize()} {form.cleaned_data["category"].capitalize()} {form.cleaned_data["gender"].capitalize()} inscrita com sucesso!')
 
-            action = request.POST.get("action")
             if action == "save_back":
                 return HttpResponseRedirect(f"/teams/{comp_id}")
             elif action == "save_add":
                 return HttpResponseRedirect(f"/teams_form/{match_type}/{comp_id}")
 
     else:
-        form = TeamForm(dojo=request.user, match_type=match_type)
+        form = TeamCategorySelection()
         context = {"form": form, "title": "Inscriver Equipa", "match_type": match_type, "comp_id": comp_id}
         return render(request, 'registration/teams_form.html', context)
 
