@@ -29,11 +29,15 @@ handler404 = 'dojos.views.custom_404'
 urlpatterns = [
     path('admin/', admin.site.urls),
 
+    # API visualization
     path('schema/', SpectacularAPIView.as_view(), name='schema'),
     path('schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     
+    # Endpoint url patterns
     path('', include("registration.urls")),
-    path('register/', include("dojos.urls")),
+    path('', include("dojos.urls")),
+
+    # Account operations
     path('logout/', dojo_views.logout_user, name="dojos-logout"),
     path('register/password_reset/', dojo_views.reset_password, name="dojos-reset-password"),
     path('register/password_reset/done/',

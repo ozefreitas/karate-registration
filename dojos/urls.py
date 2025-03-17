@@ -1,7 +1,12 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
+from rest_framework import routers
+
+router = routers.DefaultRouter()
+router.register(r'competitions', views.CompetitionViewSet, basename='competitions')
 
 urlpatterns = [
+    path('', include(router.urls)),
     path('register_user/', views.register_user, name="dojos-register"),
     path('login/', views.login_user, name="dojos-login"),
     path('feedback/', views.feedback, name="dojos-feedback"),

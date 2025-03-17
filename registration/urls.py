@@ -22,8 +22,3 @@ urlpatterns = [
     path('comp_detail/<str:comp_id>', views.comp_details, name="registration-comp"),
     path('previous_registration/<str:comp_id>', views.previous_registration, name="registration-previous"),
 ]
-
-
-urlpatterns = [
-    path('', include(router.urls)),
-]

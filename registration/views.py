@@ -51,12 +51,21 @@ CATEGORY_RULES = {
         "Infantil": "Infantil",
     }
 
+class MultipleSerializersMixIn:
+    serializer_classes = {}
 
-class AthletesViewSet(viewsets.ModelViewSet):
+    def get_serializer_class(self):
+        return self.serializer_classes.get(self.action, self.serializer_class)
+
+
+class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Athlete.objects.all()
     serializer_class = serializers.AthletesSerializer
 
-
+    serializer_classes = {
+        "create": serializers.CreateAthleteSerializer,
+        "update": serializers.UpdateAthleteSerializer
+    }
 
 ### Athletes processing ###
 

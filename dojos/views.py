@@ -17,6 +17,24 @@ from .models import CompetitionDetail
 from registration.models import Dojo, Athlete, Individual
 from smtplib import SMTPException
 
+from rest_framework import viewsets, filters, status
+from dojos import serializers
+
+class MultipleSerializersMixIn:
+    serializer_classes = {}
+
+    def get_serializer_class(self):
+        return self.serializer_classes.get(self.action, self.serializer_class)
+
+
+class CompetitionViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
+    queryset=CompetitionDetail.objects.all()
+    serializer_class=serializers.CompetitionsSerializer
+
+    serializer_classes = {
+        "create": serializers.CreateCompetitionSerializer,
+        "update": serializers.UpdateCompetitionSerializer
+    }
 
 ### User loging account actions ###
 
