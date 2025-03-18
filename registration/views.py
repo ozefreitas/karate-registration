@@ -261,6 +261,11 @@ def team_form(request, match_type, comp_id):
                 context = {"form": form, "athletes": athletes, "title": "Inscriver Equipa", "match_type": match_type, "comp_id": comp_id}
                 return render(request, 'registration/teams_form.html', context)
             
+        elif action == "clean_search":
+            form = TeamCategorySelection()
+            context = {"form": form, "title": "Inscriver Equipa", "match_type": match_type, "comp_id": comp_id}
+            return render(request, 'registration/teams_form.html', context)
+        
         else:
             athlete_instances = []
             data = request.POST.dict()
