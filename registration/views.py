@@ -75,7 +75,6 @@ def form(request):
                     errors = check_athlete_data(form, age_at_comp, age_graduation_rules, age_category_rules, matches)
             
             if len(errors) != 0:
-                request.session['can_access_target_page'] = True
                 for error in errors:
                     messages.error(request, error)
                 context = {"form": form, "title": "Inscrever atleta"}
@@ -100,8 +99,6 @@ def form(request):
                 new_athlete.save()
 
             messages.success(request, f'{new_athlete.first_name} {new_athlete.last_name} registad@ com sucesso!')
-            # form will allow thanks to open
-            request.session['can_access_target_page'] = True
             # redirect to a new URL:
             action = request.POST.get("action")
             if action == "save_back":
@@ -266,39 +263,36 @@ def team_form(request, match_type, comp_id):
             
         else:
             athlete_instances = []
-            positive_ids = [k for k, v in request.POST.dict().items() if v == "on"]
-            
+            data = request.POST.dict()
+            positive_ids = [k for k, v in data.items() if v == "on"]
             comp_instance = get_object_or_404(CompetitionDetail, id=comp_id)
             for pos_id in positive_ids:
                 athlete_instances.append(get_object_or_404(Athlete, id=pos_id))
 
             ola = {f"athlete{i + 1}": athlete_instance for i, athlete_instance in enumerate(athlete_instances)}
-            team_object = Team(**ola, dojo=request.user, match_type = match_type, competition=comp_instance, team_number=1)
+            team_object = Team(**ola, dojo=request.user, match_type = match_type, competition=comp_instance)
             
-            errors = check_teams_data(request.POST.dict(), team_object)
-            
+            errors = check_teams_data(data, match_type, athlete_instances)
 
             if len(errors) != 0:
                 request.session['can_access_target_page'] = True
                 for error in errors:
                     messages.error(request, error)
-                context = {"form": form, "title": "Inscrever Equipa", "comp_id": comp_id}
+                form = TeamCategorySelection()
+                context = {"form": form, "title": "Inscriver Equipa", "match_type": match_type, "comp_id": comp_id}
                 return render(request, 'registration/teams_form.html', context)
             
             teams = Team.objects.filter(dojo=request.user,
-                                        category=form.cleaned_data["category"], 
+                                        category=data.get("category", 0), 
                                         match_type=match_type,
-                                        gender=form.cleaned_data["gender"])
-            new_team = form.save(commit=False)
-            new_team.dojo = request.user
-            new_team.match_type = match_type
-            new_team.team_number = len(teams) + 1
-            new_team.competition = get_object_or_404(CompetitionDetail, id=comp_id)
-            new_team.save()
-            request.session['can_access_target_page'] = True
-            request.session['team'] = True
+                                        gender=data.get("gender", 0))
+            team_object.category = data.get("category", 0)
+            team_object.gender = data.get("gender", 0)
+            team_object.dojo = request.user
+            team_object.team_number = len(teams) + 1
+            team_object.save()
 
-            messages.success(request, f'Equipa de {match_type.capitalize()} {form.cleaned_data["category"].capitalize()} {form.cleaned_data["gender"].capitalize()} inscrita com sucesso!')
+            messages.success(request, f'Equipa de {match_type.capitalize()} {data.get("category", 0).capitalize()} {data.get("gender", 0).capitalize()} inscrita com sucesso!')
 
             if action == "save_back":
                 return HttpResponseRedirect(f"/teams/{comp_id}")
