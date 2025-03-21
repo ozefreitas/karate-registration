@@ -45,6 +45,7 @@ li {
 /* Login page */
 
 .info-container {
+  display: block !important;
   width: 70%;
   margin-top: 30px;
   margin-bottom: 30px;

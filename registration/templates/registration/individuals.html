@@ -7,7 +7,9 @@
 {% endif %}
 
 <h1>{{comp}}</h1>
-<h2>Provas Individuais</h2>
+{% if title != "Alunos" %}
+  <h2>Provas Individuais</h2>
+{% endif %}
 
 {% if individuals %}
     <h3>Atletas inscritos:</h3>
@@ -23,9 +25,11 @@
     {% endfor %}
 {% else %}
   {% if not is_closed %}
-    <div style="margin-top: 30px;">Ainda sem Individuais inscritos.</div>
+    <div style="margin-top: 30px;">{% if title == "Alunos" %}Ainda sem alunos inscritos.{% else %}Ainda sem Individuais inscritos.{% endif %}</div>
   {% else %}
-    <div style="margin-top: 30px;">Não inscreveu nenhum Individual para esta prova!</div>
+    <div style="margin-top: 30px;">
+      {% if title == "Alunos" %}Não inscreveu nenhum Aluno para esta prova!{% else %}Não inscreveu nenhum Individual para esta prova!{% endif %}
+    </div>
   {% endif %}
 {% endif %}
 

@@ -34,6 +34,12 @@ class CompetitionDetail(models.Model):
         "3940": "2039/2040",
     }
 
+    ENCOUNTERS = {
+        "regional": "Regional",
+        "nacional": "Nacional",
+        "internacional": "Internacional"
+    }
+
     id = models.SlugField(primary_key=True, unique=True, max_length=100, blank=True)
     name = models.CharField("Nome", max_length=99)
     location = models.CharField("Local", max_length=99)
@@ -43,11 +49,18 @@ class CompetitionDetail(models.Model):
     retifications_deadline = models.DateField("Fim do periodo de retificações")
     competition_date = models.DateField("Dia da prova")
     has_ended = models.BooleanField(default=False)
-    has_teams = models.BooleanField(default=False)
+    has_teams = models.BooleanField("Tem Equipas", default=False)
+    encounter = models.BooleanField("É estágio/encontro", default=False)
+    encounter_type = models.CharField("Estágio", choices=ENCOUNTERS, max_length=16, blank=True, null=True)
 
     def save(self, *args, **kwargs):
         if not self.id:  # Auto-generate slug only if not set
             self.id = slugify(f"{self.name} {self.season}")
+        
+        # TODO: check how I can send a message and a error page to the frontend
+        if self.encounter and self.has_teams:
+            raise ValueError("Encontros não têm equipas")
+        
         super().save(*args, **kwargs)
 
         if "torneio" in self.name.lower():

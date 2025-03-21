@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from registration.models import Dojo
+from registration.models import Dojo, CompetitionDetail
 from .models import FeedbackData, Profile, PasswordConfirmReset
 from django.contrib.auth.forms import PasswordResetForm, PasswordChangeForm
 
@@ -140,3 +140,33 @@ class DojoPasswordChangeForm(PasswordChangeForm):
         # new password 2
         self.fields['new_password2'].help_text = None
         self.fields['new_password2'].label = "Repetir Palavra Passe"
+
+
+class CompetitionForm(forms.ModelForm):
+    class Meta:
+        model = CompetitionDetail
+        exclude = ("id", "has_ended", )
+
+        widgets = {
+            'start_registration': forms.DateInput(
+                attrs={
+                    'type': 'date',  # Renders an HTML5 date picker in modern browsers
+                }
+            ),
+            'end_registration': forms.DateInput(
+                attrs={
+                    'type': 'date',  # Renders an HTML5 date picker in modern browsers
+                }
+            ),
+            'retifications_deadline': forms.DateInput(
+                attrs={
+                    'type': 'date',  # Renders an HTML5 date picker in modern browsers
+                }
+            ),
+            'competition_date': forms.DateInput(
+                attrs={
+                    'type': 'date',  # Renders an HTML5 date picker in modern browsers
+                }
+            ),
+
+        }

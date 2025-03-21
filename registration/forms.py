@@ -12,6 +12,7 @@ class AthleteForm(forms.ModelForm):
                     "graduation",
                     "birth_date",
                     "skip_number",
+                    "is_just_student",
                     "category",
                     "gender",
                     "weight"]

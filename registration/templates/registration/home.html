@@ -23,4 +23,20 @@
     </div>
   {% endfor %}
 </div>
+
+{% if user.is_superuser %}
+  <button class="add_button" onclick="location.href='/register/add_competition/'">
+    <span class="text">Adicionar</span
+    ><span class="icon"
+      ><svg
+        viewBox="0 0 24 24"
+        height="24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      ></svg>
+      <span class="buttonSpan">+</span>
+    </span>
+  </button>
+{% endif %}
+
 {% endblock content %}

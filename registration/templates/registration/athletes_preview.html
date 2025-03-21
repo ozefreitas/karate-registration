@@ -9,14 +9,18 @@
         <div style="margin-bottom: 20px;">
             {% for athlete in athletes %}
                 <div class="athlete-details-preview">
-                    <label for={{athlete.id}}>{{athlete}} 
-                        {{athlete.match_type|title}} 
-                        {{athlete.category|title}} 
-                        {{athlete.gender|title}}
-                        {% if athlete.weight is not None and athlete.weight != "" and athlete.weight != "open"  %}
-                            {{athlete.weight}}Kg
-                        {% elif athlete.weight == "open" %}
-                            Open
+                    <label for={{athlete.id}}>{{athlete}}
+                        {% if not athlete.is_just_student %}
+                            {{athlete.match_type|title}} 
+                            {{athlete.category|title}} 
+                            {{athlete.gender|title}}
+                            {% if athlete.weight is not None and athlete.weight != "" and athlete.weight != "open"  %}
+                                {{athlete.weight}}Kg
+                            {% elif athlete.weight == "open" %}
+                                Open
+                            {% endif %}
+                        {% else %}
+                            Aluno/Praticante
                         {% endif %}
                     </label>
                     <input type="checkbox" name="{{athlete.id}}" id="{{athlete.id}}">

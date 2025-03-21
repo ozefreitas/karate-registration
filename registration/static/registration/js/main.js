@@ -96,3 +96,22 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+  let checkbox = document.querySelector("#id_is_just_student");
+  let extraFields = document.querySelector("#athlete_fields");
+
+  function toggleFields() {
+      if (checkbox.checked) {
+          extraFields.style.display = "none";
+      } else {
+          extraFields.style.display = "block";
+      }
+  }
+
+  // Initial check on page load
+  toggleFields();
+
+  // Listen for checkbox changes
+  checkbox.addEventListener("change", toggleFields);
+});

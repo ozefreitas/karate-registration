@@ -54,57 +54,71 @@ CATEGORY_RULES = {
 def form(request):
     # if this is a POST request we need to process the form data
     if request.method == "POST":
-        # create a form instance and populate it with data from the request:
-        form = AthleteForm(request.POST)
-        errors = []
-        # check whether it's valid:
-        if form.is_valid():
-            # process the data in form.cleaned_data as required
-            birth_date = form.cleaned_data["birth_date"]
-            age_at_comp = get_comp_age(birth_date)
-            matches, match_type_error = check_match_type(request)
 
-            if len(match_type_error) > 0:
-                errors.append(match_type_error)
-            
-            for match in matches:
-                if Athlete.objects.filter(first_name=form.cleaned_data["first_name"], birth_date=birth_date, match_type=match).exists():
-                    errors.append("Um atleta com as mesmas credenciais já está inscrito. Verifique se quer inscrever a mesma pessoa noutra prova")
+        if request.POST.dict().get("is_just_student") != "on":
+            # create a form instance and populate it with data from the request:
+            form = AthleteForm(request.POST)
+            errors = []
+            # check whether it's valid:
+            if form.is_valid():
 
-                else:
-                    errors = check_athlete_data(form, age_at_comp, age_graduation_rules, age_category_rules, matches)
-            
-            if len(errors) != 0:
-                for error in errors:
-                    messages.error(request, error)
-                context = {"form": form, "title": "Inscrever atleta"}
-                return render(request, 'registration/form.html', context)
-            
-            for match in matches:
-                new_athlete = form.save(commit=False) 
-                new_athlete.dojo = request.user
-                new_athlete.age = age_at_comp
-                new_athlete.match_type = match
+                # process the data in form.cleaned_data as required
+                birth_date = form.cleaned_data["birth_date"]
+                age_at_comp = get_comp_age(birth_date)
+                matches, match_type_error = check_match_type(request)
+
+                if len(match_type_error) > 0:
+                    errors.append(match_type_error)
                 
-                # if "kata", weight is set to None
-                if match == "kata":
-                    new_athlete.weight = None
-                else:
-                    new_athlete.weight = request.POST.dict().get("weight")
+                for match in matches:
+                    if Athlete.objects.filter(first_name=form.cleaned_data["first_name"], birth_date=birth_date, match_type=match).exists():
+                        errors.append("Um atleta com as mesmas credenciais já está inscrito. Verifique se quer inscrever a mesma pessoa noutra prova")
 
-                # reset id to prevent overwrite
-                new_athlete.pk = None
+                    else:
+                        errors = check_athlete_data(form, age_at_comp, age_graduation_rules, age_category_rules, matches)
+                
+                if len(errors) != 0:
+                    for error in errors:
+                        messages.error(request, error)
+                    context = {"form": form, "title": "Inscrever atleta"}
+                    return render(request, 'registration/form.html', context)
+                
+                for match in matches:
+                    new_athlete = form.save(commit=False) 
+                    new_athlete.dojo = request.user
+                    new_athlete.age = age_at_comp
+                    new_athlete.match_type = match
+                    
+                    # if "kata", weight is set to None
+                    if match == "kata":
+                        new_athlete.weight = None
+                    else:
+                        new_athlete.weight = request.POST.dict().get("weight")
 
-                # save
-                new_athlete.save()
+                    # reset id to prevent overwrite
+                    new_athlete.pk = None
 
-            messages.success(request, f'{new_athlete.first_name} {new_athlete.last_name} registad@ com sucesso!')
-            # redirect to a new URL:
-            action = request.POST.get("action")
-            if action == "save_back":
-                return HttpResponseRedirect("/athletes/")
-            elif action == "save_add":
-                return HttpResponseRedirect("/form/")
+
+                    # save
+                    new_athlete.save()
+
+        else:
+            new_athlete = Athlete.objects.create(first_name=request.POST.dict().get("first_name", ""),
+                                    last_name=request.POST.dict().get("last_name", ""),
+                                    graduation=request.POST.dict().get("graduation", "1"),
+                                    birth_date=request.POST.dict().get("birth_date"),
+                                    skip_number=request.POST.dict().get("skip_number"),
+                                    is_just_student=True,
+                                    dojo=request.user)
+
+        messages.success(request, f'{new_athlete.first_name} {new_athlete.last_name} registad@ com sucesso!')
+
+        # redirect to a new URL:
+        action = request.POST.get("action")
+        if action == "save_back":
+            return HttpResponseRedirect("/athletes/")
+        elif action == "save_add":
+            return HttpResponseRedirect("/form/")
 
     # if a GET (or any other method) we'll create a blank form
     else:
@@ -202,7 +216,7 @@ class IndividualsView(LoginRequiredMixin, TemplateView):
 
         context.update({
             "individuals": individuals_paginated,
-            "title": "Individual",
+            "title": "Individual" if not comp_detail.encounter else "Alunos",
             "number_indiv": number_individuals,
             "comp_id": comp_id,
             "comp": comp_detail,
@@ -212,24 +226,52 @@ class IndividualsView(LoginRequiredMixin, TemplateView):
 
 @login_required
 def athletes_preview(request, comp_id):
+    comp_instance = get_object_or_404(CompetitionDetail, id=comp_id)
     if request.method == "POST":
         positive_ids = [k for k, v in request.POST.dict().items() if v == "on"]
         for pos_id in positive_ids:
             athlete_instance = get_object_or_404(Athlete, id=pos_id)
-            comp_instance = get_object_or_404(CompetitionDetail, id=comp_id)
             if not Individual.objects.filter(athlete=athlete_instance, competition=comp_instance).exists():
                 Individual.objects.create(dojo=request.user, athlete=athlete_instance, competition=comp_instance)
                 if len(positive_ids) <= 2:
-                    messages.success(request, f"{athlete_instance.first_name} {athlete_instance.last_name} inscrito em {athlete_instance.match_type.capitalize()} {athlete_instance.category} {athlete_instance.gender.capitalize()}")
+                    if not comp_instance.encounter:
+                        messages.success(request, f"{athlete_instance.first_name} {athlete_instance.last_name} inscrito em {athlete_instance.match_type.capitalize()} {athlete_instance.category} {athlete_instance.gender.capitalize()}")
+                    else:
+                        messages.success(request, f"{athlete_instance.first_name} {athlete_instance.last_name} inscrito em {comp_instance.name}")
             else:
-                messages.error(request, f"{athlete_instance.first_name} {athlete_instance.last_name} já está inscrito em {athlete_instance.match_type.capitalize()} {athlete_instance.category} {athlete_instance.gender.capitalize()}")
+                if not comp_instance.encounter:
+                    messages.error(request, f"{athlete_instance.first_name} {athlete_instance.last_name} já está inscrito em {athlete_instance.match_type.capitalize()} {athlete_instance.category} {athlete_instance.gender.capitalize()}")
+                else:
+                    messages.error(request, f"{athlete_instance.first_name} {athlete_instance.last_name} já está inscrito em {comp_instance.name}")
+
         if len(positive_ids) > 2:
-            messages.success(request, f"{len(positive_ids)} atletas inscritos em individual")  
+            if not comp_instance.encounter:
+                messages.success(request, f"{len(positive_ids)} atletas inscritos em Individual")  
+            else:
+                messages.success(request, f"{len(positive_ids)} alunos inscritos em {comp_instance.name}")  
         return HttpResponseRedirect(f"/individuals/{comp_id}")
     else:
-        athletes = Athlete.objects.filter(dojo=request.user)
+        if comp_instance.encounter:
+            duplicated_athletes = Athlete.objects.filter(dojo=request.user)
+            duplicated_athletes = sorted(duplicated_athletes, key = lambda x: x.first_name)
+            
+            athletes = duplicated_athletes.copy()
+
+            i = 0
+            while i < len(duplicated_athletes):
+                if i == 0:
+                    last_athlete = (duplicated_athletes[i].first_name, duplicated_athletes[i].last_name)
+                else:
+                    if (duplicated_athletes[i].first_name, duplicated_athletes[i].last_name) == last_athlete:
+                        athletes.pop(i)
+                    last_athlete = (duplicated_athletes[i].first_name, duplicated_athletes[i].last_name)
+                i += 1
+
+        else:
+            athletes = Athlete.objects.filter(dojo=request.user, is_just_student=False)
+            athletes = sorted(athletes, key = lambda x: x.first_name)
+
         number_athletes = len(athletes)
-        athletes = sorted(athletes, key = lambda x: x.first_name)
         context = {"athletes": athletes,
                 "number_athletes": number_athletes,
                 "title": "Seleção de atletas"}
@@ -256,7 +298,8 @@ def team_form(request, match_type, comp_id):
                 
                 athletes = Athlete.objects.filter(gender=form.cleaned_data["gender"], 
                                                   category__in=[form.cleaned_data["category"], CATEGORY_RULES[form.cleaned_data["category"]]],
-                                                  match_type=match_type)
+                                                  match_type=match_type,
+                                                  is_just_student=False)
                 
                 context = {"form": form, "athletes": athletes, "title": "Inscriver Equipa", "match_type": match_type, "comp_id": comp_id}
                 return render(request, 'registration/teams_form.html', context)

@@ -16,15 +16,54 @@
 
     <form method="post" class="main-form">
         {% csrf_token %}
-        {{form.as_p}}
-        <p class="form-selection-boxes">
-            <label for="id_match_type_kata">Kata: </label>
-            <input type="checkbox" id="id_match_type_kata" name="match_type_kata">
+        <p>
+            <label>{{ form.first_name.label }}:</label> {{ form.first_name }}
         </p>
-        <p class="form-selection-boxes">
-            <label for="id_match_type_kumite">Kumite: </label>
-            <input type="checkbox" id="id_match_type_kumite" name="match_type_kumite">
+        <p>
+            <label>{{ form.last_name.label }}:</label> {{ form.last_name }}
         </p>
+        <p>
+            <label>{{ form.graduation.label }}:</label> {{ form.graduation }}
+        </p>
+        <p>
+            <label>{{ form.birth_date.label }}:</label> {{ form.birth_date }}
+        </p>
+        <p>
+            <label>{{ form.skip_number.label }}:</label> {{ form.skip_number }}
+        </p>
+        <div class="info-container important">
+            <span class="containers-label">Atenção</span>
+            <p>O campo <strong>Aluno</strong> deve ser selecionado caso o "atleta" que está a inscrever, não é na verdade um atleta. Ou seja,
+                se esse apenas for um aluno/praticante dentro da sua academia, e que pretende, mais tarde, inscrever num estágio.
+            </p>
+            <p>Como poderá verificar, se selecionar esta caixa, os restantes campos serão escondidos, sendo que essa informação não
+                é necessário para esses casos.
+            </p>
+        </div>
+        <p class="form-selection-boxes">
+            <label id="hide_fields">{{ form.is_just_student.label }}:</label> {{ form.is_just_student }}
+        </p>
+        <div style="display: flex; flex-direction: column;" id="athlete_fields">
+            <p>
+                <label>{{ form.category.label }}:</label> {{ form.category }}
+            </p>
+            <p>
+                <label>{{ form.gender.label }}:</label> {{ form.gender }}
+            </p>
+            <p>
+                <label>{{ form.weight.label }}:</label> {{ form.weight }}
+                {{ form.weight.help_text|safe }}
+            </p>
+            <p class="form-selection-boxes">
+                <label for="id_match_type_kata">Kata: </label>
+                <input type="checkbox" id="id_match_type_kata" name="match_type_kata">
+            </p>
+            <p class="form-selection-boxes">
+                <label for="id_match_type_kumite">Kumite: </label>
+                <input type="checkbox" id="id_match_type_kumite" name="match_type_kumite">
+            </p>
+        </div>
+
         <div class="form-submit-options">
             <button type="submit" name="action" value="save_back" class="default-button">Submeter e Voltar</button>
             <button type="submit" name="action" value="save_add" class="default-button">Submeter e Adicionar Novo</button>
