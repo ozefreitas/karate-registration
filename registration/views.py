@@ -11,6 +11,7 @@ from .models import Athlete, Team, Individual
 from .templatetags.team_extras import valid_athletes
 from .utils.utils import check_athlete_data, get_comp_age, check_filter_data, check_match_type, check_teams_data, check_team_selection
 from dojos.models import CompetitionDetail
+from dojos.forms import SeasonSelectionForm
 import datetime
 import json
 import os
@@ -417,9 +418,28 @@ class TeamView(LoginRequiredMixin, View):
 ### Auxiliar pages ###
 
 def home(request):
-    comp_details = CompetitionDetail.objects.all()
-    comp_details = sorted(comp_details, key = lambda x: x.competition_date)
-    return render(request, 'registration/home.html', {"comps": comp_details})
+    if request.method == "POST":
+        season_form = SeasonSelectionForm(request.POST)
+        if season_form.is_valid():
+            action = request.POST.get("action")
+            if action == "search":
+                comp_details = CompetitionDetail.objects.filter(season=season_form.cleaned_data["season"])
+                comp_details = sorted(comp_details, key = lambda x: x.competition_date)
+                return render(request, 'registration/home.html', {"comps": comp_details,
+                                                                "form": season_form})
+                
+            elif action == "clean_search":
+                cleaned_form = SeasonSelectionForm()
+                comp_details = CompetitionDetail.objects.all()
+                comp_details = sorted(comp_details, key = lambda x: x.competition_date)
+                return render(request, 'registration/home.html', {"comps": comp_details,
+                                                                "form": cleaned_form})
+    else:
+        form = SeasonSelectionForm()
+        comp_details = CompetitionDetail.objects.all()
+        comp_details = sorted(comp_details, key = lambda x: x.competition_date)
+        return render(request, 'registration/home.html', {"comps": comp_details,
+                                                          "form": form})
 
 
 def comp_details(request, comp_id):
