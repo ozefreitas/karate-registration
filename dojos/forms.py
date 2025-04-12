@@ -1,4 +1,5 @@
 from django import forms
+from dojos.models import CustomUser
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from registration.models import Dojo, CompetitionDetail
@@ -14,7 +15,7 @@ class DojoRegisterForm(UserCreationForm):
     email = forms.EmailField()
 
     class Meta:
-        model = User
+        model = CustomUser
         fields = ["username", "first_name", "last_name", "email", "password1", "password2"]
 
     def __init__(self, *args, **kwargs):
@@ -51,10 +52,10 @@ class DojoRegisterForm(UserCreationForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.username = self.cleaned_data['username']  # Use the team name as the username
+        user.username = self.cleaned_data['username']  # Use the dojo name as the username
         if commit:
             user.save()
-            # Mark the team as registered
+            # Mark the dojo as registered
             Dojo.objects.filter(dojo=self.cleaned_data['username']).update(is_registered=True)
         return user
 
@@ -170,3 +171,9 @@ class CompetitionForm(forms.ModelForm):
             ),
 
         }
+
+
+class SeasonSelectionForm(forms.ModelForm):
+    class Meta:
+        model = CompetitionDetail
+        fields = ["season"]

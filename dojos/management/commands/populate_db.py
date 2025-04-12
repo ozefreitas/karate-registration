@@ -17,10 +17,10 @@ class Command(BaseCommand):
     help = "Create competitions data"
 
     def handle(self, *args, **kwargs):
-        user = User.objects.filter(username=os.getenv("DJANGO_SUPERUSER_USERNAME")).first()
+        # user = User.objects.filter(username=os.getenv("DJANGO_SUPERUSER_USERNAME")).first()
         
-        if not user:
-            user = User.objects.create_superuser(username=os.getenv("DJANGO_SUPERUSER_USERNAME"), password=os.getenv("DJANGO_SUPERUSER_PASSWORD"))
+        # if not user:
+        #     user = User.objects.create_superuser(username=os.getenv("DJANGO_SUPERUSER_USERNAME"), password=os.getenv("DJANGO_SUPERUSER_PASSWORD"))
 
         competitions = [
             CompetitionDetail(id=slugify("1 Jornada Liga Soshinkai 2425"), name="1 Jornada Liga Soshinkai", location="Fafe", season="2425", start_registration=datetime(2024, 11, 1),
