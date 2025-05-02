@@ -24,35 +24,45 @@ try:
         new_users.append(new_user)
 
 
-    from registration.models import Athlete
+    from registration.models import Individual, Athlete
 
     interest_keys = ["id", "first_name", "last_name", "category", "match_type", "gender", "weight", "skip_number"]
+    individuals = list(Individual.objects.all().values())
+    
+    
     athletes = list(Athlete.objects.all().values())
+    athletes_by_id = {}
+    for athlete in athletes:
+        athletes_by_id[athlete["id"]] = athlete
 
     # format database info into Karate Score App ready format for draws
-    new_athletes = []
+    new_individuals = []
 
-    for athlete in athletes:
+    for individual in individuals:
+        current_individual = athletes_by_id[individual["athlete_id"]]
         new_athlete = {}
-        for key, value in athlete.items():
+        for key, value in individual.items():
             if key == "dojo_id":
                 for user in new_users:
                     if user["id"] == value:
                         new_athlete["team"] = user["username"]
-        new_athlete["name"] = athlete["first_name"] + " " + athlete["last_name"]
-        new_athlete["category"] = athlete["category"] + " " + athlete["gender"].capitalize()
-        if athlete["match_type"] != "kata" and athlete["weight"] is not None and athlete["weight"] != "":
-            new_athlete["category"] = new_athlete["category"] + " " + athlete["weight"] + "Kg"
-        new_athlete["type"] = athlete["match_type"].capitalize()
+        new_athlete["name"] = current_individual["first_name"] + " " + current_individual["last_name"]
+        new_athlete["category"] = current_individual["category"] + " " + current_individual["gender"].capitalize()
+        if current_individual["match_type"] != "kata" and current_individual["weight"] is not None and current_individual["weight"] != "":
+            if current_individual["weight"] != "open":
+                new_athlete["category"] = new_athlete["category"] + " " + current_individual["weight"] + "Kg"
+            else:
+                new_athlete["category"] = new_athlete["category"] + " " + "Open"
+        new_athlete["type"] = current_individual["match_type"].capitalize()
         new_athlete["favorite"] = "NO"
         try:
-            new_athlete["skip_number"] = int(round(athlete["skip_number"]))
+            new_athlete["skip_number"] = int(round(current_individual["skip_number"]))
         except:
             new_athlete["skip_number"] = ""
-        new_athletes.append(new_athlete)
+        new_individuals.append(new_athlete)
 
     # sort by team name
-    sorted_data = sorted(new_athletes, key=lambda x: (x["team"], x["name"]))
+    sorted_data = sorted(new_individuals, key=lambda x: (x["team"], x["name"]))
 
     # add the number key with 3 filling characters as string
     name = ""

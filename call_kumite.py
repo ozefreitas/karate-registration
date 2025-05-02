@@ -1,7 +1,6 @@
 import os
 import json
 from django.core.serializers.json import DjangoJSONEncoder
-from karate_registration import settings
 import django
 from django.contrib.auth import get_user_model
 import os
@@ -23,24 +22,33 @@ try:
                 new_user[key] = value
         new_users.append(new_user)
 
-    from registration.models import Athlete
+    from registration.models import Athlete, Individual
 
     interest_keys = ["name", "category", "gender", "weight"]
     
+    individuals = list(Individual.objects.all().values())
+    
     athletes = list(Athlete.objects.all().values())
+    athletes_by_id = {}
+    for athlete in athletes:
+        athletes_by_id[athlete["id"]] = athlete
 
-    new_athletes = [athlete for athlete in athletes if athlete["match_type"] == "kumite" and athlete["gender"] != "feminino"]
+    new_athletes = [indiv for indiv in individuals if athletes_by_id[indiv["athlete_id"]]["match_type"] == "kumite" and athletes_by_id[indiv["athlete_id"]]["gender"] != "feminino"]
 
     kumite_athletes = []
     for athlete in new_athletes:
+        current_individual = athletes_by_id[athlete["athlete_id"]]
         new_athlete = {}
-        for key, value in athlete.items():
+        for key, value in current_individual.items():
             if key == "dojo_id":
                 for user in new_users:
                     if user["id"] == value:
                         new_athlete["team"] = user["username"]
-        new_athlete["name"] = athlete["first_name"] + " " + athlete["last_name"]
-        new_athlete["category"] = athlete["category"] + " " + athlete["gender"].capitalize() + " " + athlete["weight"] + "Kg"
+        new_athlete["name"] = current_individual["first_name"] + " " + current_individual["last_name"]
+        if current_individual["weight"] != "open":
+            new_athlete["category"] = current_individual["category"] + " " + current_individual["gender"].capitalize() + " " + current_individual["weight"] + "Kg"
+        else:
+            new_athlete["category"] = current_individual["category"] + " " + current_individual["gender"].capitalize() + " " + "Open"
         kumite_athletes.append(new_athlete)
 
 
