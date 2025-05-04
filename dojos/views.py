@@ -11,14 +11,17 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
 from django.conf import settings
+from django.utils import timezone
 
 from .forms import DojoRegisterForm, DojoUpdateForm, ProfileUpdateForm, FeedbackForm, DojoPasswordResetForm, DojoPasswordConfirmForm, DojoPasswordChangeForm
 from .models import CompetitionDetail
 from registration.models import Dojo, Athlete, Individual
 from smtplib import SMTPException
+from dojos import serializers
 
 from rest_framework import viewsets, filters, status
-from dojos import serializers
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, action
 
 class MultipleSerializersMixIn:
     serializer_classes = {}
@@ -35,6 +38,12 @@ class CompetitionViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         "create": serializers.CreateCompetitionSerializer,
         "update": serializers.UpdateCompetitionSerializer
     }
+
+    @action(detail=False, methods=["get"], url_path="next_comp")
+    def next_comp(self, request):
+        next_competition = CompetitionDetail.objects.filter(has_ended=False).order_by('competition_date').first()
+        serializer = serializers.CompetitionsSerializer(next_competition)
+        return Response(serializer.data)
 
 ### User loging account actions ###
 

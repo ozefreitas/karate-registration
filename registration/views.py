@@ -16,6 +16,8 @@ import json
 import os
 
 from rest_framework import viewsets, filters, status
+from rest_framework.decorators import api_view, action
+from rest_framework.response import Response
 import registration.serializers as serializers
 
 # views for the athlets registrations
@@ -66,6 +68,13 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         "create": serializers.CreateAthleteSerializer,
         "update": serializers.UpdateAthleteSerializer
     }
+
+    @action(detail=False, methods=["get"], url_path="next_comp")
+    def last_five(self, request):
+        last_five = Athlete.objects.filter(dojo=request.user).order_by('creation_date')
+        serializer = serializers.AthletesSerializer(last_five)
+        return Response(serializer.data)
+
 
 ### Athletes processing ###
 
