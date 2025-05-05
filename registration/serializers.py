@@ -29,6 +29,24 @@ class UpdateAthleteSerializer(serializers.ModelSerializer):
         exclude = ("age", "dojo", )
 
 
+### Individuals Serializer Classes
+
+class IndividualsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Individual
+        fields = "__all__"
+
+
+### Teams Serializer Classes
+
+class TeamsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Team
+        fields = "__all__"
+    
+
 ### Dojos Serializer Classes
 
 class DojosSerializer(serializers.ModelSerializer):

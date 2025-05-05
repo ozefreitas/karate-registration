@@ -76,6 +76,26 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         last_five = Athlete.objects.order_by('creation_date')[:5]
         serializer = serializers.AthletesSerializer(last_five, many=True)
         return Response(serializer.data)
+    
+
+class IndividualsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
+    queryset=Individual.objects.all()
+    serializer_class = serializers.IndividualsSerializer
+
+    # serializer_classes = {
+    #     "create": serializers.CreateAthleteSerializer,
+    #     "update": serializers.UpdateAthleteSerializer
+    # }
+
+
+class TeamsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
+    queryset=Team.objects.all()
+    serializer_class = serializers.TeamsSerializer
+
+    # serializer_classes = {
+    #     "create": serializers.CreateAthleteSerializer,
+    #     "update": serializers.UpdateAthleteSerializer
+    # }
 
 
 ### Athletes processing ###
