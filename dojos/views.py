@@ -14,12 +14,13 @@ from django.conf import settings
 from django.utils import timezone
 
 from .forms import DojoRegisterForm, DojoUpdateForm, ProfileUpdateForm, FeedbackForm, DojoPasswordResetForm, DojoPasswordConfirmForm, DojoPasswordChangeForm
-from .models import CompetitionDetail
+from .models import CompetitionDetail, Notifications
 from registration.models import Dojo, Athlete, Individual
 from smtplib import SMTPException
 from dojos import serializers
 
 from rest_framework import viewsets, filters, status
+from rest_framework. views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, action
 
@@ -44,6 +45,20 @@ class CompetitionViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         next_competition = CompetitionDetail.objects.filter(has_ended=False).order_by('competition_date').first()
         serializer = serializers.CompetitionsSerializer(next_competition)
         return Response(serializer.data)
+    
+    @action(detail=False, methods=["get"], url_path="last_comp")
+    def last_comp(self, request):
+        last_competition = CompetitionDetail.objects.filter(has_ended=True).order_by('competition_date').last()
+        serializer = serializers.CompetitionsSerializer(last_competition)
+        return Response(serializer.data)
+    
+
+@api_view(['GET'])
+def notifications(request):
+    # TODO: add authentication
+    notifications = Notifications.objects.all()
+    serializer = serializers.NotificationsSerializer(notifications, many=True)
+    return Response(serializer.data)
 
 ### User loging account actions ###
 
@@ -225,22 +240,6 @@ def password_reset_confirmation(request,
             return render(request, "Invalid link.", status=400)
     else:
         return render(request, "password/reset_password_confirm.html", {"form": form})
-
-
-### Comp ended processing ###
-
-# def clone_registrations(request, comp_id):
-#     if request.method == "POST":
-#         comp = get_object_or_404(CompetitionDetail, id=comp_id)
-#         archived = ArchivedAthlete.objects.filter(competition=comp_id)
-#         for athlete in archived:
-#             athlete_data = {}
-#             for field in athlete._meta.fields:
-#                 if field.name not in ["id", "competition", "archived_date"]:
-#                     athlete_data[field.name] = getattr(athlete, field.name)
-#             Athlete.objects.create(**athlete_data)
-#         messages.success(request, f'Os atletas da/do {comp.name} foram copiados para o registo atual')
-#     return HttpResponseRedirect("/athletes/")
 
 
 ### Custom error page views ###
