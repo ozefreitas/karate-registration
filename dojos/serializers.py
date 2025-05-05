@@ -1,7 +1,6 @@
 from rest_framework import serializers
 import dojos.models as models
 
-
 class CompetitionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CompetitionDetail
@@ -16,3 +15,8 @@ class UpdateCompetitionSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CompetitionDetail
         exclude = ("id", "has_ended")
+
+class NotificationsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Notifications
+        fields = "__all__"

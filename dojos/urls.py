@@ -7,6 +7,7 @@ router.register(r'competitions', views.CompetitionViewSet, basename='competition
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('dojos/', views.notifications, name="notifications"),
     path('register_user/', views.register_user, name="dojos-register"),
     path('login/', views.login_user, name="dojos-login"),
     path('feedback/', views.feedback, name="dojos-feedback"),

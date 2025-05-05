@@ -70,3 +70,25 @@ class FeedbackData(models.Model):
 class PasswordConfirmReset(models.Model):
     new_password1 = models.CharField("Palavra Passe", max_length=36)
     new_password2 = models.CharField("Repetir Palavra Passe", max_length=36)
+
+
+class Announcement(models.Model):
+    message = models.TextField()
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class Notifications(models.Model):
+    notification = models.TextField()
+
+    class URGENCY_TYPE(models.TextChoices):
+        NONE = "none", "None"
+        GREEN = "green", "Green"
+        YELLOW = "yellow", "Yellow"
+        ORANGE = "orange", "Orange"
+        RED = "red", "Red"
+        BLACK = "black", "Black"
+
+    urgency = models.CharField(max_length=10, choices=URGENCY_TYPE.choices, default=URGENCY_TYPE.NONE)
+    dojo = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
