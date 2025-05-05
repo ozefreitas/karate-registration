@@ -60,6 +60,16 @@ def notifications(request):
     serializer = serializers.NotificationsSerializer(notifications, many=True)
     return Response(serializer.data)
 
+@api_view(['GET'])
+def current_season(request):
+    today = timezone.now()
+    if today.month > 8:
+        season = f"{today.year} - {today.year + 1}"
+    else:
+        season = f"{today.year - 1}-{today.year}"
+    return Response({"season": season})
+
+
 ### User loging account actions ###
 
 def register_user(request):
