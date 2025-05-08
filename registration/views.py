@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .forms import AthleteForm, FilterAthleteForm, TeamForm, FilterTeamForm, TeamCategorySelection
-from .models import Athlete, Team, Individual
+from .models import Athlete, Team, Individual, Classification
 from .templatetags.team_extras import valid_athletes
 from .utils.utils import check_athlete_data, get_comp_age, check_filter_data, check_match_type, check_teams_data, check_team_selection
 from dojos.models import CompetitionDetail
@@ -18,6 +18,9 @@ import os
 from rest_framework import viewsets, filters, status
 from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
+from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
 import registration.serializers as serializers
 
 # views for the athlets registrations
@@ -63,6 +66,8 @@ class MultipleSerializersMixIn:
 class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Athlete.objects.all()
     serializer_class = serializers.AthletesSerializer
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
+    # permission_classes = [IsAuthenticated]
 
     serializer_classes = {
         "create": serializers.CreateAthleteSerializer,
@@ -81,6 +86,8 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 class IndividualsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Individual.objects.all()
     serializer_class = serializers.IndividualsSerializer
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
+    # permission_classes = [IsAuthenticated]
 
     # serializer_classes = {
     #     "create": serializers.CreateAthleteSerializer,
@@ -91,12 +98,55 @@ class IndividualsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 class TeamsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Team.objects.all()
     serializer_class = serializers.TeamsSerializer
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
+    # permission_classes = [IsAuthenticated]
 
     # serializer_classes = {
     #     "create": serializers.CreateAthleteSerializer,
     #     "update": serializers.UpdateAthleteSerializer
     # }
 
+
+class ClassificationsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
+    queryset=Classification.objects.all()
+    serializer_class = serializers.AllClassificationsSerializer
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
+    # permission_classes = [IsAuthenticated]
+
+    serializer_classes = {
+        "create": serializers.CreateClassificationsSerializer,
+    }
+
+    @action(detail=False, methods=["get"], url_path="per_comp")
+    def per_comp(self, request):
+        queryset = Classification.objects.all()
+        serialized_data = serializers.AllClassificationsSerializer(queryset, many=True)
+        final_classification = {}
+        competition = ""
+        for classification in serialized_data.data:
+            comp_dict = {}
+            if competition == "" and classification["competition"] == competition:
+                comp_dict[classification['full_category']] = {"first_place": classification["first_place"], 
+                                                           "second_place": classification["second_place"],
+                                                           "third_place": classification["third_place"]}
+            else:
+                competition = classification["competition"]
+                comp_dict[classification['full_category']] = {"first_place": classification["first_place"], 
+                                                           "second_place": classification["second_place"],
+                                                           "third_place": classification["third_place"]}
+            if competition not in final_classification.keys():
+                final_classification[competition] = [comp_dict]
+            else:
+                final_classification[competition].append(comp_dict)
+
+        return Response([final_classification])
+    
+    @action(detail=False, methods=["get"], url_path="last_comp_quali")
+    def last_comp_quali(self, request):
+        last_competition = CompetitionDetail.objects.filter(has_ended=True).order_by('competition_date').last()
+        last_comp_quali = Classification.objects.filter(competition=last_competition.id)
+        serialized_data = serializers.ClassificationsSerializer(last_comp_quali, many=True)
+        return Response(serialized_data.data)
 
 ### Athletes processing ###
 

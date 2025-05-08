@@ -168,6 +168,36 @@ class Team(models.Model):
         return "{} {} {}".format(self.match_type, self.category, self.gender)
 
 
+### Classification models ###
+
+class Classification(models.Model):
+    competition = models.ForeignKey(CompetitionDetail, on_delete=models.CASCADE)
+    first_place = models.ForeignKey(Athlete, verbose_name="Primeiro Classificado", related_name="first_place", on_delete=models.CASCADE)
+    second_place = models.ForeignKey(Athlete, verbose_name="Segundo Classificado", related_name="second_place", on_delete=models.CASCADE)
+    third_place = models.ForeignKey(Athlete, verbose_name="Terceiro Classificado", related_name="third_place", on_delete=models.CASCADE)
+
+    def clean(self, *args, **kwargs):
+        if self.first_place.category != self.second_place.category\
+            or self.second_place.category != self.third_place.category\
+                or self.first_place.category != self.third_place.category:
+            raise ValueError("Categories don't match.")
+        if self.first_place.gender != self.second_place.gender\
+            or self.second_place.gender != self.third_place.gender\
+                or self.first_place.gender != self.third_place.gender:
+            raise ValueError("Genders don't match.")
+        if self.first_place.id == self.second_place.id\
+            or self.second_place.id == self.third_place.id\
+                or self.first_place.id == self.third_place.id:
+            raise ValueError("You have repeated Athletes.")
+        
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return "{} {} {} Classification".format(self.competition.name, self.first_place.category, self.first_place.gender.capitalize())
+
+
 ### Filter models ###
 
 class AthleteFilter(models.Model):
