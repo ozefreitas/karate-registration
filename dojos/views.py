@@ -14,12 +14,15 @@ from django.conf import settings
 from django.utils import timezone
 
 from .forms import DojoRegisterForm, DojoUpdateForm, ProfileUpdateForm, FeedbackForm, DojoPasswordResetForm, DojoPasswordConfirmForm, DojoPasswordChangeForm
-from .models import CompetitionDetail, Notifications
+from .models import CompetitionDetail, Notification
 from registration.models import Dojo, Athlete, Individual
 from smtplib import SMTPException
 from dojos import serializers
 
 from rest_framework import viewsets, filters, status
+from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
 from rest_framework. views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, action
@@ -34,6 +37,8 @@ class MultipleSerializersMixIn:
 class CompetitionViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=CompetitionDetail.objects.all()
     serializer_class=serializers.CompetitionsSerializer
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
+    # permission_classes = [IsAuthenticated]
 
     serializer_classes = {
         "create": serializers.CreateCompetitionSerializer,
@@ -54,9 +59,11 @@ class CompetitionViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     
 
 @api_view(['GET'])
+# @authentication_classes([SessionAuthentication, BasicAuthentication])
+# @permission_classes([IsAuthenticated])
 def notifications(request):
-    # TODO: add authentication
-    notifications = Notifications.objects.all()
+    
+    notifications = Notification.objects.all()
     serializer = serializers.NotificationsSerializer(notifications, many=True)
     return Response(serializer.data)
 

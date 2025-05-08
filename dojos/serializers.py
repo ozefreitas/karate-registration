@@ -18,5 +18,5 @@ class UpdateCompetitionSerializer(serializers.ModelSerializer):
 
 class NotificationsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Notifications
+        model = models.Notification
         fields = "__all__"

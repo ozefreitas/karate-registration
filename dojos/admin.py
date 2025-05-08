@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CompetitionDetail, FeedbackData, Profile, Notifications, Announcement
+from .models import CompetitionDetail, FeedbackData, Profile, Notification, Announcement
 
 # Register your models here.
 
@@ -11,5 +11,5 @@ class CompetitionDetailAdmin(admin.ModelAdmin):
 admin.site.register(CompetitionDetail, CompetitionDetailAdmin)
 admin.site.register(FeedbackData)
 admin.site.register(Profile)
-admin.site.register(Notifications)
+admin.site.register(Notification)
 admin.site.register(Announcement)

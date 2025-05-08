@@ -78,7 +78,7 @@ class Announcement(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 
-class Notifications(models.Model):
+class Notification(models.Model):
     notification = models.TextField()
 
     class URGENCY_TYPE(models.TextChoices):
