@@ -13,8 +13,14 @@ class TeamAdmin(admin.ModelAdmin):
     search_fields = ("category", "match_type", "gender", "dojo")
 
 
+class ClassificationAdmin(admin.ModelAdmin):
+    def save_model(self, request, obj, form, change):
+        obj.full_clean()
+        super().save_model(request, obj, form, change)
+
+
 admin.site.register(Athlete, AthleteAdmin)
 admin.site.register(Dojo)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Individual)
-admin.site.register(Classification)
+admin.site.register(Classification, ClassificationAdmin)

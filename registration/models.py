@@ -4,6 +4,7 @@ from dojos.models import CompetitionDetail
 from django.apps import apps
 from django.utils import timezone
 from nanoid import generate
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 
@@ -173,22 +174,25 @@ class Team(models.Model):
 class Classification(models.Model):
     competition = models.ForeignKey(CompetitionDetail, on_delete=models.CASCADE)
     first_place = models.ForeignKey(Athlete, verbose_name="Primeiro Classificado", related_name="first_place", on_delete=models.CASCADE)
-    second_place = models.ForeignKey(Athlete, verbose_name="Segundo Classificado", related_name="second_place", on_delete=models.CASCADE)
-    third_place = models.ForeignKey(Athlete, verbose_name="Terceiro Classificado", related_name="third_place", on_delete=models.CASCADE)
+    second_place = models.ForeignKey(Athlete, verbose_name="Segundo Classificado", related_name="second_place", on_delete=models.CASCADE, null=True, blank=True)
+    third_place = models.ForeignKey(Athlete, verbose_name="Terceiro Classificado", related_name="third_place", on_delete=models.CASCADE, null=True, blank=True)
 
-    def clean(self, *args, **kwargs):
-        if self.first_place.category != self.second_place.category\
-            or self.second_place.category != self.third_place.category\
-                or self.first_place.category != self.third_place.category:
-            raise ValueError("Categories don't match.")
-        if self.first_place.gender != self.second_place.gender\
-            or self.second_place.gender != self.third_place.gender\
-                or self.first_place.gender != self.third_place.gender:
-            raise ValueError("Genders don't match.")
-        if self.first_place.id == self.second_place.id\
-            or self.second_place.id == self.third_place.id\
-                or self.first_place.id == self.third_place.id:
-            raise ValueError("You have repeated Athletes.")
+    def clean(self):
+        super().clean()
+
+        athletes = [self.first_place, self.second_place, self.third_place]
+        athletes = [a for a in athletes if a is not None]
+
+        if len(set(athletes)) != len(athletes):
+            raise ValidationError("Each place must be assigned to a different athlete.")
+
+        categories = {a.category for a in athletes}
+        if len(categories) > 1:
+            raise ValidationError("All athletes must belong to the same category.")
+        
+        genders = {a.gender for a in athletes}
+        if len(genders) > 1:
+            raise ValidationError("All athletes must belong to the same gender.")
         
     def save(self, *args, **kwargs):
         self.full_clean()
