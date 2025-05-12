@@ -25,7 +25,7 @@ class CompactAthletesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Athlete
-        fields = ["first_name", "last_name", "gender", "match_type", "category"]
+        fields = ["id" ,"first_name", "last_name", "gender", "match_type", "category"]
 
     def get_gender(self, obj):
         return obj.gender.capitalize() if obj.gender else ''
@@ -57,10 +57,23 @@ class IndividualsSerializer(serializers.ModelSerializer):
 ### Teams Serializer Classes
 
 class TeamsSerializer(serializers.ModelSerializer):
+    athlete1 = CompactAthletesSerializer()
+    athlete2 = CompactAthletesSerializer()
+    athlete3 = CompactAthletesSerializer()
+    athlete4 = CompactAthletesSerializer()
+    athlete5 = CompactAthletesSerializer()
+    gender = serializers.SerializerMethodField()
+    match_type = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Team
         fields = "__all__"
+    
+    def get_gender(self, obj):
+        return obj.gender.capitalize() if obj.gender else ''
+    
+    def get_match_type(self, obj):
+        return obj.match_type.capitalize() if obj.match_type else ''
     
 
 ### Dojos Serializer Classes

@@ -67,7 +67,7 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Athlete.objects.all()
     serializer_class = serializers.AthletesSerializer
     # authentication_classes = [SessionAuthentication, BasicAuthentication]
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     serializer_classes = {
         "create": serializers.CreateAthleteSerializer,
@@ -76,9 +76,8 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
     @action(detail=False, methods=["get"], url_path="last_five")
     def last_five(self, request):
-        # last_five = Athlete.objects.filter(dojo=request.user).order_by('creation_date')[:5]
         # TODO: add authentication
-        last_five = Athlete.objects.order_by('creation_date')[:5]
+        last_five = Athlete.objects.filter(dojo=request.user).order_by('creation_date')[:5]
         serializer = serializers.AthletesSerializer(last_five, many=True)
         return Response(serializer.data)
     
@@ -105,6 +104,13 @@ class TeamsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     #     "create": serializers.CreateAthleteSerializer,
     #     "update": serializers.UpdateAthleteSerializer
     # }
+
+    @action(detail=False, methods=["get"], url_path="last_five")
+    def last_five(self, request):
+        # TODO: add authentication
+        last_five = Team.objects.filter(dojo=request.user).order_by('creation_date')[:5]
+        serializer = serializers.TeamsSerializer(last_five, many=True)
+        return Response(serializer.data)
 
 
 class ClassificationsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
