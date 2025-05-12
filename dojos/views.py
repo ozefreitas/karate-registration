@@ -26,6 +26,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework. views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, action
+from drf_spectacular.utils import extend_schema
 
 class MultipleSerializersMixIn:
     serializer_classes = {}
@@ -60,10 +61,10 @@ class CompetitionViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
 @api_view(['GET'])
 # @authentication_classes([SessionAuthentication, BasicAuthentication])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def notifications(request):
     
-    notifications = Notification.objects.all()
+    notifications = Notification.objects.filter(dojo=request.user)
     serializer = serializers.NotificationsSerializer(notifications, many=True)
     return Response(serializer.data)
 
@@ -75,6 +76,40 @@ def current_season(request):
     else:
         season = f"{today.year - 1}-{today.year}"
     return Response({"season": season})
+
+
+class RegisterView(APIView):
+    @extend_schema(
+        request=serializers.RegisterUserSerializer,
+        responses={201: None, 400: None},
+        description="Register a new user with username, email and password."
+    )
+    def post(self, request):
+        serializer = serializers.RegisterUserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class UserDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        return Response({
+            "id": user.id,
+            "username": user.username,
+            "email": user.email
+        }, status=status.HTTP_200_OK)
+    
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        request.user.auth_token.delete()  # Deletes token from DB
+        return Response({"detail": "Logged out"}, status=200)
 
 
 ### User loging account actions ###
