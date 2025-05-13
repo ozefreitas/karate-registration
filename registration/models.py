@@ -22,6 +22,18 @@ MATCHES = {
         "kumite": "Kumite"
 }
 
+def generate_unique_nanoid(model_name, app_label, size=10):
+    """
+    Generates a unique NanoID for a given model.
+    Uses `apps.get_model()` to avoid import issues.
+    """
+    model = apps.get_model(app_label, model_name)  # Dynamically get model
+    while True:
+        new_id = generate(size=size)  # Generate NanoID
+        if not model.objects.filter(id=new_id).exists():
+            return new_id
+
+
 GRADUATIONS = {
         "15": "9º Kyu",
         "14.5": "8º Kyu Kari",
@@ -201,6 +213,7 @@ class TeamFilter(models.Model):
 class CoachBase(models.Model):
     first_name = models.CharField("Primeiro Nome", max_length=200)
     last_name = models.CharField("Último Nome", max_length=200)
+    dojo = models.ForeignObject(User, on_delete=models.CASCADE)
     graduation = models.CharField("Graduação", max_length=4, choices=GRADUATIONS)
     birth_date = models.DateField("Data de Nascimento")
     age = models.IntegerField("Idade")
