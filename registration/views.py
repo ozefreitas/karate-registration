@@ -6,8 +6,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django_filters.rest_framework import DjangoFilterBackend
+
 from .forms import AthleteForm, FilterAthleteForm, TeamForm, FilterTeamForm, TeamCategorySelection
 from .models import Athlete, Team, Individual, Classification
+from .filters import IndividualFilters
 from .templatetags.team_extras import valid_athletes
 from .utils.utils import check_athlete_data, get_comp_age, check_filter_data, check_match_type, check_teams_data, check_team_selection
 from dojos.models import CompetitionDetail
@@ -15,8 +18,8 @@ import datetime
 import json
 import os
 
-from rest_framework import viewsets, filters, status
-from rest_framework.decorators import api_view, action
+from rest_framework import viewsets
+from rest_framework.decorators import api_view, action, permission_classes
 from rest_framework.response import Response
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
@@ -64,6 +67,7 @@ class MultipleSerializersMixIn:
 
 
 class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
+    # TODO: order get request by the category_index from the serializer
     queryset=Athlete.objects.all()
     serializer_class = serializers.AthletesSerializer
     # authentication_classes = [SessionAuthentication, BasicAuthentication]
@@ -73,6 +77,9 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         "create": serializers.CreateAthleteSerializer,
         "update": serializers.UpdateAthleteSerializer
     }
+
+    def get_queryset(self):
+        return super().get_queryset()
 
     @action(detail=False, methods=["get"], url_path="last_five")
     def last_five(self, request):
@@ -85,8 +92,10 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 class IndividualsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Individual.objects.all()
     serializer_class = serializers.IndividualsSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = IndividualFilters
     # authentication_classes = [SessionAuthentication, BasicAuthentication]
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     # serializer_classes = {
     #     "create": serializers.CreateAthleteSerializer,
@@ -98,7 +107,7 @@ class TeamsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Team.objects.all()
     serializer_class = serializers.TeamsSerializer
     # authentication_classes = [SessionAuthentication, BasicAuthentication]
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     # serializer_classes = {
     #     "create": serializers.CreateAthleteSerializer,
