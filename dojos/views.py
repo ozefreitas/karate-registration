@@ -63,7 +63,6 @@ class CompetitionViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 # @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def notifications(request):
-    
     notifications = Notification.objects.filter(dojo=request.user)
     serializer = serializers.NotificationsSerializer(notifications, many=True)
     return Response(serializer.data)
