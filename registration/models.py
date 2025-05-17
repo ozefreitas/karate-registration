@@ -104,9 +104,9 @@ class Athlete(models.Model):
             self.id = generate_unique_nanoid(self.__class__.__name__, self._meta.app_label)
         super().save(*args, **kwargs)
 
-    def __str__(self): 
-        return "{} {}".format(self.first_name, self.last_name)
-    
+    def __str__(self):
+        return "{} {} {}".format(self.first_name, self.last_name, self.dojo.username)
+
 
 ### Individual models ###
 
@@ -121,7 +121,7 @@ class Individual(models.Model):
             self.id = generate_unique_nanoid("Individual", "registration")
         super().save(*args, **kwargs)
 
-    def __str__(self): 
+    def __str__(self):
         return "{} {}".format(self.athlete.first_name, self.athlete.last_name)
 
 

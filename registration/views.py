@@ -55,27 +55,27 @@ def form(request):
 
             if len(match_type_error) > 0:
                 errors.append(match_type_error)
-            
+
             for match in matches:
                 if Athlete.objects.filter(first_name=form.cleaned_data["first_name"], birth_date=birth_date, match_type=match).exists():
                     errors.append("Um atleta com as mesmas credenciais já está inscrito. Verifique se quer inscrever a mesma pessoa noutra prova")
 
                 else:
                     errors = check_athlete_data(form, age_at_comp, age_graduation_rules, age_category_rules, matches)
-            
+
             if len(errors) != 0:
                 request.session['can_access_target_page'] = True
                 for error in errors:
                     messages.error(request, error)
                 context = {"form": form, "title": "Inscrever atleta"}
                 return render(request, 'registration/form.html', context)
-            
+
             for match in matches:
-                new_athlete = form.save(commit=False) 
+                new_athlete = form.save(commit=False)
                 new_athlete.dojo = request.user
                 new_athlete.age = age_at_comp
                 new_athlete.match_type = match
-                
+
                 # if "kata", weight is set to None
                 if match == "kata":
                     new_athlete.weight = None
@@ -156,7 +156,7 @@ class AthletesView(LoginRequiredMixin, View):
             athletes_paginated = paginator.page(1)
         except EmptyPage:
             athletes_paginated = paginator.page(paginator.num_pages)
-        
+
         context = {
             "athletes": athletes_paginated,
             "filters": filter_form,
@@ -178,7 +178,7 @@ class IndividualsView(LoginRequiredMixin, TemplateView):
         # Capture the comp_id from URL kwargs
         comp_id = self.kwargs.get('comp_id')
         comp_detail = CompetitionDetail.objects.filter(id=comp_id).first()
-        individuals = Individual.objects.filter(competition=comp_id)
+        individuals = Individual.objects.filter(competition=comp_id, dojo=self.request.user)
         number_individuals = len(individuals)
         is_closed = datetime.date.today() > comp_detail.retifications_deadline and not comp_detail.has_ended
 
@@ -216,8 +216,8 @@ def athletes_preview(request, comp_id):
             else:
                 messages.error(request, f"{athlete_instance.first_name} {athlete_instance.last_name} já está inscrito em {athlete_instance.match_type.capitalize()} {athlete_instance.category} {athlete_instance.gender.capitalize()}")
         if len(positive_ids) > 2:
-            messages.success(request, f"{len(positive_ids)} atletas inscritos em individual")  
-        return HttpResponseRedirect(f"/individuals/{comp_id}")
+            messages.success(request, f"{len(positive_ids)} atletas inscritos em individual")
+        return HttpResponseRedirect(f"/individuals/{comp_id}/")
     else:
         athletes = Athlete.objects.filter(dojo=request.user)
         number_athletes = len(athletes)
@@ -243,9 +243,9 @@ def team_form(request, match_type, comp_id):
                     messages.error(request, error)
                 context = {"form": form, "title": "Inscrever Equipa", "comp_id": comp_id}
                 return render(request, 'registration/teams_form.html', context)
-            
+
             teams = Team.objects.filter(dojo=request.user,
-                                         category=form.cleaned_data["category"], 
+                                         category=form.cleaned_data["category"],
                                          match_type=match_type,
                                          gender=form.cleaned_data["gender"])
             new_team = form.save(commit=False)
@@ -261,9 +261,9 @@ def team_form(request, match_type, comp_id):
 
             action = request.POST.get("action")
             if action == "save_back":
-                return HttpResponseRedirect(f"/teams/{comp_id}")
+                return HttpResponseRedirect(f"/teams/{comp_id}/")
             elif action == "save_add":
-                return HttpResponseRedirect(f"/teams_form/{match_type}/{comp_id}")
+                return HttpResponseRedirect(f"/teams_form/{match_type}/{comp_id}/")
 
     else:
         form = TeamForm(dojo=request.user, match_type=match_type)
@@ -295,15 +295,15 @@ class TeamView(LoginRequiredMixin, View):
 
         number_teams = len(teams)
         comp = get_object_or_404(CompetitionDetail, id=comp_id)
-        context = {"teams": teams_paginated, 
-                    "filters": filter_form, 
+        context = {"teams": teams_paginated,
+                    "filters": filter_form,
                     "not_found": not_found,
                     "comp": comp,
                     "number_teams": number_teams,
                     "is_closed": is_closed,
                     "title": "Equipas"}
         return render(request, self.template_name, context)
-    
+
     def post(self, request, *args, **kwargs):
         comp_id = self.kwargs.get('comp_id')
         not_found = False
@@ -323,8 +323,8 @@ class TeamView(LoginRequiredMixin, View):
 
         number_teams = len(teams)
         comp = get_object_or_404(CompetitionDetail, id=comp_id)
-        context = {"teams": teams_paginated, 
-                    "filters": filter_form, 
+        context = {"teams": teams_paginated,
+                    "filters": filter_form,
                     "not_found": not_found,
                     "comp": comp,
                     "number_teams": number_teams,
@@ -390,8 +390,8 @@ def delete(request, type, id, comp_id):
             # check if there's an individual with the athlete to be removed
             if Individual.objects.filter(athlete=object_of).exists():
                 messages.error(request, f"{object_of.first_name} {object_of.last_name} está inscrit@ numa prova Individual. Elimine a inscrião correspondente em primeiro lugar")
-                return HttpResponseRedirect(f"/individuals/{comp_id}")
-            
+                return HttpResponseRedirect(f"/athletes/")
+
             # check if there's a team with the the athlete to be removed
             teams = Team.objects.all()
             for team in teams:
@@ -399,16 +399,16 @@ def delete(request, type, id, comp_id):
                 for athlete in valid:
                     if Individual.objects.filter(athlete=athlete).exists():
                         messages.error(request, f"{athlete.first_name} {athlete.last_name} está inscrit@ numa prova de Equipas. Elimine a inscrião correspondente em primeiro lugar")
-                        return HttpResponseRedirect(f"/teams/{comp_id}")
-            
+                        return HttpResponseRedirect(f"/teams/{comp_id}/")
+
             # if none, delete the athlete
             message = f'Atleta com o nome {object_of.first_name} {object_of.last_name} eliminad@ com sucesso!'
-        
+
         # deletes a team
         elif type == "team":
             object_of = get_object_or_404(Team, id=id)
             message = f'Equipa com o número {object_of.team_number} eliminada com sucesso'
-        
+
         # deletes an individual
         else:
             object_of = get_object_or_404(Individual, id=id)
@@ -416,17 +416,17 @@ def delete(request, type, id, comp_id):
 
         messages.success(request, message)
         object_of.delete()
-    
+
     # GET will delete all objects, id should always equal to 0
     else:
         if type == "athlete":
-            Athlete.objects.all().delete()
+            Athlete.objects.filter(dojo=request.user).delete()
         elif type == "team":
-            Team.objects.all().delete()
+            Team.objects.filter(dojo=request.user).delete()
         else:
-            Individual.objects.all().delete()
+            Individual.objects.filter(dojo=request.user).delete()
         messages.success(request, 'Atletas eliminados' if type == "athlete" or type == "individual" else 'Equipas eliminadas')
-    return HttpResponseRedirect(f"/{type}s/{comp_id}") if type == "individual" or type == "team" else HttpResponseRedirect(f"/{type}s/")
+    return HttpResponseRedirect(f"/{type}s/{comp_id}/") if type == "individual" or type == "team" else HttpResponseRedirect(f"/{type}s/")
 
 
 def update(request, type, match_type, id, comp_id):
@@ -454,11 +454,11 @@ def update(request, type, match_type, id, comp_id):
                 birth_date = form.cleaned_data["birth_date"]
                 age_at_comp = get_comp_age(birth_date)
 
-                if Athlete.objects.filter(first_name=form.cleaned_data["first_name"], 
-                                          birth_date=birth_date, 
+                if Athlete.objects.filter(first_name=form.cleaned_data["first_name"],
+                                          birth_date=birth_date,
                                           match_type=form.cleaned_data.get("match_type")).exists():
-                    athlete_test = Athlete.objects.filter(first_name=form.cleaned_data["first_name"], 
-                                                          birth_date=birth_date, 
+                    athlete_test = Athlete.objects.filter(first_name=form.cleaned_data["first_name"],
+                                                          birth_date=birth_date,
                                                           match_type=form.cleaned_data.get("match_type")).first()
                     if athlete_test.id != athlete.id:
                         errors.append("Um atleta com as mesmas credenciais já está inscrito. Verifique se quer inscrever a mesma pessoa noutra prova")
@@ -477,12 +477,12 @@ def update(request, type, match_type, id, comp_id):
             messages.error(request, "Não foi possível atualizar")
             for error in errors:
                 messages.error(request, error)
-            return HttpResponseRedirect(f"/update_registration/{type}/{match_type}/{id}/{comp_id}")
-        
+            return HttpResponseRedirect(f"/update_registration/{type}/{match_type}/{id}/{comp_id}/")
+
         # If no erros, proceed
         else:
             if type == "athlete":
-                new_athlete = form.save(commit=False) 
+                new_athlete = form.save(commit=False)
                 new_athlete.dojo = request.user
                 new_athlete.age = age_at_comp
                 new_athlete.save()
@@ -491,15 +491,15 @@ def update(request, type, match_type, id, comp_id):
                 # If another athlete in other match_type, change it too
                 if other_match:
                     form = AthleteForm(request.POST, instance=other_match)
-                    new_athlete = form.save(commit=False) 
+                    new_athlete = form.save(commit=False)
                     new_athlete.dojo = request.user
                     new_athlete.age = age_at_comp
                     new_athlete.save()
                     messages.success(request, "Outr@ atleta com a mesma informação mas de outra prova encontrad@ e atualizad@!")
-                
+
             else:
                 teams = Team.objects.filter(dojo=request.user,
-                                         category=form.cleaned_data["category"], 
+                                         category=form.cleaned_data["category"],
                                          match_type=match_type,
                                          gender=form.cleaned_data["gender"])
                 new_team = form.save(commit=False)
@@ -507,13 +507,13 @@ def update(request, type, match_type, id, comp_id):
                 new_team.match_type = match_type
                 new_team.team_number = len(teams) + 1
                 new_team.save()
-            return HttpResponseRedirect("/athletes/") if type == "athlete" else HttpResponseRedirect(f"/teams/{comp_id}")
+            return HttpResponseRedirect("/athletes/") if type == "athlete" else HttpResponseRedirect(f"/teams/{comp_id}/")
     else:
         form = AthleteForm(instance=athlete) if type == "athlete" else TeamForm(instance=team)
         if match_type == "kata":
             del form.fields['weight']
-        return render(request, 'registration/update_registration.html', {"form": form, 
-                                                                         "type": type, 
+        return render(request, 'registration/update_registration.html', {"form": form,
+                                                                         "type": type,
                                                                          "match_type": match_type,
                                                                          "id": id,
                                                                          "comp_id": comp_id,
