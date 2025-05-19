@@ -158,4 +158,4 @@ LOGIN_URL = 'login'
 LANGUAGE_CODE = 'pt'
 USE_L10N = True
 
-AUTH_USER_MODEL = 'dojos.CustomUser'
+# AUTH_USER_MODEL = 'dojos.CustomUser'

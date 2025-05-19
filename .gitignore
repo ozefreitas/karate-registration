@@ -62,6 +62,8 @@ db.sqlite3
 db.sqlite3-journal
 static_root/
 media/
+registration/migrations/
+dojos/migrations/
 
 # Flask stuff:
 instance/

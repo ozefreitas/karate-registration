@@ -1,5 +1,5 @@
 from django import forms
-from dojos.models import CustomUser
+# from dojos.models import CustomUser
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from registration.models import Dojo, CompetitionDetail
@@ -15,7 +15,7 @@ class DojoRegisterForm(UserCreationForm):
     email = forms.EmailField()
 
     class Meta:
-        model = CustomUser
+        model = User
         fields = ["username", "first_name", "last_name", "email", "password1", "password2"]
 
     def __init__(self, *args, **kwargs):

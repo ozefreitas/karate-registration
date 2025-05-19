@@ -203,7 +203,8 @@ class IndividualsView(LoginRequiredMixin, TemplateView):
         comp_detail = CompetitionDetail.objects.filter(id=comp_id).first()
         individuals = Individual.objects.filter(competition=comp_id)
         number_individuals = len(individuals)
-        is_closed = datetime.date.today() > comp_detail.retifications_deadline and not comp_detail.has_ended
+        # is_closed = datetime.date.today() > comp_detail.retifications_deadline and not comp_detail.has_ended
+        is_closed = datetime.date.today() > comp_detail.end_registration and not comp_detail.has_ended
 
         paginator = Paginator(individuals, self.paginate_by)
         page = self.request.GET.get('page')
@@ -367,7 +368,8 @@ class TeamView(LoginRequiredMixin, View):
         teams = Team.objects.filter(dojo=request.user)
         paginator = Paginator(teams, self.paginate_by)
         page = request.GET.get('page')
-        is_closed = datetime.date.today() > comp_detail.retifications_deadline and not comp_detail.has_ended
+        # is_closed = datetime.date.today() > comp_detail.retifications_deadline and not comp_detail.has_ended
+        is_closed = datetime.date.today() > comp_detail.end_registration and not comp_detail.has_ended
 
         try:
             teams_paginated = paginator.page(page)
@@ -446,8 +448,8 @@ def comp_details(request, comp_id):
     comp_detail = CompetitionDetail.objects.filter(id=comp_id).first()
     today = datetime.date.today()
     # check registrations status
-    is_open = today > comp_detail.start_registration and today < comp_detail.end_registration
-    is_retification = today > comp_detail.end_registration and today < comp_detail.retifications_deadline
+    is_open = today > comp_detail.start_registration and today <= comp_detail.end_registration
+    is_retification = today > comp_detail.end_registration and today <= comp_detail.retifications_deadline
     is_closed = today > comp_detail.retifications_deadline and not comp_detail.has_ended
     return render(request, 'registration/comp_details.html', {"comp_detail": comp_detail,
                                                               "is_open": is_open,

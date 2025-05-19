@@ -1,13 +1,12 @@
 from django.db import models
 from django.utils.text import slugify
 from django.contrib.auth.models import User
-from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 
 # Create your models here.
 
 class Profile(models.Model):
-    dojo = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    dojo = models.OneToOneField(User, on_delete=models.CASCADE)
     image = models.ImageField("Imagem de perfil", default='skip-logo.png', upload_to='profile_pictures')
     notifications = models.JSONField(default=list, blank=True, null=True)
     dojo_contact = models.IntegerField("Contacto do Dojo", default=123456789)
@@ -38,6 +37,7 @@ class CompetitionDetail(models.Model):
     }
 
     ENCOUNTERS = {
+        "none": "None",
         "regional": "Regional",
         "nacional": "Nacional",
         "internacional": "Internacional"
@@ -54,7 +54,7 @@ class CompetitionDetail(models.Model):
     has_ended = models.BooleanField(default=False)
     has_teams = models.BooleanField("Tem Equipas", default=False)
     encounter = models.BooleanField("É estágio/encontro", default=False)
-    encounter_type = models.CharField("Estágio", choices=ENCOUNTERS, max_length=16, blank=True, null=True)
+    encounter_type = models.CharField("Estágio", choices=ENCOUNTERS, max_length=16, blank=True, null=True, default=ENCOUNTERS["none"])
 
     def save(self, *args, **kwargs):
         if not self.id:  # Auto-generate slug only if not set
@@ -88,43 +88,39 @@ class PasswordConfirmReset(models.Model):
     new_password2 = models.CharField("Repetir Palavra Passe", max_length=36)
 
 
-class CustomUser(AbstractUser):
-    """Custom user model with role-based access."""
+# class CustomUser(AbstractUser):
+#     """Custom user model with role-based access."""
     
-    class Role(models.TextChoices):
-        SUPERADMIN = "SUPERADMIN", "Super Admin"
-        DOJO_OWNER = "DOJO_OWNER", "Dojo Owner"
-        INSTRUCTOR = "INSTRUCTOR", "Instructor"
-        STUDENT = "STUDENT", "Student"
+#     class Role(models.TextChoices):
+#         SUPERADMIN = "SUPERADMIN", "Super Admin"
+#         DOJO_OWNER = "DOJO_OWNER", "Dojo Owner"
+#         INSTRUCTOR = "INSTRUCTOR", "Instructor"
+#         STUDENT = "STUDENT", "Student"
     
-    role = models.CharField(
-        max_length=20,
-        choices=Role.choices,
-        default=Role.DOJO_OWNER
-    )
+#     role = models.CharField(
+#         max_length=20,
+#         choices=Role.choices,
+#         default=Role.DOJO_OWNER
+#     )
 
-    def is_superadmin(self):
-        return self.role == self.Role.SUPERADMIN
+#     def is_superadmin(self):
+#         return self.role == self.Role.SUPERADMIN
     
-    def is_dojo_owner(self):
-        return self.role == self.Role.DOJO_OWNER
+#     def is_dojo_owner(self):
+#         return self.role == self.Role.DOJO_OWNER
     
-    def is_instructor(self):
-        return self.role == self.Role.INSTRUCTOR
+#     def is_instructor(self):
+#         return self.role == self.Role.INSTRUCTOR
     
-    def is_student(self):
-        return self.role == self.Role.STUDENT
+#     def is_student(self):
+#         return self.role == self.Role.STUDENT
     
-    def save(self, *args, **kwargs):
-        if self.username == "ozefreitas":  # Auto-generate slug only if not set
-            self.role = self.Role.SUPERADMIN
+#     def save(self, *args, **kwargs):
+#         if self.username == "ozefreitas":  # Auto-generate slug only if not set
+#             self.role = self.Role.SUPERADMIN
             
-        super().save(*args, **kwargs)
+#         super().save(*args, **kwargs)
 
-    def __str__(self):
-        return f"{self.username} ({self.get_role_display()})"
+#     def __str__(self):
+#         return f"{self.username} ({self.get_role_display()})"
     
-
-class RulesFile(models.Model):
-    file_name = models.CharField(max_length=96)
-    file = models.FileField(upload_to="documents/")
