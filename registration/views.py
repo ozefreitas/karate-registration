@@ -19,23 +19,53 @@ import os
 # views for the athlets registrations
 
 age_graduation_rules = {
-    "0-9": 15,
-    "10-11": 15,
-    "12-13": 14,
-    "14-15": 13,
-    "16-17": 12,
-    "18-50": 11
+    "Benjamins (n/SKIP)": 15,
+    "Infantil": 15,
+    "Infantil A (7 8 9) (n/SKIP)": 14,
+    "Infantil B (7 8 9) (n/SKIP)": 14,
+    "Iniciado": 15,
+    "Iniciado A 10 11 12 (n/SKIP)": 14,
+    "Iniciado B 10 11 12 (n/SKIP)": 14,
+    "Juvenil": 14,
+    "Cadete": 13,
+    "Cadete 13 14 15 (n/SKIP)": 13,
+    "Júnior": 12,
+    "Júnior 16 17 18 (n/SKIP)": 12,
+    "Sénior": 11,
+    "Sénior 19+ (n/SKIP)": 11,
+    "Veterano +35": 11,
+    "Veterano +35 (n/SKIP)": 11,
+    "Veterano +50": 11,
+}
+
+age_graduation_rules_non_skip = {
+    "7-9": 14,
+    "7-9": 14,
+    "10-12": 14,
+    "10-12": 14,
 }
 
 age_category_rules = {
-    "0-9": "Infantil",
-    "10-11": "Iniciado",
-    "12-13": "Juvenil",
-    "14-15": "Cadete",
-    "16-17": "Júnior",
-    "18-34": "Sénior",
-    "35-49": "Veterano +35",
-    "50-99": "Veterano +50"
+    "Infantil": "0-9",
+    "Iniciado": "10-11",
+    "Juvenil": "12-13",
+    "Cadete": "14-15",
+    "Júnior": "16-17",
+    "Sénior": "18-34",
+    "Veterano +35": "35-49",
+    "Veterano +50": "50-99"
+}
+
+age_category_rules_non_skip = {
+    "Benjamins (n/SKIP)": "3-7",
+    "Infantil A (7 8 9) (n/SKIP)": "7-9",
+    "Infantil B (7 8 9) (n/SKIP)": "7-9",
+    "Iniciado A 10 11 12 (n/SKIP)": "10-12",
+    "Iniciado B 10 11 12 (n/SKIP)": "10-12",
+    "Cadete 13 14 15 (n/SKIP)": "13-15",
+    "Júnior 16 17 18 (n/SKIP)": "16-18",
+    "Sénior 19+ (n/SKIP)": "19-34",
+    "Veterano +35 (n/SKIP)": "35-99"
 }
 
 CATEGORY_RULES = {
@@ -72,11 +102,11 @@ def form(request):
                     errors.append(match_type_error)
                 
                 for match in matches:
-                    if Athlete.objects.filter(first_name=form.cleaned_data["first_name"], birth_date=birth_date, match_type=match).exists():
+                    if Athlete.objects.filter(first_name=form.cleaned_data["first_name"], birth_date=birth_date, match_type=match, category=form.cleaned_data["category"]).exists():
                         errors.append("Um atleta com as mesmas credenciais já está inscrito. Verifique se quer inscrever a mesma pessoa noutra prova")
 
                     else:
-                        errors = check_athlete_data(form, age_at_comp, age_graduation_rules, age_category_rules, matches)
+                        errors = check_athlete_data(form, age_at_comp, age_graduation_rules, age_category_rules | age_category_rules_non_skip, matches)
                 
                 if len(errors) != 0:
                     for error in errors:
@@ -233,6 +263,8 @@ def athletes_preview(request, comp_id):
         positive_ids = [k for k, v in request.POST.dict().items() if v == "on"]
         for pos_id in positive_ids:
             athlete_instance = get_object_or_404(Athlete, id=pos_id)
+            if "Fernando Pinto" in comp_instance.name and "(n/SKIP)" not in athlete_instance.category: 
+                messages.error(request, f"{athlete_instance.first_name} {athlete_instance.last_name} não pode ser inscrito nesta prova. Verifique o escalão novamente")
             if not Individual.objects.filter(athlete=athlete_instance, competition=comp_instance).exists():
                 Individual.objects.create(dojo=request.user, athlete=athlete_instance, competition=comp_instance)
                 if len(positive_ids) <= 2:

@@ -3,7 +3,7 @@ from django.contrib import messages
 import requests
 from collections import Counter
 
-def range_decoder(some_range: list):
+def range_decoder(some_range: str):
     """Function that returns a range 
 
     Args:
@@ -71,23 +71,31 @@ def check_athlete_data(data, age_at_comp: int, grad_rules: dict, category_rules:
         list: _description_
     """
     errors = []
-    for age_range, grad in grad_rules.items():
-        age_range = range_decoder(age_range)
-        if age_at_comp in age_range and float(data.cleaned_data["graduation"]) > grad:
-            errors.append("Atleta não dispõe da graduação mínima para a idade")
-    
-    for age_range, cat in category_rules.items():
-        age_range = range_decoder(age_range)
-        if age_at_comp in age_range and data.cleaned_data["category"] != cat:
-            errors.append("Idade do atleta não corresponde à categoria selecionada")
+    if " A " in data.cleaned_data["category"]:
+        if float(data.cleaned_data["graduation"]) < grad_rules[data.cleaned_data["category"]]:
+            errors.append("Graduação máxima não respeitada")
+    else:
+        if float(data.cleaned_data["graduation"]) > grad_rules[data.cleaned_data["category"]]:
+            errors.append("Graduação minima não respeitada")
+
+    possible_cats = []
+    for cat, age_range in category_rules.items():
+        if age_at_comp in range_decoder(age_range):
+            possible_cats.append(cat)
+    if data.cleaned_data["category"] not in possible_cats:
+        errors.append("Idade do atleta não corresponde à categoria selecionada")
+
+    if data.cleaned_data["category"] in ["Benjamins (n/SKIP)", "Infantil A (7 8 9) (n/SKIP)"] and data.cleaned_data["gender"] != "misto":
+        errors.append("Categorias de Benjamins e Infantil A não se dividem em género")
+
     if extra_data is not None:
-        if "kumite" in extra_data and data.cleaned_data["category"] in ["infantil", "iniciado"]:
+        if "kumite" in extra_data and (data.cleaned_data["category"].startswith("Benjamins") or data.cleaned_data["category"].startswith("Infantil") or data.cleaned_data["category"].startswith("Iniciado")):
             errors.append("Não existe prova de Kumite para esse escalão")
         
-        if "kumite" in extra_data and data.cleaned_data["weight"] is None and data.cleaned_data["gender"] == "masculino":
+        elif "kumite" in extra_data and data.cleaned_data["weight"] is None and data.cleaned_data["gender"] == "masculino":
             errors.append("Por favor selecione um peso")
 
-        if "kumite" in extra_data and data.cleaned_data["weight"] is not None and data.cleaned_data["gender"] == "feminino":
+        elif "kumite" in extra_data and data.cleaned_data["weight"] is not None and data.cleaned_data["gender"] == "feminino":
             errors.append("Os escalões femininos não são dividos por pesos")
 
     return errors

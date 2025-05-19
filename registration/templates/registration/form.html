@@ -44,6 +44,14 @@
             <label id="hide_fields">{{ form.is_just_student.label }}:</label> {{ form.is_just_student }}
         </p>
         <div style="display: flex; flex-direction: column;" id="athlete_fields">
+            <div class="info-container info">
+            <span class="containers-label">Info</span>
+            <p>De modo a incluir novas categorias de torneios criados por dojos, 
+                os escalões encontram-se, para já, dividios por "(n/SKIP)". 
+                Os escalões com esta tag são prórpios para englobar os diferentes escalões destas provas,
+                e por isso podem ser usados para criar atletas que irão ser inscritos nas mesmas. Os restantes escalões
+                seguem as regras normais da SKIP.</p>
+        </div>
             <p>
                 <label>{{ form.category.label }}:</label> {{ form.category }}
             </p>

@@ -8,14 +8,23 @@ from nanoid import generate
 # Create your models here.
 
 CATEGORIES = {
+    "Benjamins (n/SKIP)": "Benjamins (n/SKIP)",
     "Infantil": "Infantil",
+    "Infantil A (7 8 9) (n/SKIP)": "Infantil A (7 8 9) (n/SKIP)",
+    "Infantil B (7 8 9) (n/SKIP)": "Infantil B (7 8 9) (n/SKIP)",
     "Iniciado": "Iniciado",
+    "Iniciado A 10 11 12 (n/SKIP)": "Iniciado A 10 11 12 (n/SKIP)",
+    "Iniciado B 10 11 12 (n/SKIP)": "Iniciado B 10 11 12 (n/SKIP)",
     "Juvenil": "Juvenil",
     "Cadete": "Cadete",
+    "Cadete 13 14 15 (n/SKIP)": "Cadete 13 14 15 (n/SKIP)",
     "Júnior": "Júnior",
+    "Júnior 16 17 18 (n/SKIP)": "Júnior 16 17 18 (n/SKIP)",
     "Sénior": "Sénior",
+    "Sénior 19+ (n/SKIP)": "Sénior 19+ (n/SKIP)",
     "Veterano +35": "Veterano +35",
-    "Veterano +50": "Veterano +50"
+    "Veterano +35 (n/SKIP)": "Veterano +35 (n/SKIP)",
+    "Veterano +50": "Veterano +50",
 }
 
 MATCHES = {
@@ -64,7 +73,8 @@ class Athlete(models.Model):
 
     GENDERS = {
         "masculino": "Masculino",
-        "feminino": "Feminino"
+        "feminino": "Feminino",
+        "misto": "Misto"
     }
 
     WEIGHTS = {

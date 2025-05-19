@@ -30,7 +30,7 @@ class AthleteForm(forms.ModelForm):
         
         self.fields['first_name'].help_text = "<br><ul><li>Recomendado apenas um nome. Se tiver atletas com nomes iguais ou parecidos, deve colocar outro nome que os diferencie.</li></uL>"
         
-        self.fields['weight'].help_text = "<br><ul><li>Pesos apenas se aplicam aos escalões masculinos.</li><li>Séniores masculinos passarão a ser 'Open' a partir da 3ª Jornada da Liga Soshinkai.</li></uL>"
+        self.fields['weight'].help_text = "<br><ul><li>Pesos apenas se aplicam aos escalões masculinos.</li></uL>"
 
 
 class FilterAthleteForm(forms.ModelForm):
