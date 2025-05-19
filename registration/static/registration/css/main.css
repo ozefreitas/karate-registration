@@ -45,6 +45,7 @@ li {
 /* Login page */
 
 .info-container {
+  display: block !important;
   width: 70%;
   margin-top: 30px;
   margin-bottom: 30px;
@@ -310,7 +311,7 @@ li {
   display: flex;
   align-items: center;
   align-content: center;
-  margin-top: 50px;
+  margin-top: 30px;
   gap: 20px;
   flex-wrap: wrap;
 }
@@ -559,6 +560,10 @@ li {
   padding-top: 10px;
 }
 
+.team-search {
+  align-items: center;
+}
+
 .team_composition {
   display: flex;
   flex-wrap: wrap;
@@ -578,7 +583,7 @@ li {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .login-buttons {

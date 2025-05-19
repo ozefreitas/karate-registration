@@ -10,13 +10,45 @@
       </p>
     </div>
 
+    <div class="info-container important">
+      <span class="containers-label">Atenção</span>
+      <p>Comece por selecionar o Escalão e Género para o qual pretende adicionar uma Equipa. Uma lista irá aparecer com 
+        todos os atletas desse e do escalão inferior.</p>
+    </div>
+
     <form method="post" id="athlete_form" class="main-form">
+      <div class="team-search">
         {% csrf_token %}
         {{form.as_p}}
-        <div class="form-submit-options">
+        <button type="submit" form="athlete_form" name="action" value="search" class="default-button">Procurar</button>
+        <button type="submit" form="athlete_form" name="action" value="clean_search" class="default-button">Limpar</button>
+      </div>
+      <div style="margin-bottom: 50px; margin-top: 20px;">
+        {% if athletes %}
+          {% for athlete in athletes %}
+              <div class="athlete-details-preview">
+                  <label for={{athlete.id}}>{{athlete}}
+                      {{athlete.category|title}} 
+                      {{athlete.gender|title}}
+                      {% if athlete.weight is not None and athlete.weight != "" and athlete.weight != "open"  %}
+                          {{athlete.weight}}Kg
+                      {% elif athlete.weight == "open" %}
+                          Open
+                      {% endif %}
+                  </label>
+                  <input type="checkbox" name="{{athlete.id}}" id="{{athlete.id}}">
+              </div>
+          {% endfor %}
+        {% else %}
+          <p style="font-size: smaller;">Não foram encontrados atletas para essa seleção.</p>
+        {% endif %}
+      </div>
+      <div class="form-submit-options">
+        {% if athletes %}
           <button type="submit" form="athlete_form" name="action" value="save_back" class="default-button">Submeter e Voltar</button>
           <button type="submit" form="athlete_form" name="action" value="save_add" class="default-button">Submeter e Adicionar Novo</button>
-          <button type="button" name="action" value="back" class="default-button" onclick="location.href='{% url 'registration-teams' comp_id %}'">Voltar</button> 
-        </div>
+        {% endif %}
+        <button type="button" name="action" value="back" class="default-button" onclick="location.href='{% url 'registration-teams' comp_id %}'">Voltar</button> 
+      </div>
     </form>
 {% endblock content %}

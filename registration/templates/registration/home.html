@@ -6,6 +6,17 @@
 <h1>Interface de registos</h1>
 <p>Escolha uma prova para inscrever os seus atletas:</p>
 
+<form method="post" id="season_form" class="main-form">
+  <div class="team-search">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type="submit" form="season_form" name="action" value="search" class="default-button">Procurar</button>
+    <button type="submit" form="season_form" name="action" value="clean_search" class="default-button">Limpar</button>
+  </div>
+  <!-- <button type="submit" onclick="location.href='{% url 'registration-home' %}'"></button> -->
+</form>
+
+{% if comps %}
 <div class="competition-card-selector">
   {% for comp in comps%}
     <div class="competition-card">
@@ -23,4 +34,23 @@
     </div>
   {% endfor %}
 </div>
+{% else %}
+<p>Não foram encontradas provas para essa época.</p>
+{% endif %}
+
+{% if user.is_superadmin %}
+  <button class="add_button" onclick="location.href='/register/add_competition/'">
+    <span class="text">Adicionar</span
+    ><span class="icon"
+      ><svg
+        viewBox="0 0 24 24"
+        height="24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      ></svg>
+      <span class="buttonSpan">+</span>
+    </span>
+  </button>
+{% endif %}
+
 {% endblock content %}

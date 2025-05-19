@@ -93,7 +93,15 @@ def check_athlete_data(data, age_at_comp: int, grad_rules: dict, category_rules:
     return errors
 
 
-def check_teams_data(data) -> list:
+def check_team_selection(data) -> list:
+    team_cat = data.cleaned_data.get("category", 0)
+    team_gender = data.cleaned_data.get("gender", 0)
+    # check for wrong gender
+    if team_cat in ["Iniciado", "Infantil"] and team_gender != "misto":
+        return ["Categorias de Infantil e Iniciado não se dividem em género"]
+
+
+def check_teams_data(data: dict, match_type: str, athletes_list: list = None) -> list:
     """Receives the form from the view, processes the data to check any error or rules infrigements 
 
     Args:
@@ -113,29 +121,22 @@ def check_teams_data(data) -> list:
         "Infantil": "Infantil",
     }
 
-    athletes_set = [value for key, value in data.cleaned_data.items() if key.startswith("athlete") and value is not None]
-    athlete_ids = Counter([athlete.id for athlete in athletes_set])
-    for number_ids in athlete_ids.values():
-        if number_ids > 1:
-            return ["Pelo menos um dos atletas está repetido"]
     errors = []
     category_up = 0
-    team_cat = data.cleaned_data.get("category", 0)
-    team_gender = data.cleaned_data.get("gender", 0)
-    for athlete in athletes_set:
+    team_cat = data.get("category", 0)
+    team_gender = data.get("gender", 0)
+
+    if match_type == "kumite" and len(athletes_list) > 2:
+        errors.append(f"Kumite Equipa {team_cat} tem um máximo de 2 atletas")
+
+    if team_gender != "misto" and match_type == "kata" and len(athletes_list) != 3:
+        errors.append("Provas de Kata Equipa tem de ter 3 atletas")
+
+    if team_gender != "misto" and match_type == "kumite" and len(athletes_list) < 3:
+        errors.append("Provas de Kumite Equipa tem de ter pelo menos 3 atletas")
+
+    for athlete in athletes_list:
         # check for category jumps
-        if athlete.category != team_cat and CATEGORY_RULES[team_cat] != athlete.category:
-            errors.append(f"{athlete.first_name} {athlete.last_name} não pode participar nesta prova")
-
-        # check for wrong gender
-        if team_cat in ["Iniciado", "Infantil"] and team_gender != "misto":
-            return ["Categorias de Infantil e Iniciado não se dividem em género"]
-
-        if team_cat not in ["Iniciado", "Infantil"] and athlete.gender == "misto":
-            return ["Categorias acima de Iniciado não são mistas"]
-
-        if team_cat not in ["Iniciado", "Infantil"] and athlete.gender != team_gender:
-            return [f"Géneros não coincidem: {athlete.first_name} {athlete.last_name}"]
 
         if athlete.category != team_cat and CATEGORY_RULES[team_cat] == athlete.category:
             category_up += 1

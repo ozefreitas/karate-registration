@@ -1,0 +1,12 @@
+{% extends "registration/base.html" %}
+{% block content%}
+
+<h2>Adicionar Competição</h2>
+<form method="post" class="main-form">
+    {% csrf_token %}
+    {{form.as_p}}
+    <br>
+    <button type="submit" class="default-button">Submeter</button>
+</form>
+
+{% endblock content %}

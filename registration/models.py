@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from dojos.models import CompetitionDetail
 from django.apps import apps
-from django.utils import timezone
+from django.conf import settings
 from nanoid import generate
 
 # Create your models here.
@@ -92,9 +92,10 @@ class Athlete(models.Model):
     birth_date = models.DateField("Data de Nascimento")
     age = models.IntegerField("Idade", default=25)
     skip_number = models.IntegerField("Nº SKI-P", blank=True, null=True)
-    category = models.CharField("Escalão", choices=CATEGORIES, max_length=99)
-    match_type = models.CharField("Prova", choices=MATCHES, max_length=10)
-    gender = models.CharField("Género", choices=GENDERS, max_length=10)
+    is_just_student = models.BooleanField("Aluno", default=False)
+    category = models.CharField("Escalão", choices=CATEGORIES, max_length=99, blank=True, null=True)
+    match_type = models.CharField("Prova", choices=MATCHES, max_length=10, blank=True, null=True)
+    gender = models.CharField("Género", choices=GENDERS, max_length=10, blank=True, null=True)
     weight = models.CharField("Peso", choices=WEIGHTS, max_length=10, blank=True, null=True)
     dojo = models.ForeignKey(User, on_delete=models.CASCADE)
     creation_date = models.DateTimeField(auto_now_add=True)
@@ -102,6 +103,7 @@ class Athlete(models.Model):
     def save(self, *args, **kwargs):
         if not self.id:  # Generate only if no ID exists
             self.id = generate_unique_nanoid(self.__class__.__name__, self._meta.app_label)
+            
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -112,7 +114,7 @@ class Athlete(models.Model):
 
 class Individual(models.Model):
     id = models.CharField(primary_key=True, max_length=10, unique=True, editable=False)
-    dojo = models.ForeignKey(User, on_delete=models.CASCADE)
+    dojo = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     athlete = models.ForeignKey(Athlete, on_delete=models.CASCADE)
     competition = models.ForeignKey(CompetitionDetail, on_delete=models.CASCADE)
 

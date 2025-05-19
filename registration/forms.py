@@ -12,6 +12,7 @@ class AthleteForm(forms.ModelForm):
                     "graduation",
                     "birth_date",
                     "skip_number",
+                    "is_just_student",
                     "category",
                     "gender",
                     "weight"]
@@ -40,17 +41,25 @@ class FilterAthleteForm(forms.ModelForm):
 
 ### Team forms ###
 
+class TeamCategorySelection(forms.ModelForm):
+    class Meta:
+        model = Team
+        fields = ["category", "gender"]
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+            self.fields['category'].help_text = "<br><ul><li>Categorias de Infantil e Iniciado, não são divididas em géneros, tanto em Kata como em Kumite.</li></uL>"
+        
+
 class TeamForm(forms.ModelForm):
     class Meta:
         model = Team
-        fields = ["category", "gender", "athlete1", "athlete2", "athlete3", "athlete4", "athlete5"]
+        fields = ["athlete1", "athlete2", "athlete3", "athlete4", "athlete5"]
     
     def __init__(self, *args, **kwargs):
         dojo = kwargs.pop('dojo', None)
         match_type = kwargs.pop('match_type', None) 
         super().__init__(*args, **kwargs)
-
-        self.fields['category'].help_text = "<br><ul><li>Categorias de Infantil e Iniciado, não são divididas em géneros, tanto em Kata como em Kumite.</li></uL>"
         
         if dojo:
             self.fields['athlete1'].queryset = Athlete.objects.filter(dojo=dojo, match_type=match_type)

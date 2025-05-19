@@ -18,7 +18,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         # user = User.objects.filter(username=os.getenv("DJANGO_SUPERUSER_USERNAME")).first()
-
         # if not user:
         #     user = User.objects.create_superuser(username=os.getenv("DJANGO_SUPERUSER_USERNAME"), password=os.getenv("DJANGO_SUPERUSER_PASSWORD"))
 

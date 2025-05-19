@@ -1,7 +1,8 @@
 from django import forms
+# from dojos.models import CustomUser
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from registration.models import Dojo
+from registration.models import Dojo, CompetitionDetail
 from .models import FeedbackData, Profile, PasswordConfirmReset
 from django.contrib.auth.forms import PasswordResetForm, PasswordChangeForm
 
@@ -51,10 +52,10 @@ class DojoRegisterForm(UserCreationForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.username = self.cleaned_data['username']  # Use the team name as the username
+        user.username = self.cleaned_data['username']  # Use the dojo name as the username
         if commit:
             user.save()
-            # Mark the team as registered
+            # Mark the dojo as registered
             Dojo.objects.filter(dojo=self.cleaned_data['username']).update(is_registered=True)
         return user
 
@@ -140,3 +141,39 @@ class DojoPasswordChangeForm(PasswordChangeForm):
         # new password 2
         self.fields['new_password2'].help_text = None
         self.fields['new_password2'].label = "Repetir Palavra Passe"
+
+
+class CompetitionForm(forms.ModelForm):
+    class Meta:
+        model = CompetitionDetail
+        exclude = ("id", "has_ended", )
+
+        widgets = {
+            'start_registration': forms.DateInput(
+                attrs={
+                    'type': 'date',  # Renders an HTML5 date picker in modern browsers
+                }
+            ),
+            'end_registration': forms.DateInput(
+                attrs={
+                    'type': 'date',  # Renders an HTML5 date picker in modern browsers
+                }
+            ),
+            'retifications_deadline': forms.DateInput(
+                attrs={
+                    'type': 'date',  # Renders an HTML5 date picker in modern browsers
+                }
+            ),
+            'competition_date': forms.DateInput(
+                attrs={
+                    'type': 'date',  # Renders an HTML5 date picker in modern browsers
+                }
+            ),
+
+        }
+
+
+class SeasonSelectionForm(forms.ModelForm):
+    class Meta:
+        model = CompetitionDetail
+        fields = ["season"]

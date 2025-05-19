@@ -12,10 +12,10 @@ from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
 from django.conf import settings
 
-from .forms import DojoRegisterForm, DojoUpdateForm, ProfileUpdateForm, FeedbackForm, DojoPasswordResetForm, DojoPasswordConfirmForm, DojoPasswordChangeForm
-from .models import CompetitionDetail
-from registration.models import Dojo, Athlete, Individual
+from .forms import DojoRegisterForm, DojoUpdateForm, ProfileUpdateForm, FeedbackForm, DojoPasswordResetForm, DojoPasswordConfirmForm, DojoPasswordChangeForm, CompetitionForm
+from registration.models import Dojo
 from smtplib import SMTPException
+from dojos.utils.utils import check_comp_data
 
 
 ### User loging account actions ###
@@ -199,6 +199,23 @@ def password_reset_confirmation(request,
     else:
         return render(request, "password/reset_password_confirm.html", {"form": form})
 
+
+### Add Competition ###
+
+def add_competition(request):
+    if request.method == "POST":
+        competition_form = CompetitionForm(request.POST)
+        if competition_form.is_valid():
+            errors = check_comp_data(competition_form)
+            if len(errors) > 0:
+                for error in errors:
+                    messages.error(request, error)
+                return HttpResponseRedirect("/register/add_competition/")
+            competition_form.save()
+            return HttpResponseRedirect("/register/add_competition/")
+    else:
+        form = CompetitionForm()
+        return render(request, "dojos/add_comp_form.html", {"form": form})
 
 ### Comp ended processing ###
 

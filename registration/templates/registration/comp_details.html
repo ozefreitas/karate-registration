@@ -11,17 +11,22 @@
     <p>Fim do período de retificações: {{comp_detail.retifications_deadline}}</p>
     <br>
     {% if is_open %}
-        <button class="default-button" onclick="location.href='{% url 'registration-individual' comp_detail.id %}'">Inscrever Individual</button>
+        <button class="default-button" onclick="location.href='{% url 'registration-individual' comp_detail.id %}'">Inscrever {% if comp_detail.encounter %}Praticante{% else %}Individual{% endif %}</button>
         {% if comp_detail.has_teams %}
             <br>
             <button class="default-button" onclick="location.href='{% url 'registration-teams' comp_detail.id %}'">Inscrever Equipa</button>
         {% endif %}
     {% elif is_retification %}
         <p>Está no periodo de retificações.</p>
-        <button class="default-button" onclick="location.href='{% url 'registration-individual' comp_detail.id %}'">Inscrever Individual</button>
+        <!-- <button class="default-button" onclick="location.href='{% url 'registration-individual' comp_detail.id %}'">Inscrever Individual</button>
         {% if comp_detail.has_teams %}
             <br>
             <button class="default-button" onclick="location.href='{% url 'registration-teams' comp_detail.id %}'">Inscrever Equipa</button>
+        {% endif %} -->
+        <button class="default-button" onclick="location.href='{% url 'registration-individual' comp_detail.id %}'">Consultar Individual</button>
+        {% if comp_detail.has_teams %}
+            <br>
+            <button class="default-button" onclick="location.href='{% url 'registration-teams' comp_detail.id %}'">Consultar Equipa</button>
         {% endif %}
     {% elif is_closed %}
         <p>Inscrições fechadas.</p>

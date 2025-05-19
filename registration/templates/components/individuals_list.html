@@ -2,8 +2,14 @@
     <div class="athlete_info_options">
       <div class="athlete_info">
           <span class="athlete_name">{{individual.athlete.first_name}} {{individual.athlete.last_name}}</span>
-          <span class="athlete_category">{{individual.athlete.match_type|title}} {{individual.athlete.category|title}} {{individual.athlete.gender|title}}</span>
-      </div>
+          <span class="athlete_category">
+            {% if not individual.athlete.is_just_student %}
+              {{individual.athlete.match_type|title}} {{individual.athlete.category|title}} {{individual.athlete.gender|title}}
+            {% else %}
+              Aluno/Praticante
+            {% endif %}
+          </span>
+          </div>
       <div class="buttons-settings-wrapper">
         <div id="buttons-container-{{individual.id}}" class="buttons-container">
           <a onclick="toggleAthleteDetails('{{individual.id|safe}}')" class="view_button">
@@ -46,8 +52,10 @@
       <span class="athlete_name">Dojo: {{individual.athlete.dojo}}</span>
       <span class="athlete_name">Nº SKI-P: {{individual.athlete.skip_number|default:"Não atribuído"}}</span>
       <span class="athlete_match_type">Data de nascimento: {{individual.athlete.birth_date|date:"d-m-Y"}}</span>
-      <span class="athlete_category">Peso: {{individual.athlete.weight|default:"Não especificado"}}{% if individual.athlete.weight != None and individual.athlete.weight != "open" %}Kg{% endif %}</span>
-      <span class="athlete_category">Idade (no início do ano): {{individual.athlete.age}}</span>
+      {% if not individual.athlete.is_just_student %}
+        <span class="athlete_category">Peso: {{individual.athlete.weight|default:"Não especificado"}}{% if individual.athlete.weight != None and individual.athlete.weight != "open" %}Kg{% endif %}</span>
+        <span class="athlete_category">Idade (no início do ano): {{individual.athlete.age}}</span>
+      {% endif %}
     </div>
     <hr>
 </div>

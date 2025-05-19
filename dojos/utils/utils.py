@@ -27,3 +27,17 @@ def change_current_season(date = None):
         season_start = date.year - 1
         season_end = date.year
     return f"{season_start}/{season_end}"
+
+
+def check_comp_data(form_data):
+    errors = []
+    today = datetime.date.today()
+    if form_data.cleaned_data["start_registration"] <= today:
+        errors.append("Data de início de inscrições é impossível")
+    if form_data.cleaned_data["end_registration"] <= today:
+        errors.append("Data de fim de inscrições é impossível")
+    if form_data.cleaned_data["retifications_deadline"] <= today:
+        errors.append("Data de retificações é impossível")
+    if form_data.cleaned_data["competition_date"] <= today:
+        errors.append("Data da prova é impossível")
+    return errors
