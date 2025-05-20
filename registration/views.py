@@ -159,6 +159,8 @@ class ClassificationsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     @action(detail=False, methods=["get"], url_path="last_comp_quali")
     def last_comp_quali(self, request):
         last_competition = CompetitionDetail.objects.filter(has_ended=True).order_by('competition_date').last()
+        if last_competition is None:
+            return Response([])
         last_comp_quali = Classification.objects.filter(competition=last_competition.id)
         serialized_data = serializers.ClassificationsSerializer(last_comp_quali, many=True)
         return Response(serialized_data.data)

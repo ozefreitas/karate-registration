@@ -49,12 +49,16 @@ class CompetitionViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     @action(detail=False, methods=["get"], url_path="next_comp")
     def next_comp(self, request):
         next_competition = CompetitionDetail.objects.filter(has_ended=False).order_by('competition_date').first()
+        if next_competition is None:
+            return Response([])
         serializer = serializers.CompetitionsSerializer(next_competition)
         return Response(serializer.data)
     
     @action(detail=False, methods=["get"], url_path="last_comp")
     def last_comp(self, request):
         last_competition = CompetitionDetail.objects.filter(has_ended=True).order_by('competition_date').last()
+        if last_competition is None:
+            return Response([])
         serializer = serializers.CompetitionsSerializer(last_competition)
         return Response(serializer.data)
     
