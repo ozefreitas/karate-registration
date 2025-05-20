@@ -89,14 +89,19 @@ def check_athlete_data(data, age_at_comp: int, grad_rules: dict, category_rules:
         errors.append("Categorias de Benjamins e Infantil A não se dividem em género")
 
     if extra_data is not None:
-        if "kumite" in extra_data and (data.cleaned_data["category"].startswith("Benjamins") or data.cleaned_data["category"].startswith("Infantil") or data.cleaned_data["category"].startswith("Iniciado")):
-            errors.append("Não existe prova de Kumite para esse escalão")
+        if "(n/SKIP)" in data.cleaned_data["category"]:
+            if "kumite" in extra_data and data.cleaned_data["weight"] is not None:
+                errors.append("Os escalões não SKIP não são dividos por pesos")
         
-        elif "kumite" in extra_data and data.cleaned_data["weight"] is None and data.cleaned_data["gender"] == "masculino":
-            errors.append("Por favor selecione um peso")
+        else:
+            if "kumite" in extra_data and (data.cleaned_data["category"].startswith("Benjamins") or data.cleaned_data["category"].startswith("Infantil") or data.cleaned_data["category"].startswith("Iniciado")):
+                errors.append("Não existe prova de Kumite para esse escalão")
+            
+            elif "kumite" in extra_data and data.cleaned_data["weight"] is None and data.cleaned_data["gender"] == "masculino":
+                errors.append("Por favor selecione um peso")
 
-        elif "kumite" in extra_data and data.cleaned_data["weight"] is not None and data.cleaned_data["gender"] == "feminino":
-            errors.append("Os escalões femininos não são dividos por pesos")
+            elif "kumite" in extra_data and data.cleaned_data["weight"] is not None and data.cleaned_data["gender"] == "feminino":
+                errors.append("Os escalões femininos não são dividos por pesos")
 
     return errors
 
