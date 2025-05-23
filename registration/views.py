@@ -263,8 +263,11 @@ def athletes_preview(request, comp_id):
         positive_ids = [k for k, v in request.POST.dict().items() if v == "on"]
         for pos_id in positive_ids:
             athlete_instance = get_object_or_404(Athlete, id=pos_id)
+            
+            # TODO: THIS IS TEMPORARY, NEED TO CHANGE AFTER EVENT IS OVER
             if "Fernando Pinto" in comp_instance.name and "(n/SKIP)" not in athlete_instance.category: 
                 messages.error(request, f"{athlete_instance.first_name} {athlete_instance.last_name} não pode ser inscrito nesta prova. Verifique o escalão novamente")
+
             if not Individual.objects.filter(athlete=athlete_instance, competition=comp_instance).exists():
                 Individual.objects.create(dojo=request.user, athlete=athlete_instance, competition=comp_instance)
                 if len(positive_ids) <= 2:
