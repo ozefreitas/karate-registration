@@ -92,6 +92,13 @@ class IndividualsSerializer(serializers.ModelSerializer):
     
     def get_category(self, obj):
         return obj.athlete.category if obj.athlete.category else ''
+    
+
+class CreateIndividualSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = models.Individual
+        exclude = ("dojo", )
 
 
 ### Teams Serializer Classes

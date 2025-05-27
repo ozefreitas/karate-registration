@@ -10,7 +10,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from .forms import AthleteForm, FilterAthleteForm, TeamForm, FilterTeamForm, TeamCategorySelection
 from .models import Athlete, Team, Individual, Classification
-from .filters import IndividualFilters
+from .filters import IndividualFilters, AthletesFilters
 from .templatetags.team_extras import valid_athletes
 from .utils.utils import check_athlete_data, get_comp_age, check_filter_data, check_match_type, check_teams_data, check_team_selection
 from dojos.models import CompetitionDetail
@@ -71,6 +71,8 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Athlete.objects.all()
     serializer_class = serializers.AthletesSerializer
     # authentication_classes = [SessionAuthentication, BasicAuthentication]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = AthletesFilters
     permission_classes = [IsAuthenticated]
 
     serializer_classes = {
@@ -97,11 +99,13 @@ class IndividualsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     # authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
 
-    # serializer_classes = {
-    #     "create": serializers.CreateAthleteSerializer,
-    #     "update": serializers.UpdateAthleteSerializer
-    # }
+    serializer_classes = {
+        "create": serializers.CreateIndividualSerializer,
+        # "update": serializers.UpdateAthleteSerializer
+    }
 
+    def perform_create(self, serializer):
+        serializer.save(dojo=self.request.user)
 
 class TeamsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Team.objects.all()
