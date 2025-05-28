@@ -64,8 +64,8 @@ class Athlete(models.Model):
     }
 
     GENDERS = {
-        "masculino": "Masculino",
-        "feminino": "Feminino"
+        "Masculino": "Masculino",
+        "Feminino": "Feminino"
     }
 
     WEIGHTS = {

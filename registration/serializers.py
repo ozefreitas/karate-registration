@@ -5,16 +5,12 @@ import registration.models as models
 ### Athletes Serializer Classes 
 
 class AthletesSerializer(serializers.ModelSerializer):
-    gender = serializers.SerializerMethodField()
     match_type = serializers.SerializerMethodField()
     category_index = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Athlete
         fields = "__all__"
-
-    def get_gender(self, obj):
-        return obj.gender.capitalize() if obj.gender else ''
     
     def get_match_type(self, obj):
         return obj.match_type.capitalize() if obj.match_type else ''
@@ -39,15 +35,11 @@ class AthletesSerializer(serializers.ModelSerializer):
 
 
 class CompactAthletesSerializer(serializers.ModelSerializer):
-    gender = serializers.SerializerMethodField()
     match_type = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Athlete
         fields = ["id" ,"first_name", "last_name", "gender", "match_type", "category"]
-
-    def get_gender(self, obj):
-        return obj.gender.capitalize() if obj.gender else ''
     
     def get_match_type(self, obj):
         return obj.match_type.capitalize() if obj.match_type else ''
@@ -61,7 +53,7 @@ class CreateAthleteSerializer(serializers.ModelSerializer):
 class UpdateAthleteSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Athlete
-        exclude = ("age", "dojo", )
+        exclude = ("age", "dojo", "match_type", )
 
 
 ### Individuals Serializer Classes
@@ -112,15 +104,11 @@ class TeamsSerializer(serializers.ModelSerializer):
     athlete3_full_name = serializers.SerializerMethodField()
     athlete4 = CompactAthletesSerializer()
     athlete5 = CompactAthletesSerializer()
-    gender = serializers.SerializerMethodField()
     match_type = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Team
         fields = "__all__"
-    
-    def get_gender(self, obj):
-        return obj.gender.capitalize() if obj.gender else ''
     
     def get_match_type(self, obj):
         return obj.match_type.capitalize() if obj.match_type else ''
