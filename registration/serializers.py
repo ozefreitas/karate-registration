@@ -105,6 +105,7 @@ class TeamsSerializer(serializers.ModelSerializer):
     athlete4 = CompactAthletesSerializer()
     athlete5 = CompactAthletesSerializer()
     match_type = serializers.SerializerMethodField()
+    team_size = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Team
@@ -120,7 +121,11 @@ class TeamsSerializer(serializers.ModelSerializer):
         return f"{obj.athlete2.first_name} {obj.athlete2.last_name}"
     
     def get_athlete3_full_name(self, obj):
-        return f"{obj.athlete3.first_name} {obj.athlete3.last_name}"
+        return f"{obj.athlete3.first_name} {obj.athlete3.last_name}" if obj.athlete3 else None
+    
+    def get_team_size(self, obj):
+        athletes = [obj.athlete1, obj.athlete2, obj.athlete3, obj.athlete4, obj.athlete5]
+        return sum(1 for athlete in athletes if athlete is not None)
     
 
 ### Dojos Serializer Classes
