@@ -113,10 +113,10 @@ class TeamsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     # authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
 
-    # serializer_classes = {
-    #     "create": serializers.CreateAthleteSerializer,
-    #     "update": serializers.UpdateAthleteSerializer
-    # }
+    serializer_classes = {
+        # "create": serializers.CreateAthleteSerializer,
+        "update": serializers.UpdateTeamsSerializer
+    }
 
     @action(detail=False, methods=["get"], url_path="last_five")
     def last_five(self, request):

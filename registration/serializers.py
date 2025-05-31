@@ -7,6 +7,7 @@ import registration.models as models
 class AthletesSerializer(serializers.ModelSerializer):
     match_type = serializers.SerializerMethodField()
     category_index = serializers.SerializerMethodField()
+    full_name = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Athlete
@@ -32,6 +33,9 @@ class AthletesSerializer(serializers.ModelSerializer):
             return 7
         if obj.category.lower() == "veterano +50":
             return 8
+        
+    def get_full_name(self, obj):
+        return f"{obj.first_name} {obj.last_name}"
 
 
 class CompactAthletesSerializer(serializers.ModelSerializer):
@@ -106,6 +110,7 @@ class TeamsSerializer(serializers.ModelSerializer):
     athlete5 = CompactAthletesSerializer()
     match_type = serializers.SerializerMethodField()
     team_size = serializers.SerializerMethodField()
+    gender = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Team
@@ -127,6 +132,15 @@ class TeamsSerializer(serializers.ModelSerializer):
         athletes = [obj.athlete1, obj.athlete2, obj.athlete3, obj.athlete4, obj.athlete5]
         return sum(1 for athlete in athletes if athlete is not None)
     
+    def get_gender(self, obj):
+        return obj.athlete1.gender.capitalize() if obj.athlete1.gender else ''
+    
+
+class UpdateTeamsSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = models.Team
+        exclude = ("dojo", "team_number", "match_type", "category", "gender", "competition", )
 
 ### Dojos Serializer Classes
 
