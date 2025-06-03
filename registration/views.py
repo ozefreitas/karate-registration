@@ -18,8 +18,8 @@ import datetime
 import json
 import os
 
-from rest_framework import viewsets
-from rest_framework.decorators import api_view, action, permission_classes
+from rest_framework import viewsets, status
+from rest_framework.decorators import action, permission_classes
 from rest_framework.response import Response
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
@@ -89,6 +89,20 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         last_five = Athlete.objects.filter(dojo=request.user).order_by('creation_date')[:5]
         serializer = serializers.AthletesSerializer(last_five, many=True)
         return Response(serializer.data)
+
+    @action(detail=False, methods=['delete'], url_path="delete_all")
+    def delete_all(self, request):
+        deleted_count, _ = Athlete.objects.filter(dojo=request.user).delete()
+        if deleted_count <= 1:
+            return Response(
+                {"message": "Atleta eliminado"},
+                status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                {"message": f"Eliminados {deleted_count} Atletas"},
+                status=status.HTTP_200_OK
+            )
     
 
 class IndividualsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
@@ -107,6 +121,21 @@ class IndividualsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(dojo=self.request.user)
 
+    @action(detail=False, methods=['delete'], url_path="delete_all")
+    def delete_all(self, request):
+        deleted_count, _ = Individual.objects.filter(dojo=request.user).delete()
+        if deleted_count <= 1:
+            return Response(
+                {"message": "Inscrição apagada"},
+                status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                {"message": f"Apagadas {deleted_count} inscrições"},
+                status=status.HTTP_200_OK
+            )
+    
+
 class TeamsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Team.objects.all()
     serializer_class = serializers.TeamsSerializer
@@ -124,6 +153,20 @@ class TeamsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         last_five = Team.objects.filter(dojo=request.user).order_by('creation_date')[:5]
         serializer = serializers.TeamsSerializer(last_five, many=True)
         return Response(serializer.data)
+
+    @action(detail=False, methods=['delete'], url_path="delete_all")
+    def delete_all(self, request):
+        deleted_count, _ = Team.objects.filter(dojo=request.user).delete()
+        if deleted_count <= 1:
+            return Response(
+                {"message": "Equipa eliminada"},
+                status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                {"message": f"Eliminadas {deleted_count} Equipas"},
+                status=status.HTTP_200_OK
+            )
 
 
 class ClassificationsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
