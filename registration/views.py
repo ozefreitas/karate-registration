@@ -9,11 +9,11 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django_filters.rest_framework import DjangoFilterBackend
 
 from .forms import AthleteForm, FilterAthleteForm, TeamForm, FilterTeamForm, TeamCategorySelection
-from .models import Athlete, Team, Individual, Classification
-from .filters import IndividualFilters, AthletesFilters
+from .models import Athlete, Team, Classification
+from .filters import AthletesFilters
 from .templatetags.team_extras import valid_athletes
 from .utils.utils import check_athlete_data, get_comp_age, check_filter_data, check_match_type, check_teams_data, check_team_selection
-from dojos.models import CompetitionDetail
+from dojos.models import Event
 import datetime
 import json
 import os
@@ -81,7 +81,10 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     }
 
     def get_queryset(self):
-        return super().get_queryset()
+        return self.queryset.filter(dojo=self.request.user)
+    
+    def perform_create(self, serializer):
+        serializer.save(dojo=self.request.user)
 
     @action(detail=False, methods=["get"], url_path="last_five")
     def last_five(self, request):
@@ -103,38 +106,6 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 {"message": f"Eliminados {deleted_count} Atletas"},
                 status=status.HTTP_200_OK
             )
-    
-
-class IndividualsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
-    queryset=Individual.objects.all()
-    serializer_class = serializers.IndividualsSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = IndividualFilters
-    # authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    serializer_classes = {
-        "create": serializers.CreateIndividualSerializer,
-        # "update": serializers.UpdateAthleteSerializer
-    }
-
-    def perform_create(self, serializer):
-        serializer.save(dojo=self.request.user)
-
-    @action(detail=False, methods=['delete'], url_path="delete_all")
-    def delete_all(self, request):
-        deleted_count, _ = Individual.objects.filter(dojo=request.user).delete()
-        if deleted_count <= 1:
-            return Response(
-                {"message": "Inscrição apagada"},
-                status=status.HTTP_200_OK
-            )
-        else:
-            return Response(
-                {"message": f"Apagadas {deleted_count} inscrições"},
-                status=status.HTTP_200_OK
-            )
-    
 
 class TeamsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Team.objects.all()
@@ -146,6 +117,9 @@ class TeamsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         # "create": serializers.CreateAthleteSerializer,
         "update": serializers.UpdateTeamsSerializer
     }
+
+    def get_queryset(self):
+        return self.queryset.filter(dojo=self.request.user)
 
     @action(detail=False, methods=["get"], url_path="last_five")
     def last_five(self, request):
@@ -205,7 +179,7 @@ class ClassificationsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     
     @action(detail=False, methods=["get"], url_path="last_comp_quali")
     def last_comp_quali(self, request):
-        last_competition = CompetitionDetail.objects.filter(has_ended=True).order_by('competition_date').last()
+        last_competition = Event.objects.filter(has_ended=True).order_by('competition_date').last()
         if last_competition is None:
             return Response([])
         last_comp_quali = Classification.objects.filter(competition=last_competition.id)
@@ -352,7 +326,7 @@ class IndividualsView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         # Capture the comp_id from URL kwargs
         comp_id = self.kwargs.get('comp_id')
-        comp_detail = CompetitionDetail.objects.filter(id=comp_id).first()
+        comp_detail = Event.objects.filter(id=comp_id).first()
         individuals = Individual.objects.filter(competition=comp_id)
         number_individuals = len(individuals)
         is_closed = datetime.date.today() > comp_detail.retifications_deadline and not comp_detail.has_ended
@@ -383,7 +357,7 @@ def athletes_preview(request, comp_id):
         positive_ids = [k for k, v in request.POST.dict().items() if v == "on"]
         for pos_id in positive_ids:
             athlete_instance = get_object_or_404(Athlete, id=pos_id)
-            comp_instance = get_object_or_404(CompetitionDetail, id=comp_id)
+            comp_instance = get_object_or_404(Event, id=comp_id)
             if not Individual.objects.filter(athlete=athlete_instance, competition=comp_instance).exists():
                 Individual.objects.create(dojo=request.user, athlete=athlete_instance, competition=comp_instance)
                 if len(positive_ids) <= 2:
@@ -432,7 +406,7 @@ def team_form(request, match_type, comp_id):
             athlete_instances = []
             positive_ids = [k for k, v in request.POST.dict().items() if v == "on"]
             
-            comp_instance = get_object_or_404(CompetitionDetail, id=comp_id)
+            comp_instance = get_object_or_404(Event, id=comp_id)
             for pos_id in positive_ids:
                 athlete_instances.append(get_object_or_404(Athlete, id=pos_id))
 
@@ -457,7 +431,7 @@ def team_form(request, match_type, comp_id):
             new_team.dojo = request.user
             new_team.match_type = match_type
             new_team.team_number = len(teams) + 1
-            new_team.competition = get_object_or_404(CompetitionDetail, id=comp_id)
+            new_team.competition = get_object_or_404(Event, id=comp_id)
             new_team.save()
             request.session['can_access_target_page'] = True
             request.session['team'] = True
@@ -482,7 +456,7 @@ class TeamView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
 
         comp_id = self.kwargs.get('comp_id')
-        comp_detail = CompetitionDetail.objects.filter(id=comp_id).first()
+        comp_detail = Event.objects.filter(id=comp_id).first()
         not_found = False
         filter_form = FilterTeamForm()
         teams = Team.objects.filter(dojo=request.user)
@@ -498,7 +472,7 @@ class TeamView(LoginRequiredMixin, View):
             teams_paginated = paginator.page(paginator.num_pages)
 
         number_teams = len(teams)
-        comp = get_object_or_404(CompetitionDetail, id=comp_id)
+        comp = get_object_or_404(Event, id=comp_id)
         context = {"teams": teams_paginated, 
                     "filters": filter_form, 
                     "not_found": not_found,
@@ -526,7 +500,7 @@ class TeamView(LoginRequiredMixin, View):
             teams_paginated = paginator.page(paginator.num_pages)
 
         number_teams = len(teams)
-        comp = get_object_or_404(CompetitionDetail, id=comp_id)
+        comp = get_object_or_404(Event, id=comp_id)
         context = {"teams": teams_paginated, 
                     "filters": filter_form, 
                     "not_found": not_found,
@@ -539,13 +513,13 @@ class TeamView(LoginRequiredMixin, View):
 ### Auxiliar pages ###
 
 def home(request):
-    comp_details = CompetitionDetail.objects.all()
+    comp_details = Event.objects.all()
     comp_details = sorted(comp_details, key = lambda x: x.competition_date)
     return render(request, 'registration/home.html', {"comps": comp_details})
 
 
 def comp_details(request, comp_id):
-    comp_detail = CompetitionDetail.objects.filter(id=comp_id).first()
+    comp_detail = Event.objects.filter(id=comp_id).first()
     today = datetime.date.today()
     # check registrations status
     is_open = today > comp_detail.start_registration and today < comp_detail.end_registration

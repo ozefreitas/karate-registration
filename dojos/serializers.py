@@ -1,23 +1,27 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 import dojos.models as models
+import registration.serializers 
 
 
 class CompetitionsSerializer(serializers.ModelSerializer):
+    individuals = registration.serializers.CompactAthletesSerializer(many=True)
+    teams = registration.serializers.TeamsSerializer(many=True)
+    
     class Meta:
-        model = models.CompetitionDetail
+        model = models.Event
         fields = "__all__"
 
 
 class CreateCompetitionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.CompetitionDetail
+        model = models.Event
         exclude = ("id", "has_ended")
 
 
 class UpdateCompetitionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.CompetitionDetail
+        model = models.Event
         exclude = ("id", "has_ended")
 
 
@@ -25,6 +29,14 @@ class NotificationsSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Notification
         fields = "__all__"
+
+
+class AddAthleteSerializer(serializers.Serializer):
+    athlete_id = serializers.CharField()
+
+
+class AddTeamSerializer(serializers.Serializer):
+    team_id = serializers.CharField()
 
 
 class RegisterUserSerializer(serializers.ModelSerializer):

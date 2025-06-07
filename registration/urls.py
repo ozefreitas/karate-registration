@@ -5,7 +5,6 @@ from rest_framework import routers
 
 router = routers.DefaultRouter()
 router.register(r'athletes', views.AthletesViewSet, basename='athletes')
-router.register(r'individuals', views.IndividualsViewSet, basename='individuals')
 router.register(r'teams', views.TeamsViewSet, basename='teams')
 router.register(r'classifications', views.ClassificationsViewSet, basename='classifications')
 

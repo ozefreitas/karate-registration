@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.utils.timezone import now
 from datetime import timedelta
 from dojos.utils.utils import get_next_competition
-from dojos.models import CompetitionDetail
+from dojos.models import Event
 from registration.models import Athlete
 from smtplib import SMTPException
 
@@ -17,7 +17,7 @@ class Command(BaseCommand):
         next_week = today + timedelta(days=10)
 
         # Find competitions happening next week
-        competitions = CompetitionDetail.objects.filter(competition_date=next_week)
+        competitions = Event.objects.filter(competition_date=next_week)
         if not competitions.exists():
             self.stdout.write("No competitions happening next week.")
             return

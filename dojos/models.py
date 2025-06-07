@@ -14,7 +14,7 @@ class Profile(models.Model):
         return f'{self.dojo.username} profile'
 
 
-class CompetitionDetail(models.Model):
+class Event(models.Model):
     SEASONS = {
         "2425": "2024/2025",
         "2526": "2025/2026",
@@ -42,6 +42,9 @@ class CompetitionDetail(models.Model):
     end_registration = models.DateField("Fim das inscrições")
     retifications_deadline = models.DateField("Fim do periodo de retificações")
     competition_date = models.DateField("Dia da prova")
+    description = models.TextField("Descrição", default="")
+    individuals = models.ManyToManyField("registration.Athlete", related_name='events', blank=True)
+    teams = models.ManyToManyField("registration.Team", related_name='events', blank=True)
     has_ended = models.BooleanField(default=False)
     has_teams = models.BooleanField(default=False)
 

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Athlete, Dojo, Team, Individual, Classification
+from .models import Athlete, Dojo, Team, Classification
 
 # Register your models here.
 
@@ -22,5 +22,4 @@ class ClassificationAdmin(admin.ModelAdmin):
 admin.site.register(Athlete, AthleteAdmin)
 admin.site.register(Dojo)
 admin.site.register(Team, TeamAdmin)
-admin.site.register(Individual)
 admin.site.register(Classification, ClassificationAdmin)

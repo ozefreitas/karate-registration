@@ -1,10 +1,10 @@
 import datetime
-from ..models import CompetitionDetail
+from ..models import Event
 from django.utils import timezone
 
 def get_next_competition():
     today = datetime.date.today()
-    competition_details = CompetitionDetail.objects.all()
+    competition_details = Event.objects.all()
     min_date = float("inf")
     next_comp = None
     for comp_detail in competition_details:
@@ -12,7 +12,7 @@ def get_next_competition():
         if int(days_to_comp.days) > 0 and min_date > int(days_to_comp.days):
             min_date = int(days_to_comp.days)
             next_comp = comp_detail.name
-    next_comp = CompetitionDetail.objects.filter(name=next_comp).first()
+    next_comp = Event.objects.filter(name=next_comp).first()
     return next_comp
 
 

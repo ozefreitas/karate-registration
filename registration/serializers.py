@@ -54,47 +54,11 @@ class CreateAthleteSerializer(serializers.ModelSerializer):
         model = models.Athlete
         exclude = ("age", "dojo", )
 
+
 class UpdateAthleteSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Athlete
         exclude = ("age", "dojo", "match_type", )
-
-
-### Individuals Serializer Classes
-
-class IndividualsSerializer(serializers.ModelSerializer):
-    athlete = CompactAthletesSerializer()
-    first_name = serializers.SerializerMethodField()
-    last_name = serializers.SerializerMethodField()
-    gender = serializers.SerializerMethodField()
-    match_type = serializers.SerializerMethodField()
-    category = serializers.SerializerMethodField()
-
-    class Meta:
-        model = models.Individual
-        fields = "__all__"
-
-    def get_first_name(self, obj):
-        return obj.athlete.first_name if obj.athlete.first_name else ''
-    
-    def get_last_name(self, obj):
-        return obj.athlete.last_name if obj.athlete.last_name else ''
-
-    def get_gender(self, obj):
-        return obj.athlete.gender.capitalize() if obj.athlete.gender else ''
-    
-    def get_match_type(self, obj):
-        return obj.athlete.match_type.capitalize() if obj.athlete.match_type else ''
-    
-    def get_category(self, obj):
-        return obj.athlete.category if obj.athlete.category else ''
-    
-
-class CreateIndividualSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model = models.Individual
-        exclude = ("dojo", )
 
 
 ### Teams Serializer Classes

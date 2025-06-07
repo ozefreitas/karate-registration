@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from dojos.models import CompetitionDetail
+from dojos.models import Event
 from django.apps import apps
 from django.utils import timezone
 from nanoid import generate
@@ -65,7 +65,8 @@ class Athlete(models.Model):
 
     GENDERS = {
         "Masculino": "Masculino",
-        "Feminino": "Feminino"
+        "Feminino": "Feminino",
+        "Misto": "Misto",
     }
 
     WEIGHTS = {
@@ -93,6 +94,8 @@ class Athlete(models.Model):
     birth_date = models.DateField("Data de Nascimento")
     age = models.IntegerField("Idade", default=25)
     skip_number = models.IntegerField("Nº SKI-P", blank=True, null=True)
+    student = models.BooleanField("Aluno", default=False)
+    favorite = models.BooleanField("Favorito", default=False)
     category = models.CharField("Escalão", choices=CATEGORIES, max_length=99)
     match_type = models.CharField("Prova", choices=MATCHES, max_length=10)
     gender = models.CharField("Género", choices=GENDERS, max_length=10)
@@ -107,23 +110,6 @@ class Athlete(models.Model):
 
     def __str__(self): 
         return "{} {}".format(self.first_name, self.last_name)
-    
-
-### Individual models ###
-
-class Individual(models.Model):
-    id = models.CharField(primary_key=True, max_length=10, unique=True, editable=False)
-    dojo = models.ForeignKey(User, on_delete=models.CASCADE)
-    athlete = models.ForeignKey(Athlete, on_delete=models.CASCADE)
-    competition = models.ForeignKey(CompetitionDetail, on_delete=models.CASCADE)
-
-    def save(self, *args, **kwargs):
-        if not self.id:  # Generate only if no ID exists
-            self.id = generate_unique_nanoid("Individual", "registration")
-        super().save(*args, **kwargs)
-
-    def __str__(self): 
-        return "{} {}".format(self.athlete.first_name, self.athlete.last_name)
 
 
 ### Dojo model ###
@@ -157,7 +143,7 @@ class Team(models.Model):
     match_type = models.CharField("Prova", choices=MATCHES, max_length=10)
     gender = models.CharField("Género", choices=GENDERS, max_length=10)
     team_number = models.IntegerField("Nº Equipa")
-    competition = models.ForeignKey(CompetitionDetail, on_delete=models.CASCADE)
+    competition = models.ForeignKey(Event, on_delete=models.CASCADE)
     creation_date = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
@@ -172,7 +158,7 @@ class Team(models.Model):
 ### Classification models ###
 
 class Classification(models.Model):
-    competition = models.ForeignKey(CompetitionDetail, on_delete=models.CASCADE)
+    competition = models.ForeignKey(Event, on_delete=models.CASCADE)
     first_place = models.ForeignKey(Athlete, verbose_name="Primeiro Classificado", related_name="first_place", on_delete=models.CASCADE)
     second_place = models.ForeignKey(Athlete, verbose_name="Segundo Classificado", related_name="second_place", on_delete=models.CASCADE, null=True, blank=True)
     third_place = models.ForeignKey(Athlete, verbose_name="Terceiro Classificado", related_name="third_place", on_delete=models.CASCADE, null=True, blank=True)

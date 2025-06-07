@@ -14,8 +14,9 @@ from django.conf import settings
 from django.utils import timezone
 
 from .forms import DojoRegisterForm, DojoUpdateForm, ProfileUpdateForm, FeedbackForm, DojoPasswordResetForm, DojoPasswordConfirmForm, DojoPasswordChangeForm
-from .models import CompetitionDetail, Notification
-from registration.models import Dojo, Athlete, Individual
+from .permissions import IsAuthenticatedOrReadOnly
+from .models import Event, Notification
+from registration.models import Dojo, Athlete
 from smtplib import SMTPException
 from dojos import serializers
 
@@ -36,10 +37,10 @@ class MultipleSerializersMixIn:
 
 
 class CompetitionViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
-    queryset=CompetitionDetail.objects.all()
+    queryset=Event.objects.all()
     serializer_class=serializers.CompetitionsSerializer
     # authentication_classes = [SessionAuthentication, BasicAuthentication]
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     serializer_classes = {
         "create": serializers.CreateCompetitionSerializer,
@@ -48,7 +49,7 @@ class CompetitionViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
     @action(detail=False, methods=["get"], url_path="next_comp")
     def next_comp(self, request):
-        next_competition = CompetitionDetail.objects.filter(has_ended=False).order_by('competition_date').first()
+        next_competition = Event.objects.filter(has_ended=False).order_by('competition_date').first()
         if next_competition is None:
             return Response([])
         serializer = serializers.CompetitionsSerializer(next_competition)
@@ -56,11 +57,73 @@ class CompetitionViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     
     @action(detail=False, methods=["get"], url_path="last_comp")
     def last_comp(self, request):
-        last_competition = CompetitionDetail.objects.filter(has_ended=True).order_by('competition_date').last()
+        last_competition = Event.objects.filter(has_ended=True).order_by('competition_date').last()
         if last_competition is None:
             return Response([])
         serializer = serializers.CompetitionsSerializer(last_competition)
         return Response(serializer.data)
+    
+    @action(detail=True, methods=["post"], url_path="add_athlete", serializer_class=serializers.AddAthleteSerializer, permission_classes=[IsAuthenticated])
+    def add_athlete(self, request, pk=None):
+        event = self.get_object()
+        serializer = serializers.AddAthleteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        athlete_id = serializer.validated_data["athlete_id"]
+
+        try:
+            athlete = Athlete.objects.get(id=athlete_id)
+            event.individuals.add(athlete)
+
+            return Response({"message": "Atleta adicionado a este evento!"}, status=status.HTTP_200_OK)
+        except Athlete.DoesNotExist:
+            return Response({"error": "Um erro ocurreu ao adicionar este Atleta!"}, status=status.HTTP_404_NOT_FOUND)
+
+    @action(detail=True, methods=["post"], url_path="delete_athlete", serializer_class=serializers.AddAthleteSerializer)
+    def delete_athlete(self, request, pk=None):
+        event = self.get_object()
+        serializer = serializers.AddAthleteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        athlete_id = serializer.validated_data["athlete_id"]
+
+        try:
+            athlete = Athlete.objects.get(id=athlete_id)
+            event.individuals.remove(athlete)
+
+            return Response({"message": "Atleta removido deste evento!"}, status=status.HTTP_200_OK)
+        except Athlete.DoesNotExist:
+            return Response({"error": "Um erro ocurreu ao remover este Atleta!"}, status=status.HTTP_404_NOT_FOUND)
+
+
+    @action(detail=True, methods=["post"], url_path="add_team", serializer_class=serializers.AddTeamSerializer)
+    def add_team(self, request):
+        event = self.get_object()
+        serializer = serializers.AddTeamSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        team_id = serializer.validated_data["team_id"]
+
+        try:
+            team = Team.objects.get(id=team_id)
+            event.teams.add(team)
+
+            return Response({"message": "Equipa adicionada a este evento!"}, status=status.HTTP_200_OK)
+        except Athlete.DoesNotExist:
+            return Response({"error": "Um erro ocurreu ao adicionar esta Equipa!"}, status=status.HTTP_404_NOT_FOUND)
+
+
+    @action(detail=True, methods=["post"], url_path="delete_team", serializer_class=serializers.AddTeamSerializer)
+    def delete_team(self, request, pk=None):
+        event = self.get_object()
+        serializer = serializers.AddTeamSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        team_id = serializer.validated_data["team_id"]
+
+        try:
+            team = Team.objects.get(id=team_id)
+            event.teams.remove(team)
+
+            return Response({"message": "Equipa removida deste evento!"}, status=status.HTTP_200_OK)
+        except Athlete.DoesNotExist:
+            return Response({"error": "Um erro ocurreu ao remover esta Equipa!"}, status=status.HTTP_404_NOT_FOUND)
     
 
 @api_view(['GET'])
