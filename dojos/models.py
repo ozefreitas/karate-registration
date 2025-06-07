@@ -34,6 +34,13 @@ class Event(models.Model):
         "3940": "2039/2040",
     }
 
+    ENCOUNTERS = {
+        "none": "None",
+        "regional": "Regional",
+        "nacional": "Nacional",
+        "internacional": "Internacional"
+    }
+
     id = models.SlugField(primary_key=True, unique=True, max_length=100, blank=True)
     name = models.CharField("Nome", max_length=99)
     location = models.CharField("Local", max_length=99)
@@ -43,10 +50,16 @@ class Event(models.Model):
     retifications_deadline = models.DateField("Fim do periodo de retificações")
     competition_date = models.DateField("Dia da prova")
     description = models.TextField("Descrição", default="")
+    custody = models.CharField("Tutela", max_length=99, default="")
+    email_contact = models.EmailField("Email", default="jpsfreitas19@gmail.com")
+    contact = models.PositiveIntegerField("Contacto", default="123456789")
     individuals = models.ManyToManyField("registration.Athlete", related_name='events', blank=True)
     teams = models.ManyToManyField("registration.Team", related_name='events', blank=True)
     has_ended = models.BooleanField(default=False)
     has_teams = models.BooleanField(default=False)
+    encounter = models.BooleanField("É estágio/encontro", default=False)
+    encounter_type = models.CharField("Estágio", choices=ENCOUNTERS, max_length=16, blank=True, null=True, default=ENCOUNTERS["none"])
+    rating = models.IntegerField("Avaliação", default=0)
 
     def save(self, *args, **kwargs):
         if not self.id:  # Auto-generate slug only if not set

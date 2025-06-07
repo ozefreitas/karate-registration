@@ -39,6 +39,10 @@ class AddTeamSerializer(serializers.Serializer):
     team_id = serializers.CharField()
 
 
+class RatingSerializer(serializers.Serializer):
+    rating_signal = serializers.IntegerField()
+
+
 class RegisterUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User

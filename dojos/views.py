@@ -16,7 +16,7 @@ from django.utils import timezone
 from .forms import DojoRegisterForm, DojoUpdateForm, ProfileUpdateForm, FeedbackForm, DojoPasswordResetForm, DojoPasswordConfirmForm, DojoPasswordChangeForm
 from .permissions import IsAuthenticatedOrReadOnly
 from .models import Event, Notification
-from registration.models import Dojo, Athlete
+from registration.models import Dojo, Athlete, Team
 from smtplib import SMTPException
 from dojos import serializers
 
@@ -124,6 +124,21 @@ class CompetitionViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             return Response({"message": "Equipa removida deste evento!"}, status=status.HTTP_200_OK)
         except Athlete.DoesNotExist:
             return Response({"error": "Um erro ocurreu ao remover esta Equipa!"}, status=status.HTTP_404_NOT_FOUND)
+        
+    @action(detail=True, methods=["post"], url_path="rate_event", serializer_class=serializers.RatingSerializer)
+    def rate_event(self, request, pk=None):
+        event = self.get_object()
+        serializer = serializers.RatingSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        rating = serializer.validated_data["rating_signal"]
+        try:
+            current_rating = event.rating
+            new_rating = current_rating + rating
+            event.rating = new_rating
+            event.save()
+            return Response({"message": "Obrigado pela sua opinião!"}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": "Um erro ocurreu ao avaliar este Evento!"}, status=status.HTTP_400_BAD_REQUEST)
     
 
 @api_view(['GET'])
