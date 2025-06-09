@@ -15,7 +15,7 @@ from django.utils import timezone
 
 from .forms import DojoRegisterForm, DojoUpdateForm, ProfileUpdateForm, FeedbackForm, DojoPasswordResetForm, DojoPasswordConfirmForm, DojoPasswordChangeForm
 from .permissions import IsAuthenticatedOrReadOnly
-from .models import Event, Notification
+from .models import Event, Notification, DojosRatingAudit
 from registration.models import Dojo, Athlete, Team
 from smtplib import SMTPException
 from dojos import serializers
@@ -46,6 +46,9 @@ class CompetitionViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         "create": serializers.CreateCompetitionSerializer,
         "update": serializers.UpdateCompetitionSerializer
     }
+
+    def get_queryset(self):
+        return self.queryset.order_by("competition_date")
 
     @action(detail=False, methods=["get"], url_path="next_comp")
     def next_comp(self, request):
@@ -125,6 +128,31 @@ class CompetitionViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         except Athlete.DoesNotExist:
             return Response({"error": "Um erro ocurreu ao remover esta Equipa!"}, status=status.HTTP_404_NOT_FOUND)
         
+        
+    @action(detail=True, methods=["get"], url_path="check_event_rate", permission_classes=[IsAuthenticated])
+    def check_event_rate(self, request, pk=None):
+        event = self.get_object()
+        if not event.has_ended:
+            return Response({
+                "status": "error",
+                "code": "event_not_ended",
+                "message": "Este Evento ainda não foi realizado."
+            }, status=status.HTTP_200_OK)
+        print(request.user)
+        if DojosRatingAudit.objects.filter(dojo=request.user, event=event).exists():
+            return Response({
+                "status": "warning",
+                "code": "already_rated",
+                "message": "Já fez a sua avaliação deste evento."
+            }, status=status.HTTP_200_OK)
+
+        return Response({
+            "status": "success",
+            "code": "can_rate",
+            "message": "Pode fazer a sua avaliação deste evento."
+        }, status=status.HTTP_200_OK)
+        
+
     @action(detail=True, methods=["post"], url_path="rate_event", serializer_class=serializers.RatingSerializer)
     def rate_event(self, request, pk=None):
         event = self.get_object()
@@ -136,6 +164,7 @@ class CompetitionViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             new_rating = current_rating + rating
             event.rating = new_rating
             event.save()
+            DojosRatingAudit.objects.create(dojo=request.user, event=event, rating=rating)
             return Response({"message": "Obrigado pela sua opinião!"}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": "Um erro ocurreu ao avaliar este Evento!"}, status=status.HTTP_400_BAD_REQUEST)
@@ -181,7 +210,8 @@ class UserDetailView(APIView):
         return Response({
             "id": user.id,
             "username": user.username,
-            "email": user.email
+            "email": user.email,
+            "role": user.role,
         }, status=status.HTTP_200_OK)
     
 
