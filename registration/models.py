@@ -5,6 +5,7 @@ from django.apps import apps
 from django.utils import timezone
 from nanoid import generate
 from django.core.exceptions import ValidationError
+from django.conf import settings
 
 # Create your models here.
 
@@ -100,7 +101,7 @@ class Athlete(models.Model):
     match_type = models.CharField("Prova", choices=MATCHES, max_length=10)
     gender = models.CharField("Género", choices=GENDERS, max_length=10)
     weight = models.CharField("Peso", choices=WEIGHTS, max_length=10, blank=True, null=True)
-    dojo = models.ForeignKey(User, on_delete=models.CASCADE)
+    dojo = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     creation_date = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
@@ -133,7 +134,7 @@ class Team(models.Model):
     }
 
     id = models.CharField(primary_key=True, max_length=10, unique=True, editable=False)
-    dojo = models.ForeignKey(User, on_delete=models.CASCADE)
+    dojo = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     athlete1 = models.ForeignKey(Athlete, verbose_name="Atleta 1", related_name="first_element", on_delete=models.CASCADE)
     athlete2 = models.ForeignKey(Athlete, verbose_name="Atleta 2", related_name="second_element", on_delete=models.CASCADE)
     athlete3 = models.ForeignKey(Athlete, verbose_name="Atleta 3", related_name="third_element", on_delete=models.CASCADE, blank=True, null=True)

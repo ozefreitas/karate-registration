@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
 import dojos.models as models
 import registration.serializers 
 
@@ -45,11 +44,11 @@ class RatingSerializer(serializers.Serializer):
 
 class RegisterUserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = models.User
         fields = ["first_name", "last_name", "email", "username", "password"]
     
     def create(self, validated_data):
-        user = User.objects.create_user(
+        user = models.User.objects.create_user(
             username=validated_data['username'],
             email=validated_data.get('email'),
             password=validated_data['password']

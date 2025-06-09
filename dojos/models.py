@@ -1,8 +1,43 @@
 from django.db import models
 from django.utils.text import slugify
 from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 
 # Create your models here.
+
+class User(AbstractUser):
+    class Role(models.TextChoices):
+        SUPERUSER = "superuser", "Superuser"
+        NATIONAL = "national_association", "National Association"
+        DOJO = "dojo", "Dojo"
+
+    role = models.CharField(
+        max_length=32,
+        choices=Role.choices,
+        default=Role.DOJO
+    )
+
+    def is_national(self):
+        return self.role == self.Role.NATIONAL
+
+    def is_dojo(self):
+        return self.role == self.Role.DOJO
+    
+    def save(self, *args, **kwargs):
+        if self.username == "ozefreitas":
+            self.role = self.Role.SUPERUSER
+
+        if self.username == "SKIPortugal":
+            self.role = self.Role.NATIONAL
+            existing = User.objects.filter(role=self.Role.NATIONAL).exclude(pk=self.pk)
+            if existing.exists():
+                raise ValidationError("There can only be one National Association account.")
+        else:
+            if self.role == self.Role.NATIONAL:
+                raise ValidationError("Only the user with username 'SKIPortugal' can be National Association.")
+        super().save(*args, **kwargs)
+    
 
 class Profile(models.Model):
     dojo = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -49,7 +84,7 @@ class Event(models.Model):
     end_registration = models.DateField("Fim das inscrições")
     retifications_deadline = models.DateField("Fim do periodo de retificações")
     competition_date = models.DateField("Dia da prova")
-    description = models.TextField("Descrição", default="")
+    description = models.TextField("Descrição", default="", blank=True, null=True)
     custody = models.CharField("Tutela", max_length=99, default="")
     email_contact = models.EmailField("Email", default="jpsfreitas19@gmail.com")
     contact = models.PositiveIntegerField("Contacto", default="123456789")
@@ -71,6 +106,15 @@ class Event(models.Model):
 
     def __str__(self):
         return '{} {}'.format(self.name, self.season)
+
+
+class DojosRatingAudit(models.Model):
+    dojo = models.ForeignKey(User, on_delete=models.CASCADE, editable=False)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, editable=False)
+    rating = models.IntegerField("Avaliação", default=0, editable=False)
+
+    def __str__(self):
+        return '{} {} rating'.format(self.dojo, self.event)
 
 
 class FeedbackData(models.Model):
