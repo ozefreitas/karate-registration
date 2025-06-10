@@ -27,7 +27,7 @@ class CompetitionEndedMiddleware:
         competition_details = Event.objects.filter(has_ended=False)
         for comp_detail in competition_details:
                 # if competition day passes by, "has ended" go true
-                if comp_detail.competition_date < today:
+                if comp_detail.event_date < today:
                     comp_detail.has_ended=True
                     comp_detail.save()
 
