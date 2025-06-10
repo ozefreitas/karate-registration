@@ -10,23 +10,32 @@ class User(AbstractUser):
     class Role(models.TextChoices):
         SUPERUSER = "superuser", "Superuser"
         NATIONAL = "national_association", "National Association"
-        DOJO = "dojo", "Dojo"
+        FREEDOJO = "free_dojo", "Dojo Free"
+        SUBEDDOJO = "subed_dojo", "Dojo Subscription"
+
 
     role = models.CharField(
         max_length=32,
         choices=Role.choices,
-        default=Role.DOJO
+        default=Role.FREEDOJO
     )
 
     def is_national(self):
         return self.role == self.Role.NATIONAL
 
-    def is_dojo(self):
-        return self.role == self.Role.DOJO
+    def is_free_dojo(self):
+        return self.role == self.Role.FREEDOJO
+    
+    def is_subed_dojo(self):
+        return self.role == self.Role.SUBEDDOJO
     
     def save(self, *args, **kwargs):
         if self.username == "ozefreitas":
             self.role = self.Role.SUPERUSER
+        
+        else:
+            if self.role == self.Role.SUPERUSER:
+                raise ValidationError("Only Freitas can be de superuser.")
 
         if self.username == "SKIPortugal":
             self.role = self.Role.NATIONAL
@@ -73,17 +82,21 @@ class Event(models.Model):
         "none": "None",
         "regional": "Regional",
         "nacional": "Nacional",
-        "internacional": "Internacional"
+        "internacional": "Internacional",
+        "intrutores": "Instrutores",
+        "formacao": "Formação",
+        "exames": "Sessão de Exames",
+        "seminario": "Seminário"
     }
 
     id = models.SlugField(primary_key=True, unique=True, max_length=100, blank=True)
     name = models.CharField("Nome", max_length=99)
     location = models.CharField("Local", max_length=99)
     season = models.CharField("Época", choices=SEASONS, max_length=15)
-    start_registration = models.DateField("Início das inscrições")
-    end_registration = models.DateField("Fim das inscrições")
-    retifications_deadline = models.DateField("Fim do periodo de retificações")
-    competition_date = models.DateField("Dia da prova")
+    start_registration = models.DateField("Início das inscrições", null=True, blank=True)
+    end_registration = models.DateField("Fim das inscrições", null=True, blank=True)
+    retifications_deadline = models.DateField("Fim do periodo de retificações", null=True, blank=True)
+    event_date = models.DateField("Dia da prova")
     description = models.TextField("Descrição", default="", blank=True, null=True)
     custody = models.CharField("Tutela", max_length=99, default="")
     email_contact = models.EmailField("Email", default="jpsfreitas19@gmail.com")
@@ -91,6 +104,7 @@ class Event(models.Model):
     individuals = models.ManyToManyField("registration.Athlete", related_name='events', blank=True)
     teams = models.ManyToManyField("registration.Team", related_name='events', blank=True)
     has_ended = models.BooleanField(default=False)
+    has_registrations = models.BooleanField(default=False)
     has_teams = models.BooleanField(default=False)
     encounter = models.BooleanField("É estágio/encontro", default=False)
     encounter_type = models.CharField("Estágio", choices=ENCOUNTERS, max_length=16, blank=True, null=True, default=ENCOUNTERS["none"])
@@ -99,10 +113,16 @@ class Event(models.Model):
     def save(self, *args, **kwargs):
         if not self.id:  # Auto-generate slug only if not set
             self.id = slugify(f"{self.name} {self.season}")
-        super().save(*args, **kwargs)
 
-        if "torneio" in self.name.lower():
-            self.has_teams = True
+        if self.has_registrations and (self.start_registration == None or self.end_registration == None or self.retifications_deadline == None):
+            raise ValidationError("Eventos com inscrições precisam obrigatoriamente de todas as datas.")
+
+        if not self.has_registrations:
+            self.start_registration = None
+            self.end_registration = None
+            self.retifications_deadline = None
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return '{} {}'.format(self.name, self.season)

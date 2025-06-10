@@ -6,7 +6,7 @@ from .models import Event, FeedbackData, Profile, Notification, Announcement, Do
 class EventAdmin(admin.ModelAdmin):
     list_display = ("name", "location", "season")
     search_fields = ("name", "location")
-    ordering = ("start_registration", "competition_date")
+    ordering = ("start_registration", "event_date")
 
 class DojosRatingAuditAdmin(admin.ModelAdmin):
     readonly_fields = ("dojo", "event", "rating")

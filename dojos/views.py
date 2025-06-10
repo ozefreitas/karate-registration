@@ -38,24 +38,24 @@ class MultipleSerializersMixIn:
 
 class CompetitionViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Event.objects.all()
-    serializer_class=serializers.CompetitionsSerializer
+    serializer_class=serializers.EventsSerializer
     # authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     serializer_classes = {
-        "create": serializers.CreateCompetitionSerializer,
-        "update": serializers.UpdateCompetitionSerializer
+        "create": serializers.CreateEventSerializer,
+        "update": serializers.UpdateEventSerializer
     }
 
     def get_queryset(self):
-        return self.queryset.order_by("competition_date")
+        return self.queryset.order_by("event_date")
 
     @action(detail=False, methods=["get"], url_path="next_comp")
     def next_comp(self, request):
         next_competition = Event.objects.filter(has_ended=False).order_by('competition_date').first()
         if next_competition is None:
             return Response([])
-        serializer = serializers.CompetitionsSerializer(next_competition)
+        serializer = serializers.EventsSerializer(next_competition)
         return Response(serializer.data)
     
     @action(detail=False, methods=["get"], url_path="last_comp")
@@ -63,7 +63,7 @@ class CompetitionViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         last_competition = Event.objects.filter(has_ended=True).order_by('competition_date').last()
         if last_competition is None:
             return Response([])
-        serializer = serializers.CompetitionsSerializer(last_competition)
+        serializer = serializers.EventsSerializer(last_competition)
         return Response(serializer.data)
     
     @action(detail=True, methods=["post"], url_path="add_athlete", serializer_class=serializers.AddAthleteSerializer, permission_classes=[IsAuthenticated])

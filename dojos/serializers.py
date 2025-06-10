@@ -3,7 +3,7 @@ import dojos.models as models
 import registration.serializers 
 
 
-class CompetitionsSerializer(serializers.ModelSerializer):
+class EventsSerializer(serializers.ModelSerializer):
     individuals = registration.serializers.CompactAthletesSerializer(many=True)
     teams = registration.serializers.TeamsSerializer(many=True)
     
@@ -12,13 +12,13 @@ class CompetitionsSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class CreateCompetitionSerializer(serializers.ModelSerializer):
+class CreateEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Event
-        exclude = ("id", "has_ended")
+        exclude = ("id", "has_ended", "individuals", "teams", "rating", )
 
 
-class UpdateCompetitionSerializer(serializers.ModelSerializer):
+class UpdateEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Event
         exclude = ("id", "has_ended")
