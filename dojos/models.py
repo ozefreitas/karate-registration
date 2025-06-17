@@ -1,6 +1,5 @@
 from django.db import models
 from django.utils.text import slugify
-from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 
@@ -98,9 +97,9 @@ class Event(models.Model):
     retifications_deadline = models.DateField("Fim do periodo de retificações", null=True, blank=True)
     event_date = models.DateField("Dia da prova")
     description = models.TextField("Descrição", default="", blank=True, null=True)
-    custody = models.CharField("Tutela", max_length=99, default="")
-    email_contact = models.EmailField("Email", default="jpsfreitas19@gmail.com")
-    contact = models.PositiveIntegerField("Contacto", default="123456789")
+    custody = models.CharField("Tutela", max_length=99, default="", null=True, blank=True)
+    email_contact = models.EmailField("Email", default="jpsfreitas19@gmail.com", null=True, blank=True)
+    contact = models.PositiveIntegerField("Contacto", default="123456789", null=True, blank=True)
     individuals = models.ManyToManyField("registration.Athlete", related_name='events', blank=True)
     teams = models.ManyToManyField("registration.Team", related_name='events', blank=True)
     has_ended = models.BooleanField(default=False)
@@ -167,7 +166,6 @@ class Notification(models.Model):
         YELLOW = "yellow", "Yellow"
         ORANGE = "orange", "Orange"
         RED = "red", "Red"
-        BLACK = "black", "Black"
 
     urgency = models.CharField(max_length=10, choices=URGENCY_TYPE.choices, default=URGENCY_TYPE.NONE)
     dojo = models.ForeignKey(User, on_delete=models.CASCADE)
