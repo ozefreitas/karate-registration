@@ -3,13 +3,33 @@ import dojos.models as models
 import registration.serializers 
 
 
+class UsersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.User
+        fields = ["id", "username", "role"]
+
+
 class EventsSerializer(serializers.ModelSerializer):
-    individuals = registration.serializers.CompactAthletesSerializer(many=True)
+    individuals = serializers.SerializerMethodField()
+    # individuals = registration.serializers.CompactAthletesSerializer(many=True)
     teams = registration.serializers.TeamsSerializer(many=True)
     
     class Meta:
         model = models.Event
         fields = "__all__"
+
+    def get_individuals(self, obj):
+        """Filters the athletes in the individuals fields based on que requesting user"""
+        user = self.context['request'].user
+        if not user.is_authenticated:
+            return []
+        if user.role == 'free_dojo' or user.role == 'subed_dojo':
+            qs = obj.individuals.filter(dojo=user)
+        elif user.role == 'national_association' or user.role == 'superuser':
+            qs = obj.individuals.all()
+        else:
+            return []
+        return registration.serializers.CompactAthletesSerializer(qs, many=True).data
 
 
 class CreateEventSerializer(serializers.ModelSerializer):
@@ -28,6 +48,10 @@ class NotificationsSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Notification
         fields = "__all__"
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.fields["dojo"].queryset = models.User.objects.filter(role__in=["free_dojo", "subed_dojo"])
 
 
 class AddAthleteSerializer(serializers.Serializer):
