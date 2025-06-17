@@ -6,16 +6,17 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
-from django.contrib.auth.models import User
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
 from django.conf import settings
 from django.utils import timezone
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .forms import DojoRegisterForm, DojoUpdateForm, ProfileUpdateForm, FeedbackForm, DojoPasswordResetForm, DojoPasswordConfirmForm, DojoPasswordChangeForm
-from .permissions import IsAuthenticatedOrReadOnly
-from .models import Event, Notification, DojosRatingAudit
+from .filters import NotificationsFilters
+from .permissions import IsAuthenticatedOrReadOnly, IsNationalForPostDelete
+from .models import Event, Notification, DojosRatingAudit, User
 from registration.models import Dojo, Athlete, Team
 from smtplib import SMTPException
 from dojos import serializers
@@ -52,15 +53,15 @@ class CompetitionViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
     @action(detail=False, methods=["get"], url_path="next_comp")
     def next_comp(self, request):
-        next_competition = Event.objects.filter(has_ended=False).order_by('competition_date').first()
+        next_competition = Event.objects.filter(has_ended=False).order_by('event_date').first()
         if next_competition is None:
             return Response([])
-        serializer = serializers.EventsSerializer(next_competition)
+        serializer = serializers.EventsSerializer(next_competition, context={'request': request})
         return Response(serializer.data)
     
     @action(detail=False, methods=["get"], url_path="last_comp")
     def last_comp(self, request):
-        last_competition = Event.objects.filter(has_ended=True).order_by('competition_date').last()
+        last_competition = Event.objects.filter(has_ended=True).order_by('event_date').last()
         if last_competition is None:
             return Response([])
         serializer = serializers.EventsSerializer(last_competition)
@@ -179,6 +180,14 @@ def notifications(request):
     return Response(serializer.data)
 
 @api_view(['GET'])
+# @authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def users(request):
+    users = User.objects.filter(role__in=["free_dojo", "subed_dojo"])
+    serializer = serializers.UsersSerializer(users, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
 def current_season(request):
     today = timezone.now()
     if today.month > 8:
@@ -221,6 +230,23 @@ class LogoutView(APIView):
     def post(self, request):
         request.user.auth_token.delete()  # Deletes token from DB
         return Response({"detail": "Logged out"}, status=200)
+    
+
+class NotificationViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
+    queryset=Notification.objects.all()
+    serializer_class=serializers.NotificationsSerializer
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsNationalForPostDelete]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = NotificationsFilters
+
+    # serializer_classes = {
+    #     "create": serializers.CreateEventSerializer,
+    #     "update": serializers.UpdateEventSerializer
+    # }
+
+    # def get_queryset(self):
+    #     return self.queryset.order_by("event_date")
 
 
 ### User loging account actions ###

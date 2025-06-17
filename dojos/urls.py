@@ -6,9 +6,11 @@ from rest_framework.authtoken.views import obtain_auth_token
 
 router = routers.DefaultRouter()
 router.register(r'events', views.CompetitionViewSet, basename='competitions')
+router.register(r'notifications', views.NotificationViewSet, basename='notifications')
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('users/', views.users, name="users"),
     path('dojos/', views.notifications, name="notifications"),
     path('current_season/', views.current_season, name="current-season"),
     path('register_user/', views.RegisterView.as_view(), name="dojos-register"),
