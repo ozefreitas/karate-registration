@@ -24,6 +24,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.exceptions import PermissionDenied
 import registration.serializers as serializers
 
 # views for the athlets registrations
@@ -81,7 +82,16 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     }
 
     def get_queryset(self):
-        return self.queryset.filter(dojo=self.request.user)
+        user = self.request.user
+        if user.role == "national_association" or user.role == "superuser":
+            # National-level user can see all athletes
+            return self.queryset.all()
+
+        if user.role == "free_dojo" or user.role == "subed_dojo":
+            # Dojo-level user sees only their own dojo athletes
+            return self.queryset.filter(dojo=user)
+        
+        raise PermissionDenied("You do not have access to this data.")
     
     def perform_create(self, serializer):
         serializer.save(dojo=self.request.user)
@@ -179,7 +189,7 @@ class ClassificationsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     
     @action(detail=False, methods=["get"], url_path="last_comp_quali")
     def last_comp_quali(self, request):
-        last_competition = Event.objects.filter(has_ended=True).order_by('competition_date').last()
+        last_competition = Event.objects.filter(has_ended=True).order_by('event_date').last()
         if last_competition is None:
             return Response([])
         last_comp_quali = Classification.objects.filter(competition=last_competition.id)
@@ -514,7 +524,7 @@ class TeamView(LoginRequiredMixin, View):
 
 def home(request):
     comp_details = Event.objects.all()
-    comp_details = sorted(comp_details, key = lambda x: x.competition_date)
+    comp_details = sorted(comp_details, key = lambda x: x.event_date)
     return render(request, 'registration/home.html', {"comps": comp_details})
 
 
