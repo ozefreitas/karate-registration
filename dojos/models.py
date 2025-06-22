@@ -100,8 +100,7 @@ class Event(models.Model):
     custody = models.CharField("Tutela", max_length=99, default="", null=True, blank=True)
     email_contact = models.EmailField("Email", default="jpsfreitas19@gmail.com", null=True, blank=True)
     contact = models.PositiveIntegerField("Contacto", default="123456789", null=True, blank=True)
-    individuals = models.ManyToManyField("registration.Athlete", related_name='events', blank=True)
-    teams = models.ManyToManyField("registration.Team", related_name='events', blank=True)
+    individuals = models.ManyToManyField("registration.Athlete", related_name='general_events', blank=True)
     has_ended = models.BooleanField(default=False)
     has_registrations = models.BooleanField(default=False)
     has_teams = models.BooleanField(default=False)
@@ -125,6 +124,17 @@ class Event(models.Model):
 
     def __str__(self):
         return '{} {}'.format(self.name, self.season)
+    
+
+class Discipline(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='disciplines')
+    name = models.CharField("Nome", max_length=100)
+    is_team = models.BooleanField(default=False)
+    individuals = models.ManyToManyField("registration.Athlete", related_name='disciplines_indiv', blank=True)
+    teams = models.ManyToManyField("registration.Team", related_name='disciplines_team', blank=True)
+
+    def __str__(self):
+        return '{} {}'.format(self.event.name, self.name)
 
 
 class DojosRatingAudit(models.Model):

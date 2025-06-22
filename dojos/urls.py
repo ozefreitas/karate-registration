@@ -5,7 +5,8 @@ from rest_framework.authtoken.views import obtain_auth_token
 
 
 router = routers.DefaultRouter()
-router.register(r'events', views.CompetitionViewSet, basename='competitions')
+router.register(r'events', views.EventViewSet, basename='events')
+router.register(r'disciplines', views.DisciplineViewSet, basename='disciplines')
 router.register(r'notifications', views.NotificationViewSet, basename='notifications')
 
 urlpatterns = [

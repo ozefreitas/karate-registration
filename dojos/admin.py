@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Event, FeedbackData, Profile, Notification, Announcement, DojosRatingAudit, User
+from .models import Event, FeedbackData, Profile, Notification, Announcement, DojosRatingAudit, User, Discipline
 
 # Register your models here.
 
@@ -13,6 +13,7 @@ class DojosRatingAuditAdmin(admin.ModelAdmin):
 
 admin.site.register(User)
 admin.site.register(Event, EventAdmin)
+admin.site.register(Discipline)
 admin.site.register(FeedbackData)
 admin.site.register(Profile)
 admin.site.register(Notification)

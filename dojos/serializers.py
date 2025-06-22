@@ -1,6 +1,9 @@
 from rest_framework import serializers
 import dojos.models as models
-import registration.serializers 
+import registration.serializers
+from django.utils.text import slugify
+from .models import Event, Discipline
+from datetime import date
 
 
 class UsersSerializer(serializers.ModelSerializer):
@@ -11,8 +14,9 @@ class UsersSerializer(serializers.ModelSerializer):
 
 class EventsSerializer(serializers.ModelSerializer):
     individuals = serializers.SerializerMethodField()
-    # individuals = registration.serializers.CompactAthletesSerializer(many=True)
-    teams = registration.serializers.TeamsSerializer(many=True)
+    is_open = serializers.SerializerMethodField()
+    is_closed = serializers.SerializerMethodField()
+    is_retification = serializers.SerializerMethodField()
     
     class Meta:
         model = models.Event
@@ -30,18 +34,86 @@ class EventsSerializer(serializers.ModelSerializer):
         else:
             return []
         return registration.serializers.CompactAthletesSerializer(qs, many=True).data
+    
+    def get_is_open(self, obj):
+        if obj.has_registrations:
+            today = date.today()
+            if today >= obj.start_registration and today <= obj.retifications_deadline:
+                return True
+        return False
+    
+    def get_is_closed(self, obj):
+        if obj.has_registrations:
+            today = date.today()
+            if today > obj.retifications_deadline:
+                return True
+        return False
+    
+    def get_is_retification(self, obj):
+        if obj.has_registrations:
+            today = date.today()
+            if today > obj.end_registration and today <= obj.retifications_deadline:
+                return True
+        return False
 
 
 class CreateEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Event
-        exclude = ("id", "has_ended", "individuals", "teams", "rating", )
+        exclude = ("has_ended", "individuals", "rating", )
+    
+    def validate(self, data):
+        name = data.get("name")
+        season = data.get("season")
+
+        slug_id = slugify(f"{name} {season}")
+
+        # Only check on create
+        if not self.instance and Event.objects.filter(id=slug_id).exists():
+            raise serializers.ValidationError({
+                "id": ["Já existe um evento com esse nome nesta época."]
+            })
+        
+        has_registrations = data.get('has_registrations')
+        start = data.get('start_registration')
+        end = data.get('end_registration')
+        deadline = data.get('retifications_deadline')
+
+        if has_registrations and (start is None or end is None or deadline is None):
+            raise serializers.ValidationError({
+                "non_field_errors": [
+                    "Eventos com inscrições precisam de todas as datas."
+                ]
+            })
+
+        return data
 
 
 class UpdateEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Event
         exclude = ("id", "has_ended")
+
+
+class DisciplinesSerializer(serializers.ModelSerializer):
+    individuals = registration.serializers.CompactAthletesSerializer(many=True)
+    teams = registration.serializers.TeamsSerializer(many=True)
+    
+    class Meta:
+        model = models.Discipline
+        fields = "__all__"
+
+
+class CreateDisciplineSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Discipline
+        exclude = ["id", "individuals", "teams", ]
+
+
+class UpdateDisciplineSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Discipline
+        exclude = ["id", ]
 
 
 class NotificationsSerializer(serializers.ModelSerializer):
