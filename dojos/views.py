@@ -14,7 +14,7 @@ from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 
 from .forms import DojoRegisterForm, DojoUpdateForm, ProfileUpdateForm, FeedbackForm, DojoPasswordResetForm, DojoPasswordConfirmForm, DojoPasswordChangeForm
-from .filters import NotificationsFilters
+from .filters import NotificationsFilters, DisciplinesFilters
 from .permissions import IsAuthenticatedOrReadOnly, IsNationalForPostDelete
 from .models import Event, Notification, DojosRatingAudit, User, Discipline
 from registration.models import Dojo, Athlete, Team
@@ -147,6 +147,8 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     serializer_class=serializers.DisciplinesSerializer
     # authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = DisciplinesFilters
 
     serializer_classes = {
         "create": serializers.CreateDisciplineSerializer,

@@ -25,7 +25,7 @@ class AthletesFilters(filters.FilterSet):
                                               method='filter_athletes_in_gender')
 
     def filter_athletes_not_in_competition(self, queryset, name, value):
-        return queryset.exclude(events__id=value)
+        return queryset.exclude(general_events__id=value)
     
     def filter_athletes_in_category(self, queryset, name, value):
         return queryset.filter(category=value)
