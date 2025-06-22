@@ -5,16 +5,12 @@ import registration.models as models
 ### Athletes Serializer Classes 
 
 class AthletesSerializer(serializers.ModelSerializer):
-    match_type = serializers.SerializerMethodField()
     category_index = serializers.SerializerMethodField()
     full_name = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Athlete
         fields = "__all__"
-    
-    def get_match_type(self, obj):
-        return obj.match_type.capitalize() if obj.match_type else ''
     
     def get_category_index(self, obj):
         if obj.category.lower() == "infantil":
@@ -39,14 +35,10 @@ class AthletesSerializer(serializers.ModelSerializer):
 
 
 class CompactAthletesSerializer(serializers.ModelSerializer):
-    match_type = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Athlete
-        fields = ["id" ,"first_name", "last_name", "gender", "match_type", "category"]
-    
-    def get_match_type(self, obj):
-        return obj.match_type.capitalize() if obj.match_type else ''
+        fields = ["id" ,"first_name", "last_name", "gender", "category"]
 
 
 class CreateAthleteSerializer(serializers.ModelSerializer):
@@ -58,7 +50,7 @@ class CreateAthleteSerializer(serializers.ModelSerializer):
 class UpdateAthleteSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Athlete
-        exclude = ("age", "dojo", "match_type", )
+        exclude = ("age", "dojo", )
 
 
 ### Teams Serializer Classes

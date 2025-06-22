@@ -4,8 +4,8 @@ from .models import Athlete, Dojo, Team, Classification
 # Register your models here.
 
 class AthleteAdmin(admin.ModelAdmin):
-    list_display = ("first_name", "last_name", "category", "match_type", "gender")
-    search_fields = ("first_name", "last_name", "category", "match_type", "dojo")
+    list_display = ("first_name", "last_name", "category", "gender")
+    search_fields = ("first_name", "last_name", "category", "dojo")
 
 
 class TeamAdmin(admin.ModelAdmin):
