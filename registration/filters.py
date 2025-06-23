@@ -1,31 +1,29 @@
 from django_filters import rest_framework as filters
 from registration.models import Athlete
-
-
-# class IndividualFilters(filters.FilterSet):
-#     """Filter Individuals in comp_id"""
-#     in_competition = filters.CharFilter(field_name='in_competition',
-#                                               method='filter_individuals_in_competition')
-
-#     def filter_individuals_in_competition(self, queryset, name, value):
-#         return queryset.filter(competition=value)
-
-#     class Meta:
-#         model = Individual
-#         fields = []
+from dojos.models import Event
+from django.db.models import Q, Count
 
 
 class AthletesFilters(filters.FilterSet):
     """Filter Atlhetes not in comp_id"""
-    not_in_competition = filters.CharFilter(field_name='not_in_competition',
-                                              method='filter_athletes_not_in_competition')
+    not_in_event = filters.CharFilter(field_name='not_in_event',
+                                              method='filter_athletes_not_in_event')
     in_category = filters.CharFilter(field_name='in_category',
                                               method='filter_athletes_in_category')
     in_gender = filters.CharFilter(field_name='in_gender',
                                               method='filter_athletes_in_gender')
 
-    def filter_athletes_not_in_competition(self, queryset, name, value):
-        return queryset.exclude(general_events__id=value)
+    def filter_athletes_not_in_event(self, queryset, name, value):
+        event = Event.objects.filter(id=value).first()
+        number_disciplines = event.disciplines.count()
+        if number_disciplines == 0:
+            return queryset.exclude(general_events__id=value)
+        
+        return queryset.annotate(
+            discipline_count=Count('disciplines_indiv', filter=Q(disciplines_indiv__event=event), distinct=True)
+            ).filter(
+                discipline_count__lt=number_disciplines
+                )
     
     def filter_athletes_in_category(self, queryset, name, value):
         return queryset.filter(category=value)
