@@ -26,6 +26,7 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.exceptions import PermissionDenied
 import registration.serializers as serializers
+import dojos.serializers as dojo_serializers
 
 # views for the athlets registrations
 
@@ -116,6 +117,26 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 {"message": f"Eliminados {deleted_count} Atletas"},
                 status=status.HTTP_200_OK
             )
+    
+    @action(detail=True, methods=['get'], url_path='unregistered_modalities/(?P<event_id>[^/.]+)')
+    def unregistered_modalities(self, request, pk=None, event_id=None):
+        try:
+            athlete = self.get_object()
+            event = Event.objects.get(pk=event_id)
+        except Event.DoesNotExist:
+            return Response({"detail": "Event not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        # All modalities of the event
+        event_disciplines = event.disciplines.all()
+
+        # Modalities where the athlete is already registered
+        registered = athlete.disciplines_indiv.filter(event=event)
+
+        # Difference = unregistered
+        unregistered = event_disciplines.exclude(id__in=registered.values_list('id', flat=True))
+
+        serializer = dojo_serializers.DisciplinesCompactSerializer(unregistered, many=True)
+        return Response(serializer.data)
 
 class TeamsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Team.objects.all()
