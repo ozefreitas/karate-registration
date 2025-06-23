@@ -96,12 +96,32 @@ class UpdateEventSerializer(serializers.ModelSerializer):
 
 
 class DisciplinesSerializer(serializers.ModelSerializer):
-    individuals = registration.serializers.CompactAthletesSerializer(many=True)
+    individuals = serializers.SerializerMethodField()
     teams = registration.serializers.TeamsSerializer(many=True)
     
     class Meta:
         model = models.Discipline
         fields = "__all__"
+
+    def get_individuals(self, obj):
+        """Filters the athletes in the individuals fields based on que requesting user"""
+        user = self.context['request'].user
+        print(user)
+        if not user.is_authenticated:
+            return []
+        if user.role == 'free_dojo' or user.role == 'subed_dojo':
+            qs = obj.individuals.filter(dojo=user)
+        elif user.role == 'national_association' or user.role == 'superuser':
+            qs = obj.individuals.all()
+        else:
+            return []
+        return registration.serializers.CompactAthletesSerializer(qs, many=True).data
+
+
+class DisciplinesCompactSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Discipline
+        fields = ["id", "name"]
 
 
 class CreateDisciplineSerializer(serializers.ModelSerializer):
