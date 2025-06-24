@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'rest_framework.authtoken',
     'corsheaders',
+    'core',
     'registration',
     'dojos',
     "view_breadcrumbs",

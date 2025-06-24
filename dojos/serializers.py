@@ -6,12 +6,6 @@ from .models import Event, Discipline
 from datetime import date
 
 
-class UsersSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.User
-        fields = ["id", "username", "role"]
-
-
 class EventsSerializer(serializers.ModelSerializer):
     individuals = serializers.SerializerMethodField()
     is_open = serializers.SerializerMethodField()

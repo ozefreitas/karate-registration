@@ -20,6 +20,7 @@ from .models import Event, Notification, DojosRatingAudit, User, Discipline
 from registration.models import Dojo, Athlete, Team
 from smtplib import SMTPException
 from dojos import serializers
+from core.serializers import UsersSerializer
 
 from rest_framework import viewsets, filters, status
 from rest_framework.decorators import authentication_classes, permission_classes
@@ -230,7 +231,7 @@ def notifications(request):
 @permission_classes([IsAuthenticated])
 def users(request):
     users = User.objects.filter(role__in=["free_dojo", "subed_dojo"])
-    serializer = serializers.UsersSerializer(users, many=True)
+    serializer = UsersSerializer(users, many=True)
     return Response(serializer.data)
 
 @api_view(['GET'])
