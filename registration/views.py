@@ -95,7 +95,14 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         raise PermissionDenied("You do not have access to this data.")
     
     def perform_create(self, serializer):
-        serializer.save(dojo=self.request.user)
+        skip_number = serializer.validated_data.get("skip_number")
+
+        if skip_number == "":
+            # Auto-generate skip_number if it wasn't provided
+            last_athlete = Athlete.objects.all().order_by("skip_number").last()
+            skip_number = (last_athlete.skip_number if last_athlete else 0) + 1
+
+        serializer.save(skip_number=skip_number)
 
     @action(detail=False, methods=["get"], url_path="last_five")
     def last_five(self, request):
