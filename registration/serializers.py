@@ -1,12 +1,13 @@
 from rest_framework import serializers
 import registration.models as models
-
+from core.serializers import UsersSerializer
 
 ### Athletes Serializer Classes 
 
 class AthletesSerializer(serializers.ModelSerializer):
     category_index = serializers.SerializerMethodField()
     full_name = serializers.SerializerMethodField()
+    dojo = UsersSerializer()
 
     class Meta:
         model = models.Athlete
@@ -44,13 +45,25 @@ class CompactAthletesSerializer(serializers.ModelSerializer):
 class CreateAthleteSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Athlete
-        exclude = ("age", "dojo", )
+        exclude = ("age", )
+
+    def validate(self, data):
+        category = data.get("category")
+        stundent = data.get("student")
+
+        if stundent and category != "":
+            raise serializers.ValidationError({
+                'incompatible_athlete': ["Alunos não têm escalão associado."]
+            })
+        
+        
+        return data
 
 
 class UpdateAthleteSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Athlete
-        exclude = ("age", "dojo", )
+        exclude = ("age", "dojo", "skip_number", )
 
 
 ### Teams Serializer Classes
