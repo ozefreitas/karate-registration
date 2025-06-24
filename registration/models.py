@@ -97,7 +97,7 @@ class Athlete(models.Model):
     skip_number = models.IntegerField("Nº SKI-P", blank=True, null=True)
     student = models.BooleanField("Aluno", default=False)
     favorite = models.BooleanField("Favorito", default=False)
-    category = models.CharField("Escalão", choices=CATEGORIES, max_length=99)
+    category = models.CharField("Escalão", choices=CATEGORIES, max_length=99, blank=True, null=True)
     gender = models.CharField("Género", choices=GENDERS, max_length=10)
     weight = models.CharField("Peso", choices=WEIGHTS, max_length=10, blank=True, null=True)
     dojo = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -106,6 +106,8 @@ class Athlete(models.Model):
     def save(self, *args, **kwargs):
         if not self.id:  # Generate only if no ID exists
             self.id = generate_unique_nanoid(self.__class__.__name__, self._meta.app_label)
+        # # Run validations
+        # self.full_clean()
         super().save(*args, **kwargs)
 
     def __str__(self): 
