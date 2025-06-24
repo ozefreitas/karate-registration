@@ -11,6 +11,7 @@ class EventsSerializer(serializers.ModelSerializer):
     is_open = serializers.SerializerMethodField()
     is_closed = serializers.SerializerMethodField()
     is_retification = serializers.SerializerMethodField()
+    number_registrations = serializers.SerializerMethodField()
     
     class Meta:
         model = models.Event
@@ -49,6 +50,13 @@ class EventsSerializer(serializers.ModelSerializer):
             if today > obj.end_registration and today <= obj.retifications_deadline:
                 return True
         return False
+    
+    def get_number_registrations(self, obj):
+        number = obj.individuals.count()
+        disciplines = Discipline.objects.filter(event=obj)
+        for discipline in disciplines:
+            number += discipline.individuals.count()
+        return number
 
 
 class CreateEventSerializer(serializers.ModelSerializer):
