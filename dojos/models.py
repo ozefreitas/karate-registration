@@ -112,14 +112,6 @@ class Event(models.Model):
         if not self.id:  # Auto-generate slug only if not set
             self.id = slugify(f"{self.name} {self.season}")
 
-        if self.has_registrations and (self.start_registration == None or self.end_registration == None or self.retifications_deadline == None):
-            raise ValidationError("Eventos com inscrições precisam obrigatoriamente de todas as datas.")
-
-        if not self.has_registrations:
-            self.start_registration = None
-            self.end_registration = None
-            self.retifications_deadline = None
-
         super().save(*args, **kwargs)
 
     def __str__(self):

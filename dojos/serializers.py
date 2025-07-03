@@ -1,5 +1,6 @@
 from rest_framework import serializers
 import dojos.models as models
+from registration.models import Dojo
 import registration.serializers
 from django.utils.text import slugify
 from .models import Event, Discipline
@@ -108,7 +109,6 @@ class DisciplinesSerializer(serializers.ModelSerializer):
     def get_individuals(self, obj):
         """Filters the athletes in the individuals fields based on que requesting user"""
         user = self.context['request'].user
-        print(user)
         if not user.is_authenticated:
             return []
         if user.role == 'free_dojo' or user.role == 'subed_dojo':
@@ -172,3 +172,9 @@ class RegisterUserSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
         return user
+
+
+class DojosSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Dojo
+        fields = "__all__"
