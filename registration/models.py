@@ -100,6 +100,7 @@ class Athlete(models.Model):
     category = models.CharField("Escalão", choices=CATEGORIES, max_length=99, blank=True, null=True)
     gender = models.CharField("Género", choices=GENDERS, max_length=10)
     weight = models.CharField("Peso", choices=WEIGHTS, max_length=10, blank=True, null=True)
+    quotes = models.BooleanField("Quotas", default=True)
     dojo = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     creation_date = models.DateTimeField(auto_now_add=True)
 
