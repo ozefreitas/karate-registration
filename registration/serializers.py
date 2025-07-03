@@ -5,31 +5,31 @@ from core.serializers import UsersSerializer
 ### Athletes Serializer Classes 
 
 class AthletesSerializer(serializers.ModelSerializer):
-    category_index = serializers.SerializerMethodField()
+    # category_index = serializers.SerializerMethodField()
     full_name = serializers.SerializerMethodField()
     dojo = UsersSerializer()
 
     class Meta:
         model = models.Athlete
-        fields = "__all__"
+        exclude = ("quotes", )
     
-    def get_category_index(self, obj):
-        if obj.category.lower() == "infantil":
-            return 1
-        if obj.category.lower() == "inicado":
-            return 2
-        if obj.category.lower() == "juvenil":
-            return 3
-        if obj.category.lower() == "cadete":
-            return 4
-        if obj.category.lower() == "júnior":
-            return 5
-        if obj.category.lower() == "sénior":
-            return 6
-        if obj.category.lower() == "veterano +35":
-            return 7
-        if obj.category.lower() == "veterano +50":
-            return 8
+    # def get_category_index(self, obj):
+    #     if obj.category.lower() == "infantil":
+    #         return 1
+    #     if obj.category.lower() == "inicado":
+    #         return 2
+    #     if obj.category.lower() == "juvenil":
+    #         return 3
+    #     if obj.category.lower() == "cadete":
+    #         return 4
+    #     if obj.category.lower() == "júnior":
+    #         return 5
+    #     if obj.category.lower() == "sénior":
+    #         return 6
+    #     if obj.category.lower() == "veterano +35":
+    #         return 7
+    #     if obj.category.lower() == "veterano +50":
+    #         return 8
         
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
@@ -40,6 +40,17 @@ class CompactAthletesSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Athlete
         fields = ["id" ,"first_name", "last_name", "gender", "category"]
+
+
+class NotAdminLikeTypeAthletesSerializer(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = models.Athlete
+        fields = "__all__"
+
+    def get_full_name(self, obj):
+        return f"{obj.first_name} {obj.last_name}"
 
 
 class CreateAthleteSerializer(serializers.ModelSerializer):

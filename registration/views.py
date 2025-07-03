@@ -93,6 +93,15 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             return self.queryset.filter(dojo=user)
         
         raise PermissionDenied("You do not have access to this data.")
+
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            user = self.request.user
+            if user.role in ["free_dojo", "subed_dojo"]:
+                return serializers.NotAdminLikeTypeAthletesSerializer
+            return serializers.AthletesSerializer
+
+        return super().get_serializer_class()
     
     def perform_create(self, serializer):
         skip_number = serializer.validated_data.get("skip_number")
@@ -144,6 +153,7 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
         serializer = dojo_serializers.DisciplinesCompactSerializer(unregistered, many=True)
         return Response(serializer.data)
+
 
 class TeamsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Team.objects.all()
