@@ -8,11 +8,13 @@ router = routers.DefaultRouter()
 router.register(r'events', views.EventViewSet, basename='events')
 router.register(r'disciplines', views.DisciplineViewSet, basename='disciplines')
 router.register(r'notifications', views.NotificationViewSet, basename='notifications')
+router.register(r'dojos', views.DojosViewSet, basename='dojos')
 
 urlpatterns = [
     path('', include(router.urls)),
     path('users/', views.users, name="users"),
-    path('dojos/', views.notifications, name="notifications"),
+    path('users/athletes/', views.dojos_athletes, name="dojos-athletes"),
+    path('dojo_notifications/', views.notifications, name="notifications"),
     path('current_season/', views.current_season, name="current-season"),
     path('register_user/', views.RegisterView.as_view(), name="dojos-register"),
     path('login/', obtain_auth_token, name="dojos-login"),

@@ -5,13 +5,14 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash, get_user_model
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
 from django.conf import settings
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Count
 
 from .forms import DojoRegisterForm, DojoUpdateForm, ProfileUpdateForm, FeedbackForm, DojoPasswordResetForm, DojoPasswordConfirmForm, DojoPasswordChangeForm
 from .filters import NotificationsFilters, DisciplinesFilters
@@ -30,6 +31,8 @@ from rest_framework. views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, action
 from drf_spectacular.utils import extend_schema
+
+User = get_user_model()
 
 class MultipleSerializersMixIn:
     serializer_classes = {}
@@ -216,6 +219,17 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             return Response({"message": "Equipa removida deste evento!"}, status=status.HTTP_200_OK)
         except Athlete.DoesNotExist:
             return Response({"error": "Um erro ocurreu ao remover esta Equipa!"}, status=status.HTTP_404_NOT_FOUND)
+        
+
+class DojosViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
+    queryset=Dojo.objects.all()
+    serializer_class=serializers.DojosSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    # serializer_classes = {
+    #     "create": serializers.CreateDisciplineSerializer,
+    #     "update": serializers.UpdateDisciplineSerializer
+    # }
     
 
 @api_view(['GET'])
@@ -230,9 +244,22 @@ def notifications(request):
 # @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def users(request):
-    users = User.objects.filter(role__in=["free_dojo", "subed_dojo"])
-    serializer = UsersSerializer(users, many=True)
+    username = request.query_params.get('username', None)
+    if username:
+        user = User.objects.filter(username=username).first()
+        serializer = UsersSerializer(user)
+    else:
+        users = User.objects.filter(role__in=["free_dojo", "subed_dojo"])
+        serializer = UsersSerializer(users, many=True)
     return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def dojos_athletes(request):
+    data = User.objects.exclude(role__in=["national_association", "superuser"])\
+                        .annotate(athlete_count=Count('athlete'))\
+                        .values('username', 'athlete_count')
+    return Response(data)
 
 @api_view(['GET'])
 def current_season(request):
