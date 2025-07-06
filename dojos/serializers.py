@@ -178,3 +178,9 @@ class DojosSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dojo
         fields = "__all__"
+
+
+class CreateDojosSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Dojo
+        exclude = ["is_registered", ]

@@ -226,10 +226,9 @@ class DojosViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     serializer_class=serializers.DojosSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
-    # serializer_classes = {
-    #     "create": serializers.CreateDisciplineSerializer,
-    #     "update": serializers.UpdateDisciplineSerializer
-    # }
+    serializer_classes = {
+        "create": serializers.CreateDojosSerializer,
+    }
     
 
 @api_view(['GET'])
