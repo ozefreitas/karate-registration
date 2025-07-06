@@ -50,7 +50,6 @@ urlpatterns = [
         name="dojos-reset-password-complete"),
     path('register/password_change/', dojo_views.change_password, name="dojos-change-password"),
     path('register/', include('django.contrib.auth.urls')),
-    path('profile/', dojo_views.profile, name="dojos-profile"),
     path('test/', dojo_views.test_500_error, name='test_error')
     ]
 

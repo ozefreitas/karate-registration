@@ -21,6 +21,4 @@ urlpatterns = [
     path('me/', views.UserDetailView.as_view(), name="dojos-detail"),
     path('logout/', views.LogoutView.as_view(), name="dojos-logout"),
     path('feedback/', views.feedback, name="dojos-feedback"),
-    path('update_profile/', views.update_dojo_account, name="dojos-update-account"),
-    path('delete_account/', views.delete_dojo_account, name="dojos-delete-account"),
 ]
