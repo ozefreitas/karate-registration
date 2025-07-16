@@ -6,24 +6,10 @@ from django.utils import timezone
 from nanoid import generate
 from django.core.exceptions import ValidationError
 from django.conf import settings
+from core.constants import CATEGORIES, GENDERS, GRADUATIONS, MATCHES
+import datetime
 
 # Create your models here.
-
-CATEGORIES = {
-    "Infantil": "Infantil",
-    "Iniciado": "Iniciado",
-    "Juvenil": "Juvenil",
-    "Cadete": "Cadete",
-    "Júnior": "Júnior",
-    "Sénior": "Sénior",
-    "Veterano +35": "Veterano +35",
-    "Veterano +50": "Veterano +50"
-}
-
-MATCHES = {
-        "kata": "Kata",
-        "kumite": "Kumite"
-}
 
 def generate_unique_nanoid(model_name, app_label, size=10):
     """
@@ -40,66 +26,17 @@ def generate_unique_nanoid(model_name, app_label, size=10):
 ### Athlete model ###
 
 class Athlete(models.Model):
-    GRADUATIONS = {
-        "15": "9º Kyu",
-        "14.5": "8º Kyu Kari",
-        "14": "8º Kyu",
-        "13.5": "7º Kyu Kari",
-        "13": "7º Kyu",
-        "12.5": "6º Kyu Kari",
-        "12": "6º Kyu",
-        "11.5": "5º Kyu Kari",
-        "11": "5º Kyu",
-        "10.5": "4º Kyu Kari",
-        "10": "4º Kyu",
-        "9.5": "3º Kyu Kari",
-        "9": "3º Kyu",
-        "8": "2º Kyu",
-        "7": "1º Kyu",
-        "6": "1º Dan",
-        "5": "2º Dan",
-        "4": "3º Dan",
-        "3": "4º Dan",
-        "2": "5º Dan",
-        "1": "6º Dan",
-    }
-
-    GENDERS = {
-        "Masculino": "Masculino",
-        "Feminino": "Feminino",
-        "Misto": "Misto",
-    }
-
-    WEIGHTS = {
-        'Juvenil': [
-            ('-47', '-47Kg'),
-            ('+47', '+47Kg'),
-        ],
-        'Cadete': [
-            ('-57', '-57Kg'),
-            ('+57', '+57Kg'),
-        ],
-        'Júnior': [
-            ('-65', '-65Kg'),
-            ('+65', '+65Kg'),
-        ],
-        'Sénior e Veterano': [
-            ('open', 'Open'),
-        ],
-    }
-
     id = models.CharField(primary_key=True, max_length=10, unique=True, editable=False)
     first_name = models.CharField("Primeiro Nome", max_length=200)
     last_name = models.CharField("Último Nome", max_length=200)
     graduation = models.CharField("Graduação", max_length=4, choices=GRADUATIONS)
     birth_date = models.DateField("Data de Nascimento")
-    age = models.IntegerField("Idade", default=25)
-    skip_number = models.IntegerField("Nº SKI-P", blank=True, null=True)
+    age = models.IntegerField("Idade", blank=True, null=True)
+    skip_number = models.PositiveIntegerField("Nº SKI-P", blank=True, null=True)
     student = models.BooleanField("Aluno", default=False)
     favorite = models.BooleanField("Favorito", default=False)
-    category = models.CharField("Escalão", choices=CATEGORIES, max_length=99, blank=True, null=True)
     gender = models.CharField("Género", choices=GENDERS, max_length=10)
-    weight = models.CharField("Peso", choices=WEIGHTS, max_length=10, blank=True, null=True)
+    weight = models.PositiveIntegerField("Peso", blank=True, null=True)
     quotes = models.BooleanField("Quotas", default=True)
     dojo = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     creation_date = models.DateTimeField(auto_now_add=True)
@@ -107,6 +44,11 @@ class Athlete(models.Model):
     def save(self, *args, **kwargs):
         if not self.id:  # Generate only if no ID exists
             self.id = generate_unique_nanoid(self.__class__.__name__, self._meta.app_label)
+        
+        year_of_birth = self.birth_date.year
+        date_now = datetime.datetime.now()
+        age_at_comp = (date_now.year) - year_of_birth
+        self.age = age_at_comp - 1
         # # Run validations
         # self.full_clean()
         super().save(*args, **kwargs)
@@ -142,7 +84,7 @@ class Team(models.Model):
     athlete3 = models.ForeignKey(Athlete, verbose_name="Atleta 3", related_name="third_element", on_delete=models.CASCADE, blank=True, null=True)
     athlete4 = models.ForeignKey(Athlete, verbose_name="Atleta 4", related_name="forth_element", on_delete=models.CASCADE, blank=True, null=True)
     athlete5 = models.ForeignKey(Athlete, verbose_name="Atleta 5", related_name="fifth_element", on_delete=models.CASCADE, blank=True, null=True)
-    category = models.CharField("Escalão", choices=CATEGORIES, max_length=99)
+    category = models.CharField("Escalão", max_length=99)
     match_type = models.CharField("Prova", choices=MATCHES, max_length=10)
     gender = models.CharField("Género", choices=GENDERS, max_length=10)
     team_number = models.IntegerField("Nº Equipa")
