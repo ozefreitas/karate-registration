@@ -30,37 +30,6 @@ import dojos.serializers as dojo_serializers
 
 # views for the athlets registrations
 
-age_graduation_rules = {
-    "0-9": 15,
-    "10-11": 15,
-    "12-13": 14,
-    "14-15": 13,
-    "16-17": 12,
-    "18-50": 11
-}
-
-age_category_rules = {
-    "0-9": "Infantil",
-    "10-11": "Iniciado",
-    "12-13": "Juvenil",
-    "14-15": "Cadete",
-    "16-17": "Júnior",
-    "18-34": "Sénior",
-    "35-49": "Veterano +35",
-    "50-99": "Veterano +50"
-}
-
-CATEGORY_RULES = {
-        "Veterano +35": "Sénior",
-        "Veterano +50": "Sénior",
-        "Sénior": "Júnior",
-        "Júnior": "Cadete",
-        "Cadete": "Juvenil",
-        "Juvenil": "Iniciado",
-        "Iniciado": "Infantil",
-        "Infantil": "Infantil",
-    }
-
 class MultipleSerializersMixIn:
     serializer_classes = {}
 
@@ -106,7 +75,7 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     def perform_create(self, serializer):
         skip_number = serializer.validated_data.get("skip_number")
 
-        if skip_number == "":
+        if skip_number == 0:
             # Auto-generate skip_number if it wasn't provided
             last_athlete = Athlete.objects.all().order_by("skip_number").last()
             skip_number = (last_athlete.skip_number if last_athlete else 0) + 1
