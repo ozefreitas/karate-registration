@@ -4,42 +4,37 @@ from core.serializers import UsersSerializer
 
 ### Athletes Serializer Classes 
 
+
 class AthletesSerializer(serializers.ModelSerializer):
-    # category_index = serializers.SerializerMethodField()
     full_name = serializers.SerializerMethodField()
     dojo = UsersSerializer()
 
     class Meta:
         model = models.Athlete
         exclude = ("quotes", )
-    
-    # def get_category_index(self, obj):
-    #     if obj.category.lower() == "infantil":
-    #         return 1
-    #     if obj.category.lower() == "inicado":
-    #         return 2
-    #     if obj.category.lower() == "juvenil":
-    #         return 3
-    #     if obj.category.lower() == "cadete":
-    #         return 4
-    #     if obj.category.lower() == "júnior":
-    #         return 5
-    #     if obj.category.lower() == "sénior":
-    #         return 6
-    #     if obj.category.lower() == "veterano +35":
-    #         return 7
-    #     if obj.category.lower() == "veterano +50":
-    #         return 8
         
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
 
 
 class CompactAthletesSerializer(serializers.ModelSerializer):
+    category = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Athlete
         fields = ["id" ,"first_name", "last_name", "gender", "category"]
+    
+    def get_category(self, obj):
+        """Sends the category of each athlete if a category is provided"""
+        categories = self.context.get('discipline_categories', [])
+        if categories == []:
+            return None
+        if obj.age <= 0 or obj.age is None:
+            return None
+        for category in categories:
+            if category.min_age <= obj.age <= category.max_age:
+                return category.name
+        return None
 
 
 class NotAdminLikeTypeAthletesSerializer(serializers.ModelSerializer):
@@ -59,12 +54,12 @@ class CreateAthleteSerializer(serializers.ModelSerializer):
         exclude = ("age", )
 
     def validate(self, data):
-        category = data.get("category")
+        weight = data.get("weight")
         stundent = data.get("student")
 
-        if stundent and category != "":
+        if stundent and weight != "":
             raise serializers.ValidationError({
-                'incompatible_athlete': ["Alunos não têm escalão associado."]
+                'incompatible_athlete': ["Alunos não têm peso associado."]
             })
         
         
