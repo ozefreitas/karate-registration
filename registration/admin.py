@@ -1,11 +1,12 @@
 from django.contrib import admin
 from .models import Athlete, Dojo, Team, Classification
+from core.models import Category
 
 # Register your models here.
 
 class AthleteAdmin(admin.ModelAdmin):
-    list_display = ("first_name", "last_name", "category", "gender")
-    search_fields = ("first_name", "last_name", "category", "dojo")
+    list_display = ("first_name", "last_name", "gender")
+    search_fields = ("first_name", "last_name", "dojo")
 
 
 class TeamAdmin(admin.ModelAdmin):
@@ -20,6 +21,7 @@ class ClassificationAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Athlete, AthleteAdmin)
+admin.site.register(Category)
 admin.site.register(Dojo)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Classification, ClassificationAdmin)

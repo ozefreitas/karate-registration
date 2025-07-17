@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'core',
     'registration',
     'dojos',
+    'draw',
     "view_breadcrumbs",
 ]
 
@@ -100,8 +101,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'dojos.context_processors.upcoming_dates',
-                'dojos.context_processors.current_season'
             ],
         },
     },
