@@ -36,6 +36,8 @@ urlpatterns = [
     # Endpoint url patterns
     path('', include("registration.urls")),
     path('', include("dojos.urls")),
+    path('', include("draw.urls")),
+    path('', include("core.urls")),
 
     # Account operations
     path('logout/', dojo_views.logout_user, name="dojos-logout"),
