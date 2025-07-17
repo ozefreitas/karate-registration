@@ -124,6 +124,7 @@ class Discipline(models.Model):
     is_team = models.BooleanField(default=False)
     individuals = models.ManyToManyField("registration.Athlete", related_name='disciplines_indiv', blank=True)
     teams = models.ManyToManyField("registration.Team", related_name='disciplines_team', blank=True)
+    categories = models.ManyToManyField("core.category", related_name='event_categories', blank=True)
 
     def __str__(self):
         return '{} {}'.format(self.event.name, self.name)

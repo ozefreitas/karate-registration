@@ -2,6 +2,7 @@ from rest_framework import serializers
 import dojos.models as models
 from registration.models import Dojo
 import registration.serializers
+import core.serializers
 from django.utils.text import slugify
 from .models import Event, Discipline
 from datetime import date
@@ -101,6 +102,7 @@ class UpdateEventSerializer(serializers.ModelSerializer):
 class DisciplinesSerializer(serializers.ModelSerializer):
     individuals = serializers.SerializerMethodField()
     teams = registration.serializers.TeamsSerializer(many=True)
+    categories = core.serializers.CompactCategorySerializer(many=True)
     
     class Meta:
         model = models.Discipline
@@ -117,7 +119,12 @@ class DisciplinesSerializer(serializers.ModelSerializer):
             qs = obj.individuals.all()
         else:
             return []
-        return registration.serializers.CompactAthletesSerializer(qs, many=True).data
+        return registration.serializers.CompactAthletesSerializer(qs,
+                                                                   many=True, 
+                                                                   context={
+                                                                            **self.context,
+                                                                            'discipline_categories': list(obj.categories.all())
+                                                                        }).data
 
 
 class DisciplinesCompactSerializer(serializers.ModelSerializer):
@@ -129,7 +136,7 @@ class DisciplinesCompactSerializer(serializers.ModelSerializer):
 class CreateDisciplineSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Discipline
-        exclude = ["id", "individuals", "teams", ]
+        exclude = ["individuals", "teams", ]
 
 
 class UpdateDisciplineSerializer(serializers.ModelSerializer):
@@ -151,6 +158,8 @@ class NotificationsSerializer(serializers.ModelSerializer):
 class AddAthleteSerializer(serializers.Serializer):
     athlete_id = serializers.CharField()
 
+class AddCategorySerializer(serializers.Serializer):
+    category_id = serializers.CharField()
 
 class AddTeamSerializer(serializers.Serializer):
     team_id = serializers.CharField()
