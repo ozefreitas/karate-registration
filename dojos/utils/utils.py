@@ -27,3 +27,17 @@ def change_current_season(date = None):
         season_start = date.year - 1
         season_end = date.year
     return f"{season_start}/{season_end}"
+
+
+def range_decoder(min_age: int, max_age: int):
+    """Function that returns a range 
+
+    Args:
+        min_age (int): minimum age from category
+        max_age (int): maximum age from category
+
+    Returns:
+        range object: The range from the given range
+    """
+    some_range = range(min_age, max_age + 1)
+    return some_range
