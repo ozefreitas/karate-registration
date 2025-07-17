@@ -16,12 +16,14 @@ from django.db.models import Count
 
 from .forms import DojoRegisterForm, DojoUpdateForm, ProfileUpdateForm, FeedbackForm, DojoPasswordResetForm, DojoPasswordConfirmForm, DojoPasswordChangeForm
 from .filters import NotificationsFilters, DisciplinesFilters
-from .permissions import IsAuthenticatedOrReadOnly, IsNationalForPostDelete
+from core.permissions import IsAuthenticatedOrReadOnly, IsNationalForPostDelete
 from .models import Event, Notification, DojosRatingAudit, User, Discipline
 from registration.models import Dojo, Athlete, Team
+from core.models import Category
 from smtplib import SMTPException
 from dojos import serializers
 from core.serializers import UsersSerializer
+from dojos.utils.utils import range_decoder
 
 from rest_framework import viewsets, filters, status
 from rest_framework.decorators import authentication_classes, permission_classes
@@ -161,64 +163,140 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
     @action(detail=True, methods=["post"], url_path="add_athlete", serializer_class=serializers.AddAthleteSerializer, permission_classes=[IsAuthenticated])
     def add_athlete(self, request, pk=None):
-        event = self.get_object()
+        discipline = self.get_object()
         serializer = serializers.AddAthleteSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         athlete_id = serializer.validated_data["athlete_id"]
 
         try:
             athlete = Athlete.objects.get(id=athlete_id)
-            event.individuals.add(athlete)
+            categories = discipline.categories.filter(gender=athlete.gender)
+            if list(categories) == []:
+                return Response({"error": "Não existem Escalões que satisfaçam este Atleta"}, status=status.HTTP_400_BAD_REQUEST)
+            success = False
+            for category in categories:
 
-            return Response({"message": "Atleta adicionado a este evento!"}, status=status.HTTP_200_OK)
+                min_grad = int(category.min_grad) if category.min_grad is not None else None
+                max_grad = int(category.max_grad) if category.max_grad is not None else None
+                grad = int(athlete.graduation) if athlete.graduation is not None else None
+
+                if category.min_age <= athlete.age <= category.max_age:
+
+                    # Graduations
+                    if min_grad is None and max_grad is None:
+                        pass
+                    if min_grad is not None and max_grad is not None:
+                        if min_grad > grad > max_grad:
+                            pass
+                        else:
+                            return Response({"error": "Graduação não está dentro dos limites estipulados para o Escalão"}, status=status.HTTP_400_BAD_REQUEST)
+                    if max_grad is not None:
+                        if grad < max_grad:
+                            return Response({"error": "Graduação máxima para este Escalão não respeitada"}, status=status.HTTP_400_BAD_REQUEST)
+                    if min_grad is not None:
+                        if grad > min_grad:
+                            return Response({"error": "Graduação mínima para este Escalão não respeitada"}, status=status.HTTP_400_BAD_REQUEST)
+                        
+                    # Weights
+                    if category.min_weight is None and category.max_weight is None:
+                        pass
+                    if category.min_weight is not None and category.max_weight is not None:
+                        if category.min_weight <= athlete.weight <= category.max_weight:
+                            pass
+                        else: 
+                            return Response({"error": "Peso não está dentro dos limites estipulados para o Escalão"}, status=status.HTTP_400_BAD_REQUEST)
+                    if category.max_weight is not None:
+                        if athlete.weight > category.max_weight:
+                            return Response({"error": "Peso máximo para este Escalão não respeitada"}, status=status.HTTP_400_BAD_REQUEST)
+                    if category.min_weight is not None:
+                        if athlete.weight < category.min_weight:
+                            return Response({"error": "Peso mínimo para este Escalão não respeitada"}, status=status.HTTP_400_BAD_REQUEST)
+                    success = True
+                    discipline.individuals.add(athlete)
+                else:
+                    continue
+            if not success:
+                return Response({"error": "Idade do Atleta não permite inscrever nos Escalões disponíveis"}, status=status.HTTP_400_BAD_REQUEST)
+
+            return Response({"message": "Atleta adicionado a esta Modalidade"}, status=status.HTTP_200_OK)
         except Athlete.DoesNotExist:
-            return Response({"error": "Um erro ocurreu ao adicionar este Atleta!"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Um erro ocurreu ao adicionar este Atleta"}, status=status.HTTP_404_NOT_FOUND)
 
     @action(detail=True, methods=["post"], url_path="delete_athlete", serializer_class=serializers.AddAthleteSerializer)
     def delete_athlete(self, request, pk=None):
-        event = self.get_object()
+        discipline = self.get_object()
         serializer = serializers.AddAthleteSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         athlete_id = serializer.validated_data["athlete_id"]
 
         try:
             athlete = Athlete.objects.get(id=athlete_id)
-            event.individuals.remove(athlete)
+            discipline.individuals.remove(athlete)
 
-            return Response({"message": "Atleta removido deste evento!"}, status=status.HTTP_200_OK)
+            return Response({"message": "Atleta removido desta Modalidade"}, status=status.HTTP_200_OK)
         except Athlete.DoesNotExist:
-            return Response({"error": "Um erro ocurreu ao remover este Atleta!"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Um erro ocurreu ao remover este Atleta"}, status=status.HTTP_404_NOT_FOUND)
     
     @action(detail=True, methods=["post"], url_path="add_team", serializer_class=serializers.AddTeamSerializer)
     def add_team(self, request):
-        event = self.get_object()
+        discipline = self.get_object()
         serializer = serializers.AddTeamSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         team_id = serializer.validated_data["team_id"]
 
         try:
             team = Team.objects.get(id=team_id)
-            event.teams.add(team)
+            discipline.teams.add(team)
 
-            return Response({"message": "Equipa adicionada a este evento!"}, status=status.HTTP_200_OK)
+            return Response({"message": "Equipa adicionada a esta Modalidade!"}, status=status.HTTP_200_OK)
         except Athlete.DoesNotExist:
             return Response({"error": "Um erro ocurreu ao adicionar esta Equipa!"}, status=status.HTTP_404_NOT_FOUND)
 
 
     @action(detail=True, methods=["post"], url_path="delete_team", serializer_class=serializers.AddTeamSerializer)
     def delete_team(self, request, pk=None):
-        event = self.get_object()
+        discipline = self.get_object()
         serializer = serializers.AddTeamSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         team_id = serializer.validated_data["team_id"]
 
         try:
             team = Team.objects.get(id=team_id)
-            event.teams.remove(team)
+            discipline.teams.remove(team)
 
-            return Response({"message": "Equipa removida deste evento!"}, status=status.HTTP_200_OK)
+            return Response({"message": "Equipa removida desta Modalidade"}, status=status.HTTP_200_OK)
         except Athlete.DoesNotExist:
-            return Response({"error": "Um erro ocurreu ao remover esta Equipa!"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Um erro ocurreu ao remover esta Equipa"}, status=status.HTTP_404_NOT_FOUND)
+    
+    @action(detail=True, methods=["post"], url_path="add_category", serializer_class=serializers.AddCategorySerializer, permission_classes=[IsAuthenticated])
+    def add_category(self, request, pk=None):
+        event = self.get_object()
+        serializer = serializers.AddCategorySerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        category_id = serializer.validated_data["category_id"]
+
+        try:
+            category = Category.objects.get(id=category_id)
+            event.categories.add(category)
+
+            return Response({"message": "Categoria(s) adicionada(s) a esta modalidade"}, status=status.HTTP_200_OK)
+        except Category.DoesNotExist:
+            return Response({"error": "Um erro ocurreu ao adicionar esta Categoria"}, status=status.HTTP_404_NOT_FOUND)
+
+    @action(detail=True, methods=["post"], url_path="delete_category", serializer_class=serializers.AddCategorySerializer, permission_classes=[IsAuthenticated])
+    def delete_category(self, request, pk=None):
+        event = self.get_object()
+        serializer = serializers.AddCategorySerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        category_id = serializer.validated_data["category_id"]
+
+        try:
+            category = Category.objects.get(id=category_id)
+            event.categories.remove(category)
+
+            return Response({"message": "Categoria(s) removida(s) desta modalidade"}, status=status.HTTP_200_OK)
+        except Category.DoesNotExist:
+            return Response({"error": "Um erro ocurreu ao remover esta Categoria"}, status=status.HTTP_404_NOT_FOUND)
         
 
 class DojosViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
