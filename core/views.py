@@ -1,9 +1,12 @@
 from django.shortcuts import render
-from rest_framework import viewsets, filters, status
 from core.permissions import IsAuthenticatedOrReadOnly, IsNationalForPostDelete
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .models import Category
-from .serializers import CategorySerializer, CreateCategorySerializer
+from .serializers import CategorySerializer, CreateCategorySerializer, CompactCategorySerializer
+
+from rest_framework.decorators import action, permission_classes
+from rest_framework.response import Response
+from rest_framework import viewsets, filters, status
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 # Create your views here.
 
@@ -21,4 +24,20 @@ class CategoriesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
     serializer_classes = {
         "create": CreateCategorySerializer,
+        "retrieve": CompactCategorySerializer
     }
+
+    @action(detail=False, methods=['delete'], url_path="delete_all")
+    def delete_all(self, request):
+        # CAREFUL as all categories is for now the onlu ones
+        deleted_count, _ = Category.objects.all().delete()
+        if deleted_count <= 1:
+            return Response(
+                {"message": "Escalão eliminado"},
+                status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                {"message": f"Eliminados {deleted_count} Escalões"},
+                status=status.HTTP_200_OK
+            )
