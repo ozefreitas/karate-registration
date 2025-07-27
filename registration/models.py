@@ -36,7 +36,7 @@ class Athlete(models.Model):
     student = models.BooleanField("Aluno", default=False)
     favorite = models.BooleanField("Favorito", default=False)
     gender = models.CharField("Género", choices=GENDERS, max_length=10)
-    weight = models.PositiveIntegerField("Peso", blank=True, null=True)
+    weight = models.PositiveIntegerField("Peso", blank=True, null=True) 
     quotes = models.BooleanField("Quotas", default=True)
     dojo = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     creation_date = models.DateTimeField(auto_now_add=True)
@@ -47,7 +47,10 @@ class Athlete(models.Model):
         
         year_of_birth = self.birth_date.year
         date_now = datetime.datetime.now()
-        age_at_comp = (date_now.year) - year_of_birth
+        if date_now.month > 8:
+            reference = date_now.year + 1
+        else: reference = date_now.year
+        age_at_comp = reference - year_of_birth
         self.age = age_at_comp - 1
         # # Run validations
         # self.full_clean()
