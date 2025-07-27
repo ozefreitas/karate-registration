@@ -41,6 +41,8 @@ ALLOWED_HOSTS = ['karatescorappregistration.pythonanywhere.com', "127.0.0.1"]
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -75,9 +77,17 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'karate_registration.urls'
 
+ASGI_APPLICATION = 'karate_registration.asgi.application'
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # React frontend URL
 ]
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
