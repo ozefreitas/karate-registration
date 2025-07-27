@@ -34,7 +34,7 @@ class User(AbstractUser):
         
         else:
             if self.role == self.Role.SUPERUSER:
-                raise ValidationError("Only Freitas can be de superuser.")
+                raise ValidationError("Only Freitas can be the superuser.")
 
         if self.username == "SKIPortugal":
             self.role = self.Role.NATIONAL
