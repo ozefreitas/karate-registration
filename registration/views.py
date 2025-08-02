@@ -53,7 +53,7 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        if user.role == "national_association" or user.role == "superuser":
+        if user.role == "main_admin" or user.role == "superuser":
             # National-level user can see all athletes
             return self.queryset.all()
 

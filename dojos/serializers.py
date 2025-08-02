@@ -1,5 +1,6 @@
 from rest_framework import serializers
 import dojos.models as models
+from core.models import User
 from registration.models import Dojo
 import registration.serializers
 import core.serializers
@@ -26,7 +27,7 @@ class EventsSerializer(serializers.ModelSerializer):
             return []
         if user.role == 'free_dojo' or user.role == 'subed_dojo':
             qs = obj.individuals.filter(dojo=user)
-        elif user.role == 'national_association' or user.role == 'superuser':
+        elif user.role == 'main_admin' or user.role == 'superuser':
             qs = obj.individuals.all()
         else:
             return []
@@ -115,7 +116,7 @@ class DisciplinesSerializer(serializers.ModelSerializer):
             return []
         if user.role == 'free_dojo' or user.role == 'subed_dojo':
             qs = obj.individuals.filter(dojo=user)
-        elif user.role == 'national_association' or user.role == 'superuser':
+        elif user.role == 'main_admin' or user.role == 'superuser':
             qs = obj.individuals.all()
         else:
             return []
@@ -167,20 +168,6 @@ class AddTeamSerializer(serializers.Serializer):
 
 class RatingSerializer(serializers.Serializer):
     rating_signal = serializers.IntegerField()
-
-
-class RegisterUserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.User
-        fields = ["first_name", "last_name", "email", "username", "password"]
-    
-    def create(self, validated_data):
-        user = models.User.objects.create_user(
-            username=validated_data['username'],
-            email=validated_data.get('email'),
-            password=validated_data['password']
-        )
-        return user
 
 
 class DojosSerializer(serializers.ModelSerializer):

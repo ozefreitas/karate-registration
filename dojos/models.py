@@ -1,54 +1,11 @@
 from django.db import models
 from django.utils.text import slugify
-from django.contrib.auth.models import AbstractUser
-from django.core.exceptions import ValidationError
+from django.conf import settings
 
 # Create your models here.
 
-class User(AbstractUser):
-    class Role(models.TextChoices):
-        SUPERUSER = "superuser", "Superuser"
-        NATIONAL = "national_association", "National Association"
-        FREEDOJO = "free_dojo", "Dojo Free"
-        SUBEDDOJO = "subed_dojo", "Dojo Subscription"
-
-
-    role = models.CharField(
-        max_length=32,
-        choices=Role.choices,
-        default=Role.FREEDOJO
-    )
-
-    def is_national(self):
-        return self.role == self.Role.NATIONAL
-
-    def is_free_dojo(self):
-        return self.role == self.Role.FREEDOJO
-    
-    def is_subed_dojo(self):
-        return self.role == self.Role.SUBEDDOJO
-    
-    def save(self, *args, **kwargs):
-        if self.username == "ozefreitas":
-            self.role = self.Role.SUPERUSER
-        
-        else:
-            if self.role == self.Role.SUPERUSER:
-                raise ValidationError("Only Freitas can be the superuser.")
-
-        if self.username == "SKIPortugal":
-            self.role = self.Role.NATIONAL
-            existing = User.objects.filter(role=self.Role.NATIONAL).exclude(pk=self.pk)
-            if existing.exists():
-                raise ValidationError("There can only be one National Association account.")
-        else:
-            if self.role == self.Role.NATIONAL:
-                raise ValidationError("Only the user with username 'SKIPortugal' can be National Association.")
-        super().save(*args, **kwargs)
-    
-
 class Profile(models.Model):
-    dojo = models.OneToOneField(User, on_delete=models.CASCADE)
+    dojo = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     image = models.ImageField("Imagem de perfil", default='skip-logo.png', upload_to='profile_pictures')
     dojo_contact = models.IntegerField("Contacto do Dojo", default=123456789)
     cellphone_number = models.IntegerField("Número de telemóvel pessoal", default=123456789)
@@ -131,7 +88,7 @@ class Discipline(models.Model):
 
 
 class DojosRatingAudit(models.Model):
-    dojo = models.ForeignKey(User, on_delete=models.CASCADE, editable=False)
+    dojo = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, editable=False)
     event = models.ForeignKey(Event, on_delete=models.CASCADE, editable=False)
     rating = models.IntegerField("Avaliação", default=0, editable=False)
 
@@ -171,5 +128,5 @@ class Notification(models.Model):
         RED = "red", "Red"
 
     urgency = models.CharField(max_length=10, choices=URGENCY_TYPE.choices, default=URGENCY_TYPE.NONE)
-    dojo = models.ForeignKey(User, on_delete=models.CASCADE)
+    dojo = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
