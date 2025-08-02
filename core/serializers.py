@@ -1,16 +1,60 @@
 from rest_framework import serializers
 import dojos.models as models
-from .models import Category
+from .models import Category, User, SignupToken
 
 class UsersSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.User
-        fields = ["id", "username", "role"]
+        model = User
+        fields = ["id", "username", "role", "tier"]
+
+
+class GenerateTokenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SignupToken
+        fields = ["username", "alive_time"]
+
+class TokenSerializer(serializers.Serializer):
+    token = serializers.UUIDField()
+
+
+class RegisterUserSerializer(serializers.ModelSerializer):
+    """Will check for the tohen authenticity, expiration and usage before creating an user acount"""
+    token = serializers.UUIDField()
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = ["first_name", "last_name", "email", "username", "password", "token"]
+
+    def validate(self, data):
+        try:
+            token = SignupToken.objects.get(token=data['token'], is_used=False)
+        except SignupToken.DoesNotExist:
+            raise serializers.ValidationError("Invalid or used token.")
+
+        if token.is_expired():
+            raise serializers.ValidationError("Token has expired.")
+
+        data['username'] = token.username
+        data['token_obj'] = token
+        return data
+    
+    def create(self, validated_data):
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            first_name=validated_data.get('first_name'),
+            last_name=validated_data.get('last_name'),
+            email=validated_data.get('email'),
+            password=validated_data['password']
+        )
+        validated_data['token_obj'].is_used = True
+        validated_data['token_obj'].save()
+        return user
 
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.User
+        model = User
         exclude = ["password", ]
 
 

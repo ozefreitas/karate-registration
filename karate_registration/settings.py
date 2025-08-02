@@ -96,7 +96,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ],
-    'DEFAULT_PAGINATION_CLASS': 'dojos.pagination.StandardResultsSetPagination',
+    'DEFAULT_PAGINATION_CLASS': 'core.pagination.StandardResultsSetPagination',
     'PAGE_SIZE': 10
 }
 
@@ -189,4 +189,4 @@ LOGIN_URL = 'login'
 LANGUAGE_CODE = 'pt'
 USE_L10N = True
 
-AUTH_USER_MODEL = 'dojos.User'
+AUTH_USER_MODEL = 'core.User'

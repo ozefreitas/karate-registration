@@ -1,7 +1,6 @@
 from django.urls import path, include
 from . import views
 from rest_framework import routers
-from rest_framework.authtoken.views import obtain_auth_token
 
 
 router = routers.DefaultRouter()
@@ -15,10 +14,5 @@ urlpatterns = [
     path('users/', views.users, name="users"),
     path('users/athletes/', views.dojos_athletes, name="dojos-athletes"),
     path('dojo_notifications/', views.notifications, name="notifications"),
-    path('current_season/', views.current_season, name="current-season"),
-    path('register_user/', views.RegisterView.as_view(), name="dojos-register"),
-    path('login/', obtain_auth_token, name="dojos-login"),
-    path('me/', views.UserDetailView.as_view(), name="dojos-detail"),
-    path('logout/', views.LogoutView.as_view(), name="dojos-logout"),
     path('feedback/', views.feedback, name="dojos-feedback"),
 ]

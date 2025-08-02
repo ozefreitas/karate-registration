@@ -4,8 +4,8 @@ from dojos.models import Event
 from django.apps import apps
 from django.utils import timezone
 from nanoid import generate
-from django.core.exceptions import ValidationError
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from core.constants import CATEGORIES, GENDERS, GRADUATIONS, MATCHES
 import datetime
 

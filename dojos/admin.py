@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Event, FeedbackData, Profile, Notification, Announcement, DojosRatingAudit, User, Discipline
+from .models import Event, FeedbackData, Profile, Notification, Announcement, DojosRatingAudit, Discipline
 
 # Register your models here.
 
@@ -11,7 +11,6 @@ class EventAdmin(admin.ModelAdmin):
 class DojosRatingAuditAdmin(admin.ModelAdmin):
     readonly_fields = ("dojo", "event", "rating")
 
-admin.site.register(User)
 admin.site.register(Event, EventAdmin)
 admin.site.register(Discipline)
 admin.site.register(FeedbackData)

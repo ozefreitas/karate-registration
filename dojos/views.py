@@ -10,16 +10,15 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
 from django.conf import settings
-from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Count
 
 from .forms import DojoRegisterForm, DojoUpdateForm, ProfileUpdateForm, FeedbackForm, DojoPasswordResetForm, DojoPasswordConfirmForm, DojoPasswordChangeForm
 from .filters import NotificationsFilters, DisciplinesFilters
 from core.permissions import IsAuthenticatedOrReadOnly, IsNationalForPostDelete
-from .models import Event, Notification, DojosRatingAudit, User, Discipline
+from .models import Event, Notification, DojosRatingAudit, Discipline
 from registration.models import Dojo, Athlete, Team
-from core.models import Category
+from core.models import Category, User
 from smtplib import SMTPException
 from dojos import serializers
 from core.serializers import UsersSerializer
@@ -333,54 +332,10 @@ def users(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def dojos_athletes(request):
-    data = User.objects.exclude(role__in=["national_association", "superuser"])\
+    data = User.objects.exclude(role__in=["main_admin", "superuser"])\
                         .annotate(athlete_count=Count('athlete'))\
                         .values('username', 'athlete_count')
     return Response(data)
-
-@api_view(['GET'])
-def current_season(request):
-    today = timezone.now()
-    if today.month > 8:
-        season = f"{today.year} - {today.year + 1}"
-    else:
-        season = f"{today.year - 1}-{today.year}"
-    return Response({"season": season})
-
-
-class RegisterView(APIView):
-    @extend_schema(
-        request=serializers.RegisterUserSerializer,
-        responses={201: None, 400: None},
-        description="Register a new user with username, email and password."
-    )
-    def post(self, request):
-        serializer = serializers.RegisterUserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-
-class UserDetailView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        user = request.user
-        return Response({
-            "id": user.id,
-            "username": user.username,
-            "email": user.email,
-            "role": user.role,
-        }, status=status.HTTP_200_OK)
-    
-
-class LogoutView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        request.user.auth_token.delete()  # Deletes token from DB
-        return Response({"detail": "Logged out"}, status=200)
     
 
 class NotificationViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
