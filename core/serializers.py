@@ -1,6 +1,6 @@
 from rest_framework import serializers
 import dojos.models as models
-from .models import Category, User, SignupToken
+from .models import Category, User, SignupToken, RequestedAcount
 
 class UsersSerializer(serializers.ModelSerializer):
     class Meta:
@@ -8,13 +8,24 @@ class UsersSerializer(serializers.ModelSerializer):
         fields = ["id", "username", "role", "tier"]
 
 
+class RequestedAcountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RequestedAcount
+        fields = "__all__"
+
+
 class GenerateTokenSerializer(serializers.ModelSerializer):
     class Meta:
         model = SignupToken
         fields = ["username", "alive_time"]
 
+
 class TokenSerializer(serializers.Serializer):
     token = serializers.UUIDField()
+
+
+class UsernameSerializer(serializers.Serializer):
+    username = serializers.CharField()
 
 
 class RegisterUserSerializer(serializers.ModelSerializer):

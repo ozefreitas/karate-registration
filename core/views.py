@@ -1,6 +1,8 @@
 from django.shortcuts import render
-from core.permissions import IsAuthenticatedOrReadOnly, IsNationalForPostDelete
-from .models import Category, SignupToken
+from core.permissions import IsAuthenticatedOrReadOnly, IsUnauthenticatedForPost, IsNationalForPostDelete
+from .models import Category, SignupToken, RequestedAcount, User
+from registration.models import Dojo
+from dojos.models import Notification
 from . import serializers
 from django.utils import timezone
 
@@ -8,7 +10,7 @@ from rest_framework.decorators import action, permission_classes, api_view
 from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
 from rest_framework import viewsets, filters, status, views
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated
 
 # Create your views here.
 
@@ -43,6 +45,37 @@ class CategoriesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 {"message": f"Eliminados {deleted_count} Escalões"},
                 status=status.HTTP_200_OK
             )
+
+
+class RequestedAcountViewSet(viewsets.ModelViewSet):
+    queryset=RequestedAcount.objects.all()
+    serializer_class=serializers.RequestedAcountSerializer
+    permission_classes = [IsUnauthenticatedForPost]
+
+    def perform_create(self, serializer):
+        username = serializer.validated_data.get('username')
+
+        try:
+            dojo = Dojo.objects.get(dojo=username)
+        except Dojo.DoesNotExist:
+            raise serializers.ValidationError(f"No Dojo found with dojo '{username}'")
+
+        if dojo.is_registered:
+            raise serializers.ValidationError(f"Dojo '{username}' is already registered.")
+
+        # Mark as registered
+        dojo.is_registered = True
+        dojo.save()
+        admin_user = User.objects.get(role="main_admin")
+        Notification.objects.create(dojo=admin_user, 
+                                    notification=f'Um pedido de criação de conta com o username {username} foi inciado. Dirija-se para a área de Definições na aba "Gestor de Contas".',
+                                    urgency="red",
+                                    type="request",
+                                    request_acount=username)
+
+        # Save the RequestedAcount instance normally
+        serializer.save()
+
         
 @extend_schema(
         request=serializers.GenerateTokenSerializer,
@@ -51,7 +84,7 @@ class CategoriesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     )
 @api_view(['POST'])
 # @authentication_classes([SessionAuthentication, BasicAuthentication])
-@permission_classes([IsAuthenticated, IsAdminUser])
+@permission_classes([IsAuthenticated, IsNationalForPostDelete])
 def sign_up_token(request):
     username = request.data.get('username')
     alive_time = request.data.get('alive_time')
@@ -63,12 +96,26 @@ def sign_up_token(request):
         responses={200: None, 400: None},
         description="Given the token provided in the URL, simply return the username associated with it."
     )
-@api_view(['get'])
+@api_view(['GET'])
 # @authentication_classes([SessionAuthentication, BasicAuthentication])
+# @permission_classes([IsUnauthenticatedForPost])
 def get_token_username(request):
     token = request.query_params.get('token')
     token_obj = SignupToken.objects.get(token=token)
     return Response({"username": token_obj.username})
+
+@extend_schema(
+        request=serializers.UsernameSerializer,
+        responses={200: None, 400: None},
+        description="Given a username with a token, returns the token. This is usefull for the admin to go back and get the token again if the page reloads."
+    )
+@api_view(['GET'])
+# @authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsUnauthenticatedForPost])
+def get_token_by_username(request):
+    username = request.query_params.get('username')
+    token_obj = SignupToken.objects.get(username=username)
+    return Response({"token": token_obj.token})
 
 @api_view(['GET'])
 def current_season(request):
@@ -100,6 +147,7 @@ class LogoutView(views.APIView):
         request.user.auth_token.delete()  # Deletes token from DB
         return Response({"detail": "Logged out"}, status=200)
 
+
 class RegisterView(views.APIView):
     @extend_schema(
         request=serializers.RegisterUserSerializer,
@@ -109,6 +157,10 @@ class RegisterView(views.APIView):
     def post(self, request):
         serializer = serializers.RegisterUserSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
+            request_obj = RequestedAcount.objects.get(username=serializer.validated_data.get('username'))
+            request_obj.delete()
+            notification_obj = Notification.objects.get(type="request", request_acount=serializer.validated_data.get('username'))
+            notification_obj.delete()
             serializer.save()
             return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

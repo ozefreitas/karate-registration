@@ -66,8 +66,19 @@ class User(AbstractUser):
         super().save(*args, **kwargs)
 
 
+class RequestedAcount(models.Model):
+    username = models.CharField(max_length=128, unique=True)
+    first_name = models.CharField(max_length=64)
+    last_name = models.CharField(max_length=64)
+    id_number = models.CharField(max_length=64)
+    email = models.EmailField()
+
+    def __str__(self): 
+        return "Request for {} username".format(self.username)
+
+
 class SignupToken(models.Model):
-    username = models.CharField(max_length=150, unique=True)
+    username = models.CharField(max_length=128, unique=True)
     token = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     is_used = models.BooleanField(default=False)
     alive_time = models.SmallIntegerField(default=3)
