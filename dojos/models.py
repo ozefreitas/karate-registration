@@ -127,6 +127,12 @@ class Notification(models.Model):
         ORANGE = "orange", "Orange"
         RED = "red", "Red"
 
+    class TYPE(models.TextChoices):
+        NONE = "none", "None"
+        REQ = "request", "Request"
+
     urgency = models.CharField(max_length=10, choices=URGENCY_TYPE.choices, default=URGENCY_TYPE.NONE)
+    type = models.CharField(max_length=10, choices=TYPE.choices, default=TYPE.NONE)
+    request_acount = models.CharField(max_length=128, unique=True, null=True, blank=True)
     dojo = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
