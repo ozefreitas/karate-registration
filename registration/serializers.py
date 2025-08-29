@@ -51,16 +51,23 @@ class NotAdminLikeTypeAthletesSerializer(serializers.ModelSerializer):
 class CreateAthleteSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Athlete
-        exclude = ("age", )
+        exclude = ("age", "weight", )
 
     def validate(self, data):
         weight = data.get("weight")
         stundent = data.get("student")
+        gender = data.get("gender")
 
         if stundent and weight != "":
             raise serializers.ValidationError({
                 'incompatible_athlete': ["Alunos não têm peso associado."]
             })
+    
+        if gender not in ["Masculino", "Feminino"]:
+            raise serializers.ValidationError({
+                'impossible_gender': ['Género "Misto" apenas está disponível para Equipas.']
+            })
+    
         
         
         return data
