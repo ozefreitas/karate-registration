@@ -1,6 +1,5 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
-from django.template.loader import render_to_string
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -12,17 +11,18 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Count
+from decouple import config
 
 from .forms import DojoRegisterForm, DojoUpdateForm, ProfileUpdateForm, FeedbackForm, DojoPasswordResetForm, DojoPasswordConfirmForm, DojoPasswordChangeForm
 from .filters import NotificationsFilters, DisciplinesFilters
-from core.permissions import IsAuthenticatedOrReadOnly, IsNationalForPostDelete
 from .models import Event, Notification, DojosRatingAudit, Discipline
 from registration.models import Dojo, Athlete, Team
+from core.permissions import IsAuthenticatedOrReadOnly, IsNationalForPostDelete
 from core.models import Category, User
+from core.serializers import UsersSerializer
 from smtplib import SMTPException
 from dojos import serializers
-from core.serializers import UsersSerializer
-from dojos.utils.utils import range_decoder
+from dojos.utils.utils import calc_age
 
 from rest_framework import viewsets, filters, status
 from rest_framework.decorators import authentication_classes, permission_classes
@@ -90,10 +90,10 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         except Athlete.DoesNotExist:
             return Response({"error": "Um erro ocurreu ao adicionar este Atleta!"}, status=status.HTTP_404_NOT_FOUND)
 
-    @action(detail=True, methods=["post"], url_path="delete_athlete", serializer_class=serializers.AddAthleteSerializer)
+    @action(detail=True, methods=["post"], url_path="delete_athlete", serializer_class=serializers.DeleteAthleteSerializer)
     def delete_athlete(self, request, pk=None):
         event = self.get_object()
-        serializer = serializers.AddAthleteSerializer(data=request.data)
+        serializer = serializers.DeleteAthleteSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         athlete_id = serializer.validated_data["athlete_id"]
 
@@ -162,24 +162,29 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
     @action(detail=True, methods=["post"], url_path="add_athlete", serializer_class=serializers.AddAthleteSerializer, permission_classes=[IsAuthenticated])
     def add_athlete(self, request, pk=None):
+        age_method = config('AGE_CALC_REF')
         discipline = self.get_object()
         serializer = serializers.AddAthleteSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         athlete_id = serializer.validated_data["athlete_id"]
+        # will be used to check the season events is taking place in
+        event_id = serializer.validated_data["event_id"]
 
         try:
             athlete = Athlete.objects.get(id=athlete_id)
+            event_age = athlete.age if age_method == "true" else calc_age(age_method, athlete.birth_date)
+            
             categories = discipline.categories.filter(gender=athlete.gender)
             if list(categories) == []:
                 return Response({"error": "Não existem Escalões que satisfaçam este Atleta"}, status=status.HTTP_400_BAD_REQUEST)
             success = False
             for category in categories:
 
-                min_grad = int(category.min_grad) if category.min_grad is not None else None
-                max_grad = int(category.max_grad) if category.max_grad is not None else None
-                grad = int(athlete.graduation) if athlete.graduation is not None else None
+                min_grad = float(category.min_grad) if category.min_grad is not None and category.min_grad != "" else None
+                max_grad = float(category.max_grad) if category.max_grad is not None and category.max_grad != "" else None
+                grad = float(athlete.graduation) if athlete.graduation is not None and athlete.graduation != "" else None
 
-                if category.min_age <= athlete.age <= category.max_age:
+                if category.min_age <= event_age <= category.max_age:
 
                     # Graduations
                     if min_grad is None and max_grad is None:
@@ -221,10 +226,10 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         except Athlete.DoesNotExist:
             return Response({"error": "Um erro ocurreu ao adicionar este Atleta"}, status=status.HTTP_404_NOT_FOUND)
 
-    @action(detail=True, methods=["post"], url_path="delete_athlete", serializer_class=serializers.AddAthleteSerializer)
+    @action(detail=True, methods=["post"], url_path="delete_athlete", serializer_class=serializers.DeleteAthleteSerializer)
     def delete_athlete(self, request, pk=None):
         discipline = self.get_object()
-        serializer = serializers.AddAthleteSerializer(data=request.data)
+        serializer = serializers.DeleteAthleteSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         athlete_id = serializer.validated_data["athlete_id"]
 

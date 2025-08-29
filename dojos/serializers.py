@@ -158,9 +158,16 @@ class NotificationsSerializer(serializers.ModelSerializer):
 
 class AddAthleteSerializer(serializers.Serializer):
     athlete_id = serializers.CharField()
+    event_id = serializers.CharField()
+
+
+class DeleteAthleteSerializer(serializers.Serializer):
+    athlete_id = serializers.CharField()
+
 
 class AddCategorySerializer(serializers.Serializer):
     category_id = serializers.CharField()
+
 
 class AddTeamSerializer(serializers.Serializer):
     team_id = serializers.CharField()

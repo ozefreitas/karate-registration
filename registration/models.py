@@ -35,6 +35,7 @@ class Athlete(models.Model):
     skip_number = models.PositiveIntegerField("Nº SKI-P", blank=True, null=True)
     student = models.BooleanField("Aluno", default=False)
     favorite = models.BooleanField("Favorito", default=False)
+    # main admin in multiple acount schemas won't be filling the weight
     gender = models.CharField("Género", choices=GENDERS, max_length=10)
     weight = models.PositiveIntegerField("Peso", blank=True, null=True) 
     quotes = models.BooleanField("Quotas", default=True)
@@ -47,13 +48,10 @@ class Athlete(models.Model):
         
         year_of_birth = self.birth_date.year
         date_now = datetime.datetime.now()
-        if date_now.month > 8:
-            reference = date_now.year + 1
-        else: reference = date_now.year
-        age_at_comp = reference - year_of_birth
-        self.age = age_at_comp - 1
-        # # Run validations
-        # self.full_clean()
+        age_at_comp = date_now.year - year_of_birth
+        if (date_now.month, date_now.day) < (self.birth_date.month, self.birth_date.day):
+            age_at_comp -= 1
+        self.age = age_at_comp
         super().save(*args, **kwargs)
 
     def __str__(self): 
