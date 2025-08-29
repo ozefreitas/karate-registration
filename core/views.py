@@ -1,10 +1,11 @@
-from django.shortcuts import render
+from django.utils import timezone
+from django.db import transaction
+
 from core.permissions import IsAuthenticatedOrReadOnly, IsUnauthenticatedForPost, IsNationalForPostDelete
 from .models import Category, SignupToken, RequestedAcount, User
 from registration.models import Dojo
 from dojos.models import Notification
 from . import serializers
-from django.utils import timezone
 
 from rest_framework.decorators import action, permission_classes, api_view
 from drf_spectacular.utils import extend_schema
@@ -22,7 +23,7 @@ class MultipleSerializersMixIn:
     
 
 class CategoriesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
-    queryset=Category.objects.all()
+    queryset=Category.objects.all().order_by("name")
     serializer_class=serializers.CategorySerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
@@ -75,6 +76,20 @@ class RequestedAcountViewSet(viewsets.ModelViewSet):
 
         # Save the RequestedAcount instance normally
         serializer.save()
+
+    def perform_destroy(self, instance):
+        with transaction.atomic():
+            dojo = Dojo.objects.filter(dojo=instance.username).first()
+            if dojo:
+                dojo.is_registered = False
+                dojo.save()
+
+            Notification.objects.filter(
+                type="request",
+                request_acount=instance.username
+            ).delete()
+
+            instance.delete()
 
         
 @extend_schema(

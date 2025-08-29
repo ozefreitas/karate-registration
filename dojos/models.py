@@ -136,3 +136,6 @@ class Notification(models.Model):
     request_acount = models.CharField(max_length=128, unique=True, null=True, blank=True)
     dojo = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return '{}'.format(self.dojo)
