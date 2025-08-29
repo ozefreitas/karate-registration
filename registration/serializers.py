@@ -1,12 +1,17 @@
 from rest_framework import serializers
 import registration.models as models
 from core.serializers import UsersSerializer
+from dojos.utils.utils import calc_age
+from registration.utils.utils import get_comp_age
+from decouple import config
+import datetime
 
 ### Athletes Serializer Classes 
 
 
 class AthletesSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
+    age = serializers.SerializerMethodField()
     dojo = UsersSerializer()
 
     class Meta:
@@ -15,6 +20,11 @@ class AthletesSerializer(serializers.ModelSerializer):
         
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
+
+    def get_age(self, obj):
+        age_method = config('AGE_CALC_REF')
+        current_age = calc_age(age_method, obj.birth_date)
+        return current_age
 
 
 class CompactAthletesSerializer(serializers.ModelSerializer):
@@ -25,14 +35,20 @@ class CompactAthletesSerializer(serializers.ModelSerializer):
         fields = ["id" ,"first_name", "last_name", "gender", "category"]
     
     def get_category(self, obj):
-        """Sends the category of each athlete if a category is provided"""
+        """Sends the category of each athlete if a category is provided. 
+        Categories comming from the context are only the ones linked to the respective Discipline"""
+        
         categories = self.context.get('discipline_categories', [])
+        current_age = get_comp_age(obj.birth_date)
         if categories == []:
             return None
-        if obj.age <= 0 or obj.age is None:
+        if current_age <= 0 or current_age is None:
             return None
+        
+        age_method = config('AGE_CALC_REF')
+        event_age = current_age if age_method == "true" else calc_age(age_method, obj.birth_date)
         for category in categories:
-            if category.min_age <= obj.age <= category.max_age:
+            if category.min_age <= event_age <= category.max_age:
                 return category.name
         return None
 

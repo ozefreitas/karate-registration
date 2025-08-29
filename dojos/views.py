@@ -23,6 +23,7 @@ from core.serializers import UsersSerializer
 from smtplib import SMTPException
 from dojos import serializers
 from dojos.utils.utils import calc_age
+from registration.utils.utils import get_comp_age
 
 from rest_framework import viewsets, filters, status
 from rest_framework.decorators import authentication_classes, permission_classes
@@ -172,7 +173,7 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
         try:
             athlete = Athlete.objects.get(id=athlete_id)
-            event_age = athlete.age if age_method == "true" else calc_age(age_method, athlete.birth_date)
+            event_age = get_comp_age(athlete.birth_date) if age_method == "true" else calc_age(age_method, athlete.birth_date)
             
             categories = discipline.categories.filter(gender=athlete.gender)
             if list(categories) == []:

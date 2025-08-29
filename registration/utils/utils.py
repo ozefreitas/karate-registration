@@ -39,7 +39,7 @@ def check_match_type(response: requests) -> tuple:
 
 
 def get_comp_age(date_of_birth: datetime) -> int:
-    """Function that return the age of an athlete by the begining of the year
+    """Function that return the age current age of an athlete
 
     Args:
         date_of_birth (datetime): The birth date of the athlete. Must be an instance of datetime 
@@ -49,12 +49,10 @@ def get_comp_age(date_of_birth: datetime) -> int:
     """
     year_of_birth = date_of_birth.year
     date_now = datetime.now()
-    age_at_comp = (date_now.year) - year_of_birth
-    return age_at_comp - 1
-    ### methodology to date of birth as reference
-    # if (date_now.month, date_now.day) < (date_of_birth.month, date_of_birth.day):
-    #     age_at_comp -= 1
-    # return age_at_comp
+    current_age = date_now.year - year_of_birth
+    if (date_now.month, date_now.day) < (date_of_birth.month, date_of_birth.day):
+        current_age -= 1
+    return current_age
 
 
 def check_athlete_data(data, age_at_comp: int, grad_rules: dict, category_rules: dict, extra_data = None) -> list:

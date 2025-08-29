@@ -31,7 +31,6 @@ class Athlete(models.Model):
     last_name = models.CharField("Último Nome", max_length=200)
     graduation = models.CharField("Graduação", max_length=4, choices=GRADUATIONS)
     birth_date = models.DateField("Data de Nascimento")
-    age = models.IntegerField("Idade", blank=True, null=True)
     skip_number = models.PositiveIntegerField("Nº SKI-P", blank=True, null=True)
     student = models.BooleanField("Aluno", default=False)
     favorite = models.BooleanField("Favorito", default=False)
@@ -45,13 +44,7 @@ class Athlete(models.Model):
     def save(self, *args, **kwargs):
         if not self.id:  # Generate only if no ID exists
             self.id = generate_unique_nanoid(self.__class__.__name__, self._meta.app_label)
-        
-        year_of_birth = self.birth_date.year
-        date_now = datetime.datetime.now()
-        age_at_comp = date_now.year - year_of_birth
-        if (date_now.month, date_now.day) < (self.birth_date.month, self.birth_date.day):
-            age_at_comp -= 1
-        self.age = age_at_comp
+
         super().save(*args, **kwargs)
 
     def __str__(self): 
