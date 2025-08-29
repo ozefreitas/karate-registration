@@ -167,6 +167,7 @@ cython_debug/
 # Files
 *.csv
 *.json
+*.tldr
 
 # environement variables files
 .env.dev
