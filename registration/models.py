@@ -34,8 +34,8 @@ class Athlete(models.Model):
     skip_number = models.PositiveIntegerField("Nº SKI-P", blank=True, null=True)
     student = models.BooleanField("Aluno", default=False)
     favorite = models.BooleanField("Favorito", default=False)
-    # main admin in multiple acount schemas won't be filling the weight
     gender = models.CharField("Género", choices=GENDERS, max_length=10)
+    # main admin in multiple acount schemas won't be filling the weight
     weight = models.PositiveIntegerField("Peso", blank=True, null=True) 
     quotes = models.BooleanField("Quotas", default=True)
     dojo = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

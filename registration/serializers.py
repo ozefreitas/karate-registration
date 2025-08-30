@@ -22,9 +22,14 @@ class AthletesSerializer(serializers.ModelSerializer):
         return f"{obj.first_name} {obj.last_name}"
 
     def get_age(self, obj):
-        age_method = config('AGE_CALC_REF')
-        current_age = calc_age(age_method, obj.birth_date)
-        return current_age
+        """Normal Athlete table should display the real age at the time.
+        Registration modals should display the corrected age."""
+        year_of_birth = obj.birth_date.year
+        date_now = datetime.datetime.now()
+        age_at_comp = date_now.year - year_of_birth
+        if (date_now.month, date_now.day) < (obj.birth_date.month, obj.birth_date.day):
+            age_at_comp -= 1
+        return age_at_comp
 
 
 class CompactAthletesSerializer(serializers.ModelSerializer):
@@ -55,6 +60,7 @@ class CompactAthletesSerializer(serializers.ModelSerializer):
 
 class NotAdminLikeTypeAthletesSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
+    age = serializers.SerializerMethodField()
     
     class Meta:
         model = models.Athlete
@@ -63,6 +69,27 @@ class NotAdminLikeTypeAthletesSerializer(serializers.ModelSerializer):
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
 
+    def get_age(self, obj):
+        return get_comp_age(obj.birth_date)
+
+
+class NotInEventAthletesSerializer(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
+    age = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = models.Athlete
+        fields = "__all__"
+
+    def get_full_name(self, obj):
+        return f"{obj.first_name} {obj.last_name}"
+
+    def get_age(self, obj):
+        age_method = config('AGE_CALC_REF')
+        current_age = get_comp_age(obj.birth_date)
+        event_age = current_age if age_method == "true" else calc_age(age_method, obj.birth_date)
+        return event_age
+    
 
 class CreateAthleteSerializer(serializers.ModelSerializer):
     class Meta:

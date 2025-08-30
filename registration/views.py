@@ -69,6 +69,9 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             if user.role in ["free_dojo", "subed_dojo"]:
                 return serializers.NotAdminLikeTypeAthletesSerializer
             return serializers.AthletesSerializer
+        
+        if self.request.query_params.get("not_in_event"):
+            return serializers.NotInEventAthletesSerializer
 
         return super().get_serializer_class()
     
