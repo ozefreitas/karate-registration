@@ -116,7 +116,6 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 "code": "event_not_ended",
                 "message": "Este Evento ainda não foi realizado."
             }, status=status.HTTP_200_OK)
-        print(request.user)
         if DojosRatingAudit.objects.filter(dojo=request.user, event=event).exists():
             return Response({
                 "status": "warning",
@@ -161,6 +160,11 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         "update": serializers.UpdateDisciplineSerializer
     }
 
+    # def get_serializer_context(self):
+    #     # extend context with request (already included by default in DRF)
+    #     context = super().get_serializer_context()
+    #     return context
+
     @action(detail=True, methods=["post"], url_path="add_athlete", serializer_class=serializers.AddAthleteSerializer, permission_classes=[IsAuthenticated])
     def add_athlete(self, request, pk=None):
         age_method = config('AGE_CALC_REF')
@@ -173,55 +177,67 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
         try:
             athlete = Athlete.objects.get(id=athlete_id)
-            event_age = get_comp_age(athlete.birth_date) if age_method == "true" else calc_age(age_method, athlete.birth_date)
+            event = Event.objects.get(id=event_id)
+            season = event.season.split("/")[0]
+            event_age = get_comp_age(athlete.birth_date) if age_method == "true" else calc_age(age_method, athlete.birth_date, season)
             
-            categories = discipline.categories.filter(gender=athlete.gender)
+            categories = discipline.categories.filter(gender=athlete.gender, 
+                                                      min_age__lte=event_age, 
+                                                      max_age__gte=event_age
+                                                      )
+
             if list(categories) == []:
                 return Response({"error": "Não existem Escalões que satisfaçam este Atleta"}, status=status.HTTP_400_BAD_REQUEST)
             success = False
+
             for category in categories:
 
                 min_grad = float(category.min_grad) if category.min_grad is not None and category.min_grad != "" else None
                 max_grad = float(category.max_grad) if category.max_grad is not None and category.max_grad != "" else None
                 grad = float(athlete.graduation) if athlete.graduation is not None and athlete.graduation != "" else None
 
-                if category.min_age <= event_age <= category.max_age:
-
-                    # Graduations
-                    if min_grad is None and max_grad is None:
+                # Graduations
+                if min_grad is None and max_grad is None:
+                    pass
+                if min_grad is not None and max_grad is not None:
+                    if min_grad > grad > max_grad:
                         pass
-                    if min_grad is not None and max_grad is not None:
-                        if min_grad > grad > max_grad:
-                            pass
-                        else:
-                            return Response({"error": "Graduação não está dentro dos limites estipulados para o Escalão"}, status=status.HTTP_400_BAD_REQUEST)
-                    if max_grad is not None:
-                        if grad < max_grad:
-                            return Response({"error": "Graduação máxima para este Escalão não respeitada"}, status=status.HTTP_400_BAD_REQUEST)
-                    if min_grad is not None:
-                        if grad > min_grad:
-                            return Response({"error": "Graduação mínima para este Escalão não respeitada"}, status=status.HTTP_400_BAD_REQUEST)
-                        
-                    # Weights
-                    if category.min_weight is None and category.max_weight is None:
-                        pass
-                    if category.min_weight is not None and category.max_weight is not None:
-                        if category.min_weight <= athlete.weight <= category.max_weight:
-                            pass
-                        else: 
-                            return Response({"error": "Peso não está dentro dos limites estipulados para o Escalão"}, status=status.HTTP_400_BAD_REQUEST)
-                    if category.max_weight is not None:
-                        if athlete.weight > category.max_weight:
-                            return Response({"error": "Peso máximo para este Escalão não respeitada"}, status=status.HTTP_400_BAD_REQUEST)
-                    if category.min_weight is not None:
-                        if athlete.weight < category.min_weight:
-                            return Response({"error": "Peso mínimo para este Escalão não respeitada"}, status=status.HTTP_400_BAD_REQUEST)
-                    success = True
+                    else:
+                        return Response({"error": "Graduação não está dentro dos limites estipulados para o Escalão"}, status=status.HTTP_400_BAD_REQUEST)
+                if max_grad is not None:
+                    if grad < max_grad:
+                        return Response({"error": "Graduação máxima para este Escalão não respeitada"}, status=status.HTTP_400_BAD_REQUEST)
+                if min_grad is not None:
+                    if grad > min_grad:
+                        return Response({"error": "Graduação mínima para este Escalão não respeitada"}, status=status.HTTP_400_BAD_REQUEST)
+                    
+                # Weights
+                if category.min_weight is None and category.max_weight is None:  # category does not have any weight limit
                     discipline.individuals.add(athlete)
                 else:
-                    continue
-            if not success:
-                return Response({"error": "Idade do Atleta não permite inscrever nos Escalões disponíveis"}, status=status.HTTP_400_BAD_REQUEST)
+                    if athlete.weight is None:
+                        return Response({"status": "info", 
+                                         "message": "O escalão disponível para este Atleta pede que adicione um peso."}, 
+                                         status=status.HTTP_200_OK)
+                    
+
+                if category.min_weight is not None and category.max_weight is not None:
+                    if category.min_weight <= athlete.weight <= category.max_weight:
+                         discipline.individuals.add(athlete)
+                    else:
+                        continue
+                if category.max_weight is not None:
+                    if athlete.weight < category.max_weight:
+                        discipline.individuals.add(athlete)
+                if category.min_weight is not None:
+                    if athlete.weight >= category.min_weight:
+                        discipline.individuals.add(athlete)
+
+                success = True
+                
+                
+            # if not success:
+            #     return Response({"error": "Idade do Atleta não permite inscrever nos Escalões disponíveis"}, status=status.HTTP_400_BAD_REQUEST)
 
             return Response({"message": "Atleta adicionado a esta Modalidade"}, status=status.HTTP_200_OK)
         except Athlete.DoesNotExist:

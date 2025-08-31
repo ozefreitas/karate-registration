@@ -112,6 +112,7 @@ class DisciplinesSerializer(serializers.ModelSerializer):
     def get_individuals(self, obj):
         """Filters the athletes in the individuals fields based on que requesting user"""
         user = self.context['request'].user
+        event = self.context['request'].query_params.get("event_disciplines")
         if not user.is_authenticated:
             return []
         if user.role == 'free_dojo' or user.role == 'subed_dojo':
@@ -120,11 +121,13 @@ class DisciplinesSerializer(serializers.ModelSerializer):
             qs = obj.individuals.all()
         else:
             return []
+        
         return registration.serializers.CompactAthletesSerializer(qs,
                                                                    many=True, 
                                                                    context={
                                                                             **self.context,
-                                                                            'discipline_categories': list(obj.categories.all())
+                                                                            'discipline_categories': list(obj.categories.filter()),
+                                                                            'event_id': event
                                                                         }).data
 
 

@@ -2,6 +2,7 @@ from rest_framework import serializers
 import registration.models as models
 from core.serializers import UsersSerializer
 from dojos.utils.utils import calc_age
+from dojos.models import Event
 from registration.utils.utils import get_comp_age
 from decouple import config
 import datetime
@@ -44,6 +45,13 @@ class CompactAthletesSerializer(serializers.ModelSerializer):
         Categories comming from the context are only the ones linked to the respective Discipline"""
         
         categories = self.context.get('discipline_categories', [])
+        event_id = self.context['request'].query_params.get("event_disciplines")
+        try:
+            event = Event.objects.get(id=event_id)
+            season = event.season.split("/")[0]
+        except Event.DoesNotExist:
+            raise serializers.ValidationError("Event does not exist")
+        
         current_age = get_comp_age(obj.birth_date)
         if categories == []:
             return None
@@ -51,10 +59,26 @@ class CompactAthletesSerializer(serializers.ModelSerializer):
             return None
         
         age_method = config('AGE_CALC_REF')
-        event_age = current_age if age_method == "true" else calc_age(age_method, obj.birth_date)
+        event_age = current_age if age_method == "true" else calc_age(age_method, obj.birth_date, season)
         for category in categories:
-            if category.min_age <= event_age <= category.max_age:
-                return category.name
+            if category.gender == obj.gender:
+                if category.min_age <= event_age <= category.max_age:
+                    if category.min_weight is not None and category.max_weight is not None:
+                        if category.min_weight <= obj.weight <= category.max_weight:
+                            return f'{category.name} +{category.max_weight}'
+                        else:
+                            continue
+                    if category.max_weight is not None:
+                        if obj.weight < category.max_weight:
+                            return f'{category.name} -{category.max_weight}'
+                    if category.min_weight is not None:
+                        if obj.weight >= category.min_weight:
+                            return f'{category.name} +{category.min_weight}'
+                    
+                    else:
+                        print("Peso max: ", category.max_weight)
+                        print("Peso min: ", category.min_weight)
+                        return category.name
         return None
 
 
@@ -85,16 +109,24 @@ class NotInEventAthletesSerializer(serializers.ModelSerializer):
         return f"{obj.first_name} {obj.last_name}"
 
     def get_age(self, obj):
+        event_id = self.context['request'].query_params.get("not_in_event")
+
+        try:
+            event = Event.objects.get(id=event_id)
+            season = event.season.split("/")[0]
+        except Event.DoesNotExist:
+            raise serializers.ValidationError("Event does not exist")
+        
         age_method = config('AGE_CALC_REF')
         current_age = get_comp_age(obj.birth_date)
-        event_age = current_age if age_method == "true" else calc_age(age_method, obj.birth_date)
+        event_age = current_age if age_method == "true" else calc_age(age_method, obj.birth_date, season)
         return event_age
     
 
 class CreateAthleteSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Athlete
-        exclude = ("age", "weight", )
+        exclude = ("weight", )
 
     def validate(self, data):
         weight = data.get("weight")
@@ -119,7 +151,7 @@ class CreateAthleteSerializer(serializers.ModelSerializer):
 class UpdateAthleteSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Athlete
-        exclude = ("age", "dojo", "skip_number", )
+        exclude = ("dojo", "skip_number", )
 
 
 ### Teams Serializer Classes

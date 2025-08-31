@@ -43,11 +43,9 @@ def range_decoder(min_age: int, max_age: int):
     return some_range
 
 
-def calc_age(method: str, birth_date) -> int:
-    print(method)
+def calc_age(method: str, birth_date, season: str) -> int:
     year_of_birth = birth_date.year
-    current_season = change_current_season()
-    age_at_comp = int(current_season.split("/")[0]) - year_of_birth
+    age_at_comp = int(season) - year_of_birth
     if method == "season":
         if (birth_date.month, birth_date.day) > (8, 31):
             age_at_comp -= 1
