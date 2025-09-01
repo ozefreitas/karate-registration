@@ -63,21 +63,22 @@ class CompactAthletesSerializer(serializers.ModelSerializer):
         for category in categories:
             if category.gender == obj.gender:
                 if category.min_age <= event_age <= category.max_age:
-                    if category.min_weight is not None and category.max_weight is not None:
-                        if category.min_weight <= obj.weight <= category.max_weight:
-                            return f'{category.name} +{category.max_weight}'
+
+                    if obj.weight is not None:
+                        if category.min_weight is not None and category.max_weight is not None:
+                            if category.min_weight <= obj.weight <= category.max_weight:
+                                return f'{category.name} +{category.max_weight}'
+                            else:
+                                continue
+                        if category.max_weight is not None:
+                            if obj.weight < category.max_weight:
+                                return f'{category.name} -{category.max_weight}'
+                        elif category.min_weight is not None:
+                            if obj.weight >= category.min_weight:
+                                return f'{category.name} +{category.min_weight}'
                         else:
-                            continue
-                    if category.max_weight is not None:
-                        if obj.weight < category.max_weight:
-                            return f'{category.name} -{category.max_weight}'
-                    if category.min_weight is not None:
-                        if obj.weight >= category.min_weight:
-                            return f'{category.name} +{category.min_weight}'
-                    
+                            return category.name
                     else:
-                        print("Peso max: ", category.max_weight)
-                        print("Peso min: ", category.min_weight)
                         return category.name
         return None
 
@@ -142,9 +143,7 @@ class CreateAthleteSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({
                 'impossible_gender': ['Género "Misto" apenas está disponível para Equipas.']
             })
-    
-        
-        
+      
         return data
 
 
