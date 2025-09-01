@@ -13,10 +13,8 @@ from .models import Athlete, Team, Classification
 from .filters import AthletesFilters
 from .templatetags.team_extras import valid_athletes
 from .utils.utils import check_athlete_data, get_comp_age, check_filter_data, check_match_type, check_teams_data, check_team_selection
-from dojos.models import Event
-import datetime
-import json
-import os
+from dojos.models import Event, Notification
+from core.models import User
 
 from rest_framework import viewsets, status
 from rest_framework.decorators import action, permission_classes
@@ -77,11 +75,19 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     
     def perform_create(self, serializer):
         skip_number = serializer.validated_data.get("skip_number")
+        first_name = serializer.validated_data.get("first_name")
+        last_name = serializer.validated_data.get("last_name")
 
         if skip_number == 0:
             # Auto-generate skip_number if it wasn't provided
             last_athlete = Athlete.objects.all().order_by("skip_number").last()
             skip_number = (last_athlete.skip_number if last_athlete else 0) + 1
+        
+        dojo = serializer.validated_data.get('dojo')
+        user = User.objects.get(username=dojo)
+        Notification.objects.create(dojo=user, 
+                                    notification=f"Um novo atleta ({first_name} {last_name}) acabou de ser criado. Verifique os seus dados e adicione um peso caso necessário.",
+                                    urgency="yellow")
 
         serializer.save(skip_number=skip_number)
 
