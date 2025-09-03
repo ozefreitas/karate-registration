@@ -6,12 +6,9 @@ from django.db.models import Q, Count
 
 class AthletesFilters(filters.FilterSet):
     """Filter Atlhetes not in comp_id"""
-    not_in_event = filters.CharFilter(field_name='not_in_event',
-                                              method='filter_athletes_not_in_event')
-    in_category = filters.CharFilter(field_name='in_category',
-                                              method='filter_athletes_in_category')
-    in_gender = filters.CharFilter(field_name='in_gender',
-                                              method='filter_athletes_in_gender')
+    not_in_event = filters.CharFilter(method='filter_athletes_not_in_event')
+    in_category = filters.CharFilter(method='filter_athletes_in_category')
+    in_gender = filters.CharFilter(method='filter_athletes_in_gender')
 
     def filter_athletes_not_in_event(self, queryset, name, value):
         event = Event.objects.filter(id=value).first()
@@ -22,6 +19,7 @@ class AthletesFilters(filters.FilterSet):
         return queryset.annotate(
             discipline_count=Count('disciplines_indiv', filter=Q(disciplines_indiv__event=event), distinct=True)
             ).filter(
+                competitor=True,
                 discipline_count__lt=number_disciplines
                 )
     
