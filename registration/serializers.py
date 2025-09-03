@@ -35,10 +35,14 @@ class AthletesSerializer(serializers.ModelSerializer):
 
 class CompactAthletesSerializer(serializers.ModelSerializer):
     category = serializers.SerializerMethodField()
+    dojo = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Athlete
-        fields = ["id" ,"first_name", "last_name", "gender", "category"]
+        fields = ["id" ,"first_name", "last_name", "gender", "category", "dojo"]
+
+    def get_dojo(self, obj):
+        return obj.dojo.username
     
     def get_category(self, obj):
         """Sends the category of each athlete if a category is provided. 
