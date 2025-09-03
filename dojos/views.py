@@ -17,7 +17,7 @@ from .forms import DojoRegisterForm, DojoUpdateForm, ProfileUpdateForm, Feedback
 from .filters import NotificationsFilters, DisciplinesFilters
 from .models import Event, Notification, DojosRatingAudit, Discipline
 from registration.models import Dojo, Athlete, Team
-from core.permissions import IsAuthenticatedOrReadOnly, IsNationalForPostDelete
+from core.permissions import IsAuthenticatedOrReadOnly, IsNationalForPostDelete, IsPayingUserorAdminForGet
 from core.models import Category, User
 from core.serializers import UsersSerializer
 from smtplib import SMTPException
@@ -332,7 +332,7 @@ class DojosViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
 @api_view(['GET'])
 # @authentication_classes([SessionAuthentication, BasicAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsPayingUserorAdminForGet])
 def notifications(request):
     notifications = Notification.objects.filter(dojo=request.user)
     serializer = serializers.NotificationsSerializer(notifications, many=True)
