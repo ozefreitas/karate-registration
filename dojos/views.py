@@ -363,7 +363,6 @@ def dojos_athletes(request):
 class NotificationViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Notification.objects.all()
     serializer_class=serializers.NotificationsSerializer
-    # authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly, IsNationalForPostDelete]
     filter_backends = [DjangoFilterBackend]
     filterset_class = NotificationsFilters
@@ -373,8 +372,11 @@ class NotificationViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     #     "update": serializers.UpdateEventSerializer
     # }
 
-    # def get_queryset(self):
-    #     return self.queryset.order_by("event_date")
+    def get_queryset(self):
+        user = self.request.user
+        if getattr(user, "role", None) in ["main_admin", "superuser"]:
+            return Notification.objects.all().order_by("created_at")
+        return Notification.objects.filter(dojo=user) .order_by("created_at")
 
 
 ### User loging account actions ###

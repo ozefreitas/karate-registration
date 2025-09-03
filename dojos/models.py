@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils.text import slugify
 from django.conf import settings
+from datetime import timedelta
+from django.utils import timezone
 
 # Create your models here.
 
@@ -130,12 +132,17 @@ class Notification(models.Model):
     class TYPE(models.TextChoices):
         NONE = "none", "None"
         REQ = "request", "Request"
+        CREATE_ATHLETE = "create_athlete", "Create Athlete"
 
     urgency = models.CharField(max_length=10, choices=URGENCY_TYPE.choices, default=URGENCY_TYPE.NONE)
-    type = models.CharField(max_length=10, choices=TYPE.choices, default=TYPE.NONE)
+    type = models.CharField(max_length=16, choices=TYPE.choices, default=TYPE.NONE)
     request_acount = models.CharField(max_length=128, unique=True, null=True, blank=True)
     dojo = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    can_remove = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def is_expired(self):
+        return self.created_at < timezone.now() - timedelta(days=30) 
+    
     def __str__(self):
-        return '{}'.format(self.dojo)
+        return '{} {} notification'.format(self.dojo, self.urgency)
