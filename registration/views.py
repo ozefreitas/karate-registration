@@ -53,11 +53,11 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         user = self.request.user
         if user.role == "main_admin" or user.role == "superuser":
             # National-level user can see all athletes
-            return self.queryset.all()
+            return self.queryset.all().order_by("dojo")
 
         if user.role == "free_dojo" or user.role == "subed_dojo":
             # Dojo-level user sees only their own dojo athletes
-            return self.queryset.filter(dojo=user)
+            return self.queryset.filter(dojo=user).order_by("-creation_date")
         
         raise PermissionDenied("You do not have access to this data.")
 
@@ -87,7 +87,9 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         user = User.objects.get(username=dojo)
         Notification.objects.create(dojo=user, 
                                     notification=f"Um novo atleta ({first_name} {last_name}) acabou de ser criado. Verifique os seus dados e adicione um peso caso necessário.",
-                                    urgency="yellow")
+                                    urgency="yellow",
+                                    can_remove=True,
+                                    type="create_athlete")
 
         serializer.save(skip_number=skip_number)
 
