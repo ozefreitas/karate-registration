@@ -36,6 +36,15 @@ class User(AbstractUser):
         default=Tier.BASE
     )
 
+    parent = models.ForeignKey(
+        "self",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="children",
+        limit_choices_to={"role": Role.MAINADMIN},
+    )
+
     def is_main_admin(self):
         return self.role == self.Role.MAINADMIN
 
@@ -101,6 +110,9 @@ class Category(models.Model):
     max_weight = models.PositiveSmallIntegerField("Peso Máximo (inclusivé)", null=True, blank=True)
     gender = models.CharField("Género", choices=GENDERS, max_length=10)
     creation_date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["min_age"]
 
     def __str__(self): 
         return "{} {}".format(self.name, self.gender)

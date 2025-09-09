@@ -23,7 +23,7 @@ class MultipleSerializersMixIn:
     
 
 class CategoriesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
-    queryset=Category.objects.all().order_by("name")
+    queryset=Category.objects.all().order_by("min_age")
     serializer_class=serializers.CategorySerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
