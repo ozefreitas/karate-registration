@@ -103,7 +103,7 @@ class UpdateEventSerializer(serializers.ModelSerializer):
 class DisciplinesSerializer(serializers.ModelSerializer):
     individuals = serializers.SerializerMethodField()
     teams = registration.serializers.TeamsSerializer(many=True)
-    categories = core.serializers.CompactCategorySerializer(many=True)
+    categories = core.serializers.CategorySerializer(many=True)
     
     class Meta:
         model = models.Discipline

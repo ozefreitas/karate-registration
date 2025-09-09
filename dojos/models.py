@@ -133,6 +133,7 @@ class Notification(models.Model):
         NONE = "none", "None"
         REQ = "request", "Request"
         CREATE_ATHLETE = "create_athlete", "Create Athlete"
+        RATE_EVENT = "rate_event", "Rate Event"
 
     urgency = models.CharField(max_length=10, choices=URGENCY_TYPE.choices, default=URGENCY_TYPE.NONE)
     type = models.CharField(max_length=16, choices=TYPE.choices, default=TYPE.NONE)

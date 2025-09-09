@@ -12,6 +12,7 @@ from django.conf import settings
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Count
 from decouple import config
+import statistics
 
 from .forms import DojoRegisterForm, DojoUpdateForm, ProfileUpdateForm, FeedbackForm, DojoPasswordResetForm, DojoPasswordConfirmForm, DojoPasswordChangeForm
 from .filters import NotificationsFilters, DisciplinesFilters
@@ -73,7 +74,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         last_event = Event.objects.filter(has_ended=True).order_by('event_date').last()
         if last_event is None:
             return Response([])
-        serializer = serializers.EventsSerializer(last_event)
+        serializer = serializers.EventsSerializer(last_event, context={'request': request})
         return Response(serializer.data)
     
     @action(detail=True, methods=["post"], url_path="add_athlete", serializer_class=serializers.AddAthleteSerializer, permission_classes=[IsAuthenticated])
@@ -87,7 +88,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             athlete = Athlete.objects.get(id=athlete_id)
             event.individuals.add(athlete)
 
-            return Response({"message": "Atleta adicionado a este evento!"}, status=status.HTTP_200_OK)
+            return Response({"message": "Atleta adicionado(a) a este evento!"}, status=status.HTTP_200_OK)
         except Athlete.DoesNotExist:
             return Response({"error": "Um erro ocurreu ao adicionar este Atleta!"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -137,20 +138,24 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         rating = serializer.validated_data["rating_signal"]
         try:
-            current_rating = event.rating
-            new_rating = current_rating + rating
-            event.rating = new_rating
+            event_ratings = DojosRatingAudit.objects.filter(event=event)
+            if event_ratings.exists():
+                ratings = [event.rating for event in event_ratings]
+                ratings = ratings.append(rating)
+            else:
+                ratings = [rating]
+            mean_rating = statistics.mean(ratings)
+            event.rating = mean_rating
             event.save()
             DojosRatingAudit.objects.create(dojo=request.user, event=event, rating=rating)
             return Response({"message": "Obrigado pela sua opinião!"}, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response({"error": "Um erro ocurreu ao avaliar este Evento!"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Um erro ocurreu ao avaliar este Evento!", "message": e}, status=status.HTTP_400_BAD_REQUEST)
         
 
 class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Discipline.objects.all()
     serializer_class=serializers.DisciplinesSerializer
-    # authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend]
     filterset_class = DisciplinesFilters
@@ -187,7 +192,7 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                                                       )
 
             if list(categories) == []:
-                return Response({"error": "Não existem Escalões que satisfaçam este Atleta"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"error": "Não existem Escalões que satisfaçam este(a) Atleta"}, status=status.HTTP_400_BAD_REQUEST)
             success = False
 
             for category in categories:
@@ -239,7 +244,7 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             # if not success:
             #     return Response({"error": "Idade do Atleta não permite inscrever nos Escalões disponíveis"}, status=status.HTTP_400_BAD_REQUEST)
 
-            return Response({"message": "Atleta adicionado a esta Modalidade"}, status=status.HTTP_200_OK)
+            return Response({"message": "Atleta adicionado(a) a esta Modalidade"}, status=status.HTTP_200_OK)
         except Athlete.DoesNotExist:
             return Response({"error": "Um erro ocurreu ao adicionar este Atleta"}, status=status.HTTP_404_NOT_FOUND)
 

@@ -17,7 +17,7 @@ class NotificationsFilters(filters.FilterSet):
 
 
 class DisciplinesFilters(filters.FilterSet):
-    """Filter Notifications"""
+    """Filter Disciplines based on event"""
     event_disciplines = filters.CharFilter(field_name='event_disciplines',
                                               method='filter_event_disciplines')
 
