@@ -8,14 +8,28 @@ from datetime import timedelta
 
 # Create your models here.
 
-class User(AbstractUser):
+from django.db import models
+from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
+from django.db.models import Q, UniqueConstraint
 
+
+class User(AbstractUser):
     class Meta:
-        app_label = 'core'
+        app_label = "core"
+        constraints = [
+            # Ensure there can only ever be one MAINADMIN
+            UniqueConstraint(
+                fields=["role"],
+                condition=Q(role="main_admin"),
+                name="unique_main_admin",
+            )
+        ]
 
     class Role(models.TextChoices):
         SUPERUSER = "superuser", "Superuser"
         MAINADMIN = "main_admin", "Main Admin"
+        SINGLEADMIN = "single_admin", "Single Admin"
         FREEDOJO = "free_dojo", "Dojo Free"
         SUBEDDOJO = "subed_dojo", "Dojo Subscription"
 
@@ -27,13 +41,13 @@ class User(AbstractUser):
     role = models.CharField(
         max_length=32,
         choices=Role.choices,
-        default=Role.FREEDOJO
+        default=Role.FREEDOJO,
     )
 
     tier = models.CharField(
         max_length=16,
         choices=Tier.choices,
-        default=Tier.BASE
+        default=Tier.BASE,
     )
 
     parent = models.ForeignKey(
@@ -42,37 +56,51 @@ class User(AbstractUser):
         null=True,
         blank=True,
         related_name="children",
-        limit_choices_to={"role": Role.MAINADMIN},
+        limit_choices_to={"role": Role.MAINADMIN},  # only MAINADMIN can be a parent
     )
 
-    def is_main_admin(self):
-        return self.role == self.Role.MAINADMIN
+    # --------------------------
+    # Validation rules
+    # --------------------------
+    def clean(self):
+        # SUPERUSER restriction
+        if self.role == self.Role.SUPERUSER and self.username != "ozefreitas":
+            raise ValidationError("Only the user 'ozefreitas' can be Superuser.")
 
-    def is_free_dojo(self):
-        return self.role == self.Role.FREEDOJO
-    
-    def is_subed_dojo(self):
-        return self.role == self.Role.SUBEDDOJO
-    
+        # MAINADMIN restriction
+        if self.role == self.Role.MAINADMIN and self.username != "SKIPortugal":
+            raise ValidationError("Only the user 'SKIPortugal' can be Main Admin.")
+
+        # SINGLEADMIN restrictions
+        if self.role == self.Role.SINGLEADMIN:
+            if self.children.exists():
+                raise ValidationError("A Single Admin cannot have child accounts.")
+            if self.parent is not None:
+                raise ValidationError("A Single Admin cannot be assigned as a child.")
+
+        # Child rules
+        if self.parent and self.parent.role != self.Role.MAINADMIN:
+            raise ValidationError("Child accounts must have a Main Admin as parent.")
+
+        super().clean()
+
+    # --------------------------
+    # Persistence logic
+    # --------------------------
     def save(self, *args, **kwargs):
+        # Auto-assign SUPERUSER + tier
         if self.username == "ozefreitas":
             self.role = self.Role.SUPERUSER
             self.tier = self.Tier.ELITE
-        
-        else:
-            if self.role == self.Role.SUPERUSER:
-                raise ValidationError("Only Freitas can be the superuser.")
 
-        if self.username == "SKIPortugal":
+        # Auto-assign MAINADMIN
+        elif self.username == "SKIPortugal":
             self.role = self.Role.MAINADMIN
-            existing = User.objects.filter(role=self.Role.MAINADMIN).exclude(pk=self.pk)
-            if existing.exists():
-                raise ValidationError("There can only be one Main Admin account.")
-        else:
-            if self.role == self.Role.MAINADMIN:
-                raise ValidationError("Only the user with username 'SKIPortugal' can be Main Admin.")
-            
+
+        # Validate rules before saving
+        self.full_clean()
         super().save(*args, **kwargs)
+
 
 
 class RequestedAcount(models.Model):
