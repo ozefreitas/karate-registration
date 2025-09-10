@@ -62,6 +62,7 @@ class Event(models.Model):
     individuals = models.ManyToManyField("registration.Athlete", related_name='general_events', blank=True)
     has_ended = models.BooleanField(default=False)
     has_registrations = models.BooleanField(default=False)
+    has_categories = models.BooleanField(default=False)
     has_teams = models.BooleanField(default=False)
     encounter = models.BooleanField("É estágio/encontro", default=False)
     encounter_type = models.CharField("Estágio", choices=ENCOUNTERS, max_length=16, blank=True, null=True, default=ENCOUNTERS["none"])

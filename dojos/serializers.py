@@ -122,13 +122,13 @@ class DisciplinesSerializer(serializers.ModelSerializer):
         else:
             return []
         
-        return registration.serializers.CompactAthletesSerializer(qs,
-                                                                   many=True, 
-                                                                   context={
-                                                                            **self.context,
-                                                                            'discipline_categories': list(obj.categories.filter()),
-                                                                            'event_id': event
-                                                                        }).data
+        return registration.serializers.CompactCategorizedAthletesSerializer(qs,
+                                                                            many=True, 
+                                                                            context={
+                                                                                        **self.context,
+                                                                                        'discipline_categories': list(obj.categories.filter()),
+                                                                                        'event_id': event
+                                                                                    }).data
 
 
 class DisciplinesCompactSerializer(serializers.ModelSerializer):
@@ -160,6 +160,10 @@ class NotificationsSerializer(serializers.ModelSerializer):
 
 
 class AddAthleteSerializer(serializers.Serializer):
+    athlete_id = serializers.CharField()
+
+
+class AddDisciplineAthleteSerializer(serializers.Serializer):
     athlete_id = serializers.CharField()
     event_id = serializers.CharField()
 

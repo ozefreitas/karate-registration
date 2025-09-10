@@ -170,11 +170,11 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     #     context = super().get_serializer_context()
     #     return context
 
-    @action(detail=True, methods=["post"], url_path="add_athlete", serializer_class=serializers.AddAthleteSerializer, permission_classes=[IsAuthenticated])
+    @action(detail=True, methods=["post"], url_path="add_athlete", serializer_class=serializers.AddDisciplineAthleteSerializer, permission_classes=[IsAuthenticated])
     def add_athlete(self, request, pk=None):
         age_method = config('AGE_CALC_REF')
         discipline = self.get_object()
-        serializer = serializers.AddAthleteSerializer(data=request.data)
+        serializer = serializers.AddDisciplineAthleteSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         athlete_id = serializer.validated_data["athlete_id"]
         # will be used to check the season events is taking place in
