@@ -34,6 +34,17 @@ class AthletesSerializer(serializers.ModelSerializer):
 
 
 class CompactAthletesSerializer(serializers.ModelSerializer):
+    dojo = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.Athlete
+        fields = ["id" ,"first_name", "last_name", "gender", "dojo"]
+
+    def get_dojo(self, obj):
+        return obj.dojo.username
+
+
+class CompactCategorizedAthletesSerializer(serializers.ModelSerializer):
     category = serializers.SerializerMethodField()
     dojo = serializers.SerializerMethodField()
 
