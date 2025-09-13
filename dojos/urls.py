@@ -11,7 +11,6 @@ router.register(r'dojos', views.DojosViewSet, basename='dojos')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('users/', views.users, name="users"),
     path('users/athletes/', views.dojos_athletes, name="dojos-athletes"),
     path('dojo_notifications/', views.notifications, name="notifications"),
     path('feedback/', views.feedback, name="dojos-feedback"),

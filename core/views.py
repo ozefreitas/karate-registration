@@ -1,7 +1,7 @@
 from django.utils import timezone
 from django.db import transaction
 
-from core.permissions import IsAuthenticatedOrReadOnly, IsUnauthenticatedForPost, IsNationalForPostDelete
+from core.permissions import IsAuthenticatedOrReadOnly, IsUnauthenticatedForPost, IsNationalForPostDelete, IsAdminRoleorHigher
 from .models import Category, SignupToken, RequestedAcount, User
 from registration.models import Dojo
 from dojos.models import Notification
@@ -71,7 +71,7 @@ class RequestedAcountViewSet(viewsets.ModelViewSet):
         Notification.objects.create(dojo=admin_user, 
                                     notification=f'Um pedido de criação de conta com o username {username} foi inciado. Dirija-se para a área de Definições na aba "Gestor de Contas".',
                                     urgency="red",
-                                    type="request",
+                                    type="request", 
                                     request_acount=username)
 
         # Save the RequestedAcount instance normally
@@ -86,7 +86,7 @@ class RequestedAcountViewSet(viewsets.ModelViewSet):
 
             Notification.objects.filter(
                 type="request",
-                request_acount=instance.username
+                request_acount=instance.username 
             ).delete()
 
             instance.delete()
@@ -128,11 +128,18 @@ def get_token_username(request):
 # @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsUnauthenticatedForPost])
 def get_token_by_username(request):
-    username = request.query_params.get('username')
-    token_obj = SignupToken.objects.get(username=username)
-    return Response({"token": token_obj.token})
+    username = request.query_params.get('username', None)
+    try:
+        token_obj = SignupToken.objects.get(username=username)
+        return Response({"token": token_obj.token})
+    except SignupToken.DoesNotExist:
+        return Response({"error": "Provided username does not exist"})
 
 @api_view(['GET'])
+@extend_schema(
+        responses={200: None, 400: None},
+        description="Typical sportif season change in August. This endpoints checks the current month and return the respective season."
+    )
 def current_season(request):
     today = timezone.now()
     if today.month > 8:
@@ -179,3 +186,18 @@ class RegisterView(views.APIView):
             serializer.save()
             return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@extend_schema(description="Lists the current users available users.")
+@api_view(['GET'])
+# @authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated, IsAdminRoleorHigher])
+def users(request):
+    username = request.query_params.get('username', None)
+    if username:
+        user = User.objects.get(username=username)
+        serializer = serializers.UsersSerializer(user)
+    else:
+        users = User.objects.filter(role__in=["free_dojo", "subed_dojo"])
+        serializer = serializers.UsersSerializer(users, many=True)
+    return Response(serializer.data)
