@@ -18,9 +18,8 @@ from .forms import DojoRegisterForm, DojoUpdateForm, ProfileUpdateForm, Feedback
 from .filters import NotificationsFilters, DisciplinesFilters
 from .models import Event, Notification, DojosRatingAudit, Discipline
 from registration.models import Dojo, Athlete, Team
-from core.permissions import IsAuthenticatedOrReadOnly, IsNationalForPostDelete, IsPayingUserorAdminForGet
+from core.permissions import IsAuthenticatedOrReadOnly, IsNationalForPostDelete, IsPayingUserorAdminForGet, IsAdminRoleorHigher, EventPermission
 from core.models import Category, User
-from core.serializers import UsersSerializer
 from smtplib import SMTPException
 from dojos import serializers
 from dojos.utils.utils import calc_age
@@ -48,7 +47,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Event.objects.all()
     serializer_class=serializers.EventsSerializer
     # authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [EventPermission]
 
     serializer_classes = {
         "create": serializers.CreateEventSerializer,
@@ -88,9 +87,9 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             athlete = Athlete.objects.get(id=athlete_id)
             event.individuals.add(athlete)
 
-            return Response({"message": "Atleta adicionado(a) a este evento!"}, status=status.HTTP_200_OK)
+            return Response({"message": "Atleta(s) adicionado(a)(s) a este evento!"}, status=status.HTTP_200_OK)
         except Athlete.DoesNotExist:
-            return Response({"error": "Um erro ocurreu ao adicionar este Atleta!"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Um erro ocurreu ao adicionar este(s) Atleta(s)!"}, status=status.HTTP_404_NOT_FOUND)
 
     @action(detail=True, methods=["post"], url_path="delete_athlete", serializer_class=serializers.DeleteAthleteSerializer)
     def delete_athlete(self, request, pk=None):
@@ -103,9 +102,9 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             athlete = Athlete.objects.get(id=athlete_id)
             event.individuals.remove(athlete)
 
-            return Response({"message": "Atleta removido deste evento!"}, status=status.HTTP_200_OK)
+            return Response({"message": "Atleta(s) removido(a)(s) deste evento!"}, status=status.HTTP_200_OK)
         except Athlete.DoesNotExist:
-            return Response({"error": "Um erro ocurreu ao remover este Atleta!"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Um erro ocurreu ao remover este(s) Atleta(s)!"}, status=status.HTTP_404_NOT_FOUND)
         
         
     @action(detail=True, methods=["get"], url_path="check_event_rate", permission_classes=[IsAuthenticated])
@@ -185,6 +184,10 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             event = Event.objects.get(id=event_id)
             season = event.season.split("/")[0]
             event_age = get_comp_age(athlete.birth_date) if age_method == "true" else calc_age(age_method, athlete.birth_date, season)
+
+            if not event.has_categories:
+                discipline.individuals.add(athlete)
+                return Response({"message": "Atleta(s) adicionado(a)(s) a esta Modalidade"}, status=status.HTTP_200_OK)
             
             categories = discipline.categories.filter(gender=athlete.gender, 
                                                       min_age__lte=event_age, 
@@ -192,8 +195,7 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                                                       )
 
             if list(categories) == []:
-                return Response({"error": "Não existem Escalões que satisfaçam este(a) Atleta"}, status=status.HTTP_400_BAD_REQUEST)
-            success = False
+                return Response({"error": "Não existem Escalões que satisfaçam este(a)(s) Atleta(s)"}, status=status.HTTP_400_BAD_REQUEST)
 
             for category in categories:
 
@@ -237,16 +239,13 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 if category.min_weight is not None:
                     if athlete.weight >= category.min_weight:
                         discipline.individuals.add(athlete)
-
-                success = True
-                
                 
             # if not success:
             #     return Response({"error": "Idade do Atleta não permite inscrever nos Escalões disponíveis"}, status=status.HTTP_400_BAD_REQUEST)
 
-            return Response({"message": "Atleta adicionado(a) a esta Modalidade"}, status=status.HTTP_200_OK)
+            return Response({"message": "Atleta(s) adicionado(a)(s) a esta Modalidade"}, status=status.HTTP_200_OK)
         except Athlete.DoesNotExist:
-            return Response({"error": "Um erro ocurreu ao adicionar este Atleta"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Um erro ocurreu ao adicionar este(s) Atleta(s)"}, status=status.HTTP_404_NOT_FOUND)
 
     @action(detail=True, methods=["post"], url_path="delete_athlete", serializer_class=serializers.DeleteAthleteSerializer)
     def delete_athlete(self, request, pk=None):
@@ -328,11 +327,17 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 class DojosViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Dojo.objects.all()
     serializer_class=serializers.DojosSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsAdminRoleorHigher]
 
     serializer_classes = {
         "create": serializers.CreateDojosSerializer,
     }
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        if user.role != "main_admin":
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        serializer.save(mother_acount=user)
     
 
 @api_view(['GET'])
@@ -343,18 +348,6 @@ def notifications(request):
     serializer = serializers.NotificationsSerializer(notifications, many=True)
     return Response(serializer.data)
 
-@api_view(['GET'])
-# @authentication_classes([SessionAuthentication, BasicAuthentication])
-@permission_classes([IsAuthenticated])
-def users(request):
-    username = request.query_params.get('username', None)
-    if username:
-        user = User.objects.filter(username=username).first()
-        serializer = UsersSerializer(user)
-    else:
-        users = User.objects.filter(role__in=["free_dojo", "subed_dojo"])
-        serializer = UsersSerializer(users, many=True)
-    return Response(serializer.data)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

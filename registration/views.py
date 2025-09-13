@@ -8,20 +8,18 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django_filters.rest_framework import DjangoFilterBackend
 
-from .forms import AthleteForm, FilterAthleteForm, TeamForm, FilterTeamForm, TeamCategorySelection
 from .models import Athlete, Team, Classification
 from .filters import AthletesFilters
-from .templatetags.team_extras import valid_athletes
-from .utils.utils import check_athlete_data, get_comp_age, check_filter_data, check_match_type, check_teams_data, check_team_selection
 from dojos.models import Event, Notification
 from core.models import User
+from core.permissions import AthletePermission
 
 from rest_framework import viewsets, status
 from rest_framework.decorators import action, permission_classes
 from rest_framework.response import Response
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
 import registration.serializers as serializers
 import dojos.serializers as dojo_serializers
@@ -42,7 +40,7 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     # authentication_classes = [SessionAuthentication, BasicAuthentication]
     filter_backends = [DjangoFilterBackend]
     filterset_class = AthletesFilters
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, AthletePermission]
 
     serializer_classes = {
         "create": serializers.CreateAthleteSerializer,
@@ -139,7 +137,7 @@ class TeamsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Team.objects.all()
     serializer_class = serializers.TeamsSerializer
     # authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, AthletePermission]
 
     serializer_classes = {
         # "create": serializers.CreateAthleteSerializer,
