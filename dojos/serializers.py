@@ -193,4 +193,4 @@ class DojosSerializer(serializers.ModelSerializer):
 class CreateDojosSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dojo
-        exclude = ["is_registered", ]
+        exclude = ["is_registered", "mother_acount"]

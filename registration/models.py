@@ -6,8 +6,7 @@ from django.utils import timezone
 from nanoid import generate
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from core.constants import CATEGORIES, GENDERS, GRADUATIONS, MATCHES
-import datetime
+from core.constants import GENDERS, GRADUATIONS, MATCHES
 
 # Create your models here.
 
@@ -54,8 +53,26 @@ class Athlete(models.Model):
 ### Dojo model ###
 
 class Dojo(models.Model):
+    """
+    Model that holds names to be used as usernames. 
+    Can only be created when a 'main_admin' is created and can be linked.
+    These same admin acounts can create these objects, and can only create usernames for themselves.
+    The username for the admin acounts should not be listed here.
+    """
     dojo = models.CharField("Dojo", max_length=99, unique=True)
     is_registered = models.BooleanField(default=False)
+    mother_acount = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, limit_choices_to={'role': 'main_admin'})
+
+    def clean(self):
+        if self.mother_acount.role != "main_admin":
+            raise ValidationError({"mother_acount": "Mother account must be a main_admin."})
+        
+    def save(self, *args, **kwargs):
+        if self.mother_acount.role != "main_admin":
+            raise ValidationError("Mother account must be a main_admin.")
+        
+        self.full_clean()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.dojo
@@ -64,12 +81,6 @@ class Dojo(models.Model):
 ### Teams models ###
 
 class Team(models.Model):
-
-    GENDERS = {
-        "masculino": "Masculino",
-        "feminino": "Feminino",
-        "misto": "Misto"
-    }
 
     id = models.CharField(primary_key=True, max_length=10, unique=True, editable=False)
     dojo = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

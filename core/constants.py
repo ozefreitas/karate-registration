@@ -1,14 +1,3 @@
-CATEGORIES = {
-    "Infantil": "Infantil",
-    "Iniciado": "Iniciado",
-    "Juvenil": "Juvenil",
-    "Cadete": "Cadete",
-    "Júnior": "Júnior",
-    "Sénior": "Sénior",
-    "Veterano +35": "Veterano +35",
-    "Veterano +50": "Veterano +50"
-}
-
 MATCHES = {
         "kata": "Kata",
         "kumite": "Kumite"
