@@ -107,6 +107,9 @@ class EventPermission(BasePermission):
     - All others are denied.
     """
     def has_permission(self, request, view):
+        if request.method == "GET":
+            return True
+
         if not request.user or not request.user.is_authenticated:
             return False
 
