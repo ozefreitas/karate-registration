@@ -102,8 +102,8 @@ class RequestedAcountViewSet(viewsets.ModelViewSet):
 @permission_classes([IsAuthenticated, IsNationalForPostDelete])
 def sign_up_token(request):
     username = request.data.get('username')
-    alive_time = request.data.get('alive_time')
-    token = SignupToken.objects.create(username=username, alive_time=alive_time if alive_time != 0 else 3)
+    alive_time = request.data.get('alive_time', 3)
+    token = SignupToken.objects.create(username=username, alive_time=alive_time)
     return Response({"username": username, "token": str(token.token)})
 
 @extend_schema(
