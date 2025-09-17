@@ -41,7 +41,7 @@ class IsUnauthenticatedForPost(BasePermission):
     Safe methods and DELETE are restricted to admin roles.
     """
     def has_permission(self, request, view):
-        if request.methol in SAFE_METHODS or request.method in ["GET", "DELETE"]:
+        if request.method in SAFE_METHODS or request.method in ["GET", "DELETE"]:
             return bool(
                 request.user
                 and request.user.is_authenticated
@@ -66,6 +66,8 @@ class IsPayingUserorAdminForGet(BasePermission):
 class IsAdminRoleorHigher(BasePermission):
     """Allows access the current url in which is used if the user has an admin like role or higher"""
     def has_permission(self, request, view):
+        if request.method == "GET":
+            return True
         return bool(request.user and request.user.is_authenticated and (request.user.role == 'main_admin' 
                                                                             or request.user.role == 'superuser' 
                                                                             or request.user.role == 'single_admin'))
