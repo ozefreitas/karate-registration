@@ -30,7 +30,7 @@ class Athlete(models.Model):
     last_name = models.CharField("Último Nome", max_length=200)
     graduation = models.CharField("Graduação", max_length=4, choices=GRADUATIONS)
     birth_date = models.DateField("Data de Nascimento")
-    skip_number = models.PositiveIntegerField("Nº SKI-P", blank=True, null=True)
+    id_number = models.PositiveIntegerField("Nº SKI-P", blank=True, null=True)
     competitor = models.BooleanField("Competidor", default=False)
     favorite = models.BooleanField("Favorito", default=False)
     gender = models.CharField("Género", choices=GENDERS, max_length=10)

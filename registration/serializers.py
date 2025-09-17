@@ -165,7 +165,7 @@ class CreateAthleteSerializer(serializers.ModelSerializer):
 class UpdateAthleteSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Athlete
-        exclude = ("dojo", "skip_number", )
+        exclude = ("dojo", "id_number", )
 
 
 ### Teams Serializer Classes

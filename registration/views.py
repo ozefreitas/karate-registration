@@ -72,14 +72,14 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         return super().get_serializer_class()
     
     def perform_create(self, serializer):
-        skip_number = serializer.validated_data.get("skip_number")
+        id_number = serializer.validated_data.get("id_number")
         first_name = serializer.validated_data.get("first_name")
         last_name = serializer.validated_data.get("last_name")
 
-        if skip_number == 0:
-            # Auto-generate skip_number if it wasn't provided
-            last_athlete = Athlete.objects.all().order_by("skip_number").last()
-            skip_number = (last_athlete.skip_number if last_athlete else 0) + 1
+        if id_number == 0:
+            # Auto-generate id_number if it wasn't provided
+            last_athlete = Athlete.objects.all().order_by("id_number").last()
+            id_number = (last_athlete.id_number if last_athlete else 0) + 1
         
         dojo = serializer.validated_data.get('dojo')
         user = User.objects.get(username=dojo)
@@ -89,7 +89,7 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                                     can_remove=True,
                                     type="create_athlete")
 
-        serializer.save(skip_number=skip_number)
+        serializer.save(id_number=id_number)
 
     @action(detail=False, methods=["get"], url_path="last_five")
     def last_five(self, request):
