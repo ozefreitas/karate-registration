@@ -11,14 +11,19 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Count
+from django.utils import timezone
+from django.http import HttpResponse
+from django.db.models import Q
 from decouple import config
 import statistics
+from datetime import timedelta
+import openpyxl
 
 from .forms import DojoRegisterForm, DojoUpdateForm, ProfileUpdateForm, FeedbackForm, DojoPasswordResetForm, DojoPasswordConfirmForm, DojoPasswordChangeForm
 from .filters import NotificationsFilters, DisciplinesFilters
 from .models import Event, Notification, DojosRatingAudit, Discipline
 from registration.models import Dojo, Athlete, Team
-from core.permissions import IsAuthenticatedOrReadOnly, IsNationalForPostDelete, IsPayingUserorAdminForGet, IsAdminRoleorHigher, EventPermission
+from core.permissions import IsAuthenticatedOrReadOnly, IsNationalForPostDelete, IsPayingUserorAdminForGet, IsAdminRoleorHigher, EventPermission, IsAdminRoleorHigherForGET
 from core.models import Category, User
 from smtplib import SMTPException
 from dojos import serializers
@@ -55,7 +60,21 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     }
 
     def get_queryset(self):
-        return self.queryset.order_by("event_date")
+        qs = super().get_queryset()
+        user = self.request.user
+
+        if getattr(user, "role", None) == "free_dojo":
+            now = timezone.now()
+            future_7 = now + timedelta(days=7)
+
+            qs = qs.filter(
+                Q(start_registration__isnull=False, start_registration__lte=now, event_date__gte=now)
+                |
+                Q(start_registration__isnull=True, event_date__gte=now, event_date__lte=future_7)
+            )
+
+        return qs.order_by("event_date")
+        # return self.queryset.order_by("event_date")
 
     def perform_create(self, serializer):
         return super().perform_create(serializer)
@@ -150,6 +169,72 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             return Response({"message": "Obrigado pela sua opinião!"}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": "Um erro ocurreu ao avaliar este Evento!", "message": e}, status=status.HTTP_400_BAD_REQUEST)
+    
+    @action(detail=True, methods=["get"], url_path="export_athletes_excel", permission_classes=[IsAdminRoleorHigherForGET])
+    def export_athletes_excel(self, request, pk=None):
+        event = self.get_object()
+        disciplines = event.disciplines.all()
+        age_method = config('AGE_CALC_REF')
+
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Athletes"
+
+        # Headers (add what you need)
+        headers = ["Modalidade", "Nome", "Idade", "SKIP number", "Género", "Categoria"]
+        ws.append(headers)
+
+        # Loop disciplines -> individuals
+        for discipline in disciplines:
+
+            for athlete in discipline.individuals.all():
+                season = event.season.split("/")[0]
+                event_age = get_comp_age(athlete.birth_date) if age_method == "true" else calc_age(age_method, athlete.birth_date, season)
+                category_to_assign = None
+                categories = discipline.categories.filter(gender=athlete.gender, 
+                                                        min_age__lte=event_age, 
+                                                        max_age__gte=event_age
+                                                        )
+                for category in categories:
+                        
+                    # Weights
+                    if category.min_weight is None and category.max_weight is None:  # category does not have any weight limit
+                        category_to_assign = category
+                    else:
+                        if athlete.weight is None:
+                            pass
+                        
+                    if category.min_weight is not None and category.max_weight is not None:
+                        if category.min_weight <= athlete.weight <= category.max_weight:
+                            category_to_assign = category
+                        else:
+                            continue
+                    if category.max_weight is not None:
+                        if athlete.weight < category.max_weight:
+                            category_to_assign = category
+                    if category.min_weight is not None:
+                        if athlete.weight >= category.min_weight:
+                            category_to_assign = category
+                
+                ws.append([
+                    discipline.name,
+                    getattr(athlete, "first_name", "") + getattr(athlete, "last_name", ""),
+                    event_age,
+                    getattr(athlete, "id_number", ""),
+                    getattr(athlete, "gender", ""),
+                    category_to_assign.name
+                ])
+
+        # Prepare response
+        response = HttpResponse(
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        response["Content-Disposition"] = (
+            f'attachment; filename="event_{event.id}_athletes.xlsx"'
+        )
+        wb.save(response)
+
+        return response
         
 
 class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
