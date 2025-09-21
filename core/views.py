@@ -1,8 +1,13 @@
 from django.utils import timezone
 from django.db import transaction
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from django.urls import reverse
+from django.db.models import Q
 
 from core.permissions import IsAuthenticatedOrReadOnly, IsUnauthenticatedForPost, IsNationalForPostDelete, IsAdminRoleorHigher
-from .models import Category, SignupToken, RequestedAcount, User
+from .models import Category, SignupToken, RequestedAcount, User, RequestPasswordReset
 from registration.models import Dojo
 from dojos.models import Notification
 from . import serializers
@@ -201,3 +206,99 @@ def users(request):
         users = User.objects.filter(role__in=["free_dojo", "subed_dojo"])
         serializer = serializers.UsersSerializer(users, many=True)
     return Response(serializer.data)
+
+
+
+###############
+# Request passorwd reset
+###############
+
+@extend_schema(
+        request=serializers.PasswordRequestsSerializer,
+        responses={200: None, 400: None},
+        description="Returns all the current requests for password resets."
+    )
+@api_view(['GET'])
+# @authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAdminRoleorHigher])
+def get_password_requests(request):
+    requests = RequestPasswordReset.objects.all()
+    serializer = serializers.PasswordRequestsSerializer(requests, many=True)
+    return Response(serializer.data)
+
+
+@extend_schema(request=serializers.RequestPasswordResetSerializer, 
+               description="Creates a new request for a password recovery.")
+@api_view(['POST'])
+def request_password_reset(request):
+    serializer = serializers.RequestPasswordResetSerializer(data=request.data)
+    if serializer.is_valid(raise_exception=True):
+        try:
+            user = User.objects.get(
+                Q(username=serializer.validated_data.get('username_or_email')) | Q(email=serializer.validated_data.get('username_or_email'))
+            )
+        except User.DoesNotExist:
+            return Response({"error": "Não existe nenhum utilizador com estas credenciais!"}, status=status.HTTP_400_BAD_REQUEST)
+    if RequestPasswordReset.objects.filter(dojo_user=user).exists():
+        return Response({"error": "Já fez o pedido para recuperar a sua password. Aguarde por um email do seu administrador!"}, status=status.HTTP_400_BAD_REQUEST)
+    RequestPasswordReset.objects.create(dojo_user=user)
+    admin_user = User.objects.get(role="main_admin")
+    Notification.objects.create(dojo=admin_user, 
+                                    notification=f'Um pedido de recuperção de password de {user.username} foi inciado. Dirija-se para a área de Definições na aba "Gestor de Contas" imediatamente!',
+                                    urgency="red",
+                                    type="reset", 
+                                    request_acount=user.username)
+    return Response({"message": "Pedido enviado! Esteja atento ao seu email."}, status=status.HTTP_201_CREATED)
+
+
+@extend_schema(
+        request=serializers.UsernameSerializer,
+        responses={201: None, 400: None},
+        description="Generate a unique url for password recovery."
+    )
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, IsAdminRoleorHigher])
+def generate_password_recovery_url(request):
+    serializer = serializers.UsernameSerializer(data=request.data)
+    if serializer.is_valid(raise_exception=True):
+        user = User.objects.get(id=serializer.validated_data.get('username'))
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+
+        reset_url = request.build_absolute_uri(
+            reverse("password_reset_confirm", kwargs={"uidb64": uid, "token": token})
+        )
+        return Response({"url": reset_url})
+
+
+class PasswordResetConfirmAPI(views.APIView):
+    @extend_schema(
+        request=serializers.PasswordSerializer,
+        responses={201: None, 400: None},
+        description="View that confirms the uidb64 and token from the requesting user, and checks if a password is provided in the payload."
+    )
+    def post(self, request, uidb64, token):
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = User.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            return Response({"error": "Link inválido"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not default_token_generator.check_token(user, token):
+            return Response({"error": "Token inválido ou expirado"}, status=status.HTTP_400_BAD_REQUEST)
+
+        new_password = request.data.get("password")
+        new_password2 = request.data.get("password2")
+        if not new_password:
+            return Response({"error": "Forneça uma palavra-passe"}, status=status.HTTP_400_BAD_REQUEST)
+        if not new_password2:
+            return Response({"error": "Repita a palavra-passe para confirmação"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if new_password != new_password2:
+            return Response({"error": "As palavras-passe não coincidem!"}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.set_password(new_password)
+        user.save()
+        Notification.objects.filter(type="reset", request_acount=user.username).delete()
+        RequestPasswordReset.objects.filter(dojo_user=user).delete()
+        return Response({"success": True})

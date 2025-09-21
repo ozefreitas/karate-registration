@@ -126,6 +126,14 @@ class SignupToken(models.Model):
     
     def __str__(self): 
         return "{} sign up token".format(self.username)
+    
+
+class RequestPasswordReset(models.Model):
+    dojo_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reset_requests", editable=False)
+    requested_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self): 
+        return "{} password reset request".format(self.dojo_user)
 
 
 class Category(models.Model):

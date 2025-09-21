@@ -133,6 +133,7 @@ class Notification(models.Model):
     class TYPE(models.TextChoices):
         NONE = "none", "None"
         REQ = "request", "Request"
+        RES = "reset", "Reset"
         CREATE_ATHLETE = "create_athlete", "Create Athlete"
         RATE_EVENT = "rate_event", "Rate Event"
 

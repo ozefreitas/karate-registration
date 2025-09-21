@@ -1,11 +1,17 @@
 from rest_framework import serializers
 import dojos.models as models
-from .models import Category, User, SignupToken, RequestedAcount
+from .models import Category, User, SignupToken, RequestedAcount, RequestPasswordReset
 
 class UsersSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "username", "role", "tier"]
+
+
+class CompactUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "username", "email"]
 
 
 class RequestedAcountSerializer(serializers.ModelSerializer):
@@ -61,6 +67,22 @@ class RegisterUserSerializer(serializers.ModelSerializer):
         validated_data['token_obj'].is_used = True
         validated_data['token_obj'].save()
         return user
+
+
+class PasswordRequestsSerializer(serializers.ModelSerializer):
+    dojo_user = CompactUserSerializer()
+
+    class Meta:
+        model = RequestPasswordReset
+        fields = "__all__"
+
+
+class RequestPasswordResetSerializer(serializers.Serializer):
+     username_or_email = serializers.CharField(write_only=True)
+
+
+class PasswordSerializer(serializers.Serializer):
+    password = serializers.CharField(write_only=True)
 
 
 class ProfileSerializer(serializers.ModelSerializer):
