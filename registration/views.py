@@ -49,12 +49,12 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        if user.role == "main_admin" or user.role == "superuser":
+        if user.role == "main_admin" or user.role == "superuser" or user.role == "single_admin":
             # National-level user can see all athletes
             return self.queryset.all().order_by("dojo", "first_name", "last_name")
 
-        if user.role == "free_dojo" or user.role == "subed_dojo":
-            # Dojo-level user sees only their own dojo athletes
+        if user.role == "subed_dojo":
+            # paying dojos user sees only their own dojo athletes
             return self.queryset.filter(dojo=user).order_by("-creation_date", "first_name", "last_name")
         
         raise PermissionDenied("You do not have access to this data.")
