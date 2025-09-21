@@ -11,7 +11,6 @@ from dotenv import load_dotenv
 
 
 loaded = load_dotenv(".env.dev")
-print("Loaded:", loaded)  
 
 class Command(BaseCommand):
     help = "Create competitions data"
