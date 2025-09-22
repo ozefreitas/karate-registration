@@ -23,7 +23,7 @@ from .forms import DojoRegisterForm, DojoUpdateForm, ProfileUpdateForm, Feedback
 from .filters import NotificationsFilters, DisciplinesFilters
 from .models import Event, Notification, DojosRatingAudit, Discipline
 from registration.models import Dojo, Athlete, Team
-from core.permissions import IsAuthenticatedOrReadOnly, IsNationalForPostDelete, IsPayingUserorAdminForGet, IsAdminRoleorHigher, EventPermission, IsAdminRoleorHigherForGET
+from core.permissions import IsAuthenticatedOrReadOnly, IsNationalForPostDelete, IsPayingUserorAdminForGet, IsGETforClubs, EventPermission, IsAdminRoleorHigherForGET, IsAdminRoleorHigher
 from core.models import Category, User
 from smtplib import SMTPException
 from dojos import serializers
@@ -181,48 +181,106 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         ws.title = "Athletes"
 
         # Headers (add what you need)
-        headers = ["Modalidade", "Nome", "Idade", "SKIP number", "Género", "Categoria"]
+        headers = ["Dojo", "Nome", "Idade", f"Nº {config('MAIN_ADMIN')}", "Género"]
+
+        if list(disciplines) != []:
+            headers.append("Modalidade")
+
+        if event.has_categories:
+            headers.append("Escalão")
+
+        if not event.encounter:
+            headers.append("Dorsal")
+
         ws.append(headers)
 
-        # Loop disciplines -> individuals
-        for discipline in disciplines:
-
-            for athlete in discipline.individuals.all():
-                season = event.season.split("/")[0]
-                event_age = get_comp_age(athlete.birth_date) if age_method == "true" else calc_age(age_method, athlete.birth_date, season)
-                category_to_assign = None
-                categories = discipline.categories.filter(gender=athlete.gender, 
-                                                        min_age__lte=event_age, 
-                                                        max_age__gte=event_age
-                                                        )
-                for category in categories:
-                        
-                    # Weights
-                    if category.min_weight is None and category.max_weight is None:  # category does not have any weight limit
-                        category_to_assign = category
-                    else:
-                        if athlete.weight is None:
-                            pass
-                        
-                    if category.min_weight is not None and category.max_weight is not None:
-                        if category.min_weight <= athlete.weight <= category.max_weight:
-                            category_to_assign = category
-                        else:
-                            continue
-                    if category.max_weight is not None:
-                        if athlete.weight < category.max_weight:
-                            category_to_assign = category
-                    if category.min_weight is not None:
-                        if athlete.weight >= category.min_weight:
-                            category_to_assign = category
-                
-                ws.append([
-                    discipline.name,
+        if list(disciplines) == []:
+            ws.append([
+                    getattr(athlete.dojo, "username", ""),
                     getattr(athlete, "first_name", "") + getattr(athlete, "last_name", ""),
                     event_age,
                     getattr(athlete, "id_number", ""),
                     getattr(athlete, "gender", ""),
-                    category_to_assign.name
+                ])
+            
+        else:
+
+            all_members = []
+            # Loop disciplines -> individuals
+            for discipline in disciplines:
+
+                for athlete in discipline.individuals.select_related("dojo").all():
+                    season = event.season.split("/")[0]
+                    event_age = get_comp_age(athlete.birth_date) if age_method == "true" else calc_age(age_method, athlete.birth_date, season)
+                    category_to_assign = None
+
+                    if not event.has_categories:
+                    
+                        ws.append([
+                        getattr(athlete.dojo, "username", ""),
+                        getattr(athlete, "first_name", "") + getattr(athlete, "last_name", ""),
+                        event_age,
+                        getattr(athlete, "id_number", ""),
+                        getattr(athlete, "gender", ""),
+                        discipline.name,
+                    ])
+                    
+                    else:
+                        categories = discipline.categories.filter(gender=athlete.gender, 
+                                                            min_age__lte=event_age, 
+                                                            max_age__gte=event_age
+                                                            )
+                        for category in categories:
+                                
+                            # Weights
+                            if category.min_weight is None and category.max_weight is None:  # category does not have any weight limit
+                                category_to_assign = category
+                                
+                            if category.min_weight is not None and category.max_weight is not None:
+                                if category.min_weight <= athlete.weight <= category.max_weight:
+                                    category_to_assign = category
+                                else:
+                                    continue
+                            if category.max_weight is not None:
+                                if athlete.weight < category.max_weight:
+                                    category_to_assign = category
+                            if category.min_weight is not None:
+                                if athlete.weight >= category.min_weight:
+                                    category_to_assign = category
+
+                        all_members.append((discipline, athlete, event_age, category_to_assign))
+
+            all_members_sorted = sorted(
+                all_members,
+                key=lambda x: (
+                    getattr(x[1].dojo, "username", "").lower(),
+                    getattr(x[1], "first_name", "").lower(),
+                ),
+            )
+
+            name = ""
+            dojo = ""
+            i = 0
+
+            for discipline, athlete, event_age, category_to_assign in all_members_sorted: 
+
+                if name == getattr(athlete, "first_name", "") + getattr(athlete, "last_name", "") and dojo == getattr(athlete.dojo, "username", ""):
+                    member_event_number = str(i).zfill(3)
+                else:
+                    i += 1
+                    member_event_number = str(i).zfill(3)
+                    name = getattr(athlete, "first_name", "") + getattr(athlete, "last_name", ""),
+                    dojo = getattr(athlete.dojo, "username", ""),
+
+                ws.append([
+                    getattr(athlete.dojo, "username", ""),
+                    getattr(athlete, "first_name", "") + getattr(athlete, "last_name", ""),
+                    event_age,
+                    getattr(athlete, "id_number", ""),
+                    getattr(athlete, "gender", ""),
+                    discipline.name,
+                    category_to_assign.name,
+                    member_event_number
                 ])
 
         # Prepare response
@@ -412,7 +470,7 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 class DojosViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Dojo.objects.all()
     serializer_class=serializers.DojosSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, IsAdminRoleorHigher]
+    permission_classes = [IsGETforClubs]
 
     serializer_classes = {
         "create": serializers.CreateDojosSerializer,
@@ -435,7 +493,7 @@ def notifications(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsAdminRoleorHigher])
 def dojos_athletes(request):
     data = User.objects.exclude(role__in=["main_admin", "superuser"])\
                         .annotate(athlete_count=Count('athlete'))\
