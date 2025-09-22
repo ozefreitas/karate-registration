@@ -172,7 +172,6 @@ class TeamsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 class ClassificationsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Classification.objects.all()
     serializer_class = serializers.AllClassificationsSerializer
-    # authentication_classes = [SessionAuthentication, BasicAuthentication]
     # permission_classes = [IsAuthenticated]
 
     serializer_classes = {

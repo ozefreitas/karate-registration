@@ -68,8 +68,8 @@ class User(AbstractUser):
             raise ValidationError("Only the user 'ozefreitas' can be Superuser.")
 
         # MAINADMIN restriction
-        if self.role == self.Role.MAINADMIN and self.username != "SKIPortugal":
-            raise ValidationError("Only the user 'SKIPortugal' can be Main Admin.")
+        # if self.role == self.Role.MAINADMIN and self.username != "SKIPortugal":
+        #     raise ValidationError("Only the user 'SKIPortugal' can be Main Admin.")
 
         # SINGLEADMIN restrictions
         if self.role == self.Role.SINGLEADMIN:

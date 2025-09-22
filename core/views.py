@@ -72,15 +72,18 @@ class RequestedAcountViewSet(viewsets.ModelViewSet):
         # Mark as registered
         dojo.is_registered = True
         dojo.save()
-        admin_user = User.objects.get(role="main_admin")
-        Notification.objects.create(dojo=admin_user, 
-                                    notification=f'Um pedido de criação de conta com o username {username} foi inciado. Dirija-se para a área de Definições na aba "Gestor de Contas".',
-                                    urgency="red",
-                                    type="request", 
-                                    request_acount=username)
+        if dojo.is_admin:
+            serializer.save()
+        else:
+            admin_user = User.objects.get(role="main_admin")
+            Notification.objects.create(dojo=admin_user, 
+                                        notification=f'Um pedido de criação de conta com o username {username} foi inciado. Dirija-se para a área de Definições na aba "Gestor de Contas".',
+                                        urgency="red",
+                                        type="request", 
+                                        request_acount=username)
 
-        # Save the RequestedAcount instance normally
-        serializer.save()
+            # Save the RequestedAcount instance normally
+            serializer.save()
 
     def perform_destroy(self, instance):
         with transaction.atomic():
@@ -184,12 +187,17 @@ class RegisterView(views.APIView):
     def post(self, request):
         serializer = serializers.RegisterUserSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            request_obj = RequestedAcount.objects.get(username=serializer.validated_data.get('username'))
-            request_obj.delete()
-            notification_obj = Notification.objects.get(type="request", request_acount=serializer.validated_data.get('username'))
-            notification_obj.delete()
-            serializer.save()
-            return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
+            club_obj = Dojo.objects.get(dojo=serializer.validated_data.get('username'))
+            if club_obj.is_admin:
+                serializer.save()
+                return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
+            else:
+                request_obj = RequestedAcount.objects.get(username=serializer.validated_data.get('username'))
+                request_obj.delete()
+                notification_obj = Notification.objects.get(type="request", request_acount=serializer.validated_data.get('username'))
+                notification_obj.delete()
+                serializer.save()
+                return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
