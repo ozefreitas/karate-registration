@@ -447,9 +447,9 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             category = Category.objects.get(id=category_id)
             event.categories.add(category)
 
-            return Response({"message": "Categoria(s) adicionada(s) a esta modalidade"}, status=status.HTTP_200_OK)
+            return Response({"message": "Escalão(ões) adicionado(s) a esta modalidade"}, status=status.HTTP_200_OK)
         except Category.DoesNotExist:
-            return Response({"error": "Um erro ocurreu ao adicionar esta Categoria"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Um erro ocurreu ao adicionar este Escalão"}, status=status.HTTP_404_NOT_FOUND)
 
     @action(detail=True, methods=["post"], url_path="delete_category", serializer_class=serializers.AddCategorySerializer, permission_classes=[IsAuthenticated])
     def delete_category(self, request, pk=None):
@@ -462,9 +462,9 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             category = Category.objects.get(id=category_id)
             event.categories.remove(category)
 
-            return Response({"message": "Categoria(s) removida(s) desta modalidade"}, status=status.HTTP_200_OK)
+            return Response({"message": "Escalão(ões) removido(s) desta modalidade"}, status=status.HTTP_200_OK)
         except Category.DoesNotExist:
-            return Response({"error": "Um erro ocurreu ao remover esta Categoria"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Um erro ocurreu ao remover este Escalão"}, status=status.HTTP_404_NOT_FOUND)
         
 
 class DojosViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
