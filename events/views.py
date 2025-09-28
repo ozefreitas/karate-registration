@@ -11,7 +11,7 @@ import openpyxl
 
 from .filters import DisciplinesFilters
 from clubs.models import ClubRatingAudit
-from .models import Event, Discipline
+from .models import Event, Discipline, Announcement
 from registration.models import Athlete, Team
 from core.permissions import IsAuthenticatedOrReadOnly, IsNationalForPostDelete, IsPayingUserorAdminForGet, IsGETforClubs, EventPermission, IsAdminRoleorHigherForGET, IsAdminRoleorHigher
 from core.models import Category
@@ -448,3 +448,17 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             return Response({"message": "Escalão(ões) removido(s) desta modalidade"}, status=status.HTTP_200_OK)
         except Category.DoesNotExist:
             return Response({"error": "Um erro ocurreu ao remover este Escalão"}, status=status.HTTP_404_NOT_FOUND)
+        
+
+class ActiveAnnouncementView(APIView):
+    @extend_schema(description="Ola")
+    @permission_classes(IsAuthenticatedOrReadOnly)
+    def get(self, request):
+        announcement = Announcement.objects.filter(is_active=True).order_by('-created_at').first()
+        if announcement:
+            return Response({
+                "id": announcement.id,
+                "message": announcement.message,
+                "created_at": announcement.created_at,
+            })
+        return Response(None)

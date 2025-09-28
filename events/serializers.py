@@ -3,7 +3,7 @@ from core.models import User
 import registration.serializers
 import core.serializers
 from django.utils.text import slugify
-from .models import Event, Discipline
+from .models import Event, Discipline, Announcement
 from datetime import date
 
 
@@ -166,3 +166,9 @@ class AddCategorySerializer(serializers.Serializer):
 
 class AddTeamSerializer(serializers.Serializer):
     team_id = serializers.CharField()
+
+
+class AnnouncementSerializer(serializers.Serializer):
+    class Meta:
+        model = Announcement
+        fields = "__all__"

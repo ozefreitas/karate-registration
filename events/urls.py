@@ -9,4 +9,5 @@ router.register(r'disciplines', views.DisciplineViewSet, basename='disciplines')
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('active_announcement/', views.ActiveAnnouncementView.as_view(), name="active-annoucement")
 ]
