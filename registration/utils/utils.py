@@ -39,7 +39,7 @@ def check_match_type(response: requests) -> tuple:
 
 
 def get_comp_age(date_of_birth: datetime) -> int:
-    """Function that return the age current age of an athlete
+    """Function that return the current age of an athlete, in real time
 
     Args:
         date_of_birth (datetime): The birth date of the athlete. Must be an instance of datetime 

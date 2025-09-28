@@ -1,7 +1,5 @@
 from rest_framework import serializers
-import dojos.models as models
 from core.models import User
-from registration.models import Dojo
 import registration.serializers
 import core.serializers
 from django.utils.text import slugify
@@ -17,7 +15,7 @@ class EventsSerializer(serializers.ModelSerializer):
     number_registrations = serializers.SerializerMethodField()
     
     class Meta:
-        model = models.Event
+        model = Event
         fields = "__all__"
 
     def get_individuals(self, obj):
@@ -25,8 +23,8 @@ class EventsSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         if not user.is_authenticated:
             return []
-        if user.role == 'free_dojo' or user.role == 'subed_dojo':
-            qs = obj.individuals.filter(dojo=user)
+        if user.role == 'free_club' or user.role == 'subed_club':
+            qs = obj.individuals.filter(club=user)
         elif user.role == 'main_admin' or user.role == 'superuser':
             qs = obj.individuals.all()
         else:
@@ -64,7 +62,7 @@ class EventsSerializer(serializers.ModelSerializer):
 
 class CreateEventSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Event
+        model = Event
         exclude = ("has_ended", "individuals", "rating", )
     
     def validate(self, data):
@@ -96,7 +94,7 @@ class CreateEventSerializer(serializers.ModelSerializer):
 
 class UpdateEventSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Event
+        model = Event
         exclude = ("id", "has_ended")
 
 
@@ -106,7 +104,7 @@ class DisciplinesSerializer(serializers.ModelSerializer):
     categories = core.serializers.CategorySerializer(many=True)
     
     class Meta:
-        model = models.Discipline
+        model = Discipline
         fields = "__all__"
 
     def get_individuals(self, obj):
@@ -115,8 +113,8 @@ class DisciplinesSerializer(serializers.ModelSerializer):
         event = self.context['request'].query_params.get("event_disciplines")
         if not user.is_authenticated:
             return []
-        if user.role == 'free_dojo' or user.role == 'subed_dojo':
-            qs = obj.individuals.filter(dojo=user)
+        if user.role == 'free_club' or user.role == 'subed_club':
+            qs = obj.individuals.filter(club=user)
         elif user.role == 'main_admin' or user.role == 'superuser':
             qs = obj.individuals.all()
         else:
@@ -133,30 +131,20 @@ class DisciplinesSerializer(serializers.ModelSerializer):
 
 class DisciplinesCompactSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Discipline
+        model = Discipline
         fields = ["id", "name"]
 
 
 class CreateDisciplineSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Discipline
+        model = Discipline
         exclude = ["individuals", "teams", ]
 
 
 class UpdateDisciplineSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Discipline
+        model = Discipline
         exclude = ["id", ]
-
-
-class NotificationsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Notification
-        fields = "__all__"
-
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            self.fields["dojo"].queryset = models.User.objects.filter(role__in=["free_dojo", "subed_dojo"])
 
 
 class AddAthleteSerializer(serializers.Serializer):
@@ -178,19 +166,3 @@ class AddCategorySerializer(serializers.Serializer):
 
 class AddTeamSerializer(serializers.Serializer):
     team_id = serializers.CharField()
-
-
-class RatingSerializer(serializers.Serializer):
-    rating_signal = serializers.IntegerField()
-
-
-class DojosSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Dojo
-        fields = "__all__"
-
-
-class CreateDojosSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Dojo
-        exclude = ["is_registered", "mother_acount"]

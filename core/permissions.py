@@ -15,7 +15,7 @@ class IsAuthenticatedOrReadOnly(BasePermission):
 class IsNationalForPostDelete(BasePermission):
     """
     - Only main_admin/superuser can POST.
-    - DELETE: allowed for admins, or for the owner of the notification (obj.dojo).
+    - DELETE: allowed for admins, or for the owner of the notification (obj.club_user).
     - Safe methods are allowed for everyone.
     """
     def has_permission(self, request, view):
@@ -30,7 +30,7 @@ class IsNationalForPostDelete(BasePermission):
         if request.method == "DELETE":
             return (
                 getattr(request.user, "role", None) in ["main_admin", "superuser"]
-                or obj.dojo == request.user  # owner check
+                or obj.club_user == request.user  # owner check
             )
         return True
 
@@ -60,7 +60,7 @@ class IsPayingUserorAdminForGet(BasePermission):
         if request.method in SAFE_METHODS:
             return bool(request.user and request.user.is_authenticated and (request.user.role == 'main_admin' 
                                                                             or request.user.role == 'superuser' 
-                                                                            or request.user.role == 'subed_dojo'))
+                                                                            or request.user.role == 'subed_club'))
     
 
 class IsAdminRoleorHigher(BasePermission):
@@ -95,8 +95,8 @@ class AthletePermission(BasePermission):
     """
     Permission used for Athletes and Teams.
     - Admin-like users (main_admin, single_admin, superuser) have access to everything.
-    - Paying users (subed_dojo) have access to SAFE_METHODS, PUT, PATCH.
-    - Free users (free_dojo) only can GET.
+    - Paying users (subed_club) have access to SAFE_METHODS, PUT, PATCH.
+    - Free users (free_club) only can GET.
     - All others are denied.
     """
     def has_permission(self, request, view):
@@ -107,12 +107,12 @@ class AthletePermission(BasePermission):
         if role in ['main_admin', 'single_admin', 'superuser']:
             return True
 
-        if role == 'subed_dojo':
+        if role == 'subed_club':
             if request.method in SAFE_METHODS or request.method in ["PUT", "PATCH"]:
                 return True
             return False
         
-        if role == "free_dojo":
+        if role == "free_club":
             return bool(request.method in SAFE_METHODS)
 
         return False

@@ -1,8 +1,8 @@
 from rest_framework import serializers
 import registration.models as models
 from core.serializers import UsersSerializer
-from dojos.utils.utils import calc_age
-from dojos.models import Event
+from core.utils.utils import calc_age
+from events.models import Event
 from registration.utils.utils import get_comp_age
 from decouple import config
 import datetime
@@ -13,7 +13,7 @@ import datetime
 class AthletesSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     age = serializers.SerializerMethodField()
-    dojo = UsersSerializer()
+    club = UsersSerializer()
 
     class Meta:
         model = models.Athlete
@@ -34,26 +34,26 @@ class AthletesSerializer(serializers.ModelSerializer):
 
 
 class CompactAthletesSerializer(serializers.ModelSerializer):
-    dojo = serializers.SerializerMethodField()
+    club = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Athlete
-        fields = ["id" ,"first_name", "last_name", "gender", "dojo"]
+        fields = ["id" ,"first_name", "last_name", "gender", "club"]
 
-    def get_dojo(self, obj):
-        return obj.dojo.username
+    def get_club(self, obj):
+        return obj.club.username
 
 
 class CompactCategorizedAthletesSerializer(serializers.ModelSerializer):
     category = serializers.SerializerMethodField()
-    dojo = serializers.SerializerMethodField()
+    club = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Athlete
-        fields = ["id" ,"first_name", "last_name", "gender", "category", "dojo"]
+        fields = ["id" ,"first_name", "last_name", "gender", "category", "club"]
 
-    def get_dojo(self, obj):
-        return obj.dojo.username
+    def get_club(self, obj):
+        return obj.club.username
     
     def get_category(self, obj):
         """Sends the category of each athlete if a category is provided. 
@@ -165,7 +165,7 @@ class CreateAthleteSerializer(serializers.ModelSerializer):
 class UpdateAthleteSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Athlete
-        exclude = ("dojo", "id_number", )
+        exclude = ("club", "id_number", )
 
 
 ### Teams Serializer Classes
@@ -211,14 +211,7 @@ class UpdateTeamsSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = models.Team
-        exclude = ("dojo", "team_number", "match_type", "category", "gender", "competition", )
-
-### Dojos Serializer Classes
-
-class DojosSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Dojo
-        fields = "__all__"
+        exclude = ("club", "team_number", "match_type", "category", "gender", "competition", )
 
 
 ### Classifications Serializer Classes

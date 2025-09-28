@@ -1,18 +1,15 @@
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponseRedirect
 from django.views import View
 from django.views.generic import TemplateView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import Athlete, Team, Classification
 from .filters import AthletesFilters
-from dojos.models import Event, Notification
-from core.models import User
+from events.models import Event
+from core.models import User, Notification
 from core.permissions import AthletePermission
+import registration.serializers as serializers
+import events.serializers as event_serializers
 
 from rest_framework import viewsets, status
 from rest_framework.decorators import action, permission_classes
@@ -21,8 +18,7 @@ from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
-import registration.serializers as serializers
-import dojos.serializers as dojo_serializers
+
 
 # views for the athlets registrations
 
@@ -35,7 +31,7 @@ class MultipleSerializersMixIn:
 
 class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     # TODO: order get request by the category_index from the serializer
-    queryset=Athlete.objects.all()
+    queryset=Athlete.objects.all().order_by("id")
     serializer_class = serializers.AthletesSerializer
     # authentication_classes = [SessionAuthentication, BasicAuthentication]
     filter_backends = [DjangoFilterBackend]
@@ -51,18 +47,18 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         user = self.request.user
         if user.role == "main_admin" or user.role == "superuser" or user.role == "single_admin":
             # National-level user can see all athletes
-            return self.queryset.all().order_by("dojo", "first_name", "last_name")
+            return self.queryset.all().order_by("club", "first_name", "last_name")
 
-        if user.role == "subed_dojo":
-            # paying dojos user sees only their own dojo athletes
-            return self.queryset.filter(dojo=user).order_by("-creation_date", "first_name", "last_name")
+        if user.role == "subed_club":
+            # paying clubs user sees only their own club athletes
+            return self.queryset.filter(club=user).order_by("-creation_date", "first_name", "last_name")
         
         raise PermissionDenied("You do not have access to this data.")
 
     def get_serializer_class(self):
         if self.action == "retrieve":
             user = self.request.user
-            if user.role in ["free_dojo", "subed_dojo"]:
+            if user.role in ["free_club", "subed_club"]:
                 return serializers.NotAdminLikeTypeAthletesSerializer
             return serializers.AthletesSerializer
         
@@ -81,9 +77,9 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             last_athlete = Athlete.objects.all().order_by("id_number").last()
             id_number = (last_athlete.id_number if last_athlete else 0) + 1
         
-        dojo = serializer.validated_data.get('dojo')
-        user = User.objects.get(username=dojo)
-        Notification.objects.create(dojo=user, 
+        club = serializer.validated_data.get('club')
+        user = User.objects.get(username=club)
+        Notification.objects.create(club_user=user, 
                                     notification=f"Um novo atleta ({first_name} {last_name}) acabou de ser criado. Verifique os seus dados e adicione um peso caso necessário.",
                                     urgency="yellow",
                                     can_remove=True,
@@ -94,13 +90,13 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     @action(detail=False, methods=["get"], url_path="last_five")
     def last_five(self, request):
         # TODO: add authentication
-        last_five = Athlete.objects.filter(dojo=request.user).order_by('creation_date')[:5]
+        last_five = Athlete.objects.filter(club=request.user).order_by('creation_date')[:5]
         serializer = serializers.AthletesSerializer(last_five, many=True)
         return Response(serializer.data)
 
     @action(detail=False, methods=['delete'], url_path="delete_all")
     def delete_all(self, request):
-        deleted_count, _ = Athlete.objects.filter(dojo=request.user).delete()
+        deleted_count, _ = Athlete.objects.filter(club=request.user).delete()
         if deleted_count <= 1:
             return Response(
                 {"message": "Atleta eliminado"},
@@ -129,7 +125,7 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         # Difference = unregistered
         unregistered = event_disciplines.exclude(id__in=registered.values_list('id', flat=True))
 
-        serializer = dojo_serializers.DisciplinesCompactSerializer(unregistered, many=True)
+        serializer = event_serializers.DisciplinesCompactSerializer(unregistered, many=True)
         return Response(serializer.data)
 
 
@@ -145,18 +141,18 @@ class TeamsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     }
 
     def get_queryset(self):
-        return self.queryset.filter(dojo=self.request.user)
+        return self.queryset.filter(club=self.request.user)
 
     @action(detail=False, methods=["get"], url_path="last_five")
     def last_five(self, request):
         # TODO: add authentication
-        last_five = Team.objects.filter(dojo=request.user).order_by('creation_date')[:5]
+        last_five = Team.objects.filter(club=request.user).order_by('creation_date')[:5]
         serializer = serializers.TeamsSerializer(last_five, many=True)
         return Response(serializer.data)
 
     @action(detail=False, methods=['delete'], url_path="delete_all")
     def delete_all(self, request):
-        deleted_count, _ = Team.objects.filter(dojo=request.user).delete()
+        deleted_count, _ = Team.objects.filter(club=request.user).delete()
         if deleted_count <= 1:
             return Response(
                 {"message": "Equipa eliminada"},
@@ -200,6 +196,9 @@ class ClassificationsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             else:
                 final_classification[competition].append(comp_dict)
 
+        if final_classification == {}:
+            return Response([])
+        
         return Response([final_classification])
     
     @action(detail=False, methods=["get"], url_path="last_comp_quali")

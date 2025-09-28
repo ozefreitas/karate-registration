@@ -1,6 +1,7 @@
 from django.db import models
-from dojos.models import Discipline
+
 from core.models import Category
+from events.models import Discipline
 from registration.models import Athlete
 from core.constants import GENDERS
 

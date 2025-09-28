@@ -1,6 +1,5 @@
 from rest_framework import serializers
-import dojos.models as models
-from .models import Category, User, SignupToken, RequestedAcount, RequestPasswordReset
+from .models import Category, User, SignupToken, RequestedAcount, RequestPasswordReset, Notification
 
 class UsersSerializer(serializers.ModelSerializer):
     class Meta:
@@ -70,7 +69,7 @@ class RegisterUserSerializer(serializers.ModelSerializer):
 
 
 class PasswordRequestsSerializer(serializers.ModelSerializer):
-    dojo_user = CompactUserSerializer()
+    club_user = CompactUserSerializer()
 
     class Meta:
         model = RequestPasswordReset
@@ -127,3 +126,14 @@ class CreateCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = "__all__"
+
+
+
+class NotificationsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = "__all__"
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.fields["club_user"].queryset = User.objects.filter(role__in=["free_club", "subed_club"])

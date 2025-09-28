@@ -2,10 +2,12 @@ asgiref==3.8.1
 attrs==25.3.0
 autobahn==24.4.2
 Automat==25.4.16
+Brotli==1.1.0
 certifi==2025.6.15
 cffi==1.17.1
 channels==4.2.2
 charset-normalizer==3.4.2
+click==8.3.0
 constantly==23.10.4
 cryptography==45.0.5
 daphne==4.2.1
@@ -15,8 +17,11 @@ django-cors-headers==4.7.0
 django-filter==25.1
 django-view-breadcrumbs==2.5.1
 djangorestframework==3.16.0
+djangorestframework_simplejwt==5.5.1
 drf-spectacular==0.28.0
 et_xmlfile==2.0.0
+gunicorn==23.0.0
+h11==0.16.0
 hyperlink==21.0.0
 idna==3.10
 incremental==24.7.2
@@ -25,12 +30,14 @@ jsonschema==4.24.0
 jsonschema-specifications==2025.4.1
 nanoid==2.0.0
 openpyxl==3.1.5
+packaging==25.0
 pillow==11.2.1
 psycopg2==2.9.10
 psycopg2-binary==2.9.10
 pyasn1==0.6.1
 pyasn1_modules==0.4.2
 pycparser==2.22
+PyJWT==2.10.1
 pyOpenSSL==25.1.0
 python-decouple==3.8
 PyYAML==6.0.2
@@ -45,4 +52,6 @@ txaio==25.6.1
 typing_extensions==4.14.0
 uritemplate==4.2.0
 urllib3==2.5.0
+uvicorn==0.37.0
+whitenoise==6.11.0
 zope.interface==7.2

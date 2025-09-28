@@ -6,4 +6,4 @@ class DojosConfig(AppConfig):
     name = 'dojos'
 
     def ready(self):
-        import dojos.signals
+        import backend.clubs.signals

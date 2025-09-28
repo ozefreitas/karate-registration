@@ -1,16 +1,21 @@
 from django.urls import path, include
 from . import views
-from dojos.views import rules
 from rest_framework import routers
 
 from rest_framework.authtoken.views import obtain_auth_token
+from django.urls import path
+from rest_framework_simplejwt.views import TokenRefreshView
+
 
 router = routers.DefaultRouter()
 router.register(r'categories', views.CategoriesViewSet, basename='categories')
 router.register(r'request_acount', views.RequestedAcountViewSet, basename='request-acount')
+router.register(r'notifications', views.NotificationViewSet, basename='notifications')
 
 urlpatterns = [
     path('', include(router.urls)),
+    path("auth/token/", views.CustomTokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("auth/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path('sign_up/generate_token/', views.sign_up_token, name="generate-token"),
     path('sign_up/get_token_username/', views.get_token_username, name="token-username"),
     path('sign_up/get_token_by_username/', views.get_token_by_username, name="username-token"),
@@ -28,4 +33,6 @@ urlpatterns = [
     path('me/', views.UserDetailView.as_view(), name="user-detail"),
     path('logout/', views.LogoutView.as_view(), name="user-logout"),
     path('users/', views.users, name="users"),
+
+    path('club_notifications/', views.notifications, name="notifications"),
 ]

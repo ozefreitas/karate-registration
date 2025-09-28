@@ -5,18 +5,23 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.urls import reverse
 from django.db.models import Q
+from django_filters.rest_framework import DjangoFilterBackend
 
-from core.permissions import IsAuthenticatedOrReadOnly, IsUnauthenticatedForPost, IsNationalForPostDelete, IsAdminRoleorHigher
+from .filters import NotificationsFilters
+from core.permissions import IsAuthenticatedOrReadOnly, IsUnauthenticatedForPost, IsNationalForPostDelete, IsAdminRoleorHigher, IsPayingUserorAdminForGet
 from .models import Category, SignupToken, RequestedAcount, User, RequestPasswordReset
-from registration.models import Dojo
-from dojos.models import Notification
-from . import serializers
+from clubs.models import Club
+from .models import Notification
+from . import serializers as CoreSerializers
 
+from rest_framework import serializers
 from rest_framework.decorators import action, permission_classes, api_view
 from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
 from rest_framework import viewsets, filters, status, views
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.response import Response
 
 # Create your views here.
 
@@ -25,16 +30,44 @@ class MultipleSerializersMixIn:
 
     def get_serializer_class(self):
         return self.serializer_classes.get(self.action, self.serializer_class)
+
+
+class NotificationViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
+    queryset=Notification.objects.all()
+    serializer_class=CoreSerializers.NotificationsSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly, IsNationalForPostDelete]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = NotificationsFilters
+
+    # serializer_classes = {
+    #     "create": CoreSerializers.CreateEventSerializer,
+    #     "update": CoreSerializers.UpdateEventSerializer
+    # }
+
+    def get_queryset(self):
+        user = self.request.user
+        if getattr(user, "role", None) in ["main_admin", "superuser"]:
+            return Notification.objects.all().order_by("created_at")
+        return Notification.objects.filter(club_user=user) .order_by("created_at")
+
+
+@api_view(['GET'])
+# @authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated, IsPayingUserorAdminForGet])
+def notifications(request):
+    notifications = Notification.objects.filter(club_user=request.user)
+    serializer = CoreSerializers.NotificationsSerializer(notifications, many=True)
+    return Response(serializer.data)
     
 
 class CategoriesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Category.objects.all().order_by("min_age")
-    serializer_class=serializers.CategorySerializer
+    serializer_class=CoreSerializers.CategorySerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     serializer_classes = {
-        "create": serializers.CreateCategorySerializer,
-        "retrieve": serializers.CompactCategorySerializer
+        "create": CoreSerializers.CreateCategorySerializer,
+        "retrieve": CoreSerializers.CompactCategorySerializer
     }
 
     @action(detail=False, methods=['delete'], url_path="delete_all")
@@ -55,28 +88,28 @@ class CategoriesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
 class RequestedAcountViewSet(viewsets.ModelViewSet):
     queryset=RequestedAcount.objects.all()
-    serializer_class=serializers.RequestedAcountSerializer
+    serializer_class=CoreSerializers.RequestedAcountSerializer
     permission_classes = [IsUnauthenticatedForPost]
 
     def perform_create(self, serializer):
         username = serializer.validated_data.get('username')
 
         try:
-            dojo = Dojo.objects.get(dojo=username)
-        except Dojo.DoesNotExist:
-            raise serializers.ValidationError(f"No Dojo found with dojo '{username}'")
+            club_name = Club.objects.get(name=username)
+        except Club.DoesNotExist:
+            raise serializers.ValidationError(f"No Club found with '{username}' username")
 
-        if dojo.is_registered:
-            raise serializers.ValidationError(f"Dojo '{username}' is already registered.")
+        if club_name.is_registered:
+            raise serializers.ValidationError(f"Club '{username}' is already registered.")
 
         # Mark as registered
-        dojo.is_registered = True
-        dojo.save()
-        if dojo.is_admin:
+        club_name.is_registered = True
+        club_name.save()
+        if club_name.is_admin:
             serializer.save()
         else:
             admin_user = User.objects.get(role="main_admin")
-            Notification.objects.create(dojo=admin_user, 
+            Notification.objects.create(name=admin_user, 
                                         notification=f'Um pedido de criação de conta com o username {username} foi inciado. Dirija-se para a área de Definições na aba "Gestor de Contas".',
                                         urgency="red",
                                         type="request", 
@@ -87,10 +120,10 @@ class RequestedAcountViewSet(viewsets.ModelViewSet):
 
     def perform_destroy(self, instance):
         with transaction.atomic():
-            dojo = Dojo.objects.filter(dojo=instance.username).first()
-            if dojo:
-                dojo.is_registered = False
-                dojo.save()
+            club_name = Club.objects.filter(name=instance.username).first()
+            if club_name:
+                club_name.is_registered = False
+                club_name.save()
 
             Notification.objects.filter(
                 type="request",
@@ -101,7 +134,7 @@ class RequestedAcountViewSet(viewsets.ModelViewSet):
 
         
 @extend_schema(
-        request=serializers.GenerateTokenSerializer,
+        request=CoreSerializers.GenerateTokenSerializer,
         responses={201: None, 400: None},
         description="Generate a unique token with an expiration date to allow for sign up."
     )
@@ -115,7 +148,7 @@ def sign_up_token(request):
     return Response({"username": username, "token": str(token.token)})
 
 @extend_schema(
-        request=serializers.TokenSerializer,
+        request=CoreSerializers.TokenSerializer,
         responses={200: None, 400: None},
         description="Given the token provided in the URL, simply return the username associated with it."
     )
@@ -128,7 +161,7 @@ def get_token_username(request):
     return Response({"username": token_obj.username})
 
 @extend_schema(
-        request=serializers.UsernameSerializer,
+        request=CoreSerializers.UsernameSerializer,
         responses={200: None, 400: None},
         description="Given a username with a token, returns the token. This is usefull for the admin to go back and get the token again if the page reloads."
     )
@@ -180,22 +213,21 @@ class LogoutView(views.APIView):
 
 class RegisterView(views.APIView):
     @extend_schema(
-        request=serializers.RegisterUserSerializer,
+        request=CoreSerializers.RegisterUserSerializer,
         responses={201: None, 400: None},
         description="Register a new user with username, email and password."
     )
     def post(self, request):
-        serializer = serializers.RegisterUserSerializer(data=request.data)
+        serializer = CoreSerializers.RegisterUserSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            club_obj = Dojo.objects.get(dojo=serializer.validated_data.get('username'))
+            club_obj = Club.objects.get(name=serializer.validated_data.get('username'))
             if club_obj.is_admin:
                 serializer.save()
+                RequestedAcount.objects.filter(username=serializer.validated_data.get('username')).delete()
                 return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
             else:
-                request_obj = RequestedAcount.objects.get(username=serializer.validated_data.get('username'))
-                request_obj.delete()
-                notification_obj = Notification.objects.get(type="request", request_acount=serializer.validated_data.get('username'))
-                notification_obj.delete()
+                RequestedAcount.objects.filter(username=serializer.validated_data.get('username')).delete()
+                Notification.objects.filter(type="request", request_acount=serializer.validated_data.get('username')).delete()
                 serializer.save()
                 return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -209,10 +241,10 @@ def users(request):
     username = request.query_params.get('username', None)
     if username:
         user = User.objects.get(username=username)
-        serializer = serializers.UsersSerializer(user)
+        serializer = CoreSerializers.UsersSerializer(user)
     else:
-        users = User.objects.filter(role__in=["free_dojo", "subed_dojo"])
-        serializer = serializers.UsersSerializer(users, many=True)
+        users = User.objects.filter(role__in=["free_club", "subed_club"])
+        serializer = CoreSerializers.UsersSerializer(users, many=True)
     return Response(serializer.data)
 
 
@@ -222,7 +254,7 @@ def users(request):
 ###############
 
 @extend_schema(
-        request=serializers.PasswordRequestsSerializer,
+        request=CoreSerializers.PasswordRequestsSerializer,
         responses={200: None, 400: None},
         description="Returns all the current requests for password resets."
     )
@@ -231,15 +263,15 @@ def users(request):
 @permission_classes([IsAdminRoleorHigher])
 def get_password_requests(request):
     requests = RequestPasswordReset.objects.all()
-    serializer = serializers.PasswordRequestsSerializer(requests, many=True)
+    serializer = CoreSerializers.PasswordRequestsSerializer(requests, many=True)
     return Response(serializer.data)
 
 
-@extend_schema(request=serializers.RequestPasswordResetSerializer, 
+@extend_schema(request=CoreSerializers.RequestPasswordResetSerializer, 
                description="Creates a new request for a password recovery.")
 @api_view(['POST'])
 def request_password_reset(request):
-    serializer = serializers.RequestPasswordResetSerializer(data=request.data)
+    serializer = CoreSerializers.RequestPasswordResetSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
         try:
             user = User.objects.get(
@@ -247,11 +279,11 @@ def request_password_reset(request):
             )
         except User.DoesNotExist:
             return Response({"error": "Não existe nenhum utilizador com estas credenciais!"}, status=status.HTTP_400_BAD_REQUEST)
-    if RequestPasswordReset.objects.filter(dojo_user=user).exists():
+    if RequestPasswordReset.objects.filter(club_user=user).exists():
         return Response({"error": "Já fez o pedido para recuperar a sua password. Aguarde por um email do seu administrador!"}, status=status.HTTP_400_BAD_REQUEST)
-    RequestPasswordReset.objects.create(dojo_user=user)
+    RequestPasswordReset.objects.create(club_user=user)
     admin_user = User.objects.get(role="main_admin")
-    Notification.objects.create(dojo=admin_user, 
+    Notification.objects.create(club_user=admin_user, 
                                     notification=f'Um pedido de recuperção de password de {user.username} foi inciado. Dirija-se para a área de Definições na aba "Gestor de Contas" imediatamente!',
                                     urgency="red",
                                     type="reset", 
@@ -260,14 +292,14 @@ def request_password_reset(request):
 
 
 @extend_schema(
-        request=serializers.UsernameSerializer,
+        request=CoreSerializers.UsernameSerializer,
         responses={201: None, 400: None},
         description="Generate a unique url for password recovery."
     )
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsAdminRoleorHigher])
 def generate_password_recovery_url(request):
-    serializer = serializers.UsernameSerializer(data=request.data)
+    serializer = CoreSerializers.UsernameSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
         user = User.objects.get(id=serializer.validated_data.get('username'))
         uid = urlsafe_base64_encode(force_bytes(user.pk))
@@ -281,7 +313,7 @@ def generate_password_recovery_url(request):
 
 class PasswordResetConfirmAPI(views.APIView):
     @extend_schema(
-        request=serializers.PasswordSerializer,
+        request=CoreSerializers.PasswordSerializer,
         responses={201: None, 400: None},
         description="View that confirms the uidb64 and token from the requesting user, and checks if a password is provided in the payload."
     )
@@ -308,5 +340,29 @@ class PasswordResetConfirmAPI(views.APIView):
         user.set_password(new_password)
         user.save()
         Notification.objects.filter(type="reset", request_acount=user.username).delete()
-        RequestPasswordReset.objects.filter(dojo_user=user).delete()
+        RequestPasswordReset.objects.filter(club_user=user).delete()
         return Response({"success": True})
+
+
+#############
+# JWT Authentication
+#############
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        if response.status_code == 200:
+            refresh = response.data["refresh"]
+
+            # move refresh token to cookie
+            res = Response({"access": response.data["access"]})
+            res.set_cookie(
+                key="refresh_token",
+                value=refresh,
+                httponly=True,
+                secure=True,          # only HTTPS
+                samesite="Strict",    # CSRF protection
+                max_age=7*24*60*60,   # 7 days
+            )
+            return res
+        return response

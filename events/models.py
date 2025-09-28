@@ -1,20 +1,7 @@
 from django.db import models
 from django.utils.text import slugify
-from django.conf import settings
-from datetime import timedelta
-from django.utils import timezone
 
 # Create your models here.
-
-class Profile(models.Model):
-    dojo = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    image = models.ImageField("Imagem de perfil", default='skip-logo.png', upload_to='profile_pictures')
-    dojo_contact = models.IntegerField("Contacto do Dojo", default=123456789)
-    cellphone_number = models.IntegerField("Número de telemóvel pessoal", default=123456789)
-
-    def __str__(self):
-        return f'{self.dojo.username} profile'
-
 
 class Event(models.Model):
     SEASONS = {
@@ -90,15 +77,6 @@ class Discipline(models.Model):
         return '{} {}'.format(self.event.name, self.name)
 
 
-class DojosRatingAudit(models.Model):
-    dojo = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, editable=False)
-    event = models.ForeignKey(Event, on_delete=models.CASCADE, editable=False)
-    rating = models.IntegerField("Avaliação", default=0, editable=False)
-
-    def __str__(self):
-        return '{} {} rating'.format(self.dojo, self.event)
-
-
 class FeedbackData(models.Model):
     first_name = models.CharField("Primeiro Nome", max_length=100)
     last_name = models.CharField("Último Nome", max_length=100)
@@ -109,43 +87,7 @@ class FeedbackData(models.Model):
         return '{} {}'.format(self.first_name, self.last_name)
 
 
-class PasswordConfirmReset(models.Model):
-    new_password1 = models.CharField("Palavra Passe", max_length=36)
-    new_password2 = models.CharField("Repetir Palavra Passe", max_length=36)
-
-
 class Announcement(models.Model):
     message = models.TextField()
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
-
-
-class Notification(models.Model):
-    notification = models.TextField()
-
-    class URGENCY_TYPE(models.TextChoices):
-        NONE = "none", "None"
-        GREEN = "green", "Green"
-        YELLOW = "yellow", "Yellow"
-        ORANGE = "orange", "Orange"
-        RED = "red", "Red"
-
-    class TYPE(models.TextChoices):
-        NONE = "none", "None"
-        REQ = "request", "Request"
-        RES = "reset", "Reset"
-        CREATE_ATHLETE = "create_athlete", "Create Athlete"
-        RATE_EVENT = "rate_event", "Rate Event"
-
-    urgency = models.CharField(max_length=10, choices=URGENCY_TYPE.choices, default=URGENCY_TYPE.NONE)
-    type = models.CharField(max_length=16, choices=TYPE.choices, default=TYPE.NONE)
-    request_acount = models.CharField(max_length=128, unique=True, null=True, blank=True)
-    dojo = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    can_remove = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def is_expired(self):
-        return self.created_at < timezone.now() - timedelta(days=30) 
-    
-    def __str__(self):
-        return '{} {} notification'.format(self.dojo, self.urgency)

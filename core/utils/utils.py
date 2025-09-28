@@ -1,6 +1,30 @@
-import datetime
-from ..models import Event
 from django.utils import timezone
+import datetime
+from events.models import Event
+
+def change_current_season(date = None):
+    date = date or timezone.now().date()
+    if date.month >= 8:
+        # From August to December, season is current_year/current_year+1
+        season_start = date.year
+        season_end = date.year + 1
+    else:
+        # From January to July, season is previous_year/current_year
+        season_start = date.year - 1
+        season_end = date.year
+    return f"{season_start}/{season_end}"
+
+
+def calc_age(method: str, birth_date, season: str) -> int:
+    year_of_birth = birth_date.year
+    age_at_comp = int(season) - year_of_birth
+    if method == "season":
+        if (birth_date.month, birth_date.day) > (8, 31):
+            age_at_comp -= 1
+        return age_at_comp
+    elif method == "civil":
+        return age_at_comp
+    
 
 def get_next_competition():
     today = datetime.date.today()
@@ -16,19 +40,6 @@ def get_next_competition():
     return next_comp
 
 
-def change_current_season(date = None):
-    date = date or timezone.now().date()
-    if date.month >= 8:
-        # From August to December, season is current_year/current_year+1
-        season_start = date.year
-        season_end = date.year + 1
-    else:
-        # From January to July, season is previous_year/current_year
-        season_start = date.year - 1
-        season_end = date.year
-    return f"{season_start}/{season_end}"
-
-
 def range_decoder(min_age: int, max_age: int):
     """Function that returns a range 
 
@@ -42,13 +53,3 @@ def range_decoder(min_age: int, max_age: int):
     some_range = range(min_age, max_age + 1)
     return some_range
 
-
-def calc_age(method: str, birth_date, season: str) -> int:
-    year_of_birth = birth_date.year
-    age_at_comp = int(season) - year_of_birth
-    if method == "season":
-        if (birth_date.month, birth_date.day) > (8, 31):
-            age_at_comp -= 1
-        return age_at_comp
-    elif method == "civil":
-        return age_at_comp

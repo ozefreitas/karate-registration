@@ -1,18 +1,18 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
-from .constants import GRADUATIONS, GENDERS
-import uuid
 from django.utils import timezone
-from datetime import timedelta
-
-# Create your models here.
-
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.core.exceptions import ValidationError
 from django.db.models import Q, UniqueConstraint
 
+
+from datetime import timedelta
+from .constants import GRADUATIONS, GENDERS
+import uuid
+
+# Create your models here.
 
 class User(AbstractUser):
     class Meta:
@@ -30,8 +30,8 @@ class User(AbstractUser):
         SUPERUSER = "superuser", "Superuser"
         MAINADMIN = "main_admin", "Main Admin"
         SINGLEADMIN = "single_admin", "Single Admin"
-        FREEDOJO = "free_dojo", "Dojo Free"
-        SUBEDDOJO = "subed_dojo", "Dojo Subscription"
+        FREECLUB = "free_club", "Club Free"
+        SUBEDCLUB = "subed_club", "Club Subscription"
 
     class Tier(models.TextChoices):
         BASE = "base", "Base"
@@ -41,7 +41,7 @@ class User(AbstractUser):
     role = models.CharField(
         max_length=32,
         choices=Role.choices,
-        default=Role.FREEDOJO,
+        default=Role.FREECLUB,
     )
 
     tier = models.CharField(
@@ -129,11 +129,11 @@ class SignupToken(models.Model):
     
 
 class RequestPasswordReset(models.Model):
-    dojo_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reset_requests", editable=False)
+    club_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reset_requests", editable=False)
     requested_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self): 
-        return "{} password reset request".format(self.dojo_user)
+        return "{} password reset request".format(self.club_user)
 
 
 class Category(models.Model):
@@ -156,3 +156,34 @@ class Category(models.Model):
 
 class Ranking(models.Model):
     pass
+
+
+class Notification(models.Model):
+    notification = models.TextField()
+
+    class URGENCY_TYPE(models.TextChoices):
+        NONE = "none", "None"
+        GREEN = "green", "Green"
+        YELLOW = "yellow", "Yellow"
+        ORANGE = "orange", "Orange"
+        RED = "red", "Red"
+
+    class TYPE(models.TextChoices):
+        NONE = "none", "None"
+        REQ = "request", "Request"
+        RES = "reset", "Reset"
+        CREATE_ATHLETE = "create_athlete", "Create Athlete"
+        RATE_EVENT = "rate_event", "Rate Event"
+
+    urgency = models.CharField(max_length=10, choices=URGENCY_TYPE.choices, default=URGENCY_TYPE.NONE)
+    type = models.CharField(max_length=16, choices=TYPE.choices, default=TYPE.NONE)
+    request_acount = models.CharField(max_length=128, unique=True, null=True, blank=True)
+    club_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    can_remove = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def is_expired(self):
+        return self.created_at < timezone.now() - timedelta(days=30) 
+    
+    def __str__(self):
+        return '{} {} notification'.format(self.club_user, self.urgency)

@@ -38,7 +38,7 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'jpsfreitas12@gmail.com'
 
 
-ALLOWED_HOSTS = ['karatescorappregistration.pythonanywhere.com', "127.0.0.1"]
+ALLOWED_HOSTS = ['karatescorappregistration.pythonanywhere.com', "127.0.0.1", "localhost"]
 
 # Application definition
 
@@ -53,12 +53,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_filters',
     'rest_framework',
+    "rest_framework_simplejwt",
     'drf_spectacular',
     'rest_framework.authtoken',
     'corsheaders',
     'core',
     'registration',
-    'dojos',
+    'events',
+    'clubs',
     'draw',
     "view_breadcrumbs",
 ]
@@ -72,9 +74,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    'dojos.middleware.CompetitionEndedMiddleware',
-    'dojos.middleware.NoListedCompetitionsMiddleware',
-    'dojos.middleware.MaintenanceModeMiddleware'
+    'events.middleware.CompetitionEndedMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware'
 ]
 
 ROOT_URLCONF = 'karate_registration.urls'
@@ -97,9 +98,18 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PAGINATION_CLASS': 'core.pagination.StandardResultsSetPagination',
     'PAGE_SIZE': 10
+}
+
+from datetime import timedelta
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS": True,  # issue new refresh token each time
+    "BLACKLIST_AFTER_ROTATION": True,
 }
 
 TEMPLATES = [
@@ -164,12 +174,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-if DEBUG:
-    STATIC_URL = 'static/'
-    STATICFILES_DIRS = [BASE_DIR / "registration/static"]
-else:
-    STATIC_URL = 'static_root/registration/'
-    STATIC_ROOT = '/home/karatescorappregistration/karate-registration/static_root/registration/'
+STATIC_URL = '/static/'
+
+# This production code might break development mode, so we check whether we're in DEBUG mode
+if not DEBUG:
+    # Tell Django to copy static assets into a path called `staticfiles` (this is specific to Render)
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+    # Enable the WhiteNoise storage backend, which compresses static files to reduce disk use
+    # and renames the files with unique names for each version to support long-term caching
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'

@@ -1,6 +1,6 @@
 from django_filters import rest_framework as filters
 from registration.models import Athlete
-from dojos.models import Event
+from events.models import Event
 from django.db.models import Q, Count
 
 
