@@ -63,7 +63,7 @@ try:
     #         new_athlete["skip_number"] = ""
     #     new_individuals.append(new_athlete)
 
-    # # sort by dojo name
+    # # sort by dojo name, and then name of the member
     # sorted_data = sorted(new_individuals, key=lambda x: (x["team"], x["name"]))
 
     # # add the number key with 3 filling characters as string

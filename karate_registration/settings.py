@@ -38,7 +38,7 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'jpsfreitas12@gmail.com'
 
 
-ALLOWED_HOSTS = ['karatescorappregistration.pythonanywhere.com', "127.0.0.1", "localhost"]
+ALLOWED_HOSTS = ['karatescorappregistration.pythonanywhere.com', "127.0.0.1", "localhost", "karate-registration.onrender.com"]
 
 # Application definition
 
