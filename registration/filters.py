@@ -11,14 +11,15 @@ class AthletesFilters(filters.FilterSet):
     in_gender = filters.CharFilter(method='filter_athletes_in_gender')
 
     def filter_athletes_not_in_event(self, queryset, name, value):
-        event = Event.objects.filter(id=value).first()
-        number_disciplines = event.disciplines.count()
+        # event = Event.objects.filter(id=value).first()
+        # number_disciplines = event.disciplines.count()
 
-        # no disciplines just returns the ones still not in that event
-        if number_disciplines == 0:
-            return queryset.exclude(general_events__id=value)
+        # # no disciplines just returns the ones still not in that event
+        # if number_disciplines == 0:
+        #     return queryset.exclude(general_events__id=value)
 
-        else: return queryset
+        # else: 
+            return queryset
         
         # # if the event is an encounter all students are retrieved
         # if event.encounter:
