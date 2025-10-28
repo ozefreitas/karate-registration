@@ -13,3 +13,5 @@ python manage.py migrate
 
 # Create superuser with env variables from render
 python manage.py createsuperuser_if_missing
+
+# Populate athletes

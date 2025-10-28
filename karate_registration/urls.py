@@ -38,7 +38,7 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     # API visualization
-    urlspatterns.append(
+    urlpatterns.extend(
         (
             path('schema/', SpectacularAPIView.as_view(), name='schema'),
             path('schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
