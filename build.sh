@@ -12,9 +12,4 @@ python manage.py collectstatic --no-input
 python manage.py migrate
 
 # Create superuser with env variables from render
-python manage.py shell -c "from django.contrib.auth import get_user_model; User=get_user_model(); \
-import os; \
-if not User.objects.filter(is_superuser=True).exists(): \
-    User.objects.create_superuser(os.environ['DJANGO_SUPERUSER_USERNAME'], os.environ['DJANGO_SUPERUSER_EMAIL'], os.environ['DJANGO_SUPERUSER_PASSWORD']); \
-else: \
-    print('Superuser already exists, skipping creation.')"
+python manage.py createsuperuser_if_missing
