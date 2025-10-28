@@ -24,10 +24,6 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    # API visualization
-    path('schema/', SpectacularAPIView.as_view(), name='schema'),
-    path('schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-    
     # Endpoint url patterns
     path('', include("clubs.urls")),
     path('', include("events.urls")),
@@ -41,3 +37,11 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    # API visualization
+    urlspatterns.append(
+        (
+            path('schema/', SpectacularAPIView.as_view(), name='schema'),
+            path('schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+        )
+    )
+
