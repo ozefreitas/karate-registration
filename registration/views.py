@@ -31,12 +31,11 @@ class MultipleSerializersMixIn:
 
 class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     # TODO: order get request by the category_index from the serializer
-    queryset=Athlete.objects.all().order_by("id")
+    queryset=Athlete.objects.all().order_by("first_name")
     serializer_class = serializers.AthletesSerializer
-    # authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [AthletePermission]
     filter_backends = [DjangoFilterBackend]
     filterset_class = AthletesFilters
-    permission_classes = [IsAuthenticated, AthletePermission]
 
     serializer_classes = {
         "create": serializers.CreateAthleteSerializer,
