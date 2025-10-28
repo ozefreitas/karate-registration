@@ -82,8 +82,10 @@ ROOT_URLCONF = 'karate_registration.urls'
 
 ASGI_APPLICATION = 'karate_registration.asgi.application'
 
+# React frontend URL
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # React frontend URL
+    "https://martialartsregistration.netlify.app",
+    "http://localhost:5173",  
 ]
 
 CHANNEL_LAYERS = {
