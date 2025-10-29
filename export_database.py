@@ -41,7 +41,7 @@ try:
     # new_individuals = []
 
     # for individual in individuals:
-    #     current_individual = athletes_by_id[individual["athlete_id"]]
+    #     current_individual = athletes_by_id[individual["member_id"]]
     #     new_athlete = {}
     #     for key, value in individual.items():
     #         if key == "dojo_id":

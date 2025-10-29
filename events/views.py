@@ -83,10 +83,10 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         event = self.get_object()
         serializer = serializers.AddAthleteSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        athlete_id = serializer.validated_data["athlete_id"]
+        member_id = serializer.validated_data["member_id"]
 
         try:
-            athlete = Athlete.objects.get(id=athlete_id)
+            athlete = Athlete.objects.get(id=member_id)
             event.individuals.add(athlete)
 
             return Response({"message": "Atleta(s) adicionado(a)(s) a este evento!"}, status=status.HTTP_200_OK)
@@ -98,10 +98,10 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         event = self.get_object()
         serializer = serializers.DeleteAthleteSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        athlete_id = serializer.validated_data["athlete_id"]
+        member_id = serializer.validated_data["member_id"]
 
         try:
-            athlete = Athlete.objects.get(id=athlete_id)
+            athlete = Athlete.objects.get(id=member_id)
             event.individuals.remove(athlete)
 
             return Response({"message": "Atleta(s) removido(a)(s) deste evento!"}, status=status.HTTP_200_OK)
@@ -301,12 +301,12 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         discipline = self.get_object()
         serializer = serializers.AddDisciplineAthleteSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        athlete_id = serializer.validated_data["athlete_id"]
+        member_id = serializer.validated_data["member_id"]
         # will be used to check the season events is taking place in
         event_id = serializer.validated_data["event_id"]
 
         try:
-            athlete = Athlete.objects.get(id=athlete_id)
+            athlete = Athlete.objects.get(id=member_id)
             event = Event.objects.get(id=event_id)
             season = event.season.split("/")[0]
             event_age = get_comp_age(athlete.birth_date) if age_method == "true" else calc_age(age_method, athlete.birth_date, season)
@@ -378,10 +378,10 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         discipline = self.get_object()
         serializer = serializers.DeleteAthleteSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        athlete_id = serializer.validated_data["athlete_id"]
+        member_id = serializer.validated_data["member_id"]
 
         try:
-            athlete = Athlete.objects.get(id=athlete_id)
+            athlete = Athlete.objects.get(id=member_id)
             discipline.individuals.remove(athlete)
 
             return Response({"message": "Atleta removido desta Modalidade"}, status=status.HTTP_200_OK)

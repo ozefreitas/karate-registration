@@ -148,16 +148,16 @@ class UpdateDisciplineSerializer(serializers.ModelSerializer):
 
 
 class AddAthleteSerializer(serializers.Serializer):
-    athlete_id = serializers.CharField()
+    member_id = serializers.CharField()
 
 
 class AddDisciplineAthleteSerializer(serializers.Serializer):
-    athlete_id = serializers.CharField()
+    member_id = serializers.CharField()
     event_id = serializers.CharField()
 
 
 class DeleteAthleteSerializer(serializers.Serializer):
-    athlete_id = serializers.CharField()
+    member_id = serializers.CharField()
 
 
 class AddCategorySerializer(serializers.Serializer):
