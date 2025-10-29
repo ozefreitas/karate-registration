@@ -1,0 +1,5258 @@
+[
+  {
+    "model": "registration.athlete",
+    "pk": "-A3Pv7O06u",
+    "fields": {
+      "first_name": "Adriana",
+      "last_name": "Leal",
+      "graduation": "7",
+      "birth_date": "2004-06-06",
+      "id_number": null,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 13,
+      "creation_date": "2025-06-06T07:00:09.440Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "-KUCXnPX6G",
+    "fields": {
+      "first_name": "Ana Mar",
+      "last_name": "Machado",
+      "graduation": "9",
+      "birth_date": "2011-06-30",
+      "id_number": null,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-05-06T07:42:34.938Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "-V80WTuvox",
+    "fields": {
+      "first_name": "Afonso",
+      "last_name": "Silva",
+      "graduation": "13",
+      "birth_date": "2012-01-30",
+      "id_number": 17756,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": 47,
+      "quotes": true,
+      "club": 31,
+      "creation_date": "2025-06-10T12:12:42.282Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "-fbEdhr3xX",
+    "fields": {
+      "first_name": "Carlos",
+      "last_name": "Silva",
+      "graduation": "6",
+      "birth_date": "1979-10-07",
+      "id_number": 15194,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 24,
+      "creation_date": "2025-06-10T21:10:31.827Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "-iuxRm4PP2",
+    "fields": {
+      "first_name": "Miguel",
+      "last_name": "Pinto",
+      "graduation": "12.5",
+      "birth_date": "2011-10-08",
+      "id_number": 17589,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 12,
+      "creation_date": "2025-05-07T21:58:15.328Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "-rV58cFc-O",
+    "fields": {
+      "first_name": "Manuel",
+      "last_name": "Cunha",
+      "graduation": "14.5",
+      "birth_date": "2016-08-26",
+      "id_number": 19157,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-06-11T22:03:27.350Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "-yrW87p1C8",
+    "fields": {
+      "first_name": "Ines",
+      "last_name": "Miranda",
+      "graduation": "14",
+      "birth_date": "2015-12-24",
+      "id_number": null,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 12,
+      "creation_date": "2025-06-06T11:10:12.292Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "-zBmbB0cSL",
+    "fields": {
+      "first_name": "Gabriela",
+      "last_name": "Maurício",
+      "graduation": "7",
+      "birth_date": "2008-06-13",
+      "id_number": 17923,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 33,
+      "creation_date": "2025-05-07T16:08:49.761Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "020uyjyIm4",
+    "fields": {
+      "first_name": "Leonor",
+      "last_name": "Araújo",
+      "graduation": "12",
+      "birth_date": "2009-09-06",
+      "id_number": 17796,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-05-06T22:44:36.965Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "06mTXPOLbF",
+    "fields": {
+      "first_name": "Alice",
+      "last_name": "Pinto",
+      "graduation": "14.5",
+      "birth_date": "2019-03-26",
+      "id_number": 18919,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-06-05T22:42:52.081Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "0FxaOZGIb1",
+    "fields": {
+      "first_name": "Dinis",
+      "last_name": "Araújo",
+      "graduation": "6",
+      "birth_date": "2008-03-08",
+      "id_number": 15075,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-05-05T15:42:18.707Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "0Op-opGBPt",
+    "fields": {
+      "first_name": "Luana",
+      "last_name": "Costa",
+      "graduation": "13",
+      "birth_date": "2014-09-28",
+      "id_number": 18332,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-06-04T23:29:10.995Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "0UQDIcohnt",
+    "fields": {
+      "first_name": "Andreia",
+      "last_name": "Rodrigues",
+      "graduation": "5",
+      "birth_date": "2002-03-13",
+      "id_number": 15290,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-05-05T15:36:50.617Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "0ilXNpskR1",
+    "fields": {
+      "first_name": "Francisca",
+      "last_name": "Pinto",
+      "graduation": "13",
+      "birth_date": "2014-07-19",
+      "id_number": null,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-05-06T08:06:40.541Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "0nTFNLttnC",
+    "fields": {
+      "first_name": "Margarida",
+      "last_name": "Neves",
+      "graduation": "14.5",
+      "birth_date": "2015-06-30",
+      "id_number": 18377,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 31,
+      "creation_date": "2025-05-07T19:25:54.099Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "0vFKHDNqNc",
+    "fields": {
+      "first_name": "Benedita",
+      "last_name": "Gonçalves",
+      "graduation": "14.5",
+      "birth_date": "2015-05-07",
+      "id_number": 18797,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 24,
+      "creation_date": "2025-05-05T11:33:29.739Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "1AyL_fm3ia",
+    "fields": {
+      "first_name": "Santiago",
+      "last_name": "Goldbach",
+      "graduation": "15",
+      "birth_date": "2018-02-22",
+      "id_number": 19163,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-05-07T00:02:46.187Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "1GQCYJxqcE",
+    "fields": {
+      "first_name": "Anabela",
+      "last_name": "Palomo",
+      "graduation": "11",
+      "birth_date": "2008-10-21",
+      "id_number": null,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 12,
+      "creation_date": "2025-05-07T22:13:00.531Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "1MsmoPgHVU",
+    "fields": {
+      "first_name": "Ana",
+      "last_name": "Alves",
+      "graduation": "6",
+      "birth_date": "2007-10-08",
+      "id_number": 15316,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-05-07T00:23:25.846Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "1eJWEdTFiZ",
+    "fields": {
+      "first_name": "Mariana",
+      "last_name": "Marques",
+      "graduation": "12.5",
+      "birth_date": "2017-05-24",
+      "id_number": 18416,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 30,
+      "creation_date": "2025-05-03T10:38:55.336Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "1ieOm89vsw",
+    "fields": {
+      "first_name": "Gabriela",
+      "last_name": "Durães",
+      "graduation": "5",
+      "birth_date": "2005-02-20",
+      "id_number": 14785,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-05-05T22:23:35.154Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "1m_d5jYZxS",
+    "fields": {
+      "first_name": "Sara",
+      "last_name": "Ribeiro",
+      "graduation": "11",
+      "birth_date": "2011-09-14",
+      "id_number": 15760,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 31,
+      "creation_date": "2025-05-07T21:16:58.908Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "1oYWOUZxfW",
+    "fields": {
+      "first_name": "Leonor",
+      "last_name": "Bourbon Vilas Boas",
+      "graduation": "10",
+      "birth_date": "2011-04-03",
+      "id_number": null,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 13,
+      "creation_date": "2025-06-06T06:45:16.647Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "1wOE8yjZCF",
+    "fields": {
+      "first_name": "Duarte",
+      "last_name": "Fernandes",
+      "graduation": "11.5",
+      "birth_date": "2013-11-26",
+      "id_number": 17219,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-05-06T22:32:02.966Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "28bXfTliMx",
+    "fields": {
+      "first_name": "Camila",
+      "last_name": "Rajão",
+      "graduation": "15",
+      "birth_date": "2017-05-26",
+      "id_number": null,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 31,
+      "creation_date": "2025-06-12T09:41:41.719Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "2End8mpYt8",
+    "fields": {
+      "first_name": "André",
+      "last_name": "Costa",
+      "graduation": "13",
+      "birth_date": "2011-08-05",
+      "id_number": null,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 12,
+      "creation_date": "2025-06-06T21:15:51.298Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "2O6h05cL-J",
+    "fields": {
+      "first_name": "Margarida",
+      "last_name": "Silva",
+      "graduation": "15",
+      "birth_date": "2012-09-21",
+      "id_number": 19360,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-06-05T13:58:50.070Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "2_KYM7jZUY",
+    "fields": {
+      "first_name": "Matilde",
+      "last_name": "Fernandes",
+      "graduation": "12.5",
+      "birth_date": "2015-09-30",
+      "id_number": 18056,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-06-11T22:04:30.154Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "2mZCj9stGR",
+    "fields": {
+      "first_name": "Laura",
+      "last_name": "Carvalho",
+      "graduation": "8",
+      "birth_date": "2008-01-10",
+      "id_number": 15305,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 33,
+      "creation_date": "2025-05-07T16:08:01.344Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "2pCuq0pChF",
+    "fields": {
+      "first_name": "Leonor",
+      "last_name": "Silva",
+      "graduation": "13",
+      "birth_date": "2014-07-14",
+      "id_number": 18256,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-05-06T22:58:46.364Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "2uQIULqHHV",
+    "fields": {
+      "first_name": "Sofia",
+      "last_name": "Salvador",
+      "graduation": "6",
+      "birth_date": "2006-03-26",
+      "id_number": 14852,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-06-04T10:29:49.948Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "38fc4cqWjn",
+    "fields": {
+      "first_name": "Leandro",
+      "last_name": "Picado",
+      "graduation": "6",
+      "birth_date": "2000-10-27",
+      "id_number": 16917,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 24,
+      "creation_date": "2025-05-05T10:59:38.165Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "3DTnNx62dQ",
+    "fields": {
+      "first_name": "Filipe",
+      "last_name": "Pereira",
+      "graduation": "8",
+      "birth_date": "2007-07-23",
+      "id_number": 15820,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-06-04T10:38:37.832Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "3GJoDPFkA7",
+    "fields": {
+      "first_name": "Yara",
+      "last_name": "Martins",
+      "graduation": "9",
+      "birth_date": "2010-10-23",
+      "id_number": 16786,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 20,
+      "creation_date": "2025-05-06T16:51:52.048Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "3Ke-KwDkqK",
+    "fields": {
+      "first_name": "Isaac",
+      "last_name": "Lourenço",
+      "graduation": "14",
+      "birth_date": "2017-07-09",
+      "id_number": 18981,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 15,
+      "creation_date": "2025-06-05T22:14:00.103Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "3PHcQYuaX8",
+    "fields": {
+      "first_name": "Gustavo",
+      "last_name": "Pinto",
+      "graduation": "11",
+      "birth_date": "2015-01-20",
+      "id_number": 18036,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-06-05T15:41:48.074Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "3T-I3QJntY",
+    "fields": {
+      "first_name": "Álvaro",
+      "last_name": "Abreu",
+      "graduation": "5",
+      "birth_date": "1996-11-29",
+      "id_number": 10337,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 12,
+      "creation_date": "2025-05-07T21:51:16.843Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "3a7vtX3Uh2",
+    "fields": {
+      "first_name": "Vitor",
+      "last_name": "Magalhães",
+      "graduation": "3",
+      "birth_date": "1978-11-11",
+      "id_number": 602,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 33,
+      "creation_date": "2025-05-07T16:11:55.040Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "3lIlS6GeoR",
+    "fields": {
+      "first_name": "Hugo",
+      "last_name": "Ferreira",
+      "graduation": "9",
+      "birth_date": "1998-04-28",
+      "id_number": 19241,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-06-04T10:41:12.294Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "3mmwnchFgz",
+    "fields": {
+      "first_name": "Nadia",
+      "last_name": "Tavares",
+      "graduation": "13",
+      "birth_date": "2012-06-05",
+      "id_number": 18542,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-05-06T07:34:30.741Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "3s_9A9mAsJ",
+    "fields": {
+      "first_name": "Afonso",
+      "last_name": "Pereira",
+      "graduation": "9",
+      "birth_date": "2008-03-21",
+      "id_number": 16249,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-05-06T22:05:04.519Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "45TbDCl2i9",
+    "fields": {
+      "first_name": "João",
+      "last_name": "Carvalho",
+      "graduation": "12.5",
+      "birth_date": "2025-05-06",
+      "id_number": 17927,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": 47,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-05-06T22:46:23.069Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "4J3c4gYZ71",
+    "fields": {
+      "first_name": "Leandro",
+      "last_name": "Cruz",
+      "graduation": "14.5",
+      "birth_date": "2017-02-19",
+      "id_number": 18999,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 20,
+      "creation_date": "2025-05-06T16:44:47.283Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "4KEI80Andl",
+    "fields": {
+      "first_name": "Tiago",
+      "last_name": "Moreira",
+      "graduation": "15",
+      "birth_date": "2016-06-20",
+      "id_number": 18940,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Misto",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-06-05T14:09:38.339Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "4MSH5OMgTB",
+    "fields": {
+      "first_name": "Pedro",
+      "last_name": "Junior",
+      "graduation": "15",
+      "birth_date": "2014-09-05",
+      "id_number": 18768,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 12,
+      "creation_date": "2025-06-11T10:59:36.282Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "4OcRRn6Q-u",
+    "fields": {
+      "first_name": "Jefferson",
+      "last_name": "Bandeira",
+      "graduation": "14",
+      "birth_date": "2016-08-08",
+      "id_number": 19141,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 15,
+      "creation_date": "2025-06-05T22:21:01.931Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "4PmaMGCVAf",
+    "fields": {
+      "first_name": "Iana",
+      "last_name": "Costa",
+      "graduation": "14",
+      "birth_date": "2014-11-10",
+      "id_number": 18334,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-05-05T22:29:42.649Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "4RhoAH2hZK",
+    "fields": {
+      "first_name": "Inês",
+      "last_name": "Ribeiro",
+      "graduation": "8",
+      "birth_date": "2010-10-07",
+      "id_number": 17495,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 15,
+      "creation_date": "2025-05-04T16:35:45.405Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "4Xu4AZBwNg",
+    "fields": {
+      "first_name": "Ruben",
+      "last_name": "Oliveira",
+      "graduation": "9.5",
+      "birth_date": "2013-02-10",
+      "id_number": 17419,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 34,
+      "creation_date": "2025-05-11T18:59:41.739Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "4eD_TwKB-X",
+    "fields": {
+      "first_name": "Matilde",
+      "last_name": "Vaz",
+      "graduation": "8",
+      "birth_date": "2006-08-26",
+      "id_number": 15828,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-05-06T21:52:58.975Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "4hPu0KdZcb",
+    "fields": {
+      "first_name": "Joao",
+      "last_name": "Anes",
+      "graduation": "14",
+      "birth_date": "2015-10-08",
+      "id_number": 18813,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-06-04T10:49:23.751Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "5-Sg7lafo4",
+    "fields": {
+      "first_name": "Alexandra",
+      "last_name": "Figueiredo",
+      "graduation": "12",
+      "birth_date": "2008-12-28",
+      "id_number": 18792,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 15,
+      "creation_date": "2025-06-11T14:20:32.149Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "50XseJ2937",
+    "fields": {
+      "first_name": "Leonor",
+      "last_name": "Ferreira",
+      "graduation": "14.5",
+      "birth_date": "2015-03-30",
+      "id_number": 18840,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Misto",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-06-05T13:51:06.357Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "54v-0hW39T",
+    "fields": {
+      "first_name": "Leandro",
+      "last_name": "Lima",
+      "graduation": "12",
+      "birth_date": "2010-01-25",
+      "id_number": 17626,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 33,
+      "creation_date": "2025-05-07T16:05:42.750Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "5DyAu96fKC",
+    "fields": {
+      "first_name": "Teresa",
+      "last_name": "Rodrigues",
+      "graduation": "14",
+      "birth_date": "2012-10-26",
+      "id_number": 19100,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-05-07T00:07:21.765Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "5DyQrJOBoV",
+    "fields": {
+      "first_name": "Francisco",
+      "last_name": "Ribeiro",
+      "graduation": "6",
+      "birth_date": "2002-07-14",
+      "id_number": 14194,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-06-11T21:08:38.746Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "5Fbtahnvzc",
+    "fields": {
+      "first_name": "Tiago",
+      "last_name": "Ferreira",
+      "graduation": "13",
+      "birth_date": "2011-07-27",
+      "id_number": 18273,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-06-04T10:35:23.222Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "5LNyVCTEiP",
+    "fields": {
+      "first_name": "João",
+      "last_name": "Silva",
+      "graduation": "8",
+      "birth_date": "2008-08-14",
+      "id_number": 15320,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": 65,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-05-06T21:50:41.826Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "5O3lO7ljNR",
+    "fields": {
+      "first_name": "João",
+      "last_name": "Abreu",
+      "graduation": "6",
+      "birth_date": "2006-01-19",
+      "id_number": 16996,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 34,
+      "creation_date": "2025-05-11T18:51:10.784Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "5SACQwPkcc",
+    "fields": {
+      "first_name": "Simão",
+      "last_name": "Cruz",
+      "graduation": "11",
+      "birth_date": "2011-01-20",
+      "id_number": 18280,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 20,
+      "creation_date": "2025-06-06T16:34:31.257Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "5XHgwpqEbN",
+    "fields": {
+      "first_name": "Pilar",
+      "last_name": "Pereira",
+      "graduation": "14",
+      "birth_date": "2016-06-19",
+      "id_number": 18917,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-05-05T22:51:53.796Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "5c4Cet5ixQ",
+    "fields": {
+      "first_name": "Maria",
+      "last_name": "Lira",
+      "graduation": "12.5",
+      "birth_date": "2015-05-13",
+      "id_number": 18405,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-05-05T22:39:18.238Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "5m8UTe4CrK",
+    "fields": {
+      "first_name": "Clara",
+      "last_name": "Miranda",
+      "graduation": "13",
+      "birth_date": "2010-12-17",
+      "id_number": 19089,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 15,
+      "creation_date": "2025-06-11T13:54:40.088Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "5vlmn2-Htl",
+    "fields": {
+      "first_name": "Miguel",
+      "last_name": "Gouveia",
+      "graduation": "12",
+      "birth_date": "2008-03-25",
+      "id_number": null,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 13,
+      "creation_date": "2025-05-02T17:32:11.317Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "60I9CH4M9e",
+    "fields": {
+      "first_name": "Joana",
+      "last_name": "Teixeira",
+      "graduation": "12",
+      "birth_date": "2014-05-07",
+      "id_number": 18352,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-05-06T23:08:00.036Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "61sbCMQC1E",
+    "fields": {
+      "first_name": "Duarte",
+      "last_name": "Sousa",
+      "graduation": "9.5",
+      "birth_date": "2012-11-07",
+      "id_number": 17420,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": 47,
+      "quotes": true,
+      "club": 34,
+      "creation_date": "2025-05-11T18:56:46.336Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "6ELkmUpcJy",
+    "fields": {
+      "first_name": "Beatriz",
+      "last_name": "Teixeira",
+      "graduation": "6",
+      "birth_date": "1999-02-17",
+      "id_number": 14134,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 33,
+      "creation_date": "2025-05-07T16:10:07.261Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "6NZ9uyHmuX",
+    "fields": {
+      "first_name": "Matilde",
+      "last_name": "Rajão",
+      "graduation": "14",
+      "birth_date": "2014-12-13",
+      "id_number": 18070,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 31,
+      "creation_date": "2025-06-12T21:04:21.321Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "6Qkkbow0Ik",
+    "fields": {
+      "first_name": "Albano",
+      "last_name": "Pimentel",
+      "graduation": "12.5",
+      "birth_date": "2011-03-28",
+      "id_number": 16855,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": 47,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-06-11T22:13:02.655Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "6Yek2nbP0e",
+    "fields": {
+      "first_name": "Bernardo",
+      "last_name": "Laborinha",
+      "graduation": "9",
+      "birth_date": "2002-09-02",
+      "id_number": 16585,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 24,
+      "creation_date": "2025-06-09T20:48:15.321Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "6gHFSYZC8E",
+    "fields": {
+      "first_name": "Pedro",
+      "last_name": "Reis",
+      "graduation": "14.5",
+      "birth_date": "2016-10-25",
+      "id_number": 18998,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 20,
+      "creation_date": "2025-05-06T16:47:18.758Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "7JzHhdcpw3",
+    "fields": {
+      "first_name": "Francisco",
+      "last_name": "Castro",
+      "graduation": "12.5",
+      "birth_date": "2014-09-30",
+      "id_number": 17977,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-06-11T22:25:16.080Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "7Mr9M186Ok",
+    "fields": {
+      "first_name": "Emilia",
+      "last_name": "Taushanzhy",
+      "graduation": "15",
+      "birth_date": "2017-10-18",
+      "id_number": 19119,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 31,
+      "creation_date": "2025-05-07T21:27:50.394Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "7Zv32Vv3Z7",
+    "fields": {
+      "first_name": "Maria",
+      "last_name": "Lopes",
+      "graduation": "12",
+      "birth_date": "2015-04-13",
+      "id_number": 17952,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-06-04T23:34:09.682Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "7mzCbaw1oo",
+    "fields": {
+      "first_name": "Tomás",
+      "last_name": "Moreira",
+      "graduation": "13",
+      "birth_date": "2011-03-18",
+      "id_number": null,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 12,
+      "creation_date": "2025-06-06T10:52:22.171Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "7w_tDx8iPA",
+    "fields": {
+      "first_name": "Vanessa",
+      "last_name": "Costa",
+      "graduation": "5",
+      "birth_date": "1980-10-24",
+      "id_number": 1676,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 20,
+      "creation_date": "2025-05-06T16:54:47.622Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "7yiHCSwWBJ",
+    "fields": {
+      "first_name": "Diogo",
+      "last_name": "Ferreira",
+      "graduation": "10",
+      "birth_date": "2012-07-31",
+      "id_number": 18515,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 34,
+      "creation_date": "2025-06-08T09:36:06.439Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "81V9wxg2GV",
+    "fields": {
+      "first_name": "Martim",
+      "last_name": "Cardoso",
+      "graduation": "12",
+      "birth_date": "2012-05-20",
+      "id_number": 17856,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-05-06T07:29:21.751Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "81_8IKxqMh",
+    "fields": {
+      "first_name": "Diogo",
+      "last_name": "Sousa",
+      "graduation": "9",
+      "birth_date": "2010-05-08",
+      "id_number": 16235,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-06-04T10:33:51.053Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "82XESdBSYW",
+    "fields": {
+      "first_name": "Tiago",
+      "last_name": "Picado",
+      "graduation": "9",
+      "birth_date": "2005-06-28",
+      "id_number": 17264,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 24,
+      "creation_date": "2025-05-05T10:55:21.293Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "8D4eGN00TG",
+    "fields": {
+      "first_name": "Tiago",
+      "last_name": "Melo",
+      "graduation": "7",
+      "birth_date": "2009-07-30",
+      "id_number": 16062,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-05-05T22:54:40.729Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "8Roq6NMuys",
+    "fields": {
+      "first_name": "Beatriz",
+      "last_name": "Dias",
+      "graduation": "6",
+      "birth_date": "2002-03-04",
+      "id_number": 13520,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-06-04T10:11:52.793Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "8Safv7SPd3",
+    "fields": {
+      "first_name": "Jose",
+      "last_name": "Costa",
+      "graduation": "15",
+      "birth_date": "2017-01-17",
+      "id_number": 19160,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-05-06T07:30:35.046Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "8UMZZyjpaA",
+    "fields": {
+      "first_name": "Benjamin",
+      "last_name": "Santos",
+      "graduation": "14",
+      "birth_date": "2017-03-13",
+      "id_number": 18743,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 20,
+      "creation_date": "2025-05-06T16:46:38.013Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "8WL4pnUdAv",
+    "fields": {
+      "first_name": "Sara",
+      "last_name": "Macedo",
+      "graduation": "12.5",
+      "birth_date": "2014-06-20",
+      "id_number": 18392,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-06-04T09:40:36.099Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "8kYMHx96fX",
+    "fields": {
+      "first_name": "Marco",
+      "last_name": "Andrade",
+      "graduation": "15",
+      "birth_date": "2017-10-29",
+      "id_number": 19161,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Misto",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-06-04T10:55:35.516Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "93M9N9YbmD",
+    "fields": {
+      "first_name": "SALVADOR",
+      "last_name": "LOUREIRO",
+      "graduation": "14.5",
+      "birth_date": "2017-08-29",
+      "id_number": 18627,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 18,
+      "creation_date": "2025-06-11T10:40:32.967Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "9Gvm7EN7E2",
+    "fields": {
+      "first_name": "Pedro",
+      "last_name": "Peixoto",
+      "graduation": "12",
+      "birth_date": "2025-05-06",
+      "id_number": 17434,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": 57,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-05-06T22:35:17.065Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "9JO7ffz2tT",
+    "fields": {
+      "first_name": "Catarina",
+      "last_name": "Salta",
+      "graduation": "9",
+      "birth_date": "2009-03-23",
+      "id_number": 18023,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-06-04T10:06:05.354Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "9K6st1cm4q",
+    "fields": {
+      "first_name": "Lara",
+      "last_name": "Cunha",
+      "graduation": "13",
+      "birth_date": "2012-08-03",
+      "id_number": 18189,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-06-11T21:10:30.657Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "9LTd-qm1X5",
+    "fields": {
+      "first_name": "Ivo",
+      "last_name": "Salvador",
+      "graduation": "13",
+      "birth_date": "2012-09-16",
+      "id_number": 18829,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": 47,
+      "quotes": true,
+      "club": 15,
+      "creation_date": "2025-06-11T13:07:20.025Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "9_3QhDHXEa",
+    "fields": {
+      "first_name": "Luis",
+      "last_name": "Martins",
+      "graduation": "4",
+      "birth_date": "1981-12-13",
+      "id_number": 6524,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-06-10T23:00:40.123Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "9oPKS__CHF",
+    "fields": {
+      "first_name": "Ricardo",
+      "last_name": "Sousa",
+      "graduation": "6",
+      "birth_date": "2002-05-15",
+      "id_number": 13376,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 12,
+      "creation_date": "2025-05-07T21:52:24.254Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "9rfPIxN71Y",
+    "fields": {
+      "first_name": "Filipe",
+      "last_name": "Couto",
+      "graduation": "6",
+      "birth_date": "2001-09-12",
+      "id_number": 12920,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-06-04T10:43:19.745Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "9uQo7murHh",
+    "fields": {
+      "first_name": "Manuel",
+      "last_name": "Constantino",
+      "graduation": "15",
+      "birth_date": "2015-04-18",
+      "id_number": 19340,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 15,
+      "creation_date": "2025-06-11T15:26:05.850Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "9wKI_ueiiK",
+    "fields": {
+      "first_name": "Rui",
+      "last_name": "Marques",
+      "graduation": "6",
+      "birth_date": "1998-09-15",
+      "id_number": 11788,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-05-05T15:45:55.158Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "ANgVcvZswe",
+    "fields": {
+      "first_name": "Gabriela",
+      "last_name": "Costa",
+      "graduation": "14.5",
+      "birth_date": "2015-01-11",
+      "id_number": 18842,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Misto",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-06-04T10:48:16.299Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "AhiIHqk3AG",
+    "fields": {
+      "first_name": "Sara",
+      "last_name": "Lacerda",
+      "graduation": "8",
+      "birth_date": "2008-06-07",
+      "id_number": 17315,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-06-04T10:10:17.216Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "BCTPF6iqJV",
+    "fields": {
+      "first_name": "GUSTAVO",
+      "last_name": "INÁCIO",
+      "graduation": "12.5",
+      "birth_date": "2011-09-05",
+      "id_number": 17779,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 16,
+      "creation_date": "2025-05-06T14:39:55.086Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "BQfntrwP_t",
+    "fields": {
+      "first_name": "Rodrigo",
+      "last_name": "Marinho",
+      "graduation": "13",
+      "birth_date": "2015-11-03",
+      "id_number": 18548,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-05-06T07:32:29.064Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "C-7tPV09S7",
+    "fields": {
+      "first_name": "Diogo",
+      "last_name": "Azevedo",
+      "graduation": "14",
+      "birth_date": "2014-08-01",
+      "id_number": 19069,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 33,
+      "creation_date": "2025-06-17T21:08:35.010Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "C3eXLjU892",
+    "fields": {
+      "first_name": "Polyna",
+      "last_name": "Taushanzhy",
+      "graduation": "15",
+      "birth_date": "2014-05-15",
+      "id_number": 19118,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 31,
+      "creation_date": "2025-05-12T16:55:02.634Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "CIZexhzMUL",
+    "fields": {
+      "first_name": "Bianca",
+      "last_name": "Cunha",
+      "graduation": "14",
+      "birth_date": "2012-01-02",
+      "id_number": 19253,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-05-06T23:58:14.422Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "CJU70acGGH",
+    "fields": {
+      "first_name": "Salvador",
+      "last_name": "Oliveira",
+      "graduation": "13",
+      "birth_date": "2018-09-07",
+      "id_number": 18686,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-06-11T22:47:04.872Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "CTPCCH55DM",
+    "fields": {
+      "first_name": "Carla",
+      "last_name": "Ferreira",
+      "graduation": "8",
+      "birth_date": "2008-07-02",
+      "id_number": 17300,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-05-05T22:18:19.063Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "CcMMZcTuGc",
+    "fields": {
+      "first_name": "Hugo",
+      "last_name": "Patrício",
+      "graduation": "4",
+      "birth_date": "1982-05-13",
+      "id_number": 3350,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-05-06T07:39:56.771Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "ChDQNJ3kA0",
+    "fields": {
+      "first_name": "Vasco",
+      "last_name": "Correia",
+      "graduation": "9",
+      "birth_date": "2009-03-02",
+      "id_number": 15348,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 31,
+      "creation_date": "2025-05-07T19:52:48.663Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "CkCSOscO8o",
+    "fields": {
+      "first_name": "erast",
+      "last_name": "sdtgrsd",
+      "graduation": "5",
+      "birth_date": "1999-10-10",
+      "id_number": 234565322,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 1,
+      "creation_date": "2025-06-09T21:30:59.114Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "ClmI_iBPVv",
+    "fields": {
+      "first_name": "Duarte",
+      "last_name": "Marques",
+      "graduation": "10",
+      "birth_date": "2012-11-08",
+      "id_number": 17331,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 29,
+      "creation_date": "2025-05-03T10:24:59.921Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "Clwv-tc01y",
+    "fields": {
+      "first_name": "Mafalda",
+      "last_name": "Pinto",
+      "graduation": "13",
+      "birth_date": "2012-08-08",
+      "id_number": null,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-05-06T08:00:24.065Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "Coq3yWzjVq",
+    "fields": {
+      "first_name": "Leonor",
+      "last_name": "Silva",
+      "graduation": "13",
+      "birth_date": "2015-03-02",
+      "id_number": 18083,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-05-05T22:34:31.477Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "DBLVreaCfH",
+    "fields": {
+      "first_name": "FRANCISCO",
+      "last_name": "ALMEIDA",
+      "graduation": "14",
+      "birth_date": "2016-02-03",
+      "id_number": 18589,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 18,
+      "creation_date": "2025-06-11T10:39:18.535Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "DHO379GUH6",
+    "fields": {
+      "first_name": "Ricardo",
+      "last_name": "Oliveira",
+      "graduation": "9",
+      "birth_date": "2011-09-18",
+      "id_number": 17393,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-05-05T22:52:54.860Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "DRkkX4DaLf",
+    "fields": {
+      "first_name": "David",
+      "last_name": "Vieira",
+      "graduation": "12",
+      "birth_date": "2012-11-14",
+      "id_number": 18512,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 34,
+      "creation_date": "2025-06-08T09:35:04.519Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "DShKjIFC9Y",
+    "fields": {
+      "first_name": "Sofia",
+      "last_name": "Ribeiro",
+      "graduation": "11",
+      "birth_date": "2011-09-14",
+      "id_number": 15761,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 31,
+      "creation_date": "2025-05-07T19:43:43.300Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "DcRv848qjy",
+    "fields": {
+      "first_name": "Leonor",
+      "last_name": "Costa",
+      "graduation": "12",
+      "birth_date": "2010-07-23",
+      "id_number": 16698,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-06-11T22:53:30.766Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "DdVP8Vjf5q",
+    "fields": {
+      "first_name": "Francisco",
+      "last_name": "Ramos",
+      "graduation": "9.5",
+      "birth_date": "2014-10-14",
+      "id_number": 17392,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-05-05T22:21:32.113Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "E-_2-B1T0u",
+    "fields": {
+      "first_name": "Gonçalo",
+      "last_name": "Monteiro",
+      "graduation": "14",
+      "birth_date": "2015-08-25",
+      "id_number": 18236,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 12,
+      "creation_date": "2025-05-07T21:59:50.866Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "E04w8sf46R",
+    "fields": {
+      "first_name": "Rui",
+      "last_name": "Sousa",
+      "graduation": "6",
+      "birth_date": "2002-03-04",
+      "id_number": 14229,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 15,
+      "creation_date": "2025-06-05T21:53:12.904Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "E2u8Wy0hKb",
+    "fields": {
+      "first_name": "Duarte",
+      "last_name": "Carneiro",
+      "graduation": "8",
+      "birth_date": "2009-07-16",
+      "id_number": 17614,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": 57,
+      "quotes": true,
+      "club": 34,
+      "creation_date": "2025-05-11T18:52:44.750Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "E4-vJjJr9N",
+    "fields": {
+      "first_name": "Lara",
+      "last_name": "Cardoso",
+      "graduation": "9",
+      "birth_date": "2010-01-04",
+      "id_number": 16234,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-05-06T07:45:16.670Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "E59v46r-So",
+    "fields": {
+      "first_name": "Gonçalo",
+      "last_name": "Silva",
+      "graduation": "14",
+      "birth_date": "2012-08-05",
+      "id_number": 19279,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 33,
+      "creation_date": "2025-05-07T16:04:18.444Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "Eh-aGaf53E",
+    "fields": {
+      "first_name": "Inês",
+      "last_name": "Gomes",
+      "graduation": "12",
+      "birth_date": "2009-04-24",
+      "id_number": 18810,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 15,
+      "creation_date": "2025-05-05T21:23:21.411Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "Ep2Sk8aMR2",
+    "fields": {
+      "first_name": "Afonso",
+      "last_name": "Menezes",
+      "graduation": "6",
+      "birth_date": "2006-11-06",
+      "id_number": 15972,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 29,
+      "creation_date": "2025-05-03T10:15:13.333Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "F1Q4aBX1nv",
+    "fields": {
+      "first_name": "Joana",
+      "last_name": "Costa",
+      "graduation": "12",
+      "birth_date": "2010-03-08",
+      "id_number": 18181,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 24,
+      "creation_date": "2025-05-05T10:58:28.208Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "FCnyHN9psU",
+    "fields": {
+      "first_name": "Skylar",
+      "last_name": "Santos",
+      "graduation": "15",
+      "birth_date": "2018-04-09",
+      "id_number": 19205,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 31,
+      "creation_date": "2025-06-10T11:42:03.214Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "FSe3AXoyft",
+    "fields": {
+      "first_name": "Guilherme",
+      "last_name": "Martins",
+      "graduation": "14",
+      "birth_date": "2016-04-30",
+      "id_number": 18657,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 24,
+      "creation_date": "2025-05-05T14:03:02.488Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "FzZaqhtOCg",
+    "fields": {
+      "first_name": "Pedro",
+      "last_name": "Silva",
+      "graduation": "14",
+      "birth_date": "2013-03-29",
+      "id_number": 18751,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 33,
+      "creation_date": "2025-06-17T21:06:46.990Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "G4cF_D0Srp",
+    "fields": {
+      "first_name": "Tomas",
+      "last_name": "Moreira",
+      "graduation": "14",
+      "birth_date": "2011-03-18",
+      "id_number": 18617,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": 47,
+      "quotes": true,
+      "club": 12,
+      "creation_date": "2025-06-11T11:21:58.381Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "GRe6aFrm7f",
+    "fields": {
+      "first_name": "test",
+      "last_name": "iniciado 2",
+      "graduation": "10",
+      "birth_date": "2014-10-10",
+      "id_number": 84356,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 1,
+      "creation_date": "2025-06-09T18:48:48.009Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "GTxN8XmkhB",
+    "fields": {
+      "first_name": "Júlia",
+      "last_name": "Vale",
+      "graduation": "15",
+      "birth_date": "2019-01-10",
+      "id_number": 19191,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 31,
+      "creation_date": "2025-06-10T11:44:39.128Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "GZBeUFRE5O",
+    "fields": {
+      "first_name": "Gabriela",
+      "last_name": "Martins",
+      "graduation": "14",
+      "birth_date": "2014-07-28",
+      "id_number": 19277,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 34,
+      "creation_date": "2025-06-08T10:05:26.990Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "GfeW_AREum",
+    "fields": {
+      "first_name": "Miguel",
+      "last_name": "Boleixa",
+      "graduation": "7",
+      "birth_date": "1999-07-25",
+      "id_number": 12934,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 19,
+      "creation_date": "2025-05-06T22:32:01.566Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "GtS8UAq9h3",
+    "fields": {
+      "first_name": "Gonçalo",
+      "last_name": "Mota",
+      "graduation": "8",
+      "birth_date": "2010-03-17",
+      "id_number": 16663,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-05-05T22:26:55.100Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "HAEyTVmJwr",
+    "fields": {
+      "first_name": "Leonor",
+      "last_name": "Oliveira",
+      "graduation": "9",
+      "birth_date": "2006-08-16",
+      "id_number": 17373,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-05-07T00:18:01.874Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "HO-awtjpwG",
+    "fields": {
+      "first_name": "João",
+      "last_name": "Magalhães",
+      "graduation": "9",
+      "birth_date": "2008-01-19",
+      "id_number": 15386,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": 65,
+      "quotes": true,
+      "club": 31,
+      "creation_date": "2025-05-07T19:55:00.864Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "HT8OTtbO0d",
+    "fields": {
+      "first_name": "Petra",
+      "last_name": "Realinho",
+      "graduation": "14",
+      "birth_date": "2017-05-13",
+      "id_number": 18997,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Misto",
+      "weight": null,
+      "quotes": true,
+      "club": 20,
+      "creation_date": "2025-05-06T16:45:32.322Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "HfX0iTOK_z",
+    "fields": {
+      "first_name": "Eva",
+      "last_name": "Faria",
+      "graduation": "8",
+      "birth_date": "2009-02-14",
+      "id_number": 17421,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 34,
+      "creation_date": "2025-05-11T18:53:37.826Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "Ho64LAFIM_",
+    "fields": {
+      "first_name": "Tiago",
+      "last_name": "Rodrigues",
+      "graduation": "9",
+      "birth_date": "1998-06-18",
+      "id_number": 15306,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 33,
+      "creation_date": "2025-05-07T16:11:00.824Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "ILRotQu4xU",
+    "fields": {
+      "first_name": "Daniel",
+      "last_name": "Lopes",
+      "graduation": "8",
+      "birth_date": "2010-09-10",
+      "id_number": 16882,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-06-05T15:38:04.827Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "IUDi_6jk3r",
+    "fields": {
+      "first_name": "Carolina",
+      "last_name": "Cardoso",
+      "graduation": "9",
+      "birth_date": "2012-10-11",
+      "id_number": 16843,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 31,
+      "creation_date": "2025-05-07T19:31:30.519Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "IfiJF31EHv",
+    "fields": {
+      "first_name": "Rafael",
+      "last_name": "Moreira",
+      "graduation": "11",
+      "birth_date": "2008-04-02",
+      "id_number": 16251,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": 65,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-05-06T22:17:12.087Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "Ixz93Dyupb",
+    "fields": {
+      "first_name": "Daniel",
+      "last_name": "Trigo",
+      "graduation": "14",
+      "birth_date": "2015-02-11",
+      "id_number": 18739,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 15,
+      "creation_date": "2025-05-04T16:41:18.768Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "JHEaCVormJ",
+    "fields": {
+      "first_name": "Diogo",
+      "last_name": "Carvalho",
+      "graduation": "6",
+      "birth_date": "2006-07-06",
+      "id_number": 15588,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-05-06T21:56:02.938Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "JP_bRHjZ0h",
+    "fields": {
+      "first_name": "Meer",
+      "last_name": "Samji",
+      "graduation": "14",
+      "birth_date": "2014-04-10",
+      "id_number": 18814,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 15,
+      "creation_date": "2025-06-11T18:33:52.555Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "JUtcjVwsXE",
+    "fields": {
+      "first_name": "Mateus",
+      "last_name": "Silva",
+      "graduation": "12.5",
+      "birth_date": "2016-09-20",
+      "id_number": 18254,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-06-11T22:43:36.540Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "K-9gA1bU1C",
+    "fields": {
+      "first_name": "Tomás",
+      "last_name": "Veiga",
+      "graduation": "14.5",
+      "birth_date": "2016-12-10",
+      "id_number": null,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Misto",
+      "weight": null,
+      "quotes": true,
+      "club": 33,
+      "creation_date": "2025-06-04T13:08:17.703Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "K-OzaV79-k",
+    "fields": {
+      "first_name": "Diogo",
+      "last_name": "Antunes",
+      "graduation": "7",
+      "birth_date": "2001-04-01",
+      "id_number": 16233,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 19,
+      "creation_date": "2025-06-11T22:10:28.379Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "KAEfEBXUX0",
+    "fields": {
+      "first_name": "Gaspar",
+      "last_name": "Pereira",
+      "graduation": "13",
+      "birth_date": "2011-03-03",
+      "id_number": 18664,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-05-06T23:33:21.074Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "KAX3vM6I94",
+    "fields": {
+      "first_name": "Matilde",
+      "last_name": "Santos",
+      "graduation": "12.5",
+      "birth_date": "2014-04-03",
+      "id_number": 18342,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-06-11T21:07:11.347Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "KRu2szVP2a",
+    "fields": {
+      "first_name": "Afonso",
+      "last_name": "Menezes",
+      "graduation": "6",
+      "birth_date": "2006-11-06",
+      "id_number": 15972,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 15,
+      "creation_date": "2025-06-09T16:39:12.583Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "Keg8K1uMfb",
+    "fields": {
+      "first_name": "Francisco",
+      "last_name": "Maia",
+      "graduation": "12",
+      "birth_date": "2010-04-24",
+      "id_number": 16701,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": 57,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-05-06T22:27:30.658Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "KlHWaHa-KE",
+    "fields": {
+      "first_name": "Vasco",
+      "last_name": "Silva",
+      "graduation": "15",
+      "birth_date": "2015-10-21",
+      "id_number": 19164,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Misto",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-06-05T13:50:04.567Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "Kr758I5jli",
+    "fields": {
+      "first_name": "Gonçalo",
+      "last_name": "Barroso",
+      "graduation": "6",
+      "birth_date": "2001-01-30",
+      "id_number": 12840,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 15,
+      "creation_date": "2025-06-09T16:20:09.856Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "KtKRjC0i6A",
+    "fields": {
+      "first_name": "Miguel",
+      "last_name": "Madureira",
+      "graduation": "9",
+      "birth_date": "2009-04-06",
+      "id_number": 15347,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 31,
+      "creation_date": "2025-05-07T19:50:23.916Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "L8EjXW2-2S",
+    "fields": {
+      "first_name": "José",
+      "last_name": "Silva",
+      "graduation": "6",
+      "birth_date": "2002-02-27",
+      "id_number": 15626,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-06-11T21:18:24.586Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "LCswjoGVBv",
+    "fields": {
+      "first_name": "Viviana",
+      "last_name": "Matos",
+      "graduation": "6",
+      "birth_date": "2005-08-12",
+      "id_number": 16980,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 24,
+      "creation_date": "2025-05-05T11:12:13.534Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "LG_TTgmmpb",
+    "fields": {
+      "first_name": "Raquel",
+      "last_name": "Santos",
+      "graduation": "9",
+      "birth_date": "2008-05-27",
+      "id_number": 16537,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 31,
+      "creation_date": "2025-05-07T19:40:54.027Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "LOHe871o6i",
+    "fields": {
+      "first_name": "Issac",
+      "last_name": "Lourenço",
+      "graduation": "14",
+      "birth_date": "2017-07-09",
+      "id_number": 18981,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 15,
+      "creation_date": "2025-06-11T15:27:32.247Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "MCdOMRLG3L",
+    "fields": {
+      "first_name": "Santiago",
+      "last_name": "Castro",
+      "graduation": "13",
+      "birth_date": "2014-05-07",
+      "id_number": 17967,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-05-06T22:48:10.024Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "MFP6NCbclp",
+    "fields": {
+      "first_name": "Diogo",
+      "last_name": "Lemos",
+      "graduation": "6",
+      "birth_date": "2007-08-24",
+      "id_number": 15079,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-05-05T22:20:27.992Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "MFiruGZmMA",
+    "fields": {
+      "first_name": "Afonso",
+      "last_name": "Antero",
+      "graduation": "13",
+      "birth_date": "2015-06-21",
+      "id_number": 18350,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-06-11T22:06:33.024Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "MLqw8MOwdU",
+    "fields": {
+      "first_name": "Dinis",
+      "last_name": "Carvalho",
+      "graduation": "14",
+      "birth_date": "2015-02-01",
+      "id_number": 18609,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 24,
+      "creation_date": "2025-05-05T11:51:18.074Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "M_JU_7f5XS",
+    "fields": {
+      "first_name": "João",
+      "last_name": "Araújo",
+      "graduation": "6",
+      "birth_date": "2005-09-14",
+      "id_number": 16241,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-06-11T21:33:51.269Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "Mo_IG1-C21",
+    "fields": {
+      "first_name": "Henrique",
+      "last_name": "Tavares",
+      "graduation": "8",
+      "birth_date": "2007-08-24",
+      "id_number": 17736,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-05-06T07:48:01.378Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "MpIfD-gPx6",
+    "fields": {
+      "first_name": "Duarte",
+      "last_name": "Baptista",
+      "graduation": "5",
+      "birth_date": "1995-08-14",
+      "id_number": 9844,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-06-12T21:38:24.577Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "Myqh4xYZKl",
+    "fields": {
+      "first_name": "Benedita",
+      "last_name": "Cruz",
+      "graduation": "14",
+      "birth_date": "2014-12-17",
+      "id_number": 18783,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-06-05T15:27:23.526Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "N2Nmz6VakR",
+    "fields": {
+      "first_name": "Nolan",
+      "last_name": "Costa",
+      "graduation": "14.5",
+      "birth_date": "2015-04-27",
+      "id_number": 18955,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Misto",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-06-06T22:01:50.056Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "NL18YnA5Zi",
+    "fields": {
+      "first_name": "Rodrigo",
+      "last_name": "Huang",
+      "graduation": "15",
+      "birth_date": "2016-01-11",
+      "id_number": 18668,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 31,
+      "creation_date": "2025-05-07T19:24:36.623Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "NOjlDe92iW",
+    "fields": {
+      "first_name": "Tiago",
+      "last_name": "Monteiro",
+      "graduation": "12",
+      "birth_date": "2010-08-25",
+      "id_number": 17655,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": 57,
+      "quotes": true,
+      "club": 12,
+      "creation_date": "2025-05-07T21:57:08.897Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "NUxoHGsqih",
+    "fields": {
+      "first_name": "Tânia",
+      "last_name": "Cunha",
+      "graduation": "5",
+      "birth_date": "1999-11-27",
+      "id_number": null,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 13,
+      "creation_date": "2025-06-06T07:00:40.516Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "NVXgsNVHaB",
+    "fields": {
+      "first_name": "Rafael",
+      "last_name": "Duarte",
+      "graduation": "9",
+      "birth_date": "1994-03-15",
+      "id_number": 17105,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-06-11T21:12:29.963Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "Nav-tdXb_n",
+    "fields": {
+      "first_name": "Marcos",
+      "last_name": "Martins",
+      "graduation": "12",
+      "birth_date": "2007-07-10",
+      "id_number": 18690,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 29,
+      "creation_date": "2025-05-03T10:22:55.432Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "NlWh99GD7Y",
+    "fields": {
+      "first_name": "Inês",
+      "last_name": "Oliveira",
+      "graduation": "13",
+      "birth_date": "2012-04-28",
+      "id_number": 18254,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-05-06T22:55:53.230Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "Nvb9iej0Mk",
+    "fields": {
+      "first_name": "Patrick",
+      "last_name": "Whyte",
+      "graduation": "14.5",
+      "birth_date": "2017-03-20",
+      "id_number": 18339,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 33,
+      "creation_date": "2025-05-07T15:52:01.316Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "O0fdKEonEj",
+    "fields": {
+      "first_name": "Nuno",
+      "last_name": "Picado",
+      "graduation": "8",
+      "birth_date": "1977-07-27",
+      "id_number": 17380,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 24,
+      "creation_date": "2025-05-05T10:53:44.613Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "O5qkIXpXFP",
+    "fields": {
+      "first_name": "Luís",
+      "last_name": "Madureira",
+      "graduation": "9",
+      "birth_date": "2008-01-23",
+      "id_number": 15346,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": 65,
+      "quotes": true,
+      "club": 31,
+      "creation_date": "2025-05-07T19:47:48.989Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "OEOU_n-nmI",
+    "fields": {
+      "first_name": "Marta",
+      "last_name": "Miranda",
+      "graduation": "14.5",
+      "birth_date": "2015-12-08",
+      "id_number": 19088,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 15,
+      "creation_date": "2025-05-05T21:33:21.030Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "OPIySJzqdd",
+    "fields": {
+      "first_name": "Victória",
+      "last_name": "Almeida",
+      "graduation": "12.5",
+      "birth_date": "2014-04-20",
+      "id_number": 18042,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 24,
+      "creation_date": "2025-06-10T20:31:20.021Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "OadatNq3kh",
+    "fields": {
+      "first_name": "Maria",
+      "last_name": "Sousa",
+      "graduation": "12.5",
+      "birth_date": "2016-09-02",
+      "id_number": 18241,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-06-11T21:23:43.136Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "Oakp_YtwEd",
+    "fields": {
+      "first_name": "CLARA",
+      "last_name": "OLIVEIRA",
+      "graduation": "9",
+      "birth_date": "2010-08-04",
+      "id_number": 15751,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 16,
+      "creation_date": "2025-05-06T14:39:13.290Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "OyfVtWRYQz",
+    "fields": {
+      "first_name": "Clara",
+      "last_name": "Santos",
+      "graduation": "15",
+      "birth_date": "2016-03-18",
+      "id_number": 19163,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Misto",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-06-05T13:48:27.772Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "PJwQVeHuAH",
+    "fields": {
+      "first_name": "Ânia",
+      "last_name": "Almeida",
+      "graduation": "9.5",
+      "birth_date": "2011-10-22",
+      "id_number": 17195,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 20,
+      "creation_date": "2025-06-06T21:26:44.301Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "PMovz0IAmN",
+    "fields": {
+      "first_name": "Inês",
+      "last_name": "Miranda",
+      "graduation": "14.5",
+      "birth_date": "2015-12-24",
+      "id_number": 18618,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 12,
+      "creation_date": "2025-06-11T11:19:52.460Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "PR3Bu2Z_xk",
+    "fields": {
+      "first_name": "Sofia",
+      "last_name": "Gil",
+      "graduation": "14",
+      "birth_date": "2017-03-05",
+      "id_number": 18964,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-06-05T14:06:05.430Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "PdwWCINA3p",
+    "fields": {
+      "first_name": "Mariana",
+      "last_name": "Cunha",
+      "graduation": "12",
+      "birth_date": "2007-09-14",
+      "id_number": null,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 33,
+      "creation_date": "2025-05-07T16:09:36.213Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "Pk92uukv9K",
+    "fields": {
+      "first_name": "Tiago",
+      "last_name": "Teixeira",
+      "graduation": "14.5",
+      "birth_date": "2014-11-01",
+      "id_number": 19059,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 33,
+      "creation_date": "2025-05-07T15:55:21.989Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "PlUhx5Gs8Q",
+    "fields": {
+      "first_name": "João",
+      "last_name": "Henriques",
+      "graduation": "13",
+      "birth_date": "2012-01-26",
+      "id_number": 18439,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-05-06T23:09:45.620Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "Q6h2Luy8Bj",
+    "fields": {
+      "first_name": "Diogo",
+      "last_name": "Campos",
+      "graduation": "14",
+      "birth_date": "2015-07-19",
+      "id_number": 18820,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 20,
+      "creation_date": "2025-05-06T16:47:59.572Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "QTlG6dds8g",
+    "fields": {
+      "first_name": "Miguel",
+      "last_name": "Andrade",
+      "graduation": "15",
+      "birth_date": "2013-12-08",
+      "id_number": 19077,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-05-06T07:23:05.377Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "QcJJcluwe-",
+    "fields": {
+      "first_name": "Francisco",
+      "last_name": "Bela",
+      "graduation": "15",
+      "birth_date": "2018-01-08",
+      "id_number": 19000,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Misto",
+      "weight": null,
+      "quotes": true,
+      "club": 20,
+      "creation_date": "2025-06-06T16:32:46.443Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "RF05WRLV_y",
+    "fields": {
+      "first_name": "Lara",
+      "last_name": "Castro",
+      "graduation": "7",
+      "birth_date": "2010-05-29",
+      "id_number": 16063,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-06-05T15:43:45.880Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "RPajgJ0Sbp",
+    "fields": {
+      "first_name": "Bruno",
+      "last_name": "Neto",
+      "graduation": "5",
+      "birth_date": "2000-04-13",
+      "id_number": 13662,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 34,
+      "creation_date": "2025-05-11T18:49:43.454Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "RWNLqPqJ0Z",
+    "fields": {
+      "first_name": "Beatriz",
+      "last_name": "Pinho",
+      "graduation": "14",
+      "birth_date": "2018-09-20",
+      "id_number": 18652,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-05-05T15:40:04.775Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "RoOYLg_h_k",
+    "fields": {
+      "first_name": "Francisco",
+      "last_name": "Cavalho",
+      "graduation": "6",
+      "birth_date": "2006-08-30",
+      "id_number": 14345,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-05-05T22:22:42.594Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "Rx9VHZ0xZf",
+    "fields": {
+      "first_name": "Polina",
+      "last_name": "Ovsiannikova",
+      "graduation": "9.5",
+      "birth_date": "2012-06-08",
+      "id_number": 16909,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 15,
+      "creation_date": "2025-05-04T16:47:42.437Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "SO4uw8--Yj",
+    "fields": {
+      "first_name": "Henrique",
+      "last_name": "Faustino",
+      "graduation": "14",
+      "birth_date": "2014-09-24",
+      "id_number": null,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 33,
+      "creation_date": "2025-06-04T13:11:31.508Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "Sh76ARx0MY",
+    "fields": {
+      "first_name": "Eva",
+      "last_name": "Cunha",
+      "graduation": "12",
+      "birth_date": "2011-11-04",
+      "id_number": 17260,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 31,
+      "creation_date": "2025-05-07T19:46:18.523Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "SiGOVbnBy5",
+    "fields": {
+      "first_name": "Erik",
+      "last_name": "Abrantes",
+      "graduation": "15",
+      "birth_date": "2017-02-26",
+      "id_number": 19232,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 24,
+      "creation_date": "2025-05-05T11:11:17.511Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "SvHzAzTRAW",
+    "fields": {
+      "first_name": "Margarida",
+      "last_name": "Carvalho",
+      "graduation": "8",
+      "birth_date": "2008-01-10",
+      "id_number": 15304,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 33,
+      "creation_date": "2025-05-07T16:06:47.554Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "T8jTkzoS4U",
+    "fields": {
+      "first_name": "Daniel",
+      "last_name": "Loureiro",
+      "graduation": "9",
+      "birth_date": "2009-10-21",
+      "id_number": 17006,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 20,
+      "creation_date": "2025-05-06T16:53:30.457Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "TC6FVsgeBi",
+    "fields": {
+      "first_name": "Benjamim",
+      "last_name": "Cunha",
+      "graduation": "12.5",
+      "birth_date": "2014-10-14",
+      "id_number": 18384,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 30,
+      "creation_date": "2025-05-03T10:36:05.382Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "TNtIlqoPVD",
+    "fields": {
+      "first_name": "Rodrigo",
+      "last_name": "Castro",
+      "graduation": "14.5",
+      "birth_date": "2015-01-12",
+      "id_number": 19099,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-05-07T00:09:35.173Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "TY03iS7a5B",
+    "fields": {
+      "first_name": "Elisa",
+      "last_name": "Moura",
+      "graduation": "14.5",
+      "birth_date": "2016-03-02",
+      "id_number": null,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 13,
+      "creation_date": "2025-05-02T17:30:00.577Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "UTlglUxs7o",
+    "fields": {
+      "first_name": "Guilherme",
+      "last_name": "Mendes",
+      "graduation": "13.5",
+      "birth_date": "2018-02-14",
+      "id_number": 19218,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-06-11T22:41:22.688Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "UiOeVkEp9W",
+    "fields": {
+      "first_name": "Andrea",
+      "last_name": "Donate",
+      "graduation": "12",
+      "birth_date": "2025-05-07",
+      "id_number": 19165,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-05-07T00:04:43.898Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "V7lcM6jsJ7",
+    "fields": {
+      "first_name": "Pedro",
+      "last_name": "Tomás",
+      "graduation": "15",
+      "birth_date": "2012-01-28",
+      "id_number": 19276,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-06-05T13:56:45.397Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "VCBgm5Hido",
+    "fields": {
+      "first_name": "Diogo",
+      "last_name": "Martins",
+      "graduation": "12",
+      "birth_date": "2009-07-25",
+      "id_number": 15966,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-05-06T22:00:28.493Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "VTOhecfsa0",
+    "fields": {
+      "first_name": "Artur",
+      "last_name": "Lemos",
+      "graduation": "14.5",
+      "birth_date": "2014-06-30",
+      "id_number": 18954,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-05-05T15:39:04.730Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "WKVufqNPGK",
+    "fields": {
+      "first_name": "António",
+      "last_name": "Marques",
+      "graduation": "5",
+      "birth_date": "1961-10-22",
+      "id_number": 13713,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 24,
+      "creation_date": "2025-05-05T11:13:39.948Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "WekA2NWaHF",
+    "fields": {
+      "first_name": "Lia",
+      "last_name": "Bessa",
+      "graduation": "13",
+      "birth_date": "2012-06-26",
+      "id_number": 18351,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-05-06T23:03:20.487Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "WktqZQzR6N",
+    "fields": {
+      "first_name": "Martim",
+      "last_name": "Lino",
+      "graduation": "13",
+      "birth_date": "2013-08-24",
+      "id_number": 18621,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 15,
+      "creation_date": "2025-05-04T16:39:32.792Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "XOB3wihfFN",
+    "fields": {
+      "first_name": "Martim",
+      "last_name": "Viegas",
+      "graduation": "10",
+      "birth_date": "2011-04-16",
+      "id_number": 17267,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 20,
+      "creation_date": "2025-05-06T16:51:05.900Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "XzqjyCL3QX",
+    "fields": {
+      "first_name": "Pilar",
+      "last_name": "Realinho",
+      "graduation": "15",
+      "birth_date": "2014-05-13",
+      "id_number": 19223,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 20,
+      "creation_date": "2025-06-06T15:51:31.196Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "Y0IOknFYNS",
+    "fields": {
+      "first_name": "Tomás",
+      "last_name": "Paiva",
+      "graduation": "10",
+      "birth_date": "2009-08-06",
+      "id_number": 15233,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 12,
+      "creation_date": "2025-05-07T21:54:55.209Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "Y6wUcbhqHp",
+    "fields": {
+      "first_name": "Daniil",
+      "last_name": "André",
+      "graduation": "15",
+      "birth_date": "2016-09-19",
+      "id_number": 19339,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 15,
+      "creation_date": "2025-05-05T21:42:57.723Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "YVyb0qWCBW",
+    "fields": {
+      "first_name": "Hugo",
+      "last_name": "Patricio",
+      "graduation": "4",
+      "birth_date": "1982-05-13",
+      "id_number": 3350,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-06-04T10:43:54.561Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "YmrtGTZAkX",
+    "fields": {
+      "first_name": "Gonçalo",
+      "last_name": "Dias",
+      "graduation": "14.5",
+      "birth_date": "2017-09-19",
+      "id_number": 18825,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Misto",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-06-05T23:48:54.649Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "Yx_8sQzkHN",
+    "fields": {
+      "first_name": "Leandro",
+      "last_name": "Almeida",
+      "graduation": "7",
+      "birth_date": "2005-08-13",
+      "id_number": 17422,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 34,
+      "creation_date": "2025-05-11T18:50:43.468Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "Z4dbRCLduY",
+    "fields": {
+      "first_name": "Clara",
+      "last_name": "Fernandes",
+      "graduation": "14",
+      "birth_date": "2012-07-28",
+      "id_number": 19278,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 34,
+      "creation_date": "2025-06-08T10:03:35.475Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "Z62aPchxxX",
+    "fields": {
+      "first_name": "Manuel",
+      "last_name": "Anes",
+      "graduation": "15",
+      "birth_date": "2019-03-14",
+      "id_number": 19384,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Misto",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-06-05T13:43:42.989Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "Z_0sfTEz_W",
+    "fields": {
+      "first_name": "Martim",
+      "last_name": "Cunha",
+      "graduation": "13",
+      "birth_date": "2015-05-08",
+      "id_number": 18242,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-06-04T23:35:38.278Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "Zu8h_dje_p",
+    "fields": {
+      "first_name": "Gabriel",
+      "last_name": "Costa",
+      "graduation": "13",
+      "birth_date": "2015-10-25",
+      "id_number": 18511,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 15,
+      "creation_date": "2025-06-11T15:20:15.800Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "_O7DQgfR_r",
+    "fields": {
+      "first_name": "Miguel",
+      "last_name": "Alves",
+      "graduation": "12",
+      "birth_date": "2013-09-18",
+      "id_number": 19397,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-06-11T22:30:42.147Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "_YDF6JPkG9",
+    "fields": {
+      "first_name": "Guilherme",
+      "last_name": "Mota",
+      "graduation": "12.5",
+      "birth_date": "2014-06-14",
+      "id_number": 18341,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-05-09T23:19:55.386Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "_piZ-LOp1N",
+    "fields": {
+      "first_name": "MIKAEL",
+      "last_name": "BARREIRA",
+      "graduation": "13",
+      "birth_date": "2013-03-25",
+      "id_number": 19147,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 18,
+      "creation_date": "2025-06-06T09:47:52.559Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "aIeCgNp1rW",
+    "fields": {
+      "first_name": "Gabriel",
+      "last_name": "Silva",
+      "graduation": "12",
+      "birth_date": "2010-09-12",
+      "id_number": 18229,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 20,
+      "creation_date": "2025-05-06T16:52:39.140Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "bLj2AntdmK",
+    "fields": {
+      "first_name": "Beatriz",
+      "last_name": "Lucas",
+      "graduation": "12.5",
+      "birth_date": "2010-06-25",
+      "id_number": 18183,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 19,
+      "creation_date": "2025-05-06T22:24:11.455Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "bMjC7loAgD",
+    "fields": {
+      "first_name": "Guilherme",
+      "last_name": "Oliveira",
+      "graduation": "14",
+      "birth_date": "2016-09-08",
+      "id_number": null,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Misto",
+      "weight": null,
+      "quotes": true,
+      "club": 33,
+      "creation_date": "2025-06-04T13:06:21.048Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "bibcqOLMyR",
+    "fields": {
+      "first_name": "Gabriela",
+      "last_name": "Moura",
+      "graduation": "13",
+      "birth_date": "2012-06-12",
+      "id_number": 17429,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 33,
+      "creation_date": "2025-05-07T16:02:05.343Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "bk90RWanVL",
+    "fields": {
+      "first_name": "Eduardo",
+      "last_name": "Albuquerque",
+      "graduation": "12",
+      "birth_date": "2009-03-05",
+      "id_number": 18524,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 24,
+      "creation_date": "2025-05-06T11:11:14.875Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "bxg1UyU92T",
+    "fields": {
+      "first_name": "Fábio",
+      "last_name": "Loureiro",
+      "graduation": "15",
+      "birth_date": "2015-10-16",
+      "id_number": null,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Misto",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-06-05T14:33:26.743Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "cWBB2cWl4g",
+    "fields": {
+      "first_name": "Inês",
+      "last_name": "Maio",
+      "graduation": "14",
+      "birth_date": "2016-05-30",
+      "id_number": null,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 33,
+      "creation_date": "2025-05-07T15:48:55.687Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "cWYmCS5f_s",
+    "fields": {
+      "first_name": "Francisco",
+      "last_name": "Lopes",
+      "graduation": "14",
+      "birth_date": "2014-07-14",
+      "id_number": 18129,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 33,
+      "creation_date": "2025-05-07T15:58:45.901Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "cXxYzLCgQG",
+    "fields": {
+      "first_name": "Gonçalo",
+      "last_name": "Silva",
+      "graduation": "13",
+      "birth_date": "2017-05-20",
+      "id_number": 18849,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-06-11T22:42:36.833Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "cre33tgxcn",
+    "fields": {
+      "first_name": "Adriana",
+      "last_name": "Oliveira",
+      "graduation": "6",
+      "birth_date": "2003-09-15",
+      "id_number": 15757,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-06-11T21:17:32.178Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "cw38fz7UO5",
+    "fields": {
+      "first_name": "Pedro",
+      "last_name": "António",
+      "graduation": "12",
+      "birth_date": "2011-09-08",
+      "id_number": 17590,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": 47,
+      "quotes": true,
+      "club": 12,
+      "creation_date": "2025-06-11T11:23:15.284Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "d0eWMWe7X1",
+    "fields": {
+      "first_name": "Gonçalo",
+      "last_name": "Silva",
+      "graduation": "11",
+      "birth_date": "2012-03-05",
+      "id_number": 17012,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-05-05T22:25:01.578Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "dgItNBqRPH",
+    "fields": {
+      "first_name": "Vitória",
+      "last_name": "Lourenço",
+      "graduation": "12",
+      "birth_date": "2013-02-09",
+      "id_number": 18314,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 24,
+      "creation_date": "2025-05-05T11:29:06.421Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "dhfbTevv_j",
+    "fields": {
+      "first_name": "Luna",
+      "last_name": "Varejão",
+      "graduation": "8",
+      "birth_date": "2008-02-11",
+      "id_number": null,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 13,
+      "creation_date": "2025-05-02T16:23:30.949Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "e2D6Oxp8vV",
+    "fields": {
+      "first_name": "Ricardo",
+      "last_name": "Andrade",
+      "graduation": "11",
+      "birth_date": "2014-08-01",
+      "id_number": 18628,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 34,
+      "creation_date": "2025-05-11T18:59:09.176Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "evLP8bKIDt",
+    "fields": {
+      "first_name": "Mariana",
+      "last_name": "Lopes",
+      "graduation": "9",
+      "birth_date": "2013-01-10",
+      "id_number": 16883,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-05-05T22:47:27.891Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "f2ExLPUxiW",
+    "fields": {
+      "first_name": "Maria",
+      "last_name": "Mendes",
+      "graduation": "12",
+      "birth_date": "2013-04-29",
+      "id_number": 17555,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-05-06T22:42:51.671Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "fBRyam5Jme",
+    "fields": {
+      "first_name": "Diego",
+      "last_name": "Ferreira",
+      "graduation": "13",
+      "birth_date": "2015-08-19",
+      "id_number": 18543,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-06-04T10:53:49.930Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "fnLIo6qfUG",
+    "fields": {
+      "first_name": "José",
+      "last_name": "Silva",
+      "graduation": "6",
+      "birth_date": "2007-04-08",
+      "id_number": 16250,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": 65,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-05-06T22:16:00.303Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "fpDOF5rvhP",
+    "fields": {
+      "first_name": "David",
+      "last_name": "Santos",
+      "graduation": "15",
+      "birth_date": "2016-12-24",
+      "id_number": 19114,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 20,
+      "creation_date": "2025-05-06T16:43:43.453Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "gqy9dl-_mS",
+    "fields": {
+      "first_name": "Diana",
+      "last_name": "Fernandes",
+      "graduation": "12.5",
+      "birth_date": "2015-07-24",
+      "id_number": 18135,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-05-05T22:19:18.727Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "iCQ90FSWMe",
+    "fields": {
+      "first_name": "Núria",
+      "last_name": "Mendes",
+      "graduation": "14.5",
+      "birth_date": "2015-06-01",
+      "id_number": 18766,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 12,
+      "creation_date": "2025-06-11T11:20:45.010Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "icVHr-7GS3",
+    "fields": {
+      "first_name": "Bruno",
+      "last_name": "Silva",
+      "graduation": "8",
+      "birth_date": "2005-05-31",
+      "id_number": 14195,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-06-11T21:17:31.095Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "kpdkMjkDfI",
+    "fields": {
+      "first_name": "Duarte",
+      "last_name": "Teixeira",
+      "graduation": "14.5",
+      "birth_date": "2017-11-25",
+      "id_number": 18821,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Misto",
+      "weight": null,
+      "quotes": true,
+      "club": 20,
+      "creation_date": "2025-06-06T14:32:14.987Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "kuY46IL_fJ",
+    "fields": {
+      "first_name": "Angélica",
+      "last_name": "Canelhas",
+      "graduation": "7",
+      "birth_date": "2004-06-23",
+      "id_number": 18039,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 15,
+      "creation_date": "2025-05-04T16:37:03.644Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "kxAamD8y1v",
+    "fields": {
+      "first_name": "Simão",
+      "last_name": "Machado",
+      "graduation": "15",
+      "birth_date": "2016-11-03",
+      "id_number": 19157,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-05-07T00:05:39.120Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "lIoKsoOyGO",
+    "fields": {
+      "first_name": "Lara",
+      "last_name": "Rodrigues",
+      "graduation": "11",
+      "birth_date": "2004-09-03",
+      "id_number": 17718,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 31,
+      "creation_date": "2025-06-10T11:56:28.696Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "le0l8rAXKL",
+    "fields": {
+      "first_name": "Mara",
+      "last_name": "Almeida",
+      "graduation": "9",
+      "birth_date": "2008-06-30",
+      "id_number": 16791,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 20,
+      "creation_date": "2025-05-06T16:54:14.590Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "luZKZn3e2h",
+    "fields": {
+      "first_name": "Rodrigo",
+      "last_name": "Mendes",
+      "graduation": "11",
+      "birth_date": "2013-11-09",
+      "id_number": 18154,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 34,
+      "creation_date": "2025-05-11T18:58:33.763Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "m5kFnjO7hR",
+    "fields": {
+      "first_name": "Miguel",
+      "last_name": "Ferreira",
+      "graduation": "8",
+      "birth_date": "2009-05-12",
+      "id_number": 16368,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": 57,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-05-05T22:49:46.019Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "mYLcs_ld6w",
+    "fields": {
+      "first_name": "Bernardo",
+      "last_name": "Soares",
+      "graduation": "15",
+      "birth_date": "2013-03-20",
+      "id_number": 19409,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-06-06T20:28:42.587Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "n3lTlV6cjW",
+    "fields": {
+      "first_name": "Tiago",
+      "last_name": "Cunha",
+      "graduation": "14",
+      "birth_date": "2016-09-26",
+      "id_number": null,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Misto",
+      "weight": null,
+      "quotes": true,
+      "club": 33,
+      "creation_date": "2025-06-04T13:03:26.544Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "n5yl_P3mWE",
+    "fields": {
+      "first_name": "Ana",
+      "last_name": "Prata",
+      "graduation": "9",
+      "birth_date": "1966-08-30",
+      "id_number": 1692,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-05-05T15:35:51.876Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "noyFcz8JZ-",
+    "fields": {
+      "first_name": "Rita",
+      "last_name": "Silva",
+      "graduation": "15",
+      "birth_date": "2017-11-02",
+      "id_number": 18887,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 31,
+      "creation_date": "2025-06-10T12:04:54.118Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "o0O83shfDl",
+    "fields": {
+      "first_name": "Gabriel",
+      "last_name": "Lobo",
+      "graduation": "14",
+      "birth_date": "2012-06-06",
+      "id_number": null,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 34,
+      "creation_date": "2025-06-11T20:55:55.458Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "o4AoNXHW7D",
+    "fields": {
+      "first_name": "Sergio",
+      "last_name": "Magalhães",
+      "graduation": "14",
+      "birth_date": "2018-05-31",
+      "id_number": null,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 13,
+      "creation_date": "2025-06-06T06:51:26.813Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "oRVQTd2OQV",
+    "fields": {
+      "first_name": "Raquel",
+      "last_name": "Rabecchi",
+      "graduation": "14.5",
+      "birth_date": "2012-02-22",
+      "id_number": 18759,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 19,
+      "creation_date": "2025-06-11T22:09:08.992Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "osBBDwicCX",
+    "fields": {
+      "first_name": "Eduarda",
+      "last_name": "Muniz",
+      "graduation": "10",
+      "birth_date": "2025-05-07",
+      "id_number": 19254,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-05-06T23:54:40.080Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "ov82eRgt-t",
+    "fields": {
+      "first_name": "Joana",
+      "last_name": "Alves",
+      "graduation": "15",
+      "birth_date": "2014-05-25",
+      "id_number": 18881,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 31,
+      "creation_date": "2025-05-07T21:13:23.753Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "p3WvV34vqN",
+    "fields": {
+      "first_name": "Simao",
+      "last_name": "Machado",
+      "graduation": "14.5",
+      "birth_date": "2016-11-03",
+      "id_number": 19157,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-06-11T22:48:34.930Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "pKyg8UIBZ-",
+    "fields": {
+      "first_name": "LOURENÇO",
+      "last_name": "INÁCIO",
+      "graduation": "9",
+      "birth_date": "2006-10-23",
+      "id_number": 16127,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 16,
+      "creation_date": "2025-05-06T14:40:39.138Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "q4E4HSUVOI",
+    "fields": {
+      "first_name": "Francisco",
+      "last_name": "Gil",
+      "graduation": "12.5",
+      "birth_date": "2013-09-10",
+      "id_number": 18293,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-06-05T14:04:01.364Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "qBB0UzDtFh",
+    "fields": {
+      "first_name": "Bruno",
+      "last_name": "Leite",
+      "graduation": "9",
+      "birth_date": "1992-08-28",
+      "id_number": 17116,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-06-11T21:11:11.757Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "qVivIUfaXM",
+    "fields": {
+      "first_name": "Lourenço",
+      "last_name": "Vicente",
+      "graduation": "15",
+      "birth_date": "2018-09-05",
+      "id_number": 18890,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 31,
+      "creation_date": "2025-06-10T12:04:00.114Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "qpVcA3yf5G",
+    "fields": {
+      "first_name": "Luisa",
+      "last_name": "Filipe",
+      "graduation": "11",
+      "birth_date": "2009-12-19",
+      "id_number": 17765,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-06-04T10:08:36.389Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "qrXpKp5LM_",
+    "fields": {
+      "first_name": "Francisco",
+      "last_name": "Oliveira",
+      "graduation": "14",
+      "birth_date": "2012-10-30",
+      "id_number": 19217,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-06-05T14:02:46.543Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "qygaM3DsFo",
+    "fields": {
+      "first_name": "Martim",
+      "last_name": "Pinheiro",
+      "graduation": "12",
+      "birth_date": "2011-07-26",
+      "id_number": 18611,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 24,
+      "creation_date": "2025-05-05T14:01:31.943Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "r7WomPY58K",
+    "fields": {
+      "first_name": "Francisco",
+      "last_name": "Carvalho",
+      "graduation": "6",
+      "birth_date": "2006-08-30",
+      "id_number": 14345,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-06-05T15:39:45.653Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "rQPBfkB0EK",
+    "fields": {
+      "first_name": "Sofia",
+      "last_name": "Pires",
+      "graduation": "15",
+      "birth_date": "2013-03-16",
+      "id_number": 19076,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-06-05T14:00:05.360Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "rdGiGAfKrs",
+    "fields": {
+      "first_name": "João",
+      "last_name": "Castro",
+      "graduation": "14",
+      "birth_date": "2014-11-15",
+      "id_number": 18658,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 24,
+      "creation_date": "2025-05-05T11:19:06.943Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "swccH_7zCn",
+    "fields": {
+      "first_name": "Dinis",
+      "last_name": "Queiroz",
+      "graduation": "15",
+      "birth_date": "2014-02-14",
+      "id_number": 19183,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 31,
+      "creation_date": "2025-05-13T20:44:50.786Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "tZ2rruALr5",
+    "fields": {
+      "first_name": "Guilherme",
+      "last_name": "Seixas",
+      "graduation": "12",
+      "birth_date": "2012-07-30",
+      "id_number": 17536,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 31,
+      "creation_date": "2025-05-15T21:32:51.875Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "tb9CNx8ARw",
+    "fields": {
+      "first_name": "Ana Luísa",
+      "last_name": "Carvalho",
+      "graduation": "14.5",
+      "birth_date": "2017-05-24",
+      "id_number": 19115,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 20,
+      "creation_date": "2025-05-06T16:43:00.487Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "uhFeHg09gK",
+    "fields": {
+      "first_name": "BARREIRA",
+      "last_name": "MIKAEL",
+      "graduation": "13",
+      "birth_date": "2013-03-25",
+      "id_number": 19247,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 18,
+      "creation_date": "2025-06-11T10:41:50.718Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "ujjq3HQZYj",
+    "fields": {
+      "first_name": "Ângelo",
+      "last_name": "Saraiva",
+      "graduation": "14",
+      "birth_date": "2012-06-19",
+      "id_number": 18977,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 24,
+      "creation_date": "2025-06-09T20:23:52.061Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "vPm6bZsob-",
+    "fields": {
+      "first_name": "José",
+      "last_name": "Freitas",
+      "graduation": "6",
+      "birth_date": "1999-10-02",
+      "id_number": 14957,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 17,
+      "creation_date": "2025-06-06T15:27:08.954Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "vbE8RHfY_a",
+    "fields": {
+      "first_name": "Duarte",
+      "last_name": "Pires",
+      "graduation": "10",
+      "birth_date": "2013-11-26",
+      "id_number": 18219,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 32,
+      "creation_date": "2025-06-11T22:28:07.139Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "wC6PLbaO82",
+    "fields": {
+      "first_name": "Leonor",
+      "last_name": "Vilas Boas",
+      "graduation": "10",
+      "birth_date": "2011-03-04",
+      "id_number": null,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 13,
+      "creation_date": "2025-06-05T22:14:44.755Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "wR_MPleixz",
+    "fields": {
+      "first_name": "Constança",
+      "last_name": "Andresen",
+      "graduation": "13",
+      "birth_date": "2015-04-01",
+      "id_number": 18420,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 19,
+      "creation_date": "2025-05-06T22:30:29.490Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "ww_JUZUzsE",
+    "fields": {
+      "first_name": "Martim",
+      "last_name": "Cardoso",
+      "graduation": "9",
+      "birth_date": "2005-08-21",
+      "id_number": 15363,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 12,
+      "creation_date": "2025-05-07T21:53:19.019Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "xPGJyIZj_r",
+    "fields": {
+      "first_name": "Lara",
+      "last_name": "Lopes",
+      "graduation": "15",
+      "birth_date": "2012-05-26",
+      "id_number": null,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 33,
+      "creation_date": "2025-06-04T13:28:54.267Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "xkUDS_TMha",
+    "fields": {
+      "first_name": "Ricardo",
+      "last_name": "Santos",
+      "graduation": "10",
+      "birth_date": "2012-05-24",
+      "id_number": null,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Masculino",
+      "weight": null,
+      "quotes": true,
+      "club": 13,
+      "creation_date": "2025-05-02T17:29:16.750Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "xtnIPZGpRG",
+    "fields": {
+      "first_name": "Gonçalo",
+      "last_name": "Marinho",
+      "graduation": "15",
+      "birth_date": "2016-09-22",
+      "id_number": 19162,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Misto",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-06-05T13:53:46.358Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "yGHK2muNep",
+    "fields": {
+      "first_name": "Leonor",
+      "last_name": "Pinto",
+      "graduation": "7",
+      "birth_date": "2008-09-07",
+      "id_number": null,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 11,
+      "creation_date": "2025-05-06T08:07:37.154Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "yqHR1VMnq_",
+    "fields": {
+      "first_name": "Inez",
+      "last_name": "Castro",
+      "graduation": "12.5",
+      "birth_date": "2012-05-16",
+      "id_number": 18253,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 19,
+      "creation_date": "2025-05-06T22:25:57.449Z"
+    }
+  },
+  {
+    "model": "registration.athlete",
+    "pk": "zUE_Qjc6fz",
+    "fields": {
+      "first_name": "Adriana",
+      "last_name": "Amaral",
+      "graduation": "7",
+      "birth_date": "1994-01-31",
+      "id_number": null,
+      "competitor": true,
+      "favorite": false,
+      "gender": "Feminino",
+      "weight": null,
+      "quotes": true,
+      "club": 13,
+      "creation_date": "2025-06-06T06:59:29.637Z"
+    }
+  }
+]

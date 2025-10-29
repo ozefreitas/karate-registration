@@ -44,11 +44,11 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        if user.role == "main_admin" or user.role == "superuser" or user.role == "single_admin":
+        if user.role in ["main_admin", "superuser", "single_admin"]:
             # National-level user can see all athletes
             return self.queryset.all().order_by("club", "first_name", "last_name")
 
-        if user.role == "subed_club":
+        if user.role in ["subed_club", "free_club"]:
             # paying clubs user sees only their own club athletes
             return self.queryset.filter(club=user).order_by("-creation_date", "first_name", "last_name")
         
@@ -73,7 +73,7 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
         if id_number == 0:
             # Auto-generate id_number if it wasn't provided
-            last_athlete = Athlete.objects.all().order_by("id_number").last()
+            last_athlete = Athlete.objects.filter(id_number__isnull=False).order_by("id_number").last()
             id_number = (last_athlete.id_number if last_athlete else 0) + 1
         
         club = serializer.validated_data.get('club')

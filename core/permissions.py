@@ -113,7 +113,7 @@ class AthletePermission(BasePermission):
             return False
         
         if role == "free_club":
-            return bool(request.method in SAFE_METHODS)
+            return bool(request.method in SAFE_METHODS or request.method == "PATCH")
 
         return False
     
