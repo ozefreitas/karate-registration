@@ -26,7 +26,7 @@ urlpatterns = [
     path(
         'password_recovery/confirm/<uidb64>/<token>/',
         views.PasswordResetConfirmAPI.as_view(),
-        name="password-confirm"
+        name="password_reset_confirm"  # <-- change this
     ),
     path('current_season/', views.current_season, name="current-season"),
     path('login/', obtain_auth_token, name="user-login"),

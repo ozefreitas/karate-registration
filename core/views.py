@@ -305,10 +305,12 @@ def generate_password_recovery_url(request):
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
 
-        reset_url = request.build_absolute_uri(
-            reverse("password_reset_confirm", kwargs={"uidb64": uid, "token": token})
-        )
-        return Response({"url": reset_url})
+        # reset_url = request.build_absolute_uri(
+        #     reverse("password_reset_confirm", kwargs={"uidb64": uid, "token": token})
+        # )
+
+        # Just returns the link expected in the frontend
+        return Response({"url": f"/reset/{uid}/{token}/"})
 
 
 class PasswordResetConfirmAPI(views.APIView):
