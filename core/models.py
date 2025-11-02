@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.conf import settings
 from django.db import models
+from events.models import Event
 from django.contrib.auth.models import AbstractUser
 from django.db.models import Q, UniqueConstraint
 
@@ -29,6 +30,7 @@ class User(AbstractUser):
     class Role(models.TextChoices):
         SUPERUSER = "superuser", "Superuser"
         MAINADMIN = "main_admin", "Main Admin"
+        TECHNICIAN = "technician", "Technician"
         SINGLEADMIN = "single_admin", "Single Admin"
         FREECLUB = "free_club", "Club Free"
         SUBEDCLUB = "subed_club", "Club Subscription"
@@ -77,6 +79,13 @@ class User(AbstractUser):
                 raise ValidationError("A Single Admin cannot have child accounts.")
             if self.parent is not None:
                 raise ValidationError("A Single Admin cannot be assigned as a child.")
+        
+        # TECHNICIAN restrictions
+        if self.role == self.Role.TECHNICIAN:
+            if not self.parent.exists():
+                raise ValidationError("Technician accounts must have a assigned parent.")
+            if self.parent.exists() and self.parent.role != self.Role.MAINADMIN:
+                raise ValidationError("Technician Child accounts must have a Main Admin as parent.")
 
         # Child rules
         if self.parent and self.parent.role != self.Role.MAINADMIN:
@@ -161,23 +170,33 @@ class Ranking(models.Model):
 class Notification(models.Model):
     notification = models.TextField()
 
-    class URGENCY_TYPE(models.TextChoices):
-        NONE = "none", "None"
-        GREEN = "green", "Green"
-        YELLOW = "yellow", "Yellow"
-        ORANGE = "orange", "Orange"
-        RED = "red", "Red"
-
     class TYPE(models.TextChoices):
         NONE = "none", "None"
         REQ = "request", "Request"
         RES = "reset", "Reset"
         CREATE_ATHLETE = "create_athlete", "Create Athlete"
         RATE_EVENT = "rate_event", "Rate Event"
+        REGISTRATIONS_CLOSING = "registrations_closing", "Registrations Closing"
+        REGISTRATIONS_CLOSE = "registrations_close", "Registrations Close"
+        CLASSIFICATIONS_AVAILABLE = "classifications_available", "Classifications Available"
+        OPEN_REGISTRATIONS = "open_registrations", "Open Registrations"
+        PAYMENT_AVAILABLE = "payment_available", "Payment Available"
+        PAYMENT_OVERDUE = "payment_overdue", "Payment Overdue"
+        ADMINISTRATIVE = "administrative", "Administrative"
+        SYSTEM = "system", "System"
+        DANGER = "danger", "Danger"
 
-    urgency = models.CharField(max_length=10, choices=URGENCY_TYPE.choices, default=URGENCY_TYPE.NONE)
-    type = models.CharField(max_length=16, choices=TYPE.choices, default=TYPE.NONE)
+    type = models.CharField(max_length=32, choices=TYPE.choices, default=TYPE.NONE)
     request_acount = models.CharField(max_length=128, unique=True, null=True, blank=True)
+
+    class PAYMENT_TYPE(models.TextChoices):
+        NONE = "none", "None"
+        QUOTES = "quotes", "Quotes"
+        INSURANCE = "insurance", "Insurance"
+        EVENTS = "events", "Events"
+
+    payment_object = models.CharField(max_length=32, choices=PAYMENT_TYPE.choices, default=PAYMENT_TYPE.NONE)
+    target_event = models.ForeignKey(Event, on_delete=models.CASCADE, null=True, blank=True)
     club_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     can_remove = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -186,4 +205,4 @@ class Notification(models.Model):
         return self.created_at < timezone.now() - timedelta(days=30) 
     
     def __str__(self):
-        return '{} {} notification'.format(self.club_user, self.urgency)
+        return '{} notification'.format(self.club_user)

@@ -46,7 +46,7 @@ class Athlete(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self): 
-        return "{} {}".format(self.first_name, self.last_name)
+        return "{} {} | {}".format(self.first_name, self.last_name, self.club.username)
 
 
 ### Teams models ###

@@ -1,5 +1,7 @@
 from django.db import models
 from django.utils.text import slugify
+from django.core.exceptions import ValidationError
+import datetime
 
 # Create your models here.
 
@@ -55,7 +57,14 @@ class Event(models.Model):
     encounter_type = models.CharField("Estágio", choices=ENCOUNTERS, max_length=16, blank=True, null=True, default=ENCOUNTERS["none"])
     rating = models.IntegerField("Avaliação", default=0)
 
+    def clean(self):
+        if self.event_date < datetime.date.today():
+            raise ValidationError({"mother_acount": "Mother account must be a main_admin."})
+
+
     def save(self, *args, **kwargs):
+        self.full_clean()
+
         if not self.id:  # Auto-generate slug only if not set
             self.id = slugify(f"{self.name} {self.season}")
 

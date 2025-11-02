@@ -80,7 +80,6 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         user = User.objects.get(username=club)
         Notification.objects.create(club_user=user, 
                                     notification=f"Um novo atleta ({first_name} {last_name}) acabou de ser criado. Verifique os seus dados e adicione um peso caso necessário.",
-                                    urgency="yellow",
                                     can_remove=True,
                                     type="create_athlete")
 

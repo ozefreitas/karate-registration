@@ -29,7 +29,6 @@ class CompetitionEndedMiddleware:
                                 f'O Evento "{comp_detail.name}" acabou. '
                                 "Por favor, dirija-se à área do Evento para o classificar."
                             ),
-                            urgency="orange",
                             type="rate_event",
                             can_remove=True
                         )

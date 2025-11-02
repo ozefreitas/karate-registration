@@ -111,7 +111,6 @@ class RequestedAcountViewSet(viewsets.ModelViewSet):
             admin_user = User.objects.get(role="main_admin")
             Notification.objects.create(name=admin_user, 
                                         notification=f'Um pedido de criação de conta com o username {username} foi inciado. Dirija-se para a área de Definições na aba "Gestor de Contas".',
-                                        urgency="red",
                                         type="request", 
                                         request_acount=username)
 
@@ -285,7 +284,6 @@ def request_password_reset(request):
     admin_user = User.objects.get(role="main_admin")
     Notification.objects.create(club_user=admin_user, 
                                     notification=f'Um pedido de recuperção de password de {user.username} foi inciado. Dirija-se para a área de Definições na aba "Gestor de Contas" imediatamente!',
-                                    urgency="red",
                                     type="reset", 
                                     request_acount=user.username)
     return Response({"message": "Pedido enviado! Esteja atento ao seu email."}, status=status.HTTP_201_CREATED)

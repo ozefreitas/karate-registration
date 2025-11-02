@@ -36,10 +36,10 @@ class Club(models.Model):
             if self.mother_acount.role != "main_admin":
                 raise ValidationError({"mother_acount": "Mother account must be a main_admin."})
 
+
     def save(self, *args, **kwargs):
         self.clean()
         super().save(*args, **kwargs)
-
         
         self.full_clean()
         super().save(*args, **kwargs)
