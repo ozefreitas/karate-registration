@@ -82,9 +82,9 @@ class User(AbstractUser):
         
         # TECHNICIAN restrictions
         if self.role == self.Role.TECHNICIAN:
-            if not self.parent.exists():
+            if self.parent is None:
                 raise ValidationError("Technician accounts must have a assigned parent.")
-            if self.parent.exists() and self.parent.role != self.Role.MAINADMIN:
+            if self.parent is not None and self.parent.role != self.Role.MAINADMIN:
                 raise ValidationError("Technician Child accounts must have a Main Admin as parent.")
 
         # Child rules
@@ -205,4 +205,4 @@ class Notification(models.Model):
         return self.created_at < timezone.now() - timedelta(days=30) 
     
     def __str__(self):
-        return '{} notification'.format(self.club_user)
+        return '{} {} notification'.format(self.club_user, self.type)

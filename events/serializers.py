@@ -1,7 +1,6 @@
 from rest_framework import serializers
-from core.models import User
 import registration.serializers
-import core.serializers
+import core.serializers.categories
 from django.utils.text import slugify
 from .models import Event, Discipline, Announcement
 from datetime import date
@@ -60,6 +59,12 @@ class EventsSerializer(serializers.ModelSerializer):
         return number
 
 
+class CompactEventsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Event
+        fields = ["id", "name"]
+
+
 class CreateEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
@@ -101,7 +106,7 @@ class UpdateEventSerializer(serializers.ModelSerializer):
 class DisciplinesSerializer(serializers.ModelSerializer):
     individuals = serializers.SerializerMethodField()
     teams = registration.serializers.TeamsSerializer(many=True)
-    categories = core.serializers.CategorySerializer(many=True)
+    categories = core.serializers.categories.CategorySerializer(many=True)
     
     class Meta:
         model = Discipline

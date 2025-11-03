@@ -76,14 +76,15 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             last_athlete = Athlete.objects.filter(id_number__isnull=False).order_by("id_number").last()
             id_number = (last_athlete.id_number if last_athlete else 0) + 1
         
-        club = serializer.validated_data.get('club')
-        user = User.objects.get(username=club)
-        Notification.objects.create(club_user=user, 
-                                    notification=f"Um novo atleta ({first_name} {last_name}) acabou de ser criado. Verifique os seus dados e adicione um peso caso necessário.",
-                                    can_remove=True,
-                                    type="create_athlete")
+        if self.request.user.role == "main_admin":
+            club = serializer.validated_data.get('club')
+            user = User.objects.get(username=club)
+            Notification.objects.create(club_user=user, 
+                                        notification=f"Um novo atleta ({first_name} {last_name}) acabou de ser criado. Verifique os seus dados e adicione um peso caso necessário.",
+                                        can_remove=True,
+                                        type="create_athlete")
 
-        serializer.save(id_number=id_number)
+        serializer.save(id_number=id_number, club=self.request.user)
 
     @action(detail=False, methods=["get"], url_path="last_five")
     def last_five(self, request):

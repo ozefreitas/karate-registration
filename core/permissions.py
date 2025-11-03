@@ -108,12 +108,26 @@ class AthletePermission(BasePermission):
             return True
 
         if role == 'subed_club':
-            if request.method in SAFE_METHODS or request.method in ["PUT", "PATCH"]:
+            # if request.method in SAFE_METHODS or request.method in ["PUT", "PATCH"]:
+            if request.method in SAFE_METHODS or request.method in ["PUT", "PATCH", "POST"]:
                 return True
             return False
         
         if role == "free_club":
             return bool(request.method in SAFE_METHODS or request.method == "PATCH")
+
+        return False
+
+    def has_object_permission(self, request, view, obj):
+        role = getattr(request.user, "role", None)
+
+        # Admins can access all
+        if role in ['main_admin', 'single_admin', 'superuser']:
+            return True
+
+        # Clubs only access their own athletes
+        if role == 'subed_club':
+            return obj.club == request.user
 
         return False
     

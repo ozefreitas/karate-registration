@@ -1,6 +1,6 @@
 from rest_framework import serializers
 import registration.models as models
-from core.serializers import UsersSerializer
+from core.serializers.users import UsersSerializer
 from core.utils.utils import calc_age
 from events.models import Event
 from registration.utils.utils import get_comp_age
@@ -143,6 +143,7 @@ class CreateAthleteSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Athlete
         exclude = ("weight", )
+        read_only_fields = ("club", ) 
 
     def validate(self, data):
         weight = data.get("weight")

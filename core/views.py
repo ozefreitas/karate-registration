@@ -12,7 +12,9 @@ from core.permissions import IsAuthenticatedOrReadOnly, IsUnauthenticatedForPost
 from .models import Category, SignupToken, RequestedAcount, User, RequestPasswordReset
 from clubs.models import Club
 from .models import Notification
-from . import serializers as CoreSerializers
+from core.serializers import base as BaseSerializers
+from core.serializers.categories import CategorySerializer, CreateCategorySerializer, CompactCategorySerializer
+from core.serializers.users import UsersSerializer
 
 from rest_framework import serializers
 from rest_framework.decorators import action, permission_classes, api_view
@@ -34,7 +36,7 @@ class MultipleSerializersMixIn:
 
 class NotificationViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Notification.objects.all()
-    serializer_class=CoreSerializers.NotificationsSerializer
+    serializer_class=BaseSerializers.NotificationsSerializer
     permission_classes = [IsAuthenticatedOrReadOnly, IsNationalForPostDelete]
     filter_backends = [DjangoFilterBackend]
     filterset_class = NotificationsFilters
@@ -56,18 +58,18 @@ class NotificationViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 @permission_classes([IsAuthenticated, IsPayingUserorAdminForGet])
 def notifications(request):
     notifications = Notification.objects.filter(club_user=request.user)
-    serializer = CoreSerializers.NotificationsSerializer(notifications, many=True)
+    serializer = BaseSerializers.NotificationsSerializer(notifications, many=True)
     return Response(serializer.data)
     
 
 class CategoriesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Category.objects.all().order_by("min_age")
-    serializer_class=CoreSerializers.CategorySerializer
+    serializer_class=CategorySerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     serializer_classes = {
-        "create": CoreSerializers.CreateCategorySerializer,
-        "retrieve": CoreSerializers.CompactCategorySerializer
+        "create": CreateCategorySerializer,
+        "retrieve": CompactCategorySerializer
     }
 
     @action(detail=False, methods=['delete'], url_path="delete_all")
@@ -88,7 +90,7 @@ class CategoriesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
 class RequestedAcountViewSet(viewsets.ModelViewSet):
     queryset=RequestedAcount.objects.all()
-    serializer_class=CoreSerializers.RequestedAcountSerializer
+    serializer_class=BaseSerializers.RequestedAcountSerializer
     permission_classes = [IsUnauthenticatedForPost]
 
     def perform_create(self, serializer):
@@ -133,7 +135,7 @@ class RequestedAcountViewSet(viewsets.ModelViewSet):
 
         
 @extend_schema(
-        request=CoreSerializers.GenerateTokenSerializer,
+        request=BaseSerializers.GenerateTokenSerializer,
         responses={201: None, 400: None},
         description="Generate a unique token with an expiration date to allow for sign up."
     )
@@ -147,7 +149,7 @@ def sign_up_token(request):
     return Response({"username": username, "token": str(token.token)})
 
 @extend_schema(
-        request=CoreSerializers.TokenSerializer,
+        request=BaseSerializers.TokenSerializer,
         responses={200: None, 400: None},
         description="Given the token provided in the URL, simply return the username associated with it."
     )
@@ -160,7 +162,7 @@ def get_token_username(request):
     return Response({"username": token_obj.username})
 
 @extend_schema(
-        request=CoreSerializers.UsernameSerializer,
+        request=BaseSerializers.UsernameSerializer,
         responses={200: None, 400: None},
         description="Given a username with a token, returns the token. This is usefull for the admin to go back and get the token again if the page reloads."
     )
@@ -212,12 +214,12 @@ class LogoutView(views.APIView):
 
 class RegisterView(views.APIView):
     @extend_schema(
-        request=CoreSerializers.RegisterUserSerializer,
+        request=BaseSerializers.RegisterUserSerializer,
         responses={201: None, 400: None},
         description="Register a new user with username, email and password."
     )
     def post(self, request):
-        serializer = CoreSerializers.RegisterUserSerializer(data=request.data)
+        serializer = BaseSerializers.RegisterUserSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             club_obj = Club.objects.get(name=serializer.validated_data.get('username'))
             if club_obj.is_admin:
@@ -240,10 +242,10 @@ def users(request):
     username = request.query_params.get('username', None)
     if username:
         user = User.objects.get(username=username)
-        serializer = CoreSerializers.UsersSerializer(user)
+        serializer = UsersSerializer(user)
     else:
         users = User.objects.filter(role__in=["free_club", "subed_club"])
-        serializer = CoreSerializers.UsersSerializer(users, many=True)
+        serializer = UsersSerializer(users, many=True)
     return Response(serializer.data)
 
 
@@ -253,7 +255,7 @@ def users(request):
 ###############
 
 @extend_schema(
-        request=CoreSerializers.PasswordRequestsSerializer,
+        request=BaseSerializers.PasswordRequestsSerializer,
         responses={200: None, 400: None},
         description="Returns all the current requests for password resets."
     )
@@ -262,15 +264,15 @@ def users(request):
 @permission_classes([IsAdminRoleorHigher])
 def get_password_requests(request):
     requests = RequestPasswordReset.objects.all()
-    serializer = CoreSerializers.PasswordRequestsSerializer(requests, many=True)
+    serializer = BaseSerializers.PasswordRequestsSerializer(requests, many=True)
     return Response(serializer.data)
 
 
-@extend_schema(request=CoreSerializers.RequestPasswordResetSerializer, 
+@extend_schema(request=BaseSerializers.RequestPasswordResetSerializer, 
                description="Creates a new request for a password recovery.")
 @api_view(['POST'])
 def request_password_reset(request):
-    serializer = CoreSerializers.RequestPasswordResetSerializer(data=request.data)
+    serializer = BaseSerializers.RequestPasswordResetSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
         try:
             user = User.objects.get(
@@ -290,14 +292,14 @@ def request_password_reset(request):
 
 
 @extend_schema(
-        request=CoreSerializers.UsernameSerializer,
+        request=BaseSerializers.UsernameSerializer,
         responses={201: None, 400: None},
         description="Generate a unique url for password recovery."
     )
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsAdminRoleorHigher])
 def generate_password_recovery_url(request):
-    serializer = CoreSerializers.UsernameSerializer(data=request.data)
+    serializer = BaseSerializers.UsernameSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
         user = User.objects.get(id=serializer.validated_data.get('username'))
         uid = urlsafe_base64_encode(force_bytes(user.pk))
@@ -313,7 +315,7 @@ def generate_password_recovery_url(request):
 
 class PasswordResetConfirmAPI(views.APIView):
     @extend_schema(
-        request=CoreSerializers.PasswordSerializer,
+        request=BaseSerializers.PasswordSerializer,
         responses={201: None, 400: None},
         description="View that confirms the uidb64 and token from the requesting user, and checks if a password is provided in the payload."
     )
