@@ -38,7 +38,11 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'jpsfreitas12@gmail.com'
 
 
-ALLOWED_HOSTS = ['karatescorappregistration.pythonanywhere.com', "127.0.0.1", "localhost", "karate-registration.onrender.com"]
+ALLOWED_HOSTS = ['karatescorappregistration.pythonanywhere.com', 
+                 "127.0.0.1", 
+                 "localhost", 
+                 "karate-registration.onrender.com",
+                 "fight-tec.com"]
 
 # Application definition
 
@@ -84,6 +88,7 @@ ASGI_APPLICATION = 'karate_registration.asgi.application'
 
 # React frontend URL
 CORS_ALLOWED_ORIGINS = [
+    "https://fight-tec.com",
     "https://martialartsregistration.netlify.app",
     "http://localhost:5173",  
 ]

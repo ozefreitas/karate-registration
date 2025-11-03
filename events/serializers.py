@@ -173,7 +173,7 @@ class AddTeamSerializer(serializers.Serializer):
     team_id = serializers.CharField()
 
 
-class AnnouncementSerializer(serializers.Serializer):
+class AnnouncementSerializer(serializers.ModelSerializer):
     class Meta:
         model = Announcement
         fields = "__all__"

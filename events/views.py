@@ -153,6 +153,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         except Exception as e:
             return Response({"error": "Um erro ocurreu ao avaliar este Evento!", "message": e}, status=status.HTTP_400_BAD_REQUEST)
     
+
     @action(detail=True, methods=["get"], url_path="export_athletes_excel", permission_classes=[IsAdminRoleorHigherForGET])
     def export_athletes_excel(self, request, pk=None):
         event = self.get_object()
@@ -451,14 +452,19 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         
 
 class ActiveAnnouncementView(APIView):
-    @extend_schema(description="Ola")
+    @extend_schema(description="Returns a list of currently active annoucements")
     @permission_classes(IsAuthenticatedOrReadOnly)
     def get(self, request):
-        announcement = Announcement.objects.filter(is_active=True).order_by('-created_at').first()
-        if announcement:
-            return Response({
-                "id": announcement.id,
-                "message": announcement.message,
-                "created_at": announcement.created_at,
-            })
-        return Response(None)
+        announcements = Announcement.objects.filter(is_active=True).order_by('-created_at')
+
+        if not announcements.exists():
+            return Response(None)
+
+        serializer = serializers.AnnouncementSerializer(announcements, many=True)
+        return Response(serializer.data)
+    
+ # return Response({
+            #     "id": announcement.id,
+            #     "message": announcement.message,
+            #     "created_at": announcement.created_at,
+            # })
