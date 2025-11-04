@@ -16,14 +16,14 @@ from core.serializers import base as BaseSerializers
 from core.serializers.categories import CategorySerializer, CreateCategorySerializer, CompactCategorySerializer
 from core.serializers.users import UsersSerializer
 
-from rest_framework import serializers
+from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import action, permission_classes, api_view
 from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
-from rest_framework import viewsets, filters, status, views
+from rest_framework import viewsets, filters, status, views, serializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.response import Response
 
 # Create your views here.
 
@@ -202,6 +202,18 @@ class UserDetailView(views.APIView):
             "email": user.email,
             "role": user.role,
         }, status=status.HTTP_200_OK)
+    
+
+class CustomAuthToken(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data,
+                                           context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        # Delete old token (if exists) and create new one
+        Token.objects.filter(user=user).delete()
+        token = Token.objects.create(user=user)
+        return Response({'token': token.key})
     
 
 class LogoutView(views.APIView):

@@ -26,10 +26,10 @@ urlpatterns = [
     path(
         'password_recovery/confirm/<uidb64>/<token>/',
         views.PasswordResetConfirmAPI.as_view(),
-        name="password_reset_confirm"  # <-- change this
+        name="password_reset_confirm"
     ),
     path('current_season/', views.current_season, name="current-season"),
-    path('login/', obtain_auth_token, name="user-login"),
+    path('login/', views.CustomAuthToken.as_view(), name="user-login"),
     path('me/', views.UserDetailView.as_view(), name="user-detail"),
     path('logout/', views.LogoutView.as_view(), name="user-logout"),
     path('users/', views.users, name="users"),

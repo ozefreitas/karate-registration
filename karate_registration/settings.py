@@ -42,7 +42,7 @@ ALLOWED_HOSTS = ['karatescorappregistration.pythonanywhere.com',
                  "127.0.0.1", 
                  "localhost", 
                  "karate-registration.onrender.com",
-                 "fight-tec.com"]
+                 "fight-tech.com"]
 
 # Application definition
 
@@ -88,7 +88,7 @@ ASGI_APPLICATION = 'karate_registration.asgi.application'
 
 # React frontend URL
 CORS_ALLOWED_ORIGINS = [
-    "https://fight-tec.com",
+    "https://fight-tech.com",
     "https://martialartsregistration.netlify.app",
     "http://localhost:5173",  
 ]
