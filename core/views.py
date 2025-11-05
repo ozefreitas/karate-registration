@@ -41,16 +41,40 @@ class NotificationViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_class = NotificationsFilters
 
-    # serializer_classes = {
-    #     "create": CoreSerializers.CreateEventSerializer,
-    #     "update": CoreSerializers.UpdateEventSerializer
-    # }
+    serializer_classes = {
+        "create": BaseSerializers.CreateNotificationsSerializer,
+        # "update": CoreSerializers.UpdateEventSerializer
+    }
 
     def get_queryset(self):
         user = self.request.user
         if getattr(user, "role", None) in ["main_admin", "superuser"]:
             return Notification.objects.all().order_by("created_at")
         return Notification.objects.filter(club_user=user) .order_by("created_at")
+    
+    @action(detail=False, methods=['post'], url_path="create_all_users", serializer_class=BaseSerializers.AllUsersNotificationsSerializer)
+    def create_all_user(self, request):
+        user = request.user
+        if user.role not in ["main_admin", "superuser"]:
+            return Response(
+                {"error": "Não tem autorização para realizar esta ação"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        serializer = BaseSerializers.AllUsersNotificationsSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            children_acounts = user.children.exclude(role="technician")
+            if len(children_acounts) == 0:
+                return Response(
+                    {"error": "Não possui nenhuma conta filha."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            for children in children_acounts:
+                Notification.objects.create(**serializer.validated_data, club_user=children)
+        return Response(
+            {"message": "Notificações enviadas para todos os clubes."},
+            status=status.HTTP_200_OK
+        )
 
 
 @api_view(['GET'])
@@ -272,7 +296,6 @@ def users(request):
         description="Returns all the current requests for password resets."
     )
 @api_view(['GET'])
-# @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAdminRoleorHigher])
 def get_password_requests(request):
     requests = RequestPasswordReset.objects.all()
@@ -306,23 +329,26 @@ def request_password_reset(request):
 @extend_schema(
         request=BaseSerializers.UsernameSerializer,
         responses={201: None, 400: None},
-        description="Generate a unique url for password recovery."
+        description="Generate a unique url for password recovery by providing the id of the account."
     )
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsAdminRoleorHigher])
 def generate_password_recovery_url(request):
     serializer = BaseSerializers.UsernameSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
-        user = User.objects.get(id=serializer.validated_data.get('username'))
-        uid = urlsafe_base64_encode(force_bytes(user.pk))
-        token = default_token_generator.make_token(user)
+        try:
+            user = User.objects.get(id=serializer.validated_data.get('username'))
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            token = default_token_generator.make_token(user)
 
-        # reset_url = request.build_absolute_uri(
-        #     reverse("password_reset_confirm", kwargs={"uidb64": uid, "token": token})
-        # )
+            # reset_url = request.build_absolute_uri(
+            #     reverse("password_reset_confirm", kwargs={"uidb64": uid, "token": token})
+            # )
 
-        # Just returns the link expected in the frontend
-        return Response({"url": f"/reset/{uid}/{token}/"})
+            # Just returns the link expected in the frontend
+            return Response({"url": f"/reset/{uid}/{token}/"}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": "Ocorreu um erro."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PasswordResetConfirmAPI(views.APIView):

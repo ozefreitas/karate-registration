@@ -95,3 +95,15 @@ class NotificationsSerializer(serializers.ModelSerializer):
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
             self.fields["club_user"].queryset = User.objects.filter(role__in=["free_club", "subed_club"])
+
+
+class CreateNotificationsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        exclude = ["request_acount"]
+
+
+class AllUsersNotificationsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        exclude = ["club_user"]
