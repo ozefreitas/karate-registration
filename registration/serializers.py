@@ -142,7 +142,7 @@ class NotInEventAthletesSerializer(serializers.ModelSerializer):
 class CreateAthleteSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Athlete
-        exclude = ("weight", )
+        fields = "__all__"
         read_only_fields = ("club", ) 
 
     def validate(self, data):

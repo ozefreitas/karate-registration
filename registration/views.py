@@ -72,9 +72,10 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         last_name = serializer.validated_data.get("last_name")
 
         if id_number == 0:
-            # Auto-generate id_number if it wasn't provided
-            last_athlete = Athlete.objects.filter(id_number__isnull=False).order_by("id_number").last()
-            id_number = (last_athlete.id_number if last_athlete else 0) + 1
+            # # Auto-generate id_number if it wasn't provided
+            # last_athlete = Athlete.objects.filter(id_number__isnull=False).order_by("id_number").last()
+            # id_number = (last_athlete.id_number if last_athlete else 0) + 1
+            id_number = None
         
         if self.request.user.role == "main_admin":
             club = serializer.validated_data.get('club')

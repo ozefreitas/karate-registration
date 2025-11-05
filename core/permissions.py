@@ -109,7 +109,7 @@ class AthletePermission(BasePermission):
 
         if role == 'subed_club':
             # if request.method in SAFE_METHODS or request.method in ["PUT", "PATCH"]:
-            if request.method in SAFE_METHODS or request.method in ["PUT", "PATCH", "POST"]:
+            if request.method in SAFE_METHODS or request.method in ["PUT", "PATCH", "POST", "DELETE"]:
                 return True
             return False
         
