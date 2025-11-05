@@ -389,6 +389,28 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         except Athlete.DoesNotExist:
             return Response({"error": "Um erro ocurreu ao remover este Atleta"}, status=status.HTTP_404_NOT_FOUND)
     
+    @action(detail=True, methods=['delete'], url_path="delete_all_individuals")
+    def delete_all_individuals(self, request, pk=None):
+        try:
+            discipline = self.get_object()
+            individuals_count = discipline.individuals.count()
+            discipline.individuals.clear()
+            if individuals_count <= 1:
+                return Response(
+                    {"message": f'Atleta removido de {discipline.name}'},
+                    status=status.HTTP_200_OK
+                )
+            else:
+                return Response(
+                    {"message": f"Removidos {individuals_count} Atletas de {discipline.name}"},
+                    status=status.HTTP_200_OK
+                )
+        except Discipline.DoesNotExist:
+            return Response(
+                    {"error": "Ocorreu um erro a remover estes Atletas. Tente mais tarde ou contacte o administrador."},
+                    status=status.HTTP_200_OK
+                )
+    
     @action(detail=True, methods=["post"], url_path="add_team", serializer_class=serializers.AddTeamSerializer)
     def add_team(self, request):
         discipline = self.get_object()
