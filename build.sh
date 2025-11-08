@@ -15,5 +15,5 @@ python manage.py migrate
 python manage.py createsuperuser_if_missing
 
 # Populate users and athletes after migrations and superuser creation
-python manage.py loaddata /etc/secrets/users.json
+# python manage.py loaddata /etc/secrets/users.json
 python manage.py loadathletes
