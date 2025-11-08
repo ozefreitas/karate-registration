@@ -39,7 +39,7 @@ class NotificationViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     serializer_class=BaseSerializers.NotificationsSerializer
     permission_classes = [IsAuthenticatedOrReadOnly, IsNationalForPostDelete]
     filter_backends = [DjangoFilterBackend]
-    filterset_class = NotificationsFilters
+    # filterset_class = NotificationsFilters
 
     serializer_classes = {
         "create": BaseSerializers.CreateNotificationsSerializer,
@@ -48,8 +48,6 @@ class NotificationViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        if getattr(user, "role", None) in ["main_admin", "superuser"]:
-            return Notification.objects.all().order_by("created_at")
         return Notification.objects.filter(club_user=user) .order_by("created_at")
     
     @action(detail=False, methods=['post'], url_path="create_all_users", serializer_class=BaseSerializers.AllUsersNotificationsSerializer)
@@ -81,7 +79,7 @@ class NotificationViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 # @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated, IsPayingUserorAdminForGet])
 def notifications(request):
-    notifications = Notification.objects.filter(club_user=request.user)
+    notifications = Notification.objects.filter(club_user=request.user)[:5]
     serializer = BaseSerializers.NotificationsSerializer(notifications, many=True)
     return Response(serializer.data)
     
