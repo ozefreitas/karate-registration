@@ -3,7 +3,7 @@ from django.views.generic import TemplateView
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django_filters.rest_framework import DjangoFilterBackend
 
-from .models import Athlete, Team, Classification
+from .models import Member, Team, Classification
 from .filters import AthletesFilters
 from events.models import Event
 from core.models import User, Notification
@@ -31,7 +31,7 @@ class MultipleSerializersMixIn:
 
 class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     # TODO: order get request by the category_index from the serializer
-    queryset=Athlete.objects.all().order_by("first_name")
+    queryset=Member.objects.all().order_by("first_name")
     serializer_class = serializers.AthletesSerializer
     permission_classes = [AthletePermission]
     filter_backends = [DjangoFilterBackend]
@@ -73,7 +73,7 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
         if id_number == 0:
             # # Auto-generate id_number if it wasn't provided
-            # last_athlete = Athlete.objects.filter(id_number__isnull=False).order_by("id_number").last()
+            # last_athlete = Member.objects.filter(id_number__isnull=False).order_by("id_number").last()
             # id_number = (last_athlete.id_number if last_athlete else 0) + 1
             id_number = None
         
@@ -90,13 +90,13 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     @action(detail=False, methods=["get"], url_path="last_five")
     def last_five(self, request):
         # TODO: add authentication
-        last_five = Athlete.objects.filter(club=request.user).order_by('creation_date')[:5]
+        last_five = Member.objects.filter(club=request.user).order_by('creation_date')[:5]
         serializer = serializers.AthletesSerializer(last_five, many=True)
         return Response(serializer.data)
 
     @action(detail=False, methods=['delete'], url_path="delete_all")
     def delete_all(self, request):
-        deleted_count, _ = Athlete.objects.filter(club=request.user).delete()
+        deleted_count, _ = Member.objects.filter(club=request.user).delete()
         if deleted_count <= 1:
             return Response(
                 {"message": "Atleta eliminado"},

@@ -48,7 +48,7 @@ class Event(models.Model):
     custody = models.CharField("Tutela", max_length=99, default="", null=True, blank=True)
     email_contact = models.EmailField("Email", default="jpsfreitas19@gmail.com", null=True, blank=True)
     contact = models.PositiveIntegerField("Contacto", default="123456789", null=True, blank=True)
-    individuals = models.ManyToManyField("registration.Athlete", related_name='general_events', blank=True)
+    individuals = models.ManyToManyField("registration.Member", related_name='general_events', blank=True)
     has_ended = models.BooleanField(default=False)
     has_registrations = models.BooleanField(default=False)
     has_categories = models.BooleanField(default=False)
@@ -60,6 +60,8 @@ class Event(models.Model):
     def clean(self):
         if self.event_date < datetime.date.today():
             raise ValidationError({"mother_acount": "Mother account must be a main_admin."})
+        
+        super().clean()
 
 
     def save(self, *args, **kwargs):
@@ -78,7 +80,7 @@ class Discipline(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='disciplines')
     name = models.CharField("Nome", max_length=100)
     is_team = models.BooleanField(default=False)
-    individuals = models.ManyToManyField("registration.Athlete", related_name='disciplines_indiv', blank=True)
+    individuals = models.ManyToManyField("registration.Member", related_name='disciplines_indiv', blank=True)
     teams = models.ManyToManyField("registration.Team", related_name='disciplines_team', blank=True)
     categories = models.ManyToManyField("core.category", related_name='event_categories', blank=True)
 

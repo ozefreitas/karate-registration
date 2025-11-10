@@ -130,7 +130,8 @@ class DisciplinesSerializer(serializers.ModelSerializer):
                                                                             context={
                                                                                         **self.context,
                                                                                         'discipline_categories': list(obj.categories.filter()),
-                                                                                        'event_id': event
+                                                                                        'event_id': event,
+                                                                                        'restricted': self.context['request'].query_params.get("restricted")
                                                                                     }).data
 
 

@@ -38,7 +38,7 @@ class ClubsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, IsAdminRoleorHigher])
 def club_athletes(request):
-    data = User.objects.exclude(role__in=["main_admin", "superuser"])\
-                        .annotate(athlete_count=Count('athlete'))\
-                        .values('username', 'athlete_count')
+    data = User.objects.exclude(role__in=["main_admin", "superuser", "technician"])\
+                        .annotate(member_count=Count('member'))\
+                        .values('username', 'member_count')
     return Response(data)

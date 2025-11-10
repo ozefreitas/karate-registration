@@ -12,7 +12,7 @@ import openpyxl
 from .filters import DisciplinesFilters
 from clubs.models import ClubRatingAudit
 from .models import Event, Discipline, Announcement
-from registration.models import Athlete, Team
+from registration.models import Member, Team
 from core.permissions import IsAuthenticatedOrReadOnly, IsNationalForPostDelete, IsPayingUserorAdminForGet, IsGETforClubs, EventPermission, IsAdminRoleorHigherForGET, IsAdminRoleorHigher
 from core.models import Category
 from events import serializers
@@ -86,11 +86,11 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         member_id = serializer.validated_data["member_id"]
 
         try:
-            athlete = Athlete.objects.get(id=member_id)
+            athlete = Member.objects.get(id=member_id)
             event.individuals.add(athlete)
 
             return Response({"message": "Atleta(s) adicionado(a)(s) a este evento!"}, status=status.HTTP_200_OK)
-        except Athlete.DoesNotExist:
+        except Member.DoesNotExist:
             return Response({"error": "Um erro ocurreu ao adicionar este(s) Atleta(s)!"}, status=status.HTTP_404_NOT_FOUND)
 
     @action(detail=True, methods=["post"], url_path="delete_athlete", serializer_class=serializers.DeleteAthleteSerializer)
@@ -101,11 +101,11 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         member_id = serializer.validated_data["member_id"]
 
         try:
-            athlete = Athlete.objects.get(id=member_id)
+            athlete = Member.objects.get(id=member_id)
             event.individuals.remove(athlete)
 
             return Response({"message": "Atleta(s) removido(a)(s) deste evento!"}, status=status.HTTP_200_OK)
-        except Athlete.DoesNotExist:
+        except Member.DoesNotExist:
             return Response({"error": "Um erro ocurreu ao remover este(s) Atleta(s)!"}, status=status.HTTP_404_NOT_FOUND)
         
         
@@ -307,7 +307,7 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         event_id = serializer.validated_data["event_id"]
 
         try:
-            athlete = Athlete.objects.get(id=member_id)
+            athlete = Member.objects.get(id=member_id)
             event = Event.objects.get(id=event_id)
             season = event.season.split("/")[0]
             event_age = get_comp_age(athlete.birth_date) if age_method == "true" else calc_age(age_method, athlete.birth_date, season)
@@ -371,7 +371,7 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             #     return Response({"error": "Idade do Atleta não permite inscrever nos Escalões disponíveis"}, status=status.HTTP_400_BAD_REQUEST)
 
             return Response({"message": "Atleta(s) adicionado(a)(s) a esta Modalidade"}, status=status.HTTP_200_OK)
-        except Athlete.DoesNotExist:
+        except Member.DoesNotExist:
             return Response({"error": "Um erro ocurreu ao adicionar este(s) Atleta(s)"}, status=status.HTTP_404_NOT_FOUND)
 
     @action(detail=True, methods=["post"], url_path="delete_athlete", serializer_class=serializers.DeleteAthleteSerializer)
@@ -382,11 +382,11 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         member_id = serializer.validated_data["member_id"]
 
         try:
-            athlete = Athlete.objects.get(id=member_id)
+            athlete = Member.objects.get(id=member_id)
             discipline.individuals.remove(athlete)
 
             return Response({"message": "Atleta removido desta Modalidade"}, status=status.HTTP_200_OK)
-        except Athlete.DoesNotExist:
+        except Member.DoesNotExist:
             return Response({"error": "Um erro ocurreu ao remover este Atleta"}, status=status.HTTP_404_NOT_FOUND)
     
     @action(detail=True, methods=['delete'], url_path="delete_all_individuals")
@@ -423,7 +423,7 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             discipline.teams.add(team)
 
             return Response({"message": "Equipa adicionada a esta Modalidade!"}, status=status.HTTP_200_OK)
-        except Athlete.DoesNotExist:
+        except Member.DoesNotExist:
             return Response({"error": "Um erro ocurreu ao adicionar esta Equipa!"}, status=status.HTTP_404_NOT_FOUND)
 
 
@@ -439,7 +439,7 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             discipline.teams.remove(team)
 
             return Response({"message": "Equipa removida desta Modalidade"}, status=status.HTTP_200_OK)
-        except Athlete.DoesNotExist:
+        except Member.DoesNotExist:
             return Response({"error": "Um erro ocurreu ao remover esta Equipa"}, status=status.HTTP_404_NOT_FOUND)
     
     @action(detail=True, methods=["post"], url_path="add_category", serializer_class=serializers.AddCategorySerializer, permission_classes=[IsAuthenticated])

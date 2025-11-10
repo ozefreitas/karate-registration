@@ -5,7 +5,7 @@ from django.utils.timezone import now
 from datetime import timedelta
 from dojos.utils.utils import get_next_competition
 from dojos.models import Event
-from registration.models import Athlete
+from registration.models import Member
 from smtplib import SMTPException
 
 
@@ -26,7 +26,7 @@ class Command(BaseCommand):
         user_dojos = User.objects.all()
         for dojo in user_dojos:
             if not dojo.is_superuser:
-                dojo_athletes = Athlete.objects.filter(dojo=dojo.id)
+                dojo_athletes = Member.objects.filter(dojo=dojo.id)
                 # TODO: add the number of unique registered athletes
                 try:
                     send_mail(

@@ -7,10 +7,10 @@ import pandas as pd
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "karate_registration.settings")
 django.setup()
 
-from registration.models import Athlete
+from registration.models import Member
 
 # Fetch data from the model
-queryset = Athlete.objects.all().values("category")  # Get only the category column
+queryset = Member.objects.all().values("category")  # Get only the category column
 df = pd.DataFrame(queryset)
 
 # Count occurrences of each category

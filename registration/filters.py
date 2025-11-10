@@ -1,5 +1,5 @@
 from django_filters import rest_framework as filters
-from registration.models import Athlete
+from registration.models import Member
 from events.models import Event
 from django.db.models import Q, Count
 
@@ -30,7 +30,7 @@ class AthletesFilters(filters.FilterSet):
         return queryset.annotate(
             discipline_count=Count('disciplines_indiv', filter=Q(disciplines_indiv__event=event), distinct=True)
             ).filter(
-                competitor=True,
+                member_type="competitor",
                 discipline_count__lt=number_disciplines
                 )
     
@@ -41,5 +41,5 @@ class AthletesFilters(filters.FilterSet):
         return queryset.filter(gender=value)
 
     class Meta:
-        model = Athlete
+        model = Member
         fields = []

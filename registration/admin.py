@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Athlete, Team, Classification
+from .models import Member, Team, Classification
 
 # Register your models here.
 
@@ -19,6 +19,6 @@ class ClassificationAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
 
-admin.site.register(Athlete, AthleteAdmin)
+admin.site.register(Member, AthleteAdmin)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Classification, ClassificationAdmin)
