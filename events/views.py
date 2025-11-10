@@ -13,7 +13,7 @@ from .filters import DisciplinesFilters
 from clubs.models import ClubRatingAudit
 from .models import Event, Discipline, Announcement
 from registration.models import Member, Team
-from core.permissions import IsAuthenticatedOrReadOnly, IsNationalForPostDelete, IsPayingUserorAdminForGet, IsGETforClubs, EventPermission, IsAdminRoleorHigherForGET, IsAdminRoleorHigher
+from core.permissions import IsAuthenticatedOrReadOnly, EventIndividualsPermission, EventPermission, IsAdminRoleorHigherForGET, IsAdminRoleorHigher
 from core.models import Category
 from events import serializers
 from clubs.serializers import RatingSerializer
@@ -78,7 +78,11 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         serializer = serializers.EventsSerializer(last_event, context={'request': request})
         return Response(serializer.data)
     
-    @action(detail=True, methods=["post"], url_path="add_athlete", serializer_class=serializers.AddAthleteSerializer, permission_classes=[IsAuthenticated])
+    @action(detail=True, 
+            methods=["post"], 
+            url_path="add_athlete", 
+            serializer_class=serializers.AddAthleteSerializer, 
+            permission_classes=[EventIndividualsPermission])
     def add_athlete(self, request, pk=None):
         event = self.get_object()
         serializer = serializers.AddAthleteSerializer(data=request.data)
@@ -93,7 +97,11 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         except Member.DoesNotExist:
             return Response({"error": "Um erro ocurreu ao adicionar este(s) Atleta(s)!"}, status=status.HTTP_404_NOT_FOUND)
 
-    @action(detail=True, methods=["post"], url_path="delete_athlete", serializer_class=serializers.DeleteAthleteSerializer)
+    @action(detail=True, 
+            methods=["post"], 
+            url_path="delete_athlete", 
+            serializer_class=serializers.DeleteAthleteSerializer, 
+            permission_classes=[EventIndividualsPermission])
     def delete_athlete(self, request, pk=None):
         event = self.get_object()
         serializer = serializers.DeleteAthleteSerializer(data=request.data)

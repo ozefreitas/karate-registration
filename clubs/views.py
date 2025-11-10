@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Case, When, IntegerField
 from django.contrib.auth import get_user_model
 
 from .models import Club
@@ -39,6 +39,24 @@ class ClubsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 @permission_classes([IsAuthenticated, IsAdminRoleorHigher])
 def club_athletes(request):
     data = User.objects.exclude(role__in=["main_admin", "superuser", "technician"])\
-                        .annotate(member_count=Count('member'))\
-                        .values('username', 'member_count')
+                        .annotate(member_count=Count('member'),
+                                    student_count=Count(
+                                        Case(
+                                            When(member__member_type='student', then=1),
+                                            output_field=IntegerField(),
+                                        )
+                                    ),
+                                    coach_count=Count(
+                                        Case(
+                                            When(member__member_type='coach', then=1),
+                                            output_field=IntegerField(),
+                                        )
+                                    ),
+                                    athlete_count=Count(
+                                        Case(
+                                            When(member__member_type='athlete', then=1),
+                                            output_field=IntegerField(),
+                                        )
+                                    ),
+                                ).values('username', 'member_count', 'student_count', 'coach_count', 'athlete_count')
     return Response(data)

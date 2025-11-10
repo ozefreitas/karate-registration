@@ -31,7 +31,7 @@ class Member(models.Model):
         COACH = "coach", "Coach"
 
     id = models.CharField(primary_key=True, max_length=10, unique=True, editable=False)
-    member_type = models.CharField(max_length=32, choices=MEMBER_TYPE.choices, default=MEMBER_TYPE.STUDENT)
+    member_type = models.CharField(max_length=16, choices=MEMBER_TYPE.choices, default=MEMBER_TYPE.ATHLETE)
     first_name = models.CharField("Primeiro Nome", max_length=200)
     last_name = models.CharField("Último Nome", max_length=200)
     graduation = models.CharField("Graduação", max_length=4, choices=GRADUATIONS)
@@ -45,15 +45,22 @@ class Member(models.Model):
     club = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     creation_date = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["first_name", "last_name", "birth_date", "member_type", "id_number"],
+                name="unique_member_identity"
+            )
+        ]
+
     def clean(self):
-        if self.member_type == "coach" and self.favorite == False:
-            raise ValidationError("Coaches are not qualified as fovorite.")
+        if self.member_type == "coach" and self.favorite == True:
+            raise ValidationError("Coaches are not qualified as favorite.")
         
         return super().clean()
 
     def save(self, *args, **kwargs):
         self.full_clean()
-        super().save(*args, **kwargs)
 
         if not self.id:  # Generate only if no ID exists
             self.id = generate_unique_nanoid(self.__class__.__name__, self._meta.app_label)

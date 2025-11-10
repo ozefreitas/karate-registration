@@ -2,39 +2,11 @@ from django.db import models
 from django.utils.text import slugify
 from django.core.exceptions import ValidationError
 import datetime
+from core.constants import ENCOUNTERS, SEASONS
 
 # Create your models here.
 
 class Event(models.Model):
-    SEASONS = {
-        "2024/2025": "2024/2025",
-        "2025/2026": "2025/2026",
-        "2026/2027": "2026/2027",
-        "2027/2028": "2027/2028",
-        "2028/2029": "2028/2029",
-        "2029/2030": "2029/2030",
-        "2030/2031": "2030/2031",
-        "2031/2032": "2031/2032",
-        "2032/2033": "2032/2033",
-        "2033/2034": "2033/2034",
-        "2034/2035": "2034/2035",
-        "2035/2036": "2035/2036",
-        "2036/2037": "2036/2037",
-        "2037/2038": "2037/2038",
-        "2038/2039": "2038/2039",
-        "2039/2040": "2039/2040",
-    }
-
-    ENCOUNTERS = {
-        "none": "None",
-        "regional": "Regional",
-        "nacional": "Nacional",
-        "internacional": "Internacional",
-        "intrutores": "Instrutores",
-        "formacao": "Formação",
-        "exames": "Sessão de Exames",
-        "seminario": "Seminário"
-    }
 
     id = models.SlugField(primary_key=True, unique=True, max_length=100, blank=True)
     name = models.CharField("Nome", max_length=99)
@@ -80,6 +52,7 @@ class Discipline(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='disciplines')
     name = models.CharField("Nome", max_length=100)
     is_team = models.BooleanField(default=False)
+    is_coach = models.BooleanField(default=False)
     individuals = models.ManyToManyField("registration.Member", related_name='disciplines_indiv', blank=True)
     teams = models.ManyToManyField("registration.Team", related_name='disciplines_team', blank=True)
     categories = models.ManyToManyField("core.category", related_name='event_categories', blank=True)

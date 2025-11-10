@@ -38,7 +38,7 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     filterset_class = AthletesFilters
 
     serializer_classes = {
-        "create": serializers.CreateAthleteSerializer,
+        "create": serializers.ClubsCreateAthleteSerializer,
         "update": serializers.UpdateAthleteSerializer
     }
 
@@ -60,6 +60,12 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             if user.role in ["free_club", "subed_club"]:
                 return serializers.NotAdminLikeTypeAthletesSerializer
             return serializers.AthletesSerializer
+
+        elif self.action == "create":
+            user = self.request.user
+            if user.role in ["free_club", "subed_club"]:
+                return serializers.ClubsCreateAthleteSerializer
+            return serializers.AdminCreateAthleteSerializer
         
         if self.request.query_params.get("not_in_event"):
             return serializers.NotInEventAthletesSerializer
@@ -84,8 +90,10 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                                         notification=f"Um novo atleta ({first_name} {last_name}) acabou de ser criado. Verifique os seus dados e adicione um peso caso necessário.",
                                         can_remove=True,
                                         type="create_athlete")
+            serializer.save(id_number=id_number)
 
-        serializer.save(id_number=id_number, club=self.request.user)
+        else:
+            serializer.save(id_number=id_number, club=self.request.user)
 
     @action(detail=False, methods=["get"], url_path="last_five")
     def last_five(self, request):
@@ -104,7 +112,7 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             )
         else:
             return Response(
-                {"message": f"Eliminados {deleted_count} Atletas"},
+                {"message": f"Eliminados {deleted_count} Membros"},
                 status=status.HTTP_200_OK
             )
     

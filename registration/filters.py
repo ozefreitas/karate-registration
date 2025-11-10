@@ -30,7 +30,7 @@ class AthletesFilters(filters.FilterSet):
         return queryset.annotate(
             discipline_count=Count('disciplines_indiv', filter=Q(disciplines_indiv__event=event), distinct=True)
             ).filter(
-                member_type="competitor",
+                member_type="athlete",
                 discipline_count__lt=number_disciplines
                 )
     

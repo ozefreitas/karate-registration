@@ -34,23 +34,28 @@ class AthletesSerializer(serializers.ModelSerializer):
 
 
 class CompactAthletesSerializer(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
     club = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Member
-        fields = ["id" ,"first_name", "last_name", "gender", "club"]
+        fields = ["id" ,"first_name", "last_name", "gender", "club", "full_name"]
 
     def get_club(self, obj):
         return obj.club.username
+    
+    def get_full_name(self, obj):
+        return f"{obj.first_name} {obj.last_name}"
 
 
 class CompactCategorizedAthletesSerializer(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
     category = serializers.SerializerMethodField()
     club = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Member
-        fields = ["id", "first_name", "last_name", "gender", "category", "club"]
+        fields = ["id", "first_name", "last_name", "gender", "category", "club", "full_name"]
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -62,6 +67,9 @@ class CompactCategorizedAthletesSerializer(serializers.ModelSerializer):
 
     def get_club(self, obj):
         return obj.club.username
+    
+    def get_full_name(self, obj):
+        return f"{obj.first_name} {obj.last_name}"
     
     def get_category(self, obj):
         """Sends the category of each athlete if a category is provided. 
@@ -147,11 +155,34 @@ class NotInEventAthletesSerializer(serializers.ModelSerializer):
         return event_age
     
 
-class CreateAthleteSerializer(serializers.ModelSerializer):
+class ClubsCreateAthleteSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Member
         fields = "__all__"
         read_only_fields = ("club", ) 
+
+    def validate(self, data):
+        weight = data.get("weight")
+        stundent = data.get("student")
+        gender = data.get("gender")
+
+        if stundent and weight != "":
+            raise serializers.ValidationError({
+                'incompatible_athlete': ["Alunos não têm peso associado."]
+            })
+    
+        if gender not in ["Masculino", "Feminino"]:
+            raise serializers.ValidationError({
+                'impossible_gender': ['Género "Misto" apenas está disponível para Equipas.']
+            })
+      
+        return data
+    
+
+class AdminCreateAthleteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Member
+        fields = "__all__"
 
     def validate(self, data):
         weight = data.get("weight")
