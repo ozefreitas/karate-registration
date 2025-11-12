@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from django.db.models import Q
 from decouple import config
 import statistics
-from datetime import timedelta
+from datetime import timedelta, datetime
 import openpyxl
 
 from .filters import DisciplinesFilters
@@ -138,7 +138,29 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             "code": "can_rate",
             "message": "Pode fazer a sua avaliação deste evento."
         }, status=status.HTTP_200_OK)
-        
+    
+    @action(detail=False, methods=["post"], url_path="events_days_per_month", permission_classes=[IsAuthenticated], serializer_class=serializers.EventDaysSerializer)
+    def events_days_per_month(self, request, pk=None):
+        serializer = serializers.EventDaysSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        month = serializer.validated_data["month"]
+        if not month:
+            return Response({'error': 'Month parameter is required, e.g., "2025-11".'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # Parse the provided month string
+            date_obj = datetime.strptime(month, "%Y-%m")
+        except ValueError:
+            return Response({'error': 'Invalid month format. Use "YYYY-MM".'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Filter events in that month
+        events = Event.objects.filter(
+            event_date__year=date_obj.year,
+            event_date__month=date_obj.month
+        )
+
+        serializer = serializers.CompactEventsSerializer(events, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["post"], url_path="rate_event", serializer_class=RatingSerializer)
     def rate_event(self, request, pk=None):
@@ -322,7 +344,15 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
             if not event.has_categories:
                 discipline.individuals.add(athlete)
-                return Response({"message": "Atleta(s) adicionado(a)(s) a esta Modalidade"}, status=status.HTTP_200_OK)
+                return Response({"message": "Membro(s) adicionado(s) a esta Modalidade"}, status=status.HTTP_200_OK)
+
+            # if targeted discipline has no categories, it is assumed that anyone can be registered
+            if discipline.categories.count() == 0:
+                # TODO: quick fix for coaches only allow more than 1º Dan
+                print(athlete.graduation)
+                if float(athlete.graduation) > 6:
+                    return Response({"error": "Treinadores têm de ter graduação superior a 1º Dan!"}, status=status.HTTP_400_BAD_REQUEST)
+                discipline.individuals.add(athlete)
             
             categories = discipline.categories.filter(gender=athlete.gender, 
                                                       min_age__lte=event_age, 
@@ -330,7 +360,7 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                                                       )
 
             if list(categories) == []:
-                return Response({"error": "Não existem Escalões que satisfaçam este(a)(s) Atleta(s)"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"error": "Não existem Escalões que satisfaçam este(s) Membro(s)"}, status=status.HTTP_400_BAD_REQUEST)
 
             for category in categories:
 
@@ -378,9 +408,9 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             # if not success:
             #     return Response({"error": "Idade do Atleta não permite inscrever nos Escalões disponíveis"}, status=status.HTTP_400_BAD_REQUEST)
 
-            return Response({"message": "Atleta(s) adicionado(a)(s) a esta Modalidade"}, status=status.HTTP_200_OK)
+            return Response({"message": "Membro(s) adicionado(s) a esta Modalidade"}, status=status.HTTP_200_OK)
         except Member.DoesNotExist:
-            return Response({"error": "Um erro ocurreu ao adicionar este(s) Atleta(s)"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Um erro ocurreu ao adicionar este(s) Membro(s)"}, status=status.HTTP_404_NOT_FOUND)
 
     @action(detail=True, methods=["post"], url_path="delete_athlete", serializer_class=serializers.DeleteAthleteSerializer)
     def delete_athlete(self, request, pk=None):

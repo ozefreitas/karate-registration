@@ -103,6 +103,10 @@ class UpdateEventSerializer(serializers.ModelSerializer):
         exclude = ("id", "has_ended")
 
 
+class EventDaysSerializer(serializers.Serializer):
+    month = serializers.CharField()
+
+
 class DisciplinesSerializer(serializers.ModelSerializer):
     individuals = serializers.SerializerMethodField()
     teams = registration.serializers.TeamsSerializer(many=True)
