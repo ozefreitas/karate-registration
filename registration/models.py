@@ -45,13 +45,13 @@ class Member(models.Model):
     club = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     creation_date = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["first_name", "last_name", "birth_date", "member_type", "id_number"],
-                name="unique_member_identity"
-            )
-        ]
+    # class Meta:
+    #     constraints = [
+    #         models.UniqueConstraint(
+    #             fields=["first_name", "last_name", "birth_date", "member_type", "id_number"],
+    #             name="unique_member_identity"
+    #         )
+    #     ]
 
     def clean(self):
         if self.member_type == "coach" and self.favorite == True:
