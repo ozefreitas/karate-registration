@@ -19,8 +19,8 @@ class Migration(migrations.Migration):
             name='member_type',
             field=models.CharField(choices=[('student', 'Student'), ('athlete', 'Athlete'), ('coach', 'Coach')], default='athlete', max_length=16),
         ),
-        migrations.AddConstraint(
-            model_name='member',
-            constraint=models.UniqueConstraint(fields=('first_name', 'last_name', 'birth_date', 'member_type', 'id_number'), name='unique_member_identity'),
-        ),
+        # migrations.AddConstraint(
+        #     model_name='member',
+        #     constraint=models.UniqueConstraint(fields=('first_name', 'last_name', 'birth_date', 'member_type', 'id_number'), name='unique_member_identity'),
+        # ),
     ]
