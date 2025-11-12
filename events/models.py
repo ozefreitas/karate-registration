@@ -35,7 +35,6 @@ class Event(models.Model):
         
         super().clean()
 
-
     def save(self, *args, **kwargs):
         self.full_clean()
 
@@ -56,6 +55,17 @@ class Discipline(models.Model):
     individuals = models.ManyToManyField("registration.Member", related_name='disciplines_indiv', blank=True)
     teams = models.ManyToManyField("registration.Team", related_name='disciplines_team', blank=True)
     categories = models.ManyToManyField("core.category", related_name='event_categories', blank=True)
+
+    def clean(self):
+        if self.is_team == self.is_coach:
+            raise ValidationError({"error": "Disciplines may not be for coaches and teams at the same time."})
+        
+        super().clean()
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return '{} {}'.format(self.event.name, self.name)

@@ -288,7 +288,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     
 
 class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
-    queryset=Discipline.objects.all()
+    queryset=Discipline.objects.all().order_by("name")
     serializer_class=serializers.DisciplinesSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend]

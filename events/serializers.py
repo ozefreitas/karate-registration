@@ -124,6 +124,8 @@ class DisciplinesSerializer(serializers.ModelSerializer):
             qs = obj.individuals.all()
         else:
             return []
+
+        qs = qs.order_by('club__username')
         
         return registration.serializers.CompactCategorizedAthletesSerializer(qs,
                                                                             many=True, 

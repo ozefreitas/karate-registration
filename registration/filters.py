@@ -9,10 +9,11 @@ class AthletesFilters(filters.FilterSet):
     not_in_event = filters.CharFilter(method='filter_athletes_not_in_event')
     in_category = filters.CharFilter(method='filter_athletes_in_category')
     in_gender = filters.CharFilter(method='filter_athletes_in_gender')
+    coach_not_in_event = filters.CharFilter(method='filter_coach_not_in_event')
 
     def filter_athletes_not_in_event(self, queryset, name, value):
         event = Event.objects.filter(id=value).first()
-        number_disciplines = event.disciplines.count()
+        number_disciplines = event.disciplines.filter(is_coach=False).count()
 
         # no disciplines just returns the ones still not in that event
         if number_disciplines == 0:
@@ -39,6 +40,17 @@ class AthletesFilters(filters.FilterSet):
     
     def filter_athletes_in_gender(self, queryset, name, value):
         return queryset.filter(gender=value)
+    
+    def filter_coach_not_in_event(self, queryset, name, value):
+        event = Event.objects.filter(id=value).first()
+        number_disciplines = event.disciplines.filter(is_coach=True).count()
+
+        return queryset.annotate(
+            discipline_count=Count('disciplines_indiv', filter=Q(disciplines_indiv__event=event), distinct=True)
+            ).filter(
+                member_type="coach",
+                discipline_count__lt=number_disciplines
+                )
 
     class Meta:
         model = Member
