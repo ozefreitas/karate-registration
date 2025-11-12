@@ -1,10 +1,10 @@
 from django.contrib import admin
-from .models import Athlete, Team, Classification
+from .models import Member, Team, Classification
 
 # Register your models here.
 
-class AthleteAdmin(admin.ModelAdmin):
-    list_display = ("first_name", "last_name", "gender")
+class MemberAdmin(admin.ModelAdmin):
+    list_display = ("first_name", "last_name", "gender", "member_type")
     search_fields = ("first_name", "last_name", "club")
 
 
@@ -19,6 +19,6 @@ class ClassificationAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
 
-admin.site.register(Athlete, AthleteAdmin)
+admin.site.register(Member, MemberAdmin)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Classification, ClassificationAdmin)

@@ -24,7 +24,7 @@ try:
         new_users.append(new_user)
 
 
-    from registration.models import Athlete, Team
+    from registration.models import Member, Team
 
     # event = CompetitionDetail.objects.filter(name="Torneio Shihan Mário Águas").first()
 
@@ -32,7 +32,7 @@ try:
     # individuals = list(Individual.objects.filter(competition=event).values())
 
 
-    # athletes = list(Athlete.objects.all().values())
+    # athletes = list(Member.objects.all().values())
     # athletes_by_id = {}
     # for athlete in athletes:
     #     athletes_by_id[athlete["id"]] = athlete
@@ -79,7 +79,7 @@ try:
     #         name = item["name"]
     #         dojo = item["team"]
 
-    athletes = list(Athlete.objects.all().values())
+    athletes = list(Member.objects.all().values())
     athletes_by_id = {}
     for athlete in athletes:
         athletes_by_id[athlete["id"]] = athlete

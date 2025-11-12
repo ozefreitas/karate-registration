@@ -1,6 +1,6 @@
 [
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "-A3Pv7O06u",
     "fields": {
       "first_name": "Adriana",
@@ -18,7 +18,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "-KUCXnPX6G",
     "fields": {
       "first_name": "Ana Mar",
@@ -36,7 +36,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "-V80WTuvox",
     "fields": {
       "first_name": "Afonso",
@@ -54,7 +54,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "-fbEdhr3xX",
     "fields": {
       "first_name": "Carlos",
@@ -72,7 +72,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "-iuxRm4PP2",
     "fields": {
       "first_name": "Miguel",
@@ -90,7 +90,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "-rV58cFc-O",
     "fields": {
       "first_name": "Manuel",
@@ -108,7 +108,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "-yrW87p1C8",
     "fields": {
       "first_name": "Ines",
@@ -126,7 +126,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "-zBmbB0cSL",
     "fields": {
       "first_name": "Gabriela",
@@ -144,7 +144,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "020uyjyIm4",
     "fields": {
       "first_name": "Leonor",
@@ -162,7 +162,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "06mTXPOLbF",
     "fields": {
       "first_name": "Alice",
@@ -180,7 +180,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "0FxaOZGIb1",
     "fields": {
       "first_name": "Dinis",
@@ -198,7 +198,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "0Op-opGBPt",
     "fields": {
       "first_name": "Luana",
@@ -216,7 +216,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "0UQDIcohnt",
     "fields": {
       "first_name": "Andreia",
@@ -234,7 +234,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "0ilXNpskR1",
     "fields": {
       "first_name": "Francisca",
@@ -252,7 +252,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "0nTFNLttnC",
     "fields": {
       "first_name": "Margarida",
@@ -270,7 +270,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "0vFKHDNqNc",
     "fields": {
       "first_name": "Benedita",
@@ -288,7 +288,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "1AyL_fm3ia",
     "fields": {
       "first_name": "Santiago",
@@ -306,7 +306,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "1GQCYJxqcE",
     "fields": {
       "first_name": "Anabela",
@@ -324,7 +324,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "1MsmoPgHVU",
     "fields": {
       "first_name": "Ana",
@@ -342,7 +342,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "1eJWEdTFiZ",
     "fields": {
       "first_name": "Mariana",
@@ -360,7 +360,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "1ieOm89vsw",
     "fields": {
       "first_name": "Gabriela",
@@ -378,7 +378,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "1m_d5jYZxS",
     "fields": {
       "first_name": "Sara",
@@ -396,7 +396,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "1oYWOUZxfW",
     "fields": {
       "first_name": "Leonor",
@@ -414,7 +414,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "1wOE8yjZCF",
     "fields": {
       "first_name": "Duarte",
@@ -432,7 +432,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "28bXfTliMx",
     "fields": {
       "first_name": "Camila",
@@ -450,7 +450,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "2End8mpYt8",
     "fields": {
       "first_name": "André",
@@ -468,7 +468,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "2O6h05cL-J",
     "fields": {
       "first_name": "Margarida",
@@ -486,7 +486,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "2_KYM7jZUY",
     "fields": {
       "first_name": "Matilde",
@@ -504,7 +504,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "2mZCj9stGR",
     "fields": {
       "first_name": "Laura",
@@ -522,7 +522,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "2pCuq0pChF",
     "fields": {
       "first_name": "Leonor",
@@ -540,7 +540,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "2uQIULqHHV",
     "fields": {
       "first_name": "Sofia",
@@ -558,7 +558,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "38fc4cqWjn",
     "fields": {
       "first_name": "Leandro",
@@ -576,7 +576,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "3DTnNx62dQ",
     "fields": {
       "first_name": "Filipe",
@@ -594,7 +594,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "3GJoDPFkA7",
     "fields": {
       "first_name": "Yara",
@@ -612,7 +612,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "3Ke-KwDkqK",
     "fields": {
       "first_name": "Isaac",
@@ -630,7 +630,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "3PHcQYuaX8",
     "fields": {
       "first_name": "Gustavo",
@@ -648,7 +648,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "3T-I3QJntY",
     "fields": {
       "first_name": "Álvaro",
@@ -666,7 +666,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "3a7vtX3Uh2",
     "fields": {
       "first_name": "Vitor",
@@ -684,7 +684,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "3lIlS6GeoR",
     "fields": {
       "first_name": "Hugo",
@@ -702,7 +702,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "3mmwnchFgz",
     "fields": {
       "first_name": "Nadia",
@@ -720,7 +720,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "3s_9A9mAsJ",
     "fields": {
       "first_name": "Afonso",
@@ -738,7 +738,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "45TbDCl2i9",
     "fields": {
       "first_name": "João",
@@ -756,7 +756,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "4J3c4gYZ71",
     "fields": {
       "first_name": "Leandro",
@@ -774,7 +774,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "4KEI80Andl",
     "fields": {
       "first_name": "Tiago",
@@ -792,7 +792,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "4MSH5OMgTB",
     "fields": {
       "first_name": "Pedro",
@@ -810,7 +810,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "4OcRRn6Q-u",
     "fields": {
       "first_name": "Jefferson",
@@ -828,7 +828,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "4PmaMGCVAf",
     "fields": {
       "first_name": "Iana",
@@ -846,7 +846,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "4RhoAH2hZK",
     "fields": {
       "first_name": "Inês",
@@ -864,7 +864,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "4Xu4AZBwNg",
     "fields": {
       "first_name": "Ruben",
@@ -882,7 +882,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "4eD_TwKB-X",
     "fields": {
       "first_name": "Matilde",
@@ -900,7 +900,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "4hPu0KdZcb",
     "fields": {
       "first_name": "Joao",
@@ -918,7 +918,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "5-Sg7lafo4",
     "fields": {
       "first_name": "Alexandra",
@@ -936,7 +936,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "50XseJ2937",
     "fields": {
       "first_name": "Leonor",
@@ -954,7 +954,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "54v-0hW39T",
     "fields": {
       "first_name": "Leandro",
@@ -972,7 +972,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "5DyAu96fKC",
     "fields": {
       "first_name": "Teresa",
@@ -990,7 +990,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "5DyQrJOBoV",
     "fields": {
       "first_name": "Francisco",
@@ -1008,7 +1008,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "5Fbtahnvzc",
     "fields": {
       "first_name": "Tiago",
@@ -1026,7 +1026,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "5LNyVCTEiP",
     "fields": {
       "first_name": "João",
@@ -1044,7 +1044,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "5O3lO7ljNR",
     "fields": {
       "first_name": "João",
@@ -1062,7 +1062,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "5SACQwPkcc",
     "fields": {
       "first_name": "Simão",
@@ -1080,7 +1080,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "5XHgwpqEbN",
     "fields": {
       "first_name": "Pilar",
@@ -1098,7 +1098,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "5c4Cet5ixQ",
     "fields": {
       "first_name": "Maria",
@@ -1116,7 +1116,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "5m8UTe4CrK",
     "fields": {
       "first_name": "Clara",
@@ -1134,7 +1134,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "5vlmn2-Htl",
     "fields": {
       "first_name": "Miguel",
@@ -1152,7 +1152,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "60I9CH4M9e",
     "fields": {
       "first_name": "Joana",
@@ -1170,7 +1170,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "61sbCMQC1E",
     "fields": {
       "first_name": "Duarte",
@@ -1188,7 +1188,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "6ELkmUpcJy",
     "fields": {
       "first_name": "Beatriz",
@@ -1206,7 +1206,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "6NZ9uyHmuX",
     "fields": {
       "first_name": "Matilde",
@@ -1224,7 +1224,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "6Qkkbow0Ik",
     "fields": {
       "first_name": "Albano",
@@ -1242,7 +1242,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "6Yek2nbP0e",
     "fields": {
       "first_name": "Bernardo",
@@ -1260,7 +1260,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "6gHFSYZC8E",
     "fields": {
       "first_name": "Pedro",
@@ -1278,7 +1278,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "7JzHhdcpw3",
     "fields": {
       "first_name": "Francisco",
@@ -1296,7 +1296,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "7Mr9M186Ok",
     "fields": {
       "first_name": "Emilia",
@@ -1314,7 +1314,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "7Zv32Vv3Z7",
     "fields": {
       "first_name": "Maria",
@@ -1332,7 +1332,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "7mzCbaw1oo",
     "fields": {
       "first_name": "Tomás",
@@ -1350,7 +1350,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "7w_tDx8iPA",
     "fields": {
       "first_name": "Vanessa",
@@ -1368,7 +1368,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "7yiHCSwWBJ",
     "fields": {
       "first_name": "Diogo",
@@ -1386,7 +1386,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "81V9wxg2GV",
     "fields": {
       "first_name": "Martim",
@@ -1404,7 +1404,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "81_8IKxqMh",
     "fields": {
       "first_name": "Diogo",
@@ -1422,7 +1422,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "82XESdBSYW",
     "fields": {
       "first_name": "Tiago",
@@ -1440,7 +1440,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "8D4eGN00TG",
     "fields": {
       "first_name": "Tiago",
@@ -1458,7 +1458,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "8Roq6NMuys",
     "fields": {
       "first_name": "Beatriz",
@@ -1476,7 +1476,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "8Safv7SPd3",
     "fields": {
       "first_name": "Jose",
@@ -1494,7 +1494,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "8UMZZyjpaA",
     "fields": {
       "first_name": "Benjamin",
@@ -1512,7 +1512,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "8WL4pnUdAv",
     "fields": {
       "first_name": "Sara",
@@ -1530,7 +1530,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "8kYMHx96fX",
     "fields": {
       "first_name": "Marco",
@@ -1548,7 +1548,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "93M9N9YbmD",
     "fields": {
       "first_name": "SALVADOR",
@@ -1566,7 +1566,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "9Gvm7EN7E2",
     "fields": {
       "first_name": "Pedro",
@@ -1584,7 +1584,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "9JO7ffz2tT",
     "fields": {
       "first_name": "Catarina",
@@ -1602,7 +1602,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "9K6st1cm4q",
     "fields": {
       "first_name": "Lara",
@@ -1620,7 +1620,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "9LTd-qm1X5",
     "fields": {
       "first_name": "Ivo",
@@ -1638,7 +1638,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "9_3QhDHXEa",
     "fields": {
       "first_name": "Luis",
@@ -1656,7 +1656,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "9oPKS__CHF",
     "fields": {
       "first_name": "Ricardo",
@@ -1674,7 +1674,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "9rfPIxN71Y",
     "fields": {
       "first_name": "Filipe",
@@ -1692,7 +1692,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "9uQo7murHh",
     "fields": {
       "first_name": "Manuel",
@@ -1710,7 +1710,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "9wKI_ueiiK",
     "fields": {
       "first_name": "Rui",
@@ -1728,7 +1728,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "ANgVcvZswe",
     "fields": {
       "first_name": "Gabriela",
@@ -1746,7 +1746,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "AhiIHqk3AG",
     "fields": {
       "first_name": "Sara",
@@ -1764,7 +1764,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "BCTPF6iqJV",
     "fields": {
       "first_name": "GUSTAVO",
@@ -1782,7 +1782,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "BQfntrwP_t",
     "fields": {
       "first_name": "Rodrigo",
@@ -1800,7 +1800,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "C-7tPV09S7",
     "fields": {
       "first_name": "Diogo",
@@ -1818,7 +1818,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "C3eXLjU892",
     "fields": {
       "first_name": "Polyna",
@@ -1836,7 +1836,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "CIZexhzMUL",
     "fields": {
       "first_name": "Bianca",
@@ -1854,7 +1854,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "CJU70acGGH",
     "fields": {
       "first_name": "Salvador",
@@ -1872,7 +1872,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "CTPCCH55DM",
     "fields": {
       "first_name": "Carla",
@@ -1890,7 +1890,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "CcMMZcTuGc",
     "fields": {
       "first_name": "Hugo",
@@ -1908,7 +1908,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "ChDQNJ3kA0",
     "fields": {
       "first_name": "Vasco",
@@ -1926,7 +1926,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "CkCSOscO8o",
     "fields": {
       "first_name": "erast",
@@ -1944,7 +1944,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "ClmI_iBPVv",
     "fields": {
       "first_name": "Duarte",
@@ -1962,7 +1962,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "Clwv-tc01y",
     "fields": {
       "first_name": "Mafalda",
@@ -1980,7 +1980,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "Coq3yWzjVq",
     "fields": {
       "first_name": "Leonor",
@@ -1998,7 +1998,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "DBLVreaCfH",
     "fields": {
       "first_name": "FRANCISCO",
@@ -2016,7 +2016,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "DHO379GUH6",
     "fields": {
       "first_name": "Ricardo",
@@ -2034,7 +2034,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "DRkkX4DaLf",
     "fields": {
       "first_name": "David",
@@ -2052,7 +2052,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "DShKjIFC9Y",
     "fields": {
       "first_name": "Sofia",
@@ -2070,7 +2070,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "DcRv848qjy",
     "fields": {
       "first_name": "Leonor",
@@ -2088,7 +2088,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "DdVP8Vjf5q",
     "fields": {
       "first_name": "Francisco",
@@ -2106,7 +2106,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "E-_2-B1T0u",
     "fields": {
       "first_name": "Gonçalo",
@@ -2124,7 +2124,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "E04w8sf46R",
     "fields": {
       "first_name": "Rui",
@@ -2142,7 +2142,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "E2u8Wy0hKb",
     "fields": {
       "first_name": "Duarte",
@@ -2160,7 +2160,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "E4-vJjJr9N",
     "fields": {
       "first_name": "Lara",
@@ -2178,7 +2178,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "E59v46r-So",
     "fields": {
       "first_name": "Gonçalo",
@@ -2196,7 +2196,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "Eh-aGaf53E",
     "fields": {
       "first_name": "Inês",
@@ -2214,7 +2214,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "Ep2Sk8aMR2",
     "fields": {
       "first_name": "Afonso",
@@ -2232,7 +2232,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "F1Q4aBX1nv",
     "fields": {
       "first_name": "Joana",
@@ -2250,7 +2250,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "FCnyHN9psU",
     "fields": {
       "first_name": "Skylar",
@@ -2268,7 +2268,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "FSe3AXoyft",
     "fields": {
       "first_name": "Guilherme",
@@ -2286,7 +2286,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "FzZaqhtOCg",
     "fields": {
       "first_name": "Pedro",
@@ -2304,7 +2304,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "G4cF_D0Srp",
     "fields": {
       "first_name": "Tomas",
@@ -2322,7 +2322,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "GRe6aFrm7f",
     "fields": {
       "first_name": "test",
@@ -2340,7 +2340,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "GTxN8XmkhB",
     "fields": {
       "first_name": "Júlia",
@@ -2358,7 +2358,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "GZBeUFRE5O",
     "fields": {
       "first_name": "Gabriela",
@@ -2376,7 +2376,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "GfeW_AREum",
     "fields": {
       "first_name": "Miguel",
@@ -2394,7 +2394,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "GtS8UAq9h3",
     "fields": {
       "first_name": "Gonçalo",
@@ -2412,7 +2412,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "HAEyTVmJwr",
     "fields": {
       "first_name": "Leonor",
@@ -2430,7 +2430,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "HO-awtjpwG",
     "fields": {
       "first_name": "João",
@@ -2448,7 +2448,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "HT8OTtbO0d",
     "fields": {
       "first_name": "Petra",
@@ -2466,7 +2466,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "HfX0iTOK_z",
     "fields": {
       "first_name": "Eva",
@@ -2484,7 +2484,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "Ho64LAFIM_",
     "fields": {
       "first_name": "Tiago",
@@ -2502,7 +2502,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "ILRotQu4xU",
     "fields": {
       "first_name": "Daniel",
@@ -2520,7 +2520,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "IUDi_6jk3r",
     "fields": {
       "first_name": "Carolina",
@@ -2538,7 +2538,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "IfiJF31EHv",
     "fields": {
       "first_name": "Rafael",
@@ -2556,7 +2556,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "Ixz93Dyupb",
     "fields": {
       "first_name": "Daniel",
@@ -2574,7 +2574,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "JHEaCVormJ",
     "fields": {
       "first_name": "Diogo",
@@ -2592,7 +2592,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "JP_bRHjZ0h",
     "fields": {
       "first_name": "Meer",
@@ -2610,7 +2610,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "JUtcjVwsXE",
     "fields": {
       "first_name": "Mateus",
@@ -2628,7 +2628,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "K-9gA1bU1C",
     "fields": {
       "first_name": "Tomás",
@@ -2646,7 +2646,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "K-OzaV79-k",
     "fields": {
       "first_name": "Diogo",
@@ -2664,7 +2664,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "KAEfEBXUX0",
     "fields": {
       "first_name": "Gaspar",
@@ -2682,7 +2682,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "KAX3vM6I94",
     "fields": {
       "first_name": "Matilde",
@@ -2700,7 +2700,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "KRu2szVP2a",
     "fields": {
       "first_name": "Afonso",
@@ -2718,7 +2718,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "Keg8K1uMfb",
     "fields": {
       "first_name": "Francisco",
@@ -2736,7 +2736,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "KlHWaHa-KE",
     "fields": {
       "first_name": "Vasco",
@@ -2754,7 +2754,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "Kr758I5jli",
     "fields": {
       "first_name": "Gonçalo",
@@ -2772,7 +2772,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "KtKRjC0i6A",
     "fields": {
       "first_name": "Miguel",
@@ -2790,7 +2790,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "L8EjXW2-2S",
     "fields": {
       "first_name": "José",
@@ -2808,7 +2808,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "LCswjoGVBv",
     "fields": {
       "first_name": "Viviana",
@@ -2826,7 +2826,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "LG_TTgmmpb",
     "fields": {
       "first_name": "Raquel",
@@ -2844,7 +2844,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "LOHe871o6i",
     "fields": {
       "first_name": "Issac",
@@ -2862,7 +2862,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "MCdOMRLG3L",
     "fields": {
       "first_name": "Santiago",
@@ -2880,7 +2880,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "MFP6NCbclp",
     "fields": {
       "first_name": "Diogo",
@@ -2898,7 +2898,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "MFiruGZmMA",
     "fields": {
       "first_name": "Afonso",
@@ -2916,7 +2916,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "MLqw8MOwdU",
     "fields": {
       "first_name": "Dinis",
@@ -2934,7 +2934,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "M_JU_7f5XS",
     "fields": {
       "first_name": "João",
@@ -2952,7 +2952,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "Mo_IG1-C21",
     "fields": {
       "first_name": "Henrique",
@@ -2970,7 +2970,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "MpIfD-gPx6",
     "fields": {
       "first_name": "Duarte",
@@ -2988,7 +2988,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "Myqh4xYZKl",
     "fields": {
       "first_name": "Benedita",
@@ -3006,7 +3006,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "N2Nmz6VakR",
     "fields": {
       "first_name": "Nolan",
@@ -3024,7 +3024,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "NL18YnA5Zi",
     "fields": {
       "first_name": "Rodrigo",
@@ -3042,7 +3042,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "NOjlDe92iW",
     "fields": {
       "first_name": "Tiago",
@@ -3060,7 +3060,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "NUxoHGsqih",
     "fields": {
       "first_name": "Tânia",
@@ -3078,7 +3078,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "NVXgsNVHaB",
     "fields": {
       "first_name": "Rafael",
@@ -3096,7 +3096,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "Nav-tdXb_n",
     "fields": {
       "first_name": "Marcos",
@@ -3114,7 +3114,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "NlWh99GD7Y",
     "fields": {
       "first_name": "Inês",
@@ -3132,7 +3132,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "Nvb9iej0Mk",
     "fields": {
       "first_name": "Patrick",
@@ -3150,7 +3150,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "O0fdKEonEj",
     "fields": {
       "first_name": "Nuno",
@@ -3168,7 +3168,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "O5qkIXpXFP",
     "fields": {
       "first_name": "Luís",
@@ -3186,7 +3186,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "OEOU_n-nmI",
     "fields": {
       "first_name": "Marta",
@@ -3204,7 +3204,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "OPIySJzqdd",
     "fields": {
       "first_name": "Victória",
@@ -3222,7 +3222,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "OadatNq3kh",
     "fields": {
       "first_name": "Maria",
@@ -3240,7 +3240,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "Oakp_YtwEd",
     "fields": {
       "first_name": "CLARA",
@@ -3258,7 +3258,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "OyfVtWRYQz",
     "fields": {
       "first_name": "Clara",
@@ -3276,7 +3276,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "PJwQVeHuAH",
     "fields": {
       "first_name": "Ânia",
@@ -3294,7 +3294,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "PMovz0IAmN",
     "fields": {
       "first_name": "Inês",
@@ -3312,7 +3312,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "PR3Bu2Z_xk",
     "fields": {
       "first_name": "Sofia",
@@ -3330,7 +3330,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "PdwWCINA3p",
     "fields": {
       "first_name": "Mariana",
@@ -3348,7 +3348,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "Pk92uukv9K",
     "fields": {
       "first_name": "Tiago",
@@ -3366,7 +3366,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "PlUhx5Gs8Q",
     "fields": {
       "first_name": "João",
@@ -3384,7 +3384,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "Q6h2Luy8Bj",
     "fields": {
       "first_name": "Diogo",
@@ -3402,7 +3402,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "QTlG6dds8g",
     "fields": {
       "first_name": "Miguel",
@@ -3420,7 +3420,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "QcJJcluwe-",
     "fields": {
       "first_name": "Francisco",
@@ -3438,7 +3438,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "RF05WRLV_y",
     "fields": {
       "first_name": "Lara",
@@ -3456,7 +3456,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "RPajgJ0Sbp",
     "fields": {
       "first_name": "Bruno",
@@ -3474,7 +3474,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "RWNLqPqJ0Z",
     "fields": {
       "first_name": "Beatriz",
@@ -3492,7 +3492,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "RoOYLg_h_k",
     "fields": {
       "first_name": "Francisco",
@@ -3510,7 +3510,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "Rx9VHZ0xZf",
     "fields": {
       "first_name": "Polina",
@@ -3528,7 +3528,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "SO4uw8--Yj",
     "fields": {
       "first_name": "Henrique",
@@ -3546,7 +3546,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "Sh76ARx0MY",
     "fields": {
       "first_name": "Eva",
@@ -3564,7 +3564,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "SiGOVbnBy5",
     "fields": {
       "first_name": "Erik",
@@ -3582,7 +3582,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "SvHzAzTRAW",
     "fields": {
       "first_name": "Margarida",
@@ -3600,7 +3600,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "T8jTkzoS4U",
     "fields": {
       "first_name": "Daniel",
@@ -3618,7 +3618,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "TC6FVsgeBi",
     "fields": {
       "first_name": "Benjamim",
@@ -3636,7 +3636,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "TNtIlqoPVD",
     "fields": {
       "first_name": "Rodrigo",
@@ -3654,7 +3654,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "TY03iS7a5B",
     "fields": {
       "first_name": "Elisa",
@@ -3672,7 +3672,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "UTlglUxs7o",
     "fields": {
       "first_name": "Guilherme",
@@ -3690,7 +3690,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "UiOeVkEp9W",
     "fields": {
       "first_name": "Andrea",
@@ -3708,7 +3708,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "V7lcM6jsJ7",
     "fields": {
       "first_name": "Pedro",
@@ -3726,7 +3726,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "VCBgm5Hido",
     "fields": {
       "first_name": "Diogo",
@@ -3744,7 +3744,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "VTOhecfsa0",
     "fields": {
       "first_name": "Artur",
@@ -3762,7 +3762,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "WKVufqNPGK",
     "fields": {
       "first_name": "António",
@@ -3780,7 +3780,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "WekA2NWaHF",
     "fields": {
       "first_name": "Lia",
@@ -3798,7 +3798,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "WktqZQzR6N",
     "fields": {
       "first_name": "Martim",
@@ -3816,7 +3816,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "XOB3wihfFN",
     "fields": {
       "first_name": "Martim",
@@ -3834,7 +3834,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "XzqjyCL3QX",
     "fields": {
       "first_name": "Pilar",
@@ -3852,7 +3852,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "Y0IOknFYNS",
     "fields": {
       "first_name": "Tomás",
@@ -3870,7 +3870,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "Y6wUcbhqHp",
     "fields": {
       "first_name": "Daniil",
@@ -3888,7 +3888,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "YVyb0qWCBW",
     "fields": {
       "first_name": "Hugo",
@@ -3906,7 +3906,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "YmrtGTZAkX",
     "fields": {
       "first_name": "Gonçalo",
@@ -3924,7 +3924,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "Yx_8sQzkHN",
     "fields": {
       "first_name": "Leandro",
@@ -3942,7 +3942,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "Z4dbRCLduY",
     "fields": {
       "first_name": "Clara",
@@ -3960,7 +3960,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "Z62aPchxxX",
     "fields": {
       "first_name": "Manuel",
@@ -3978,7 +3978,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "Z_0sfTEz_W",
     "fields": {
       "first_name": "Martim",
@@ -3996,7 +3996,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "Zu8h_dje_p",
     "fields": {
       "first_name": "Gabriel",
@@ -4014,7 +4014,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "_O7DQgfR_r",
     "fields": {
       "first_name": "Miguel",
@@ -4032,7 +4032,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "_YDF6JPkG9",
     "fields": {
       "first_name": "Guilherme",
@@ -4050,7 +4050,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "_piZ-LOp1N",
     "fields": {
       "first_name": "MIKAEL",
@@ -4068,7 +4068,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "aIeCgNp1rW",
     "fields": {
       "first_name": "Gabriel",
@@ -4086,7 +4086,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "bLj2AntdmK",
     "fields": {
       "first_name": "Beatriz",
@@ -4104,7 +4104,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "bMjC7loAgD",
     "fields": {
       "first_name": "Guilherme",
@@ -4122,7 +4122,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "bibcqOLMyR",
     "fields": {
       "first_name": "Gabriela",
@@ -4140,7 +4140,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "bk90RWanVL",
     "fields": {
       "first_name": "Eduardo",
@@ -4158,7 +4158,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "bxg1UyU92T",
     "fields": {
       "first_name": "Fábio",
@@ -4176,7 +4176,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "cWBB2cWl4g",
     "fields": {
       "first_name": "Inês",
@@ -4194,7 +4194,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "cWYmCS5f_s",
     "fields": {
       "first_name": "Francisco",
@@ -4212,7 +4212,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "cXxYzLCgQG",
     "fields": {
       "first_name": "Gonçalo",
@@ -4230,7 +4230,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "cre33tgxcn",
     "fields": {
       "first_name": "Adriana",
@@ -4248,7 +4248,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "cw38fz7UO5",
     "fields": {
       "first_name": "Pedro",
@@ -4266,7 +4266,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "d0eWMWe7X1",
     "fields": {
       "first_name": "Gonçalo",
@@ -4284,7 +4284,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "dgItNBqRPH",
     "fields": {
       "first_name": "Vitória",
@@ -4302,7 +4302,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "dhfbTevv_j",
     "fields": {
       "first_name": "Luna",
@@ -4320,7 +4320,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "e2D6Oxp8vV",
     "fields": {
       "first_name": "Ricardo",
@@ -4338,7 +4338,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "evLP8bKIDt",
     "fields": {
       "first_name": "Mariana",
@@ -4356,7 +4356,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "f2ExLPUxiW",
     "fields": {
       "first_name": "Maria",
@@ -4374,7 +4374,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "fBRyam5Jme",
     "fields": {
       "first_name": "Diego",
@@ -4392,7 +4392,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "fnLIo6qfUG",
     "fields": {
       "first_name": "José",
@@ -4410,7 +4410,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "fpDOF5rvhP",
     "fields": {
       "first_name": "David",
@@ -4428,7 +4428,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "gqy9dl-_mS",
     "fields": {
       "first_name": "Diana",
@@ -4446,7 +4446,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "iCQ90FSWMe",
     "fields": {
       "first_name": "Núria",
@@ -4464,7 +4464,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "icVHr-7GS3",
     "fields": {
       "first_name": "Bruno",
@@ -4482,7 +4482,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "kpdkMjkDfI",
     "fields": {
       "first_name": "Duarte",
@@ -4500,7 +4500,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "kuY46IL_fJ",
     "fields": {
       "first_name": "Angélica",
@@ -4518,7 +4518,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "kxAamD8y1v",
     "fields": {
       "first_name": "Simão",
@@ -4536,7 +4536,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "lIoKsoOyGO",
     "fields": {
       "first_name": "Lara",
@@ -4554,7 +4554,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "le0l8rAXKL",
     "fields": {
       "first_name": "Mara",
@@ -4572,7 +4572,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "luZKZn3e2h",
     "fields": {
       "first_name": "Rodrigo",
@@ -4590,7 +4590,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "m5kFnjO7hR",
     "fields": {
       "first_name": "Miguel",
@@ -4608,7 +4608,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "mYLcs_ld6w",
     "fields": {
       "first_name": "Bernardo",
@@ -4626,7 +4626,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "n3lTlV6cjW",
     "fields": {
       "first_name": "Tiago",
@@ -4644,7 +4644,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "n5yl_P3mWE",
     "fields": {
       "first_name": "Ana",
@@ -4662,7 +4662,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "noyFcz8JZ-",
     "fields": {
       "first_name": "Rita",
@@ -4680,7 +4680,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "o0O83shfDl",
     "fields": {
       "first_name": "Gabriel",
@@ -4698,7 +4698,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "o4AoNXHW7D",
     "fields": {
       "first_name": "Sergio",
@@ -4716,7 +4716,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "oRVQTd2OQV",
     "fields": {
       "first_name": "Raquel",
@@ -4734,7 +4734,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "osBBDwicCX",
     "fields": {
       "first_name": "Eduarda",
@@ -4752,7 +4752,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "ov82eRgt-t",
     "fields": {
       "first_name": "Joana",
@@ -4770,7 +4770,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "p3WvV34vqN",
     "fields": {
       "first_name": "Simao",
@@ -4788,7 +4788,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "pKyg8UIBZ-",
     "fields": {
       "first_name": "LOURENÇO",
@@ -4806,7 +4806,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "q4E4HSUVOI",
     "fields": {
       "first_name": "Francisco",
@@ -4824,7 +4824,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "qBB0UzDtFh",
     "fields": {
       "first_name": "Bruno",
@@ -4842,7 +4842,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "qVivIUfaXM",
     "fields": {
       "first_name": "Lourenço",
@@ -4860,7 +4860,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "qpVcA3yf5G",
     "fields": {
       "first_name": "Luisa",
@@ -4878,7 +4878,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "qrXpKp5LM_",
     "fields": {
       "first_name": "Francisco",
@@ -4896,7 +4896,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "qygaM3DsFo",
     "fields": {
       "first_name": "Martim",
@@ -4914,7 +4914,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "r7WomPY58K",
     "fields": {
       "first_name": "Francisco",
@@ -4932,7 +4932,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "rQPBfkB0EK",
     "fields": {
       "first_name": "Sofia",
@@ -4950,7 +4950,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "rdGiGAfKrs",
     "fields": {
       "first_name": "João",
@@ -4968,7 +4968,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "swccH_7zCn",
     "fields": {
       "first_name": "Dinis",
@@ -4986,7 +4986,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "tZ2rruALr5",
     "fields": {
       "first_name": "Guilherme",
@@ -5004,7 +5004,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "tb9CNx8ARw",
     "fields": {
       "first_name": "Ana Luísa",
@@ -5022,7 +5022,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "uhFeHg09gK",
     "fields": {
       "first_name": "BARREIRA",
@@ -5040,7 +5040,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "ujjq3HQZYj",
     "fields": {
       "first_name": "Ângelo",
@@ -5058,7 +5058,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "vPm6bZsob-",
     "fields": {
       "first_name": "José",
@@ -5076,7 +5076,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "vbE8RHfY_a",
     "fields": {
       "first_name": "Duarte",
@@ -5094,7 +5094,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "wC6PLbaO82",
     "fields": {
       "first_name": "Leonor",
@@ -5112,7 +5112,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "wR_MPleixz",
     "fields": {
       "first_name": "Constança",
@@ -5130,7 +5130,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "ww_JUZUzsE",
     "fields": {
       "first_name": "Martim",
@@ -5148,7 +5148,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "xPGJyIZj_r",
     "fields": {
       "first_name": "Lara",
@@ -5166,7 +5166,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "xkUDS_TMha",
     "fields": {
       "first_name": "Ricardo",
@@ -5184,7 +5184,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "xtnIPZGpRG",
     "fields": {
       "first_name": "Gonçalo",
@@ -5202,7 +5202,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "yGHK2muNep",
     "fields": {
       "first_name": "Leonor",
@@ -5220,7 +5220,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "yqHR1VMnq_",
     "fields": {
       "first_name": "Inez",
@@ -5238,7 +5238,7 @@
     }
   },
   {
-    "model": "registration.athlete",
+    "model": "registration.member",
     "pk": "zUE_Qjc6fz",
     "fields": {
       "first_name": "Adriana",

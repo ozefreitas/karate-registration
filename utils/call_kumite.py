@@ -23,11 +23,11 @@ try:
                 new_user[key] = value
         new_users.append(new_user)
 
-    from registration.models import Athlete
+    from registration.models import Member
 
     interest_keys = ["name", "category", "gender", "weight"]
     
-    athletes = list(Athlete.objects.all().values())
+    athletes = list(Member.objects.all().values())
 
     new_athletes = [athlete for athlete in athletes if athlete["match_type"] == "kumite" and athlete["gender"] != "feminino"]
 

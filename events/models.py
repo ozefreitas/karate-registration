@@ -2,39 +2,11 @@ from django.db import models
 from django.utils.text import slugify
 from django.core.exceptions import ValidationError
 import datetime
+from core.constants import ENCOUNTERS, SEASONS
 
 # Create your models here.
 
 class Event(models.Model):
-    SEASONS = {
-        "2024/2025": "2024/2025",
-        "2025/2026": "2025/2026",
-        "2026/2027": "2026/2027",
-        "2027/2028": "2027/2028",
-        "2028/2029": "2028/2029",
-        "2029/2030": "2029/2030",
-        "2030/2031": "2030/2031",
-        "2031/2032": "2031/2032",
-        "2032/2033": "2032/2033",
-        "2033/2034": "2033/2034",
-        "2034/2035": "2034/2035",
-        "2035/2036": "2035/2036",
-        "2036/2037": "2036/2037",
-        "2037/2038": "2037/2038",
-        "2038/2039": "2038/2039",
-        "2039/2040": "2039/2040",
-    }
-
-    ENCOUNTERS = {
-        "none": "None",
-        "regional": "Regional",
-        "nacional": "Nacional",
-        "internacional": "Internacional",
-        "intrutores": "Instrutores",
-        "formacao": "Formação",
-        "exames": "Sessão de Exames",
-        "seminario": "Seminário"
-    }
 
     id = models.SlugField(primary_key=True, unique=True, max_length=100, blank=True)
     name = models.CharField("Nome", max_length=99)
@@ -48,7 +20,7 @@ class Event(models.Model):
     custody = models.CharField("Tutela", max_length=99, default="", null=True, blank=True)
     email_contact = models.EmailField("Email", default="jpsfreitas19@gmail.com", null=True, blank=True)
     contact = models.PositiveIntegerField("Contacto", default="123456789", null=True, blank=True)
-    individuals = models.ManyToManyField("registration.Athlete", related_name='general_events', blank=True)
+    individuals = models.ManyToManyField("registration.Member", related_name='general_events', blank=True)
     has_ended = models.BooleanField(default=False)
     has_registrations = models.BooleanField(default=False)
     has_categories = models.BooleanField(default=False)
@@ -60,7 +32,8 @@ class Event(models.Model):
     def clean(self):
         if self.event_date < datetime.date.today():
             raise ValidationError({"mother_acount": "Mother account must be a main_admin."})
-
+        
+        super().clean()
 
     def save(self, *args, **kwargs):
         self.full_clean()
@@ -78,9 +51,21 @@ class Discipline(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='disciplines')
     name = models.CharField("Nome", max_length=100)
     is_team = models.BooleanField(default=False)
-    individuals = models.ManyToManyField("registration.Athlete", related_name='disciplines_indiv', blank=True)
+    is_coach = models.BooleanField(default=False)
+    individuals = models.ManyToManyField("registration.Member", related_name='disciplines_indiv', blank=True)
     teams = models.ManyToManyField("registration.Team", related_name='disciplines_team', blank=True)
     categories = models.ManyToManyField("core.category", related_name='event_categories', blank=True)
+
+    def clean(self):
+        if self.is_team == self.is_coach:
+            raise ValidationError({"error": "Disciplines may not be for coaches and teams at the same time."})
+        
+        super().clean()
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return '{} {}'.format(self.event.name, self.name)

@@ -174,7 +174,7 @@ class Notification(models.Model):
         NONE = "none", "None"
         REQ = "request", "Request"
         RES = "reset", "Reset"
-        CREATE_ATHLETE = "create_athlete", "Create Athlete"
+        CREATE_MEMBER = "create_member", "Create Member"
         RATE_EVENT = "rate_event", "Rate Event"
         REGISTRATIONS_CLOSING = "registrations_closing", "Registrations Closing"
         REGISTRATIONS_CLOSE = "registrations_close", "Registrations Close"

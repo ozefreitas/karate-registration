@@ -155,3 +155,24 @@ class EventPermission(BasePermission):
             if request.method in SAFE_METHODS or request.method in ["PUT", "PATCH"]:
                 return True
             return False
+        
+
+class EventIndividualsPermission(BasePermission):
+    """
+    Permissions for adding/removing individuals from an Event.
+    """
+    def has_permission(self, request, view):
+        if not request.user or not request.user.is_authenticated:
+            return False
+
+        role = getattr(request.user, "role", None)
+
+        # Full access for admin-like users
+        if role in ['main_admin', 'single_admin', 'superuser']:
+            return True
+
+        # Limited club roles can modify individuals only
+        if role in ['subed_club', 'free_club']:
+            return request.method in ["POST", "DELETE"]
+
+        return False

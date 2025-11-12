@@ -124,13 +124,16 @@ class DisciplinesSerializer(serializers.ModelSerializer):
             qs = obj.individuals.all()
         else:
             return []
+
+        qs = qs.order_by('club__username')
         
         return registration.serializers.CompactCategorizedAthletesSerializer(qs,
                                                                             many=True, 
                                                                             context={
                                                                                         **self.context,
                                                                                         'discipline_categories': list(obj.categories.filter()),
-                                                                                        'event_id': event
+                                                                                        'event_id': event,
+                                                                                        'restricted': self.context['request'].query_params.get("restricted")
                                                                                     }).data
 
 

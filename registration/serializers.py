@@ -16,14 +16,14 @@ class AthletesSerializer(serializers.ModelSerializer):
     club = UsersSerializer()
 
     class Meta:
-        model = models.Athlete
+        model = models.Member
         exclude = ("quotes", )
         
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
 
     def get_age(self, obj):
-        """Normal Athlete table should display the real age at the time.
+        """Normal Member table should display the real age at the time.
         Registration modals should display the corrected age."""
         year_of_birth = obj.birth_date.year
         date_now = datetime.datetime.now()
@@ -34,26 +34,42 @@ class AthletesSerializer(serializers.ModelSerializer):
 
 
 class CompactAthletesSerializer(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
     club = serializers.SerializerMethodField()
 
     class Meta:
-        model = models.Athlete
-        fields = ["id" ,"first_name", "last_name", "gender", "club"]
+        model = models.Member
+        fields = ["id" ,"first_name", "last_name", "gender", "club", "full_name"]
 
     def get_club(self, obj):
         return obj.club.username
+    
+    def get_full_name(self, obj):
+        return f"{obj.first_name} {obj.last_name}"
 
 
 class CompactCategorizedAthletesSerializer(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
     category = serializers.SerializerMethodField()
     club = serializers.SerializerMethodField()
 
     class Meta:
-        model = models.Athlete
-        fields = ["id" ,"first_name", "last_name", "gender", "category", "club"]
+        model = models.Member
+        fields = ["id", "first_name", "last_name", "gender", "category", "club", "full_name"]
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        drop = self.context.get("restricted", [])
+
+        if drop == "true":
+            self.fields.pop("id", None)
 
     def get_club(self, obj):
         return obj.club.username
+    
+    def get_full_name(self, obj):
+        return f"{obj.first_name} {obj.last_name}"
     
     def get_category(self, obj):
         """Sends the category of each athlete if a category is provided. 
@@ -103,7 +119,7 @@ class NotAdminLikeTypeAthletesSerializer(serializers.ModelSerializer):
     age = serializers.SerializerMethodField()
     
     class Meta:
-        model = models.Athlete
+        model = models.Member
         fields = "__all__"
 
     def get_full_name(self, obj):
@@ -118,8 +134,8 @@ class NotInEventAthletesSerializer(serializers.ModelSerializer):
     age = serializers.SerializerMethodField()
     
     class Meta:
-        model = models.Athlete
-        fields = "__all__"
+        model = models.Member
+        exclude = ["creation_date", "quotes", "favorite", "member_type"]
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
@@ -139,11 +155,34 @@ class NotInEventAthletesSerializer(serializers.ModelSerializer):
         return event_age
     
 
-class CreateAthleteSerializer(serializers.ModelSerializer):
+class ClubsCreateAthleteSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Athlete
+        model = models.Member
         fields = "__all__"
         read_only_fields = ("club", ) 
+
+    def validate(self, data):
+        weight = data.get("weight")
+        stundent = data.get("student")
+        gender = data.get("gender")
+
+        if stundent and weight != "":
+            raise serializers.ValidationError({
+                'incompatible_athlete': ["Alunos não têm peso associado."]
+            })
+    
+        if gender not in ["Masculino", "Feminino"]:
+            raise serializers.ValidationError({
+                'impossible_gender': ['Género "Misto" apenas está disponível para Equipas.']
+            })
+      
+        return data
+    
+
+class AdminCreateAthleteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Member
+        fields = "__all__"
 
     def validate(self, data):
         weight = data.get("weight")
@@ -165,7 +204,7 @@ class CreateAthleteSerializer(serializers.ModelSerializer):
 
 class UpdateAthleteSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Athlete
+        model = models.Member
         exclude = ("club", "id_number", )
 
 
