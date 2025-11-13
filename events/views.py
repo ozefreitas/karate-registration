@@ -352,7 +352,9 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 print(athlete.graduation)
                 if float(athlete.graduation) > 6:
                     return Response({"error": "Treinadores têm de ter graduação superior a 1º Dan!"}, status=status.HTTP_400_BAD_REQUEST)
-                discipline.individuals.add(athlete)
+                else:
+                    discipline.individuals.add(athlete)
+                    return Response({"message": "Treinador(es) adicionado(s) a este Evento"}, status=status.HTTP_200_OK)
             
             categories = discipline.categories.filter(gender=athlete.gender, 
                                                       min_age__lte=event_age, 
