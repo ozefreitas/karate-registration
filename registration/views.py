@@ -124,10 +124,10 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         except Event.DoesNotExist:
             return Response({"detail": "Event not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        # All modalities of the event
-        event_disciplines = event.disciplines.all()
+        # All disciplines of the event
+        event_disciplines = event.disciplines.filter(is_coach=False)
 
-        # Modalities where the athlete is already registered
+        # disciplines where the athlete is already registered
         registered = athlete.disciplines_indiv.filter(event=event)
 
         # Difference = unregistered

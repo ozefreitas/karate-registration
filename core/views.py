@@ -39,15 +39,16 @@ class NotificationViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     serializer_class=BaseSerializers.NotificationsSerializer
     permission_classes = [IsAuthenticatedOrReadOnly, IsNationalForPostDelete]
     filter_backends = [DjangoFilterBackend]
-    # filterset_class = NotificationsFilters
+    filterset_class = NotificationsFilters
 
     serializer_classes = {
         "create": BaseSerializers.CreateNotificationsSerializer,
-        # "update": CoreSerializers.UpdateEventSerializer
     }
 
     def get_queryset(self):
         user = self.request.user
+        if user.role in ["main_admin", "superuser"]:
+            return self.queryset
         return Notification.objects.filter(club_user=user) .order_by("created_at")
     
     @action(detail=False, methods=['post'], url_path="create_all_users", serializer_class=BaseSerializers.AllUsersNotificationsSerializer)
