@@ -269,6 +269,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 key=lambda x: (
                     getattr(x[1].club, "username", "").lower(),
                     getattr(x[1], "first_name", "").lower(),
+                    getattr(x[1], "last_name", "").lower(),
                 ),
             )
 
@@ -276,24 +277,37 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             club = ""
             i = 0
 
-            for discipline, athlete, event_age, category_to_assign in all_members_sorted: 
+            for discipline, athlete, event_age, category_to_assign in all_members_sorted:
 
-                if name == getattr(athlete, "first_name", "") + getattr(athlete, "last_name", "") and club == getattr(athlete.club, "username", ""):
+                curr_name = getattr(athlete, "first_name", "") + getattr(athlete, "last_name", "")
+                curr_club = getattr(athlete.club, "username", "")
+
+                if curr_name == name and curr_club == club:
+                    # Same athlete as previous → repeat the same number
                     member_event_number = str(i).zfill(3)
                 else:
+                    # New athlete → increment and assign new number
                     i += 1
                     member_event_number = str(i).zfill(3)
-                    name = getattr(athlete, "first_name", "") + getattr(athlete, "last_name", ""),
-                    club = getattr(athlete.club, "username", ""),
+                    name = curr_name
+                    club = curr_club
+
+                
+                new_category_to_assign = ""
+                if category_to_assign != None:
+                    if category_to_assign.max_weight != None:
+                        new_category_to_assign = f"{category_to_assign.name} - {category_to_assign.max_weight}"
+                    elif category_to_assign.min_weight != None:
+                        new_category_to_assign = f"{category_to_assign.name} - {category_to_assign.min_weight}"
 
                 ws.append([
                     getattr(athlete.club, "username", ""),
-                    getattr(athlete, "first_name", "") + getattr(athlete, "last_name", ""),
+                    getattr(athlete, "first_name", "") + " " + getattr(athlete, "last_name", ""),
                     event_age,
                     getattr(athlete, "id_number", ""),
                     getattr(athlete, "gender", ""),
                     discipline.name,
-                    category_to_assign.name if category_to_assign != None else "",
+                    new_category_to_assign,
                     member_event_number
                 ])
 
@@ -349,7 +363,6 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             # if targeted discipline has no categories, it is assumed that anyone can be registered
             if discipline.categories.count() == 0:
                 # TODO: quick fix for coaches only allow more than 1º Dan
-                print(athlete.graduation)
                 if float(athlete.graduation) > 6:
                     return Response({"error": "Treinadores têm de ter graduação superior a 1º Dan!"}, status=status.HTTP_400_BAD_REQUEST)
                 else:
