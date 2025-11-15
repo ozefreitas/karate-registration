@@ -295,7 +295,9 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 
                 new_category_to_assign = ""
                 if category_to_assign != None:
-                    if category_to_assign.max_weight != None:
+                    if category_to_assign.max_weight == None and category_to_assign.min_weight == None:
+                        new_category_to_assign = category_to_assign.name
+                    elif category_to_assign.max_weight != None:
                         new_category_to_assign = f"{category_to_assign.name} - {category_to_assign.max_weight}"
                     elif category_to_assign.min_weight != None:
                         new_category_to_assign = f"{category_to_assign.name} + {category_to_assign.min_weight}"
