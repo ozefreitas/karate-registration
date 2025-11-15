@@ -298,7 +298,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                     if category_to_assign.max_weight != None:
                         new_category_to_assign = f"{category_to_assign.name} - {category_to_assign.max_weight}"
                     elif category_to_assign.min_weight != None:
-                        new_category_to_assign = f"{category_to_assign.name} - {category_to_assign.min_weight}"
+                        new_category_to_assign = f"{category_to_assign.name} + {category_to_assign.min_weight}"
 
                 ws.append([
                     getattr(athlete.club, "username", ""),
