@@ -293,7 +293,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                     getattr(athlete, "id_number", ""),
                     getattr(athlete, "gender", ""),
                     discipline.name,
-                    category_to_assign.name,
+                    category_to_assign.name if category_to_assign != None else "",
                     member_event_number
                 ])
 
