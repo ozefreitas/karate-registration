@@ -9,7 +9,7 @@ import statistics
 from datetime import timedelta, datetime
 import openpyxl
 
-from .filters import DisciplinesFilters
+from .filters import DisciplinesFilters, EventsFilters
 from clubs.models import ClubRatingAudit
 from .models import Event, Discipline, Announcement
 from registration.models import Member, Team
@@ -36,6 +36,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Event.objects.all()
     serializer_class=serializers.EventsSerializer
     permission_classes = [EventPermission]
+    filterset_class = EventsFilters
 
     serializer_classes = {
         "create": serializers.CreateEventSerializer,
@@ -337,26 +338,25 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         event_id = serializer.validated_data["event_id"]
 
         try:
-            athlete = Member.objects.get(id=member_id)
+            member = Member.objects.get(id=member_id)
             event = Event.objects.get(id=event_id)
             season = event.season.split("/")[0]
-            event_age = get_comp_age(athlete.birth_date) if age_method == "true" else calc_age(age_method, athlete.birth_date, season)
+            event_age = get_comp_age(member.birth_date) if age_method == "true" else calc_age(age_method, member.birth_date, season)
 
             if not event.has_categories:
-                discipline.individuals.add(athlete)
+                discipline.add_member(member)
                 return Response({"message": "Membro(s) adicionado(s) a esta Modalidade"}, status=status.HTTP_200_OK)
 
             # if targeted discipline has no categories, it is assumed that anyone can be registered
             if discipline.categories.count() == 0:
                 # TODO: quick fix for coaches only allow more than 1º Dan
-                print(athlete.graduation)
-                if float(athlete.graduation) > 6:
+                if float(member.graduation) > 6:
                     return Response({"error": "Treinadores têm de ter graduação superior a 1º Dan!"}, status=status.HTTP_400_BAD_REQUEST)
                 else:
-                    discipline.individuals.add(athlete)
+                    discipline.add_member(member)
                     return Response({"message": "Treinador(es) adicionado(s) a este Evento"}, status=status.HTTP_200_OK)
             
-            categories = discipline.categories.filter(gender=athlete.gender, 
+            categories = discipline.categories.filter(gender=member.gender, 
                                                       min_age__lte=event_age, 
                                                       max_age__gte=event_age
                                                       )
@@ -368,7 +368,7 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
                 min_grad = float(category.min_grad) if category.min_grad is not None and category.min_grad != "" else None
                 max_grad = float(category.max_grad) if category.max_grad is not None and category.max_grad != "" else None
-                grad = float(athlete.graduation) if athlete.graduation is not None and athlete.graduation != "" else None
+                grad = float(member.graduation) if member.graduation is not None and member.graduation != "" else None
 
                 # Graduations
                 if min_grad is None and max_grad is None:
@@ -387,25 +387,25 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                     
                 # Weights
                 if category.min_weight is None and category.max_weight is None:  # category does not have any weight limit
-                    discipline.individuals.add(athlete)
+                    discipline.add_member(member)
                 else:
-                    if athlete.weight is None:
+                    if member.weight is None:
                         return Response({"status": "info", 
                                          "message": "O escalão disponível para este Atleta pede que adicione um peso."}, 
                                          status=status.HTTP_200_OK)
                     
 
                 if category.min_weight is not None and category.max_weight is not None:
-                    if category.min_weight <= athlete.weight <= category.max_weight:
-                         discipline.individuals.add(athlete)
+                    if category.min_weight <= member.weight <= category.max_weight:
+                         discipline.add_member(member)
                     else:
                         continue
                 if category.max_weight is not None:
-                    if athlete.weight < category.max_weight:
-                        discipline.individuals.add(athlete)
+                    if member.weight < category.max_weight:
+                        discipline.add_member(member)
                 if category.min_weight is not None:
-                    if athlete.weight >= category.min_weight:
-                        discipline.individuals.add(athlete)
+                    if member.weight >= category.min_weight:
+                        discipline.add_member(member)
                 
             # if not success:
             #     return Response({"error": "Idade do Atleta não permite inscrever nos Escalões disponíveis"}, status=status.HTTP_400_BAD_REQUEST)

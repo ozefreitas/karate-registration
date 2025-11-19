@@ -2,7 +2,7 @@ from rest_framework import serializers
 import registration.serializers
 import core.serializers.categories
 from django.utils.text import slugify
-from .models import Event, Discipline, Announcement
+from .models import Event, Discipline, Announcement, DisciplineMember
 from datetime import date
 
 
@@ -117,28 +117,40 @@ class DisciplinesSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def get_individuals(self, obj):
-        """Filters the athletes in the individuals fields based on que requesting user"""
         user = self.context['request'].user
         event = self.context['request'].query_params.get("event_disciplines")
+
         if not user.is_authenticated:
             return []
-        if user.role == 'free_club' or user.role == 'subed_club':
-            qs = obj.individuals.filter(club=user)
-        elif user.role == 'main_admin' or user.role == 'superuser':
-            qs = obj.individuals.all()
-        else:
+
+        # Start with through model queryset
+        qs = DisciplineMember.objects.filter(discipline=obj)
+
+        if user.role in ['free_club', 'subed_club']:
+            qs = qs.filter(member__club=user)
+        elif user.role not in ['main_admin', 'superuser']:
             return []
 
-        qs = qs.order_by('club__username')
-        
-        return registration.serializers.CompactCategorizedAthletesSerializer(qs,
-                                                                            many=True, 
-                                                                            context={
-                                                                                        **self.context,
-                                                                                        'discipline_categories': list(obj.categories.filter()),
-                                                                                        'event_id': event,
-                                                                                        'restricted': self.context['request'].query_params.get("restricted")
-                                                                                    }).data
+        qs = qs.order_by('member__club__username')
+
+        return DisciplineMemberSerializer(
+            qs,
+            many=True,
+            context={
+                **self.context,
+                'discipline_categories': list(obj.categories.all()),
+                'event_id': event,
+                'restricted': self.context['request'].query_params.get("restricted")
+            }
+        ).data
+
+
+class DisciplineMemberSerializer(serializers.ModelSerializer):
+    member = registration.serializers.CompactCategorizedAthletesSerializer()
+
+    class Meta:
+        model = DisciplineMember
+        fields = ["member", "added_at"]
 
 
 class DisciplinesCompactSerializer(serializers.ModelSerializer):

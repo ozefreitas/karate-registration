@@ -4,12 +4,10 @@ from .models import Notification
 
 class NotificationsFilters(filters.FilterSet):
     """Filter Notifications"""
-    club_notification = filters.CharFilter(field_name='club_notification',
-                                              method='filter_club_notification')
+    user_id = filters.CharFilter(field_name='user_id',
+                                              method='filter_user_id')
 
-    def filter_club_notification(self, queryset, name, value):
-        if value == "0":
-            return queryset.none()
+    def filter_user_id(self, queryset, name, value):
         return queryset.filter(club_user=value)
 
     class Meta:

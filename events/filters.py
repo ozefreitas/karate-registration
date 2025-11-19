@@ -1,5 +1,18 @@
 from django_filters import rest_framework as filters
-from .models import Discipline
+from .models import Discipline, Event
+
+
+class EventsFilters(filters.FilterSet):
+    """Filter Events based on different fields"""
+    season = filters.CharFilter(field_name='season',
+                                              method='filter_season')
+
+    def filter_season(self, queryset, name, value):
+        return queryset.filter(season=value)
+
+    class Meta:
+        model = Event
+        fields = []
 
 
 class DisciplinesFilters(filters.FilterSet):

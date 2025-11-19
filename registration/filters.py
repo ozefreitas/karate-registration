@@ -10,6 +10,7 @@ class AthletesFilters(filters.FilterSet):
     in_category = filters.CharFilter(method='filter_athletes_in_category')
     in_gender = filters.CharFilter(method='filter_athletes_in_gender')
     coach_not_in_event = filters.CharFilter(method='filter_coach_not_in_event')
+    member_type = filters.ChoiceFilter(choices=Member.MEMBER_TYPE)
 
     def filter_athletes_not_in_event(self, queryset, name, value):
         event = Event.objects.filter(id=value).first()

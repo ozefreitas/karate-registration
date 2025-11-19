@@ -11,7 +11,7 @@ from core.permissions import AthletePermission
 import registration.serializers as serializers
 import events.serializers as event_serializers
 
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, filters
 from rest_framework.decorators import action, permission_classes
 from rest_framework.response import Response
 from rest_framework.decorators import authentication_classes, permission_classes
@@ -34,7 +34,8 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Member.objects.all().order_by("first_name")
     serializer_class = serializers.AthletesSerializer
     permission_classes = [AthletePermission]
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    ordering_fields = ["first_name", "gender", "member_type"]
     filterset_class = AthletesFilters
 
     serializer_classes = {

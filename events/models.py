@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.text import slugify
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 import datetime
 from core.constants import ENCOUNTERS, SEASONS
 
@@ -52,9 +53,22 @@ class Discipline(models.Model):
     name = models.CharField("Nome", max_length=100)
     is_team = models.BooleanField(default=False)
     is_coach = models.BooleanField(default=False)
-    individuals = models.ManyToManyField("registration.Member", related_name='disciplines_indiv', blank=True)
+    
+    individuals = models.ManyToManyField(
+        "registration.Member",
+        through="DisciplineMember",
+        related_name="disciplines_indiv",
+        blank=True
+    )
+    
     teams = models.ManyToManyField("registration.Team", related_name='disciplines_team', blank=True)
     categories = models.ManyToManyField("core.category", related_name='event_categories', blank=True)
+
+    def add_member(self, member):
+        DisciplineMember.objects.get_or_create(
+            discipline=self,
+            member=member
+        )
 
     def clean(self):
         if self.is_team == self.is_coach:
@@ -69,6 +83,15 @@ class Discipline(models.Model):
 
     def __str__(self):
         return '{} {}'.format(self.event.name, self.name)
+    
+
+class DisciplineMember(models.Model):
+    discipline = models.ForeignKey("Discipline", on_delete=models.CASCADE)
+    member = models.ForeignKey("registration.Member", on_delete=models.CASCADE)
+    added_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        unique_together = ('discipline', 'member') 
 
 
 class FeedbackData(models.Model):
