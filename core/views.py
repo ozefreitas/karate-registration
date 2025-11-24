@@ -78,9 +78,9 @@ class NotificationViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 # @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated, IsPayingUserorAdminForGet])
 def notifications(request):
-    notifications = Notification.objects.filter(club_user=request.user)[:5]
-    serializer = BaseSerializers.NotificationsSerializer(notifications, many=True)
-    return Response(serializer.data)
+    notifications = Notification.objects.filter(club_user=request.user)
+    serializer = BaseSerializers.NotificationsSerializer(notifications[:5], many=True)
+    return Response({"response": serializer.data, "total": len(notifications)})
     
 
 class CategoriesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):

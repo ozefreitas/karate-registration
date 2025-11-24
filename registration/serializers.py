@@ -17,8 +17,8 @@ class AthletesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Member
-        exclude = ("quotes", )
-        
+        exclude = ("quotes_legible", "creation_date", "favorite", "graduation", "id_number", "weight", "birth_date")
+
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
 
@@ -117,6 +117,7 @@ class CompactCategorizedAthletesSerializer(serializers.ModelSerializer):
 class NotAdminLikeTypeAthletesSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     age = serializers.SerializerMethodField()
+    monthly_payment_status = serializers.SerializerMethodField()
     
     class Meta:
         model = models.Member
@@ -127,6 +128,9 @@ class NotAdminLikeTypeAthletesSerializer(serializers.ModelSerializer):
 
     def get_age(self, obj):
         return get_comp_age(obj.birth_date)
+    
+    def get_monthly_payment_status(self, obj):
+        return obj.current_month_payment()
 
 
 class NotInEventAthletesSerializer(serializers.ModelSerializer):
@@ -206,6 +210,15 @@ class UpdateAthleteSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Member
         exclude = ("club", "id_number", )
+
+
+### Monthly Payments Serializer Classes
+
+class MonthlyMemberPaymentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.MonthlyMemberPayment
+        fields = "__all__"
 
 
 ### Teams Serializer Classes

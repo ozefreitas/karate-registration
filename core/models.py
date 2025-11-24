@@ -61,6 +61,13 @@ class User(AbstractUser):
         limit_choices_to={"role": Role.MAINADMIN},  # only MAINADMIN can be a parent
     )
 
+    monthly_fee = models.DecimalField(
+        max_digits=7,
+        decimal_places=2,
+        default=0,
+        help_text="Monthly fee for members of this dojo",
+    )
+
     # --------------------------
     # Validation rules
     # --------------------------

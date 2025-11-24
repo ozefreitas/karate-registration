@@ -1,9 +1,6 @@
-from django.views import View
-from django.views.generic import TemplateView
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django_filters.rest_framework import DjangoFilterBackend
 
-from .models import Member, Team, Classification
+from .models import Member, Team, Classification, MonthlyMemberPayment
 from .filters import AthletesFilters
 from events.models import Event
 from core.models import User, Notification
@@ -98,7 +95,6 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
     @action(detail=False, methods=["get"], url_path="last_five")
     def last_five(self, request):
-        # TODO: add authentication
         last_five = Member.objects.filter(club=request.user).order_by('creation_date')[:5]
         serializer = serializers.AthletesSerializer(last_five, many=True)
         return Response(serializer.data)
@@ -136,6 +132,20 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
         serializer = event_serializers.DisciplinesCompactSerializer(unregistered, many=True)
         return Response(serializer.data)
+    
+
+class MonthlyMemberPaymentViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
+    queryset=MonthlyMemberPayment.objects.all()
+    serializer_class = serializers.MonthlyMemberPaymentSerializer
+    permission_classes = [IsAuthenticated]
+
+    serializer_classes = {
+        # "create": serializers.CreateAthleteSerializer,
+        # "update": serializers.UpdateTeamsSerializer
+    }
+
+    # def get_queryset(self):
+    #     return self.queryset.filter(club=self.request.user)
 
 
 class TeamsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):

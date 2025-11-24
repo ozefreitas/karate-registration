@@ -30,15 +30,15 @@ class Event(models.Model):
     encounter_type = models.CharField("Estágio", choices=ENCOUNTERS, max_length=16, blank=True, null=True, default=ENCOUNTERS["none"])
     rating = models.IntegerField("Avaliação", default=0)
 
-    def clean(self):
-        if self.event_date < datetime.date.today():
-            raise ValidationError({"mother_acount": "Mother account must be a main_admin."})
-        
-        super().clean()
+    # def clean(self):
+    #     super().clean()
 
     def save(self, *args, **kwargs):
-        self.full_clean()
+        # self.full_clean()
 
+        if self.event_date < datetime.date.today():
+            raise ValidationError({"date_error": "Não pode criar Eventos para dias passados."})
+        
         if not self.id:  # Auto-generate slug only if not set
             self.id = slugify(f"{self.name} {self.season}")
 

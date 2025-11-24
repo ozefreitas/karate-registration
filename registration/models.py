@@ -2,8 +2,10 @@ from django.db import models
 from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 from nanoid import generate
+from datetime import date
 from core.constants import GENDERS, GRADUATIONS, MATCHES
 from events.models import Event
 
@@ -41,7 +43,7 @@ class Member(models.Model):
     gender = models.CharField("Género", choices=GENDERS, max_length=10)
     # main admin in multiple acount schemas won't be filling the weight
     weight = models.PositiveIntegerField("Peso", blank=True, null=True)
-    quotes = models.BooleanField("Quotas", default=True)
+    quotes_legible = models.BooleanField("Paga Quotas", default=True)
     club = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     creation_date = models.DateTimeField(auto_now_add=True)
 
@@ -52,6 +54,15 @@ class Member(models.Model):
                 name="unique_member_identity"
             )
         ]
+    
+    def current_month_payment(self):
+        """Returns True if the member paid this month's quota."""
+        today = date.today()
+        return self.payments.filter(
+            year=today.year,
+            month=today.month,
+            paid=True,
+        ).exists()
 
     def clean(self):
         if self.member_type == "coach" and self.favorite == True:
@@ -69,6 +80,30 @@ class Member(models.Model):
 
     def __str__(self): 
         return "{} {} | {}".format(self.first_name, self.last_name, self.club.username)
+
+
+class MonthlyMemberPayment(models.Model):
+    member = models.ForeignKey(
+        Member,
+        on_delete=models.CASCADE,
+        related_name="payments"
+    )
+
+    year = models.PositiveIntegerField()
+    month = models.PositiveSmallIntegerField()  # 1=Jan ... 12=Dec
+
+    amount = models.DecimalField(max_digits=7, decimal_places=2)
+    paid = models.BooleanField(default=False)
+    paid_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        unique_together = ("member", "year", "month")
+        ordering = ["-year", "-month"]
+
+    def mark_as_paid(self):
+        self.paid = True
+        self.paid_at = timezone.now()
+        self.save()
 
 
 ### Teams models ###

@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.conf import settings
+from django.utils import timezone
 
 from events.models import Event
 
@@ -57,6 +58,32 @@ class ClubRatingAudit(models.Model):
 
     def __str__(self):
         return '{} {} rating'.format(self.club, self.event)
+    
+
+class ClubSubscription(models.Model):
+    club = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="subscriptions",
+        limit_choices_to={"role__in": ["free_club", "subed_club"]}
+    )
+
+    year = models.PositiveIntegerField()  # e.g., 2025
+    amount = models.DecimalField(max_digits=7, decimal_places=2)
+    paid = models.BooleanField(default=False)
+    paid_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        unique_together = ("club", "year")
+        ordering = ["-year"]
+
+    def mark_as_paid(self):
+        self.paid = True
+        self.paid_at = timezone.now()
+        self.save()
+
+    def __str__(self):
+        return f'{self.club.username} {self.year} payment'
     
 
 class Profile(models.Model):

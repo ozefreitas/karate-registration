@@ -36,6 +36,8 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Event.objects.all()
     serializer_class=serializers.EventsSerializer
     permission_classes = [EventPermission]
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    ordering_fields = ["name", "event_date", "start_registration"]
     filterset_class = EventsFilters
 
     serializer_classes = {

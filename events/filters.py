@@ -6,9 +6,39 @@ class EventsFilters(filters.FilterSet):
     """Filter Events based on different fields"""
     season = filters.CharFilter(field_name='season',
                                               method='filter_season')
+    has_ended = filters.BooleanFilter(field_name='has_ended',
+                                              method='filter_has_ended')
+    has_teams = filters.BooleanFilter(field_name='has_teams',
+                                              method='filter_has_teams')
+    has_categories = filters.BooleanFilter(field_name='has_categories',
+                                              method='filter_has_categories')
+    has_registrations = filters.BooleanFilter(field_name='has_registrations',
+                                              method='filter_has_registrations')
 
     def filter_season(self, queryset, name, value):
         return queryset.filter(season=value)
+    
+    def filter_has_ended(self, queryset, name, value):
+        return queryset.filter(has_ended=value)
+    
+    def filter_has_teams(self, queryset, name, value):
+        if not value:
+            return queryset.all()
+        else:
+            return queryset.filter(has_teams=value)
+                
+    def filter_has_categories(self, queryset, name, value):
+        if not value:
+            return queryset.all()
+        else:
+            return queryset.filter(has_categories=value)
+        
+    def filter_has_registrations(self, queryset, name, value):
+        if not value:
+            return queryset.all()
+        else:
+            return queryset.filter(has_registrations=value)
+
 
     class Meta:
         model = Event
