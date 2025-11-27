@@ -7,10 +7,10 @@ from registration.utils.utils import get_comp_age
 from decouple import config
 import datetime
 
-### Athletes Serializer Classes 
+### Members Serializer Classes 
 
 
-class AthletesSerializer(serializers.ModelSerializer):
+class MembersSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     age = serializers.SerializerMethodField()
     club = UsersSerializer()
@@ -33,7 +33,7 @@ class AthletesSerializer(serializers.ModelSerializer):
         return age_at_comp
 
 
-class CompactAthletesSerializer(serializers.ModelSerializer):
+class CompactMembersSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     club = serializers.SerializerMethodField()
 
@@ -48,7 +48,7 @@ class CompactAthletesSerializer(serializers.ModelSerializer):
         return f"{obj.first_name} {obj.last_name}"
 
 
-class CompactCategorizedAthletesSerializer(serializers.ModelSerializer):
+class CompactCategorizedMembersSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     category = serializers.SerializerMethodField()
     club = serializers.SerializerMethodField()
@@ -72,7 +72,7 @@ class CompactCategorizedAthletesSerializer(serializers.ModelSerializer):
         return f"{obj.first_name} {obj.last_name}"
     
     def get_category(self, obj):
-        """Sends the category of each athlete if a category is provided. 
+        """Sends the category of each member if a category is provided. 
         Categories comming from the context are only the ones linked to the respective Discipline"""
         
         categories = self.context.get('discipline_categories', [])
@@ -114,14 +114,14 @@ class CompactCategorizedAthletesSerializer(serializers.ModelSerializer):
         return None
 
 
-class NotAdminLikeTypeAthletesSerializer(serializers.ModelSerializer):
+class NotAdminLikeTypeMembersSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     age = serializers.SerializerMethodField()
     monthly_payment_status = serializers.SerializerMethodField()
     
     class Meta:
         model = models.Member
-        fields = "__all__"
+        exclude = ("creation_date", )
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
@@ -133,7 +133,29 @@ class NotAdminLikeTypeAthletesSerializer(serializers.ModelSerializer):
         return obj.current_month_payment()
 
 
-class NotInEventAthletesSerializer(serializers.ModelSerializer):
+class AdminLikeTypeMembersSerializer(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
+    age = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.Member
+        exclude = ("quotes_legible", "creation_date", "favorite", "club")
+
+    def get_full_name(self, obj):
+        return f"{obj.first_name} {obj.last_name}"
+
+    def get_age(self, obj):
+        """Normal Member table should display the real age at the time.
+        Registration modals should display the corrected age."""
+        year_of_birth = obj.birth_date.year
+        date_now = datetime.datetime.now()
+        age_at_comp = date_now.year - year_of_birth
+        if (date_now.month, date_now.day) < (obj.birth_date.month, obj.birth_date.day):
+            age_at_comp -= 1
+        return age_at_comp
+
+
+class NotInEventMembersSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     age = serializers.SerializerMethodField()
     
@@ -159,7 +181,7 @@ class NotInEventAthletesSerializer(serializers.ModelSerializer):
         return event_age
     
 
-class ClubsCreateAthleteSerializer(serializers.ModelSerializer):
+class ClubsCreateMemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Member
         fields = "__all__"
@@ -172,7 +194,7 @@ class ClubsCreateAthleteSerializer(serializers.ModelSerializer):
 
         if stundent and weight != "":
             raise serializers.ValidationError({
-                'incompatible_athlete': ["Alunos não têm peso associado."]
+                'incompatible_member': ["Alunos não têm peso associado."]
             })
     
         if gender not in ["Masculino", "Feminino"]:
@@ -183,10 +205,10 @@ class ClubsCreateAthleteSerializer(serializers.ModelSerializer):
         return data
     
 
-class AdminCreateAthleteSerializer(serializers.ModelSerializer):
+class AdminCreateMemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Member
-        fields = "__all__"
+        exclude = ("address", "post_code", "national_card_number", "taxpayer_number")
 
     def validate(self, data):
         weight = data.get("weight")
@@ -195,7 +217,7 @@ class AdminCreateAthleteSerializer(serializers.ModelSerializer):
 
         if stundent and weight != "":
             raise serializers.ValidationError({
-                'incompatible_athlete': ["Alunos não têm peso associado."]
+                'incompatible_member': ["Alunos não têm peso associado."]
             })
     
         if gender not in ["Masculino", "Feminino"]:
@@ -206,10 +228,10 @@ class AdminCreateAthleteSerializer(serializers.ModelSerializer):
         return data
 
 
-class UpdateAthleteSerializer(serializers.ModelSerializer):
+class UpdateMemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Member
-        exclude = ("club", "id_number", )
+        exclude = ("club", "id_number", "created_by", "creation_date")
 
 
 ### Monthly Payments Serializer Classes
@@ -224,14 +246,14 @@ class MonthlyMemberPaymentSerializer(serializers.ModelSerializer):
 ### Teams Serializer Classes
 
 class TeamsSerializer(serializers.ModelSerializer):
-    athlete1 = CompactAthletesSerializer()
-    athlete1_full_name = serializers.SerializerMethodField()
-    athlete2 = CompactAthletesSerializer()
-    athlete2_full_name = serializers.SerializerMethodField()
-    athlete3 = CompactAthletesSerializer()
-    athlete3_full_name = serializers.SerializerMethodField()
-    athlete4 = CompactAthletesSerializer()
-    athlete5 = CompactAthletesSerializer()
+    member1 = CompactMembersSerializer()
+    member1_full_name = serializers.SerializerMethodField()
+    member2 = CompactMembersSerializer()
+    member2_full_name = serializers.SerializerMethodField()
+    member3 = CompactMembersSerializer()
+    member3_full_name = serializers.SerializerMethodField()
+    member4 = CompactMembersSerializer()
+    member5 = CompactMembersSerializer()
     match_type = serializers.SerializerMethodField()
     team_size = serializers.SerializerMethodField()
     gender = serializers.SerializerMethodField()
@@ -243,21 +265,21 @@ class TeamsSerializer(serializers.ModelSerializer):
     def get_match_type(self, obj):
         return obj.match_type.capitalize() if obj.match_type else ''
     
-    def get_athlete1_full_name(self, obj):
-        return f"{obj.athlete1.first_name} {obj.athlete1.last_name}"
+    def get_member1_full_name(self, obj):
+        return f"{obj.member1.first_name} {obj.member1.last_name}"
     
-    def get_athlete2_full_name(self, obj):
-        return f"{obj.athlete2.first_name} {obj.athlete2.last_name}"
+    def get_member2_full_name(self, obj):
+        return f"{obj.member2.first_name} {obj.member2.last_name}"
     
-    def get_athlete3_full_name(self, obj):
-        return f"{obj.athlete3.first_name} {obj.athlete3.last_name}" if obj.athlete3 else None
+    def get_member3_full_name(self, obj):
+        return f"{obj.member3.first_name} {obj.member3.last_name}" if obj.member3 else None
     
     def get_team_size(self, obj):
-        athletes = [obj.athlete1, obj.athlete2, obj.athlete3, obj.athlete4, obj.athlete5]
-        return sum(1 for athlete in athletes if athlete is not None)
+        members = [obj.member1, obj.member2, obj.member3, obj.member4, obj.member5]
+        return sum(1 for member in members if member is not None)
     
     def get_gender(self, obj):
-        return obj.athlete1.gender.capitalize() if obj.athlete1.gender else ''
+        return obj.member1.gender.capitalize() if obj.member1.gender else ''
     
 
 class UpdateTeamsSerializer(serializers.ModelSerializer):
@@ -276,7 +298,7 @@ class AllClassificationsSerializer(serializers.ModelSerializer):
     second_place = serializers.SerializerMethodField()
     third_place = serializers.SerializerMethodField()
 
-    def format_athlete_name(self, name: str) -> str:
+    def format_member_name(self, name: str) -> str:
         return name.lower().capitalize()
 
     class Meta:
@@ -290,20 +312,20 @@ class AllClassificationsSerializer(serializers.ModelSerializer):
         return f"{obj.competition.name} {obj.competition.season}"
     
     def get_first_place(self, obj):
-        return f"{self.format_athlete_name(obj.first_place.first_name)} {self.format_athlete_name(obj.first_place.last_name)}"
+        return f"{self.format_member_name(obj.first_place.first_name)} {self.format_member_name(obj.first_place.last_name)}"
     
     def get_second_place(self, obj):
-        return f"{self.format_athlete_name(obj.second_place.first_name)} {self.format_athlete_name(obj.second_place.last_name)}"
+        return f"{self.format_member_name(obj.second_place.first_name)} {self.format_member_name(obj.second_place.last_name)}"
     
     def get_third_place(self, obj):
-        return f"{self.format_athlete_name(obj.third_place.first_name)} {self.format_athlete_name(obj.third_place.last_name)}"
+        return f"{self.format_member_name(obj.third_place.first_name)} {self.format_member_name(obj.third_place.last_name)}"
     
 
 class ClassificationsSerializer(serializers.ModelSerializer):
     full_category = serializers.SerializerMethodField()
-    first_place = CompactAthletesSerializer()
-    second_place = CompactAthletesSerializer()
-    third_place = CompactAthletesSerializer()
+    first_place = CompactMembersSerializer()
+    second_place = CompactMembersSerializer()
+    third_place = CompactMembersSerializer()
 
     class Meta:
         model = models.Classification

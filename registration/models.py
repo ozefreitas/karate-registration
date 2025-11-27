@@ -38,13 +38,26 @@ class Member(models.Model):
     last_name = models.CharField("Último Nome", max_length=200)
     graduation = models.CharField("Graduação", max_length=4, choices=GRADUATIONS)
     birth_date = models.DateField("Data de Nascimento")
+    address = models.CharField("Morada", max_length=200, blank=True, null=True)
+    post_code = models.PositiveIntegerField("Código Postal", blank=True, null=True)
     id_number = models.PositiveIntegerField("Nº SKI-P", blank=True, null=True)
     favorite = models.BooleanField("Favorito", default=False)
+    registration_date = models.DateField("Data de Inscrição", default=date.today)
+    national_card_number = models.PositiveIntegerField("Nº CC/BI", blank=True, null=True)
+    taxpayer_number = models.PositiveIntegerField("NIF", blank=True, null=True)
     gender = models.CharField("Género", choices=GENDERS, max_length=10)
     # main admin in multiple acount schemas won't be filling the weight
     weight = models.PositiveIntegerField("Peso", blank=True, null=True)
     quotes_legible = models.BooleanField("Paga Quotas", default=True)
     club = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        related_name="created_members",
+        null=True
+    )
+    conditions = models.TextField("Condições Médicas", blank=True, null=True)
+    observations = models.TextField("Observações", blank=True, null=True)
     creation_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -75,6 +88,9 @@ class Member(models.Model):
 
         if not self.id:  # Generate only if no ID exists
             self.id = generate_unique_nanoid(self.__class__.__name__, self._meta.app_label)
+        
+        if not self.registration_date:
+            self.registration_date = date.today()
 
         super().save(*args, **kwargs)
 
@@ -164,32 +180,3 @@ class Classification(models.Model):
 
     def __str__(self):
         return "{} {} {} Classification".format(self.competition.name, self.first_place.category, self.first_place.gender.capitalize())
-
-
-### Filter models ###
-
-class AthleteFilter(models.Model):
-    ORDER_BY = {
-        "first_name": "Primeiro Nome",
-        "last_name": "Último Nome",
-        "birth_date": "Idade",
-        "category": "Categoria",
-        "gender": "Género",
-        "match_type": "Prova"
-    }
-
-    order = models.CharField("Ordenar por", choices=ORDER_BY, max_length=20, blank=True, null=True)
-    filter = models.CharField("Filtrar por", choices=ORDER_BY, max_length=20, blank=True, null=True)
-    search = models.CharField("Procurar", max_length=99, blank=True, null=True)
-
-
-class TeamFilter(models.Model):
-    ORDER_BY = {
-        "category": "Categoria",
-        "gender": "Género",
-        "match_type": "Prova"
-    }
-
-    order = models.CharField("Ordenar por", choices=ORDER_BY, max_length=20, blank=True, null=True)
-    filter = models.CharField("Filtrar por", choices=ORDER_BY, max_length=20, blank=True, null=True)
-    search = models.CharField("Procurar", max_length=99, blank=True, null=True)

@@ -91,9 +91,9 @@ class IsGETforClubs(BasePermission):
                                                                             or request.user.role == 'single_admin'))
 
 
-class AthletePermission(BasePermission):
+class MemberPermission(BasePermission):
     """
-    Permission used for Athletes and Teams.
+    Permission used for Members and Teams.
     - Admin-like users (main_admin, single_admin, superuser) have access to everything.
     - Paying users (subed_club) have access to SAFE_METHODS, PUT, PATCH.
     - Free users (free_club) only can GET.
@@ -123,9 +123,9 @@ class AthletePermission(BasePermission):
 
         # Admins can access all
         if role in ['main_admin', 'single_admin', 'superuser']:
-            return True
+            return obj.created_by == request.user
 
-        # Clubs only access their own athletes
+        # Clubs only access their own members
         if role == 'subed_club':
             return obj.club == request.user
 

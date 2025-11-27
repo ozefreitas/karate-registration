@@ -4,15 +4,15 @@ from events.models import Event
 from django.db.models import Q, Count
 
 
-class AthletesFilters(filters.FilterSet):
+class MembersFilters(filters.FilterSet):
     """Filter Atlhetes not in comp_id"""
-    not_in_event = filters.CharFilter(method='filter_athletes_not_in_event')
-    in_category = filters.CharFilter(method='filter_athletes_in_category')
-    in_gender = filters.CharFilter(method='filter_athletes_in_gender')
+    not_in_event = filters.CharFilter(method='filter_members_not_in_event')
+    in_category = filters.CharFilter(method='filter_members_in_category')
+    in_gender = filters.CharFilter(method='filter_members_in_gender')
     coach_not_in_event = filters.CharFilter(method='filter_coach_not_in_event')
     member_type = filters.ChoiceFilter(choices=Member.MEMBER_TYPE)
 
-    def filter_athletes_not_in_event(self, queryset, name, value):
+    def filter_members_not_in_event(self, queryset, name, value):
         event = Event.objects.filter(id=value).first()
         number_disciplines = event.disciplines.filter(is_coach=False).count()
 
@@ -36,10 +36,10 @@ class AthletesFilters(filters.FilterSet):
                 discipline_count__lt=number_disciplines
                 )
     
-    def filter_athletes_in_category(self, queryset, name, value):
+    def filter_members_in_category(self, queryset, name, value):
         return queryset.filter(category=value)
     
-    def filter_athletes_in_gender(self, queryset, name, value):
+    def filter_members_in_gender(self, queryset, name, value):
         return queryset.filter(gender=value)
     
     def filter_coach_not_in_event(self, queryset, name, value):

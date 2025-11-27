@@ -18,7 +18,7 @@ class EventsSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def get_individuals(self, obj):
-        """Filters the athletes in the individuals fields based on que requesting user"""
+        """Filters the members in the individuals fields based on que requesting user"""
         user = self.context['request'].user
         if not user.is_authenticated:
             return []
@@ -28,7 +28,7 @@ class EventsSerializer(serializers.ModelSerializer):
             qs = obj.individuals.all()
         else:
             return []
-        return registration.serializers.CompactAthletesSerializer(qs, many=True).data
+        return registration.serializers.CompactMembersSerializer(qs, many=True).data
     
     def get_is_open(self, obj):
         if obj.has_registrations:
@@ -146,7 +146,7 @@ class DisciplinesSerializer(serializers.ModelSerializer):
 
 
 class DisciplineMemberSerializer(serializers.ModelSerializer):
-    member = registration.serializers.CompactCategorizedAthletesSerializer()
+    member = registration.serializers.CompactCategorizedMembersSerializer()
 
     class Meta:
         model = DisciplineMember
@@ -171,16 +171,16 @@ class UpdateDisciplineSerializer(serializers.ModelSerializer):
         exclude = ["id", ]
 
 
-class AddAthleteSerializer(serializers.Serializer):
+class AddMemberSerializer(serializers.Serializer):
     member_id = serializers.CharField()
 
 
-class AddDisciplineAthleteSerializer(serializers.Serializer):
+class AddDisciplineMemberSerializer(serializers.Serializer):
     member_id = serializers.CharField()
     event_id = serializers.CharField()
 
 
-class DeleteAthleteSerializer(serializers.Serializer):
+class DeleteMemberSerializer(serializers.Serializer):
     member_id = serializers.CharField()
 
 

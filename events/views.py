@@ -83,18 +83,18 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     
     @action(detail=True, 
             methods=["post"], 
-            url_path="add_athlete", 
-            serializer_class=serializers.AddAthleteSerializer, 
+            url_path="add_member", 
+            serializer_class=serializers.AddMemberSerializer, 
             permission_classes=[EventIndividualsPermission])
-    def add_athlete(self, request, pk=None):
+    def add_member(self, request, pk=None):
         event = self.get_object()
-        serializer = serializers.AddAthleteSerializer(data=request.data)
+        serializer = serializers.AddMemberSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         member_id = serializer.validated_data["member_id"]
 
         try:
-            athlete = Member.objects.get(id=member_id)
-            event.individuals.add(athlete)
+            member = Member.objects.get(id=member_id)
+            event.individuals.add(member)
 
             return Response({"message": "Atleta(s) adicionado(a)(s) a este evento!"}, status=status.HTTP_200_OK)
         except Member.DoesNotExist:
@@ -102,18 +102,18 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
     @action(detail=True, 
             methods=["post"], 
-            url_path="delete_athlete", 
-            serializer_class=serializers.DeleteAthleteSerializer, 
+            url_path="delete_member", 
+            serializer_class=serializers.DeleteMemberSerializer, 
             permission_classes=[EventIndividualsPermission])
-    def delete_athlete(self, request, pk=None):
+    def delete_member(self, request, pk=None):
         event = self.get_object()
-        serializer = serializers.DeleteAthleteSerializer(data=request.data)
+        serializer = serializers.DeleteMemberSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         member_id = serializer.validated_data["member_id"]
 
         try:
-            athlete = Member.objects.get(id=member_id)
-            event.individuals.remove(athlete)
+            member = Member.objects.get(id=member_id)
+            event.individuals.remove(member)
 
             return Response({"message": "Atleta(s) removido(a)(s) deste evento!"}, status=status.HTTP_200_OK)
         except Member.DoesNotExist:
@@ -187,15 +187,15 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             return Response({"error": "Um erro ocurreu ao avaliar este Evento!", "message": e}, status=status.HTTP_400_BAD_REQUEST)
     
 
-    @action(detail=True, methods=["get"], url_path="export_athletes_excel", permission_classes=[IsAdminRoleorHigherForGET])
-    def export_athletes_excel(self, request, pk=None):
+    @action(detail=True, methods=["get"], url_path="export_members_excel", permission_classes=[IsAdminRoleorHigherForGET])
+    def export_members_excel(self, request, pk=None):
         event = self.get_object()
         disciplines = event.disciplines.all()
         age_method = config('AGE_CALC_REF')
 
         wb = openpyxl.Workbook()
         ws = wb.active
-        ws.title = "Athletes"
+        ws.title = "Members"
 
         # Headers (add what you need)
         headers = ["Dojo", "Nome", "Idade", f"Nº {config('MAIN_ADMIN')}", "Género"]
@@ -213,11 +213,11 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
         if list(disciplines) == []:
             ws.append([
-                    getattr(athlete.club, "username", ""),
-                    getattr(athlete, "first_name", "") + getattr(athlete, "last_name", ""),
+                    getattr(member.club, "username", ""),
+                    getattr(member, "first_name", "") + getattr(member, "last_name", ""),
                     event_age,
-                    getattr(athlete, "id_number", ""),
-                    getattr(athlete, "gender", ""),
+                    getattr(member, "id_number", ""),
+                    getattr(member, "gender", ""),
                 ])
             
         else:
@@ -226,24 +226,24 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             # Loop disciplines -> individuals
             for discipline in disciplines:
 
-                for athlete in discipline.individuals.select_related("club").all():
+                for member in discipline.individuals.select_related("club").all():
                     season = event.season.split("/")[0]
-                    event_age = get_comp_age(athlete.birth_date) if age_method == "true" else calc_age(age_method, athlete.birth_date, season)
+                    event_age = get_comp_age(member.birth_date) if age_method == "true" else calc_age(age_method, member.birth_date, season)
                     category_to_assign = None
 
                     if not event.has_categories:
                     
                         ws.append([
-                        getattr(athlete.club, "username", ""),
-                        getattr(athlete, "first_name", "") + getattr(athlete, "last_name", ""),
+                        getattr(member.club, "username", ""),
+                        getattr(member, "first_name", "") + getattr(member, "last_name", ""),
                         event_age,
-                        getattr(athlete, "id_number", ""),
-                        getattr(athlete, "gender", ""),
+                        getattr(member, "id_number", ""),
+                        getattr(member, "gender", ""),
                         discipline.name,
                     ])
                     
                     else:
-                        categories = discipline.categories.filter(gender=athlete.gender, 
+                        categories = discipline.categories.filter(gender=member.gender, 
                                                             min_age__lte=event_age, 
                                                             max_age__gte=event_age
                                                             )
@@ -254,18 +254,18 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                                 category_to_assign = category
                                 
                             if category.min_weight is not None and category.max_weight is not None:
-                                if category.min_weight <= athlete.weight <= category.max_weight:
+                                if category.min_weight <= member.weight <= category.max_weight:
                                     category_to_assign = category
                                 else:
                                     continue
                             if category.max_weight is not None:
-                                if athlete.weight < category.max_weight:
+                                if member.weight < category.max_weight:
                                     category_to_assign = category
                             if category.min_weight is not None:
-                                if athlete.weight >= category.min_weight:
+                                if member.weight >= category.min_weight:
                                     category_to_assign = category
 
-                        all_members.append((discipline, athlete, event_age, category_to_assign))
+                        all_members.append((discipline, member, event_age, category_to_assign))
 
             all_members_sorted = sorted(
                 all_members,
@@ -279,22 +279,22 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             club = ""
             i = 0
 
-            for discipline, athlete, event_age, category_to_assign in all_members_sorted: 
+            for discipline, member, event_age, category_to_assign in all_members_sorted: 
 
-                if name == getattr(athlete, "first_name", "") + getattr(athlete, "last_name", "") and club == getattr(athlete.club, "username", ""):
+                if name == getattr(member, "first_name", "") + getattr(member, "last_name", "") and club == getattr(member.club, "username", ""):
                     member_event_number = str(i).zfill(3)
                 else:
                     i += 1
                     member_event_number = str(i).zfill(3)
-                    name = getattr(athlete, "first_name", "") + getattr(athlete, "last_name", ""),
-                    club = getattr(athlete.club, "username", ""),
+                    name = getattr(member, "first_name", "") + getattr(member, "last_name", ""),
+                    club = getattr(member.club, "username", ""),
 
                 ws.append([
-                    getattr(athlete.club, "username", ""),
-                    getattr(athlete, "first_name", "") + getattr(athlete, "last_name", ""),
+                    getattr(member.club, "username", ""),
+                    getattr(member, "first_name", "") + getattr(member, "last_name", ""),
                     event_age,
-                    getattr(athlete, "id_number", ""),
-                    getattr(athlete, "gender", ""),
+                    getattr(member, "id_number", ""),
+                    getattr(member, "gender", ""),
                     discipline.name,
                     category_to_assign.name,
                     member_event_number
@@ -305,7 +305,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
         response["Content-Disposition"] = (
-            f'attachment; filename="event_{event.id}_athletes.xlsx"'
+            f'attachment; filename="event_{event.id}_members.xlsx"'
         )
         wb.save(response)
 
@@ -329,11 +329,11 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     #     context = super().get_serializer_context()
     #     return context
 
-    @action(detail=True, methods=["post"], url_path="add_athlete", serializer_class=serializers.AddDisciplineAthleteSerializer, permission_classes=[IsAuthenticated])
-    def add_athlete(self, request, pk=None):
+    @action(detail=True, methods=["post"], url_path="add_member", serializer_class=serializers.AddDisciplineMemberSerializer, permission_classes=[IsAuthenticated])
+    def add_member(self, request, pk=None):
         age_method = config('AGE_CALC_REF')
         discipline = self.get_object()
-        serializer = serializers.AddDisciplineAthleteSerializer(data=request.data)
+        serializer = serializers.AddDisciplineMemberSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         member_id = serializer.validated_data["member_id"]
         # will be used to check the season events is taking place in
@@ -416,16 +416,16 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         except Member.DoesNotExist:
             return Response({"error": "Um erro ocurreu ao adicionar este(s) Membro(s)"}, status=status.HTTP_404_NOT_FOUND)
 
-    @action(detail=True, methods=["post"], url_path="delete_athlete", serializer_class=serializers.DeleteAthleteSerializer)
-    def delete_athlete(self, request, pk=None):
+    @action(detail=True, methods=["post"], url_path="delete_member", serializer_class=serializers.DeleteMemberSerializer)
+    def delete_member(self, request, pk=None):
         discipline = self.get_object()
-        serializer = serializers.DeleteAthleteSerializer(data=request.data)
+        serializer = serializers.DeleteMemberSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         member_id = serializer.validated_data["member_id"]
 
         try:
-            athlete = Member.objects.get(id=member_id)
-            discipline.individuals.remove(athlete)
+            member = Member.objects.get(id=member_id)
+            discipline.individuals.remove(member)
 
             return Response({"message": "Atleta removido desta Modalidade"}, status=status.HTTP_200_OK)
         except Member.DoesNotExist:

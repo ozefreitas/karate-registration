@@ -9,6 +9,6 @@ router.register(r'club_subscription', views.ClubSubscriptionsViewSet, basename='
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('users/athletes/', views.club_athletes, name="clubs-athletes"),
+    path('users/members/', views.club_members, name="clubs-members"),
     # path('feedback/', views.feedback, name="dojos-feedback"),
 ]

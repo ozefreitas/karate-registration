@@ -1,12 +1,15 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from datetime import date
+from django.utils import timezone
 
 from .models import Member, Team, Classification, MonthlyMemberPayment
-from .filters import AthletesFilters
+from .filters import MembersFilters
 from events.models import Event
 from core.models import User, Notification
-from core.permissions import AthletePermission
+from core.permissions import MemberPermission
 import registration.serializers as serializers
 import events.serializers as event_serializers
+
 
 from rest_framework import viewsets, status, filters
 from rest_framework.decorators import action, permission_classes
@@ -26,28 +29,28 @@ class MultipleSerializersMixIn:
         return self.serializer_classes.get(self.action, self.serializer_class)
 
 
-class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
+class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     # TODO: order get request by the category_index from the serializer
     queryset=Member.objects.all().order_by("first_name")
-    serializer_class = serializers.AthletesSerializer
-    permission_classes = [AthletePermission]
+    serializer_class = serializers.MembersSerializer
+    permission_classes = [MemberPermission]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
-    ordering_fields = ["first_name", "gender", "member_type"]
-    filterset_class = AthletesFilters
+    ordering_fields = ["first_name", "gender", "member_type", "birth_date"]
+    filterset_class = MembersFilters
 
     serializer_classes = {
-        "create": serializers.ClubsCreateAthleteSerializer,
-        "update": serializers.UpdateAthleteSerializer
+        "create": serializers.ClubsCreateMemberSerializer,
+        "update": serializers.UpdateMemberSerializer
     }
 
     def get_queryset(self):
         user = self.request.user
         if user.role in ["main_admin", "superuser", "single_admin"]:
-            # National-level user can see all athletes
-            return self.queryset.all().order_by("club", "first_name", "last_name")
+            # National-level user can see all Members
+            return self.queryset.filter(created_by=user).order_by("club", "first_name", "last_name")
 
         if user.role in ["subed_club", "free_club"]:
-            # paying clubs user sees only their own club athletes
+            # paying clubs user sees only their own club Members
             return self.queryset.filter(club=user).order_by("-creation_date", "first_name", "last_name")
         
         raise PermissionDenied("You do not have access to this data.")
@@ -56,47 +59,47 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         if self.action == "retrieve":
             user = self.request.user
             if user.role in ["free_club", "subed_club"]:
-                return serializers.NotAdminLikeTypeAthletesSerializer
-            return serializers.AthletesSerializer
+                return serializers.NotAdminLikeTypeMembersSerializer
+            return serializers.AdminLikeTypeMembersSerializer
 
         elif self.action == "create":
             user = self.request.user
             if user.role in ["free_club", "subed_club"]:
-                return serializers.ClubsCreateAthleteSerializer
-            return serializers.AdminCreateAthleteSerializer
+                return serializers.ClubsCreateMemberSerializer
+            return serializers.AdminCreateMemberSerializer
         
         if self.request.query_params.get("not_in_event"):
-            return serializers.NotInEventAthletesSerializer
+            return serializers.NotInEventMembersSerializer
 
         return super().get_serializer_class()
     
     def perform_create(self, serializer):
+        request_user = self.request.user
         id_number = serializer.validated_data.get("id_number")
         first_name = serializer.validated_data.get("first_name")
         last_name = serializer.validated_data.get("last_name")
 
         if id_number == 0:
             # # Auto-generate id_number if it wasn't provided
-            # last_athlete = Member.objects.filter(id_number__isnull=False).order_by("id_number").last()
-            # id_number = (last_athlete.id_number if last_athlete else 0) + 1
+            # last_Member = Member.objects.filter(id_number__isnull=False).order_by("id_number").last()
+            # id_number = (last_Member.id_number if last_Member else 0) + 1
             id_number = None
-        
-        if self.request.user.role == "main_admin":
+
+        if request_user.role == "main_admin":
             club = serializer.validated_data.get('club')
             user = User.objects.get(username=club)
             Notification.objects.create(club_user=user, 
-                                        notification=f"Um novo atleta ({first_name} {last_name}) acabou de ser criado. Verifique os seus dados e adicione um peso caso necessário.",
+                                        notification=f"Um novo Membro ({first_name} {last_name}) acabou de ser criado. Verifique os seus dados e adicione outros campos caso necessário.",
                                         can_remove=True,
-                                        type="create_athlete")
-            serializer.save(id_number=id_number)
-
-        else:
-            serializer.save(id_number=id_number, club=self.request.user)
+                                        type="create_member")
+            serializer.save(id_number=id_number, created_by=request_user)
+        elif request_user.role == "subed_club":
+            serializer.save(id_number=id_number, club=request_user, created_by=request_user)
 
     @action(detail=False, methods=["get"], url_path="last_five")
     def last_five(self, request):
         last_five = Member.objects.filter(club=request.user).order_by('creation_date')[:5]
-        serializer = serializers.AthletesSerializer(last_five, many=True)
+        serializer = serializers.MembersSerializer(last_five, many=True)
         return Response(serializer.data)
 
     @action(detail=False, methods=['delete'], url_path="delete_all")
@@ -116,7 +119,7 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     @action(detail=True, methods=['get'], url_path='unregistered_modalities/(?P<event_id>[^/.]+)')
     def unregistered_modalities(self, request, pk=None, event_id=None):
         try:
-            athlete = self.get_object()
+            member = self.get_object()
             event = Event.objects.get(pk=event_id)
         except Event.DoesNotExist:
             return Response({"detail": "Event not found."}, status=status.HTTP_404_NOT_FOUND)
@@ -124,8 +127,8 @@ class AthletesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         # All modalities of the event
         event_disciplines = event.disciplines.all()
 
-        # Modalities where the athlete is already registered
-        registered = athlete.disciplines_indiv.filter(event=event)
+        # Modalities where the member is already registered
+        registered = member.disciplines_indiv.filter(event=event)
 
         # Difference = unregistered
         unregistered = event_disciplines.exclude(id__in=registered.values_list('id', flat=True))
@@ -140,7 +143,7 @@ class MonthlyMemberPaymentViewSet(MultipleSerializersMixIn, viewsets.ModelViewSe
     permission_classes = [IsAuthenticated]
 
     serializer_classes = {
-        # "create": serializers.CreateAthleteSerializer,
+        # "create": serializers.CreateMemberSerializer,
         # "update": serializers.UpdateTeamsSerializer
     }
 
@@ -152,10 +155,10 @@ class TeamsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Team.objects.all()
     serializer_class = serializers.TeamsSerializer
     # authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [IsAuthenticated, AthletePermission]
+    permission_classes = [IsAuthenticated, MemberPermission]
 
     serializer_classes = {
-        # "create": serializers.CreateAthleteSerializer,
+        # "create": serializers.CreateMemberSerializer,
         "update": serializers.UpdateTeamsSerializer
     }
 
@@ -164,7 +167,6 @@ class TeamsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
     @action(detail=False, methods=["get"], url_path="last_five")
     def last_five(self, request):
-        # TODO: add authentication
         last_five = Team.objects.filter(club=request.user).order_by('creation_date')[:5]
         serializer = serializers.TeamsSerializer(last_five, many=True)
         return Response(serializer.data)
