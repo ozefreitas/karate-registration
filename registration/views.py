@@ -35,7 +35,7 @@ class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     serializer_class = serializers.MembersSerializer
     permission_classes = [MemberPermission]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
-    ordering_fields = ["first_name", "gender", "member_type", "birth_date"]
+    ordering_fields = ["first_name", "last_name", "gender", "member_type", "birth_date"]
     filterset_class = MembersFilters
 
     serializer_classes = {

@@ -16,6 +16,8 @@ from rest_framework. views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, action
 
+from datetime import date
+
 # Create your views here.
 
 User = get_user_model()
@@ -103,6 +105,11 @@ class ClubSubscriptionsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             if len(children_acounts) == 0:
                 return Response(
                     {"error": "Não possui nenhuma conta filha."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            if serializer.validated_data["year"] < date.today().year:
+                return Response(
+                    {"error": "Não pode criar notifcações de quotas para anos anteriores ao atual."},
                     status=status.HTTP_400_BAD_REQUEST
                 )
             for children in children_acounts:

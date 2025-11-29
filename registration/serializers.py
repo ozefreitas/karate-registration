@@ -161,7 +161,7 @@ class NotInEventMembersSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = models.Member
-        exclude = ["creation_date", "quotes", "favorite", "member_type"]
+        exclude = ["creation_date", "favorite", "member_type"]
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"

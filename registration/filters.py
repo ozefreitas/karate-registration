@@ -10,7 +10,7 @@ class MembersFilters(filters.FilterSet):
     in_category = filters.CharFilter(method='filter_members_in_category')
     in_gender = filters.CharFilter(method='filter_members_in_gender')
     coach_not_in_event = filters.CharFilter(method='filter_coach_not_in_event')
-    member_type = filters.ChoiceFilter(choices=Member.MEMBER_TYPE)
+    in_member_type = filters.CharFilter(method='filter_members_in_member_type')
 
     def filter_members_not_in_event(self, queryset, name, value):
         event = Event.objects.filter(id=value).first()
@@ -52,6 +52,10 @@ class MembersFilters(filters.FilterSet):
                 member_type="coach",
                 discipline_count__lt=number_disciplines
                 )
+    
+    def filter_members_in_member_type(self, queryset, name, value):
+        types = [v.strip() for v in value.split(",") if v.strip()]
+        return queryset.filter(member_type__in=types)
 
     class Meta:
         model = Member
