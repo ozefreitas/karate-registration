@@ -36,8 +36,8 @@ class Event(models.Model):
     def save(self, *args, **kwargs):
         # self.full_clean()
 
-        if self.event_date < datetime.date.today():
-            raise ValidationError({"date_error": "Não pode criar Eventos para dias passados."})
+        # if self.event_date < datetime.date.today():
+        #     raise ValidationError({"date_error": "Não pode criar Eventos para dias passados."})
         
         if not self.id:  # Auto-generate slug only if not set
             self.id = slugify(f"{self.name} {self.season}")

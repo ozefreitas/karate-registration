@@ -142,11 +142,14 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             "message": "Pode fazer a sua avaliação deste evento."
         }, status=status.HTTP_200_OK)
     
-    @action(detail=False, methods=["post"], url_path="events_days_per_month", permission_classes=[IsAuthenticated], serializer_class=serializers.EventDaysSerializer)
-    def events_days_per_month(self, request, pk=None):
-        serializer = serializers.EventDaysSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        month = serializer.validated_data["month"]
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path="events_days_per_month",
+        permission_classes=[IsAuthenticated],
+    )
+    def events_days_per_month(self, request):
+        month = request.query_params.get("month")
         if not month:
             return Response({'error': 'Month parameter is required, e.g., "2025-11".'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -161,9 +164,11 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             event_date__year=date_obj.year,
             event_date__month=date_obj.month
         )
-
+        days = []
+        for event in events:
+            days.append(event.event_date.day)
         serializer = serializers.CompactEventsSerializer(events, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({"days": sorted(days), "results": serializer.data}, status=200)
 
     @action(detail=True, methods=["post"], url_path="rate_event", serializer_class=RatingSerializer)
     def rate_event(self, request, pk=None):

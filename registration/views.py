@@ -47,11 +47,11 @@ class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         user = self.request.user
         if user.role in ["main_admin", "superuser", "single_admin"]:
             # National-level user can see all Members
-            return self.queryset.filter(created_by=user).order_by("club", "first_name", "last_name")
+            return self.queryset.filter(created_by=user)
 
         if user.role in ["subed_club", "free_club"]:
             # paying clubs user sees only their own club Members
-            return self.queryset.filter(club=user).order_by("-creation_date", "first_name", "last_name")
+            return self.queryset.filter(club=user)
         
         raise PermissionDenied("You do not have access to this data.")
 
@@ -98,7 +98,7 @@ class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
     @action(detail=False, methods=["get"], url_path="last_five")
     def last_five(self, request):
-        last_five = Member.objects.filter(club=request.user).order_by('creation_date')[:5]
+        last_five = Member.objects.filter(club=request.user).order_by('-creation_date')[:5]
         serializer = serializers.MembersSerializer(last_five, many=True)
         return Response(serializer.data)
 

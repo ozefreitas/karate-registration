@@ -60,9 +60,42 @@ class EventsSerializer(serializers.ModelSerializer):
 
 
 class CompactEventsSerializer(serializers.ModelSerializer):
+    is_open = serializers.SerializerMethodField()
+    is_closed = serializers.SerializerMethodField()
+    is_retification = serializers.SerializerMethodField()
+    number_registrations = serializers.SerializerMethodField()
+
     class Meta:
         model = Event
-        fields = ["id", "name"]
+        fields = ["id", "name", "event_date", "is_open", "is_closed", "is_retification", "number_registrations"]
+    
+    def get_is_open(self, obj):
+        if obj.has_registrations:
+            today = date.today()
+            if today >= obj.start_registration and today <= obj.retifications_deadline:
+                return True
+        return False
+    
+    def get_is_closed(self, obj):
+        if obj.has_registrations:
+            today = date.today()
+            if today > obj.retifications_deadline:
+                return True
+        return False
+    
+    def get_is_retification(self, obj):
+        if obj.has_registrations:
+            today = date.today()
+            if today > obj.end_registration and today <= obj.retifications_deadline:
+                return True
+        return False
+    
+    def get_number_registrations(self, obj):
+        number = obj.individuals.count()
+        disciplines = Discipline.objects.filter(event=obj)
+        for discipline in disciplines:
+            number += discipline.individuals.count()
+        return number
 
 
 class CreateEventSerializer(serializers.ModelSerializer):
@@ -101,10 +134,6 @@ class UpdateEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
         exclude = ("id", "has_ended")
-
-
-class EventDaysSerializer(serializers.Serializer):
-    month = serializers.CharField()
 
 
 class DisciplinesSerializer(serializers.ModelSerializer):

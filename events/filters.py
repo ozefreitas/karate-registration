@@ -1,5 +1,6 @@
 from django_filters import rest_framework as filters
 from .models import Discipline, Event
+from datetime import datetime
 
 
 class EventsFilters(filters.FilterSet):
@@ -14,6 +15,10 @@ class EventsFilters(filters.FilterSet):
                                               method='filter_has_categories')
     has_registrations = filters.BooleanFilter(field_name='has_registrations',
                                               method='filter_has_registrations')
+    in_month = filters.CharFilter(field_name='in_month',
+                                              method='filter_in_month')
+    in_day = filters.CharFilter(field_name='in_day',
+                                              method='filter_in_day')
 
     def filter_season(self, queryset, name, value):
         return queryset.filter(season=value)
@@ -38,6 +43,26 @@ class EventsFilters(filters.FilterSet):
             return queryset.all()
         else:
             return queryset.filter(has_registrations=value)
+        
+    def filter_in_month(self, queryset, name, value):
+        if not value:
+            return queryset.none()
+        else:
+            date_obj = datetime.strptime(value, "%Y-%m")
+            events = Event.objects.filter(
+            event_date__year=date_obj.year,
+            event_date__month=date_obj.month
+        )
+            return events
+    
+    def filter_in_day(self, queryset, name, value):
+        if not value:
+            return queryset.none()
+        else:
+            events = Event.objects.filter(
+            event_date__day=value,
+        )
+            return events
 
 
     class Meta:
