@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Club, ClubSubscription
+from .models import Club, ClubSubscription, ClubSubscriptionConfig
 from core.serializers.users import UsersSerializer
 
 
@@ -30,6 +30,12 @@ class CreateClubSubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ClubSubscription
         exclude = ["paid", "paid_at"]
+
+
+class UpdateClubSubscriptionAmountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ClubSubscriptionConfig
+        fields = ["amount"]
 
 
 class PatchClubSubscriptionSerializer(serializers.ModelSerializer):

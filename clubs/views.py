@@ -2,9 +2,9 @@ from django.conf import settings
 from django.db.models import Q, Count, Case, When, IntegerField
 from django.contrib.auth import get_user_model
 
-from .models import Club, ClubSubscription
+from .models import Club, ClubSubscription, ClubSubscriptionConfig
 from core.models import Notification
-from .serializers import ClubsSerializer, CreateClubSerializer, ClubSubscriptionsSerializer, CreateClubSubscriptionSerializer, CreateAllClubsSubscriptionSerializer, PatchClubSubscriptionSerializer
+from .serializers import ClubsSerializer, CreateClubSerializer, ClubSubscriptionsSerializer, CreateClubSubscriptionSerializer, CreateAllClubsSubscriptionSerializer, PatchClubSubscriptionSerializer, UpdateClubSubscriptionAmountSerializer
 from core.permissions import IsGETforClubs, IsAdminRoleorHigher
 from core.views import MultipleSerializersMixIn
 
@@ -88,7 +88,46 @@ class ClubSubscriptionsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         
         years = ClubSubscription.objects.values_list("year", flat=True).distinct().order_by("year")
         return Response({"years": years})
+    
+
+    @action(
+        detail=False,
+        methods=['patch'],
+        url_path="update_subscription_amount",
+        serializer_class=UpdateClubSubscriptionAmountSerializer
+    )
+    def update_subscription_amount(self, request):
+        user = request.user
         
+        # 1. Permission check
+        if user.role not in ["main_admin", "superuser"]:
+            return Response(
+                {"error": "Não tem autorização para realizar esta ação"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        # 2. Validate request data
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        amount = serializer.validated_data["amount"]
+
+        # 3. Fetch or create config for this admin
+        config, _ = ClubSubscriptionConfig.objects.get_or_create(admin=user)
+
+        # 4. Update and save
+        config.amount = amount
+        config.save()
+
+        # 5. Return updated data
+        return Response(
+            {
+                "message": "Valor atualizado com sucesso",
+                "admin": user.username,
+                "amount": str(config.amount)
+            },
+            status=status.HTTP_200_OK
+        )
 
     @action(detail=False, methods=['post'], url_path="create_all_users", serializer_class=CreateAllClubsSubscriptionSerializer)
     def create_all_users(self, request):

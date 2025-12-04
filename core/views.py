@@ -10,7 +10,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .filters import NotificationsFilters
 from core.permissions import IsAuthenticatedOrReadOnly, IsUnauthenticatedForPost, IsNationalForPostDelete, IsAdminRoleorHigher, IsPayingUserorAdminForGet
 from .models import Category, SignupToken, RequestedAcount, User, RequestPasswordReset
-from clubs.models import Club
+from clubs.models import Club, ClubSubscription
 from .models import Notification
 from core.serializers import base as BaseSerializers
 from core.serializers.categories import CategorySerializer, CreateCategorySerializer, CompactCategorySerializer
@@ -256,8 +256,8 @@ class RegisterView(views.APIView):
         if serializer.is_valid(raise_exception=True):
             club_obj = Club.objects.get(name=serializer.validated_data.get('username'))
             if club_obj.is_admin:
-                serializer.save()
                 RequestedAcount.objects.filter(username=serializer.validated_data.get('username')).delete()
+                serializer.save()
                 return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
             else:
                 RequestedAcount.objects.filter(username=serializer.validated_data.get('username')).delete()
