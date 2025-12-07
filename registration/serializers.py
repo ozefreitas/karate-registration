@@ -17,7 +17,7 @@ class MembersSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Member
-        exclude = ("quotes_legible", "creation_date", "favorite", "graduation", "id_number", "weight", "birth_date")
+        fields = ("id", "first_name", "last_name", "full_name", "gender", "club", "age", "member_type")
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
@@ -139,7 +139,7 @@ class AdminLikeTypeMembersSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Member
-        exclude = ("quotes_legible", "creation_date", "favorite", "club")
+        exclude = ("quotes_legible", "creation_date", "favorite", "club" )
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"

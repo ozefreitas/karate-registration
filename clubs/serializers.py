@@ -32,10 +32,22 @@ class CreateClubSubscriptionSerializer(serializers.ModelSerializer):
         exclude = ["paid", "paid_at"]
 
 
-class UpdateClubSubscriptionAmountSerializer(serializers.ModelSerializer):
+class UpdateClubSubscriptionConfigAmountSerializer(serializers.ModelSerializer):
     class Meta:
         model = ClubSubscriptionConfig
         fields = ["amount"]
+
+
+class UpdateClubSubscriptionAmountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ClubSubscription
+        fields = ["year", "amount"]
+
+
+class UpdateClubSubscriptionDueDateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ClubSubscription
+        fields = ["year", "due_date"]
 
 
 class PatchClubSubscriptionSerializer(serializers.ModelSerializer):
@@ -61,4 +73,4 @@ class PatchClubSubscriptionSerializer(serializers.ModelSerializer):
 class CreateAllClubsSubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ClubSubscription
-        exclude = ["paid", "paid_at", "club"]
+        fields = ["year"]

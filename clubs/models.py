@@ -69,7 +69,8 @@ class ClubSubscription(models.Model):
     )
 
     year = models.PositiveIntegerField()  # e.g., 2025
-    amount = models.DecimalField(max_digits=7, decimal_places=2)
+    amount = models.DecimalField(max_digits=7, decimal_places=2) 
+    due_date = models.DateTimeField()
     paid = models.BooleanField(default=False)
     paid_at = models.DateTimeField(null=True, blank=True)
 
