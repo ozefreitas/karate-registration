@@ -29,6 +29,7 @@ class Migration(migrations.Migration):
                 ('year', models.PositiveIntegerField()),
                 ('month', models.PositiveSmallIntegerField()),
                 ('amount', models.DecimalField(decimal_places=2, max_digits=7)),
+                ('due_date', models.DateTimeField(blank=True, null=True)),
                 ('paid', models.BooleanField(default=False)),
                 ('paid_at', models.DateTimeField(blank=True, null=True)),
                 ('member', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='payments', to='registration.member')),
@@ -37,5 +38,13 @@ class Migration(migrations.Migration):
                 'ordering': ['-year', '-month'],
                 'unique_together': {('member', 'year', 'month')},
             },
+        ),
+        migrations.CreateModel(
+            name='MonthlyMemberPaymentConfig',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('amount', models.DecimalField(decimal_places=2, default=100.0, max_digits=7)),
+                ('member', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='monthly_member_payment_config', to='registration.member')),
+            ],
         ),
     ]

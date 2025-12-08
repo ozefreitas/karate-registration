@@ -3,6 +3,8 @@ from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils import timezone
+from datetime import datetime
+import calendar
 
 from nanoid import generate
 from datetime import date
@@ -107,20 +109,63 @@ class MonthlyMemberPayment(models.Model):
 
     year = models.PositiveIntegerField()
     month = models.PositiveSmallIntegerField()  # 1=Jan ... 12=Dec
-
     amount = models.DecimalField(max_digits=7, decimal_places=2)
+    due_date = models.DateTimeField(blank=True, null=True)
     paid = models.BooleanField(default=False)
     paid_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         unique_together = ("member", "year", "month")
         ordering = ["-year", "-month"]
+    
+    def save(self, *args, **kwargs):
+        if not self.due_date:  # Generate only if no ID exists
+            last_day_of_month = calendar.monthrange(self.year, self.month)[1]
+
+            date_to_save = datetime(
+                year=self.year, 
+                month=self.month, 
+                day=last_day_of_month, 
+                hour=23, 
+                minute=59, 
+                second=59, 
+                tzinfo=timezone.get_current_timezone()
+                )
+
+            self.due_date = date_to_save
+        super().save(*args, **kwargs)
 
     def mark_as_paid(self):
         self.paid = True
         self.paid_at = timezone.now()
         self.save()
 
+    def __str__(self):
+        return f"{self.member.first_name} {self.member.last_name} {self.month}-{self.year} subscription"
+
+
+class MonthlyMemberPaymentConfig(models.Model):
+    """
+    Stores payment amount for each Member.
+    Each Member should have exactly one config row, with a fixed amount, that can then be changed by the Club of that Member.
+    """
+    member = models.OneToOneField(
+        Member,
+        on_delete=models.CASCADE,
+        related_name="monthly_member_payment_config",
+    )
+    amount = models.DecimalField(max_digits=7, decimal_places=2, default=100.00)
+
+    def __str__(self):
+        return f"{self.member.first_name} {self.member.last_name} - subscription amount: {self.amount}"
+
+    @staticmethod
+    def get_amount_for(member):
+        """
+        Returns the member's amount, creating a config row if missing.
+        """
+        obj, _ = MonthlyMemberPaymentConfig.objects.get_or_create(member=member)
+        return obj.amount
 
 ### Teams models ###
 

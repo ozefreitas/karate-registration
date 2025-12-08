@@ -73,6 +73,7 @@ class ClubSubscriptionsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter]
     search_fields = ['year']
     pagination_class = None
+    
     serializer_classes = {
         "create": ClubSerializers.CreateClubSubscriptionSerializer,
         "partial_update": ClubSerializers.PatchClubSubscriptionSerializer

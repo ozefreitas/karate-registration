@@ -5,7 +5,8 @@ from core.utils.utils import calc_age
 from events.models import Event
 from registration.utils.utils import get_comp_age
 from decouple import config
-import datetime
+from datetime import datetime
+from django.utils import timezone
 
 ### Members Serializer Classes 
 
@@ -26,7 +27,7 @@ class MembersSerializer(serializers.ModelSerializer):
         """Normal Member table should display the real age at the time.
         Registration modals should display the corrected age."""
         year_of_birth = obj.birth_date.year
-        date_now = datetime.datetime.now()
+        date_now = datetime.now()
         age_at_comp = date_now.year - year_of_birth
         if (date_now.month, date_now.day) < (obj.birth_date.month, obj.birth_date.day):
             age_at_comp -= 1
@@ -148,7 +149,7 @@ class AdminLikeTypeMembersSerializer(serializers.ModelSerializer):
         """Normal Member table should display the real age at the time.
         Registration modals should display the corrected age."""
         year_of_birth = obj.birth_date.year
-        date_now = datetime.datetime.now()
+        date_now = datetime.now()
         age_at_comp = date_now.year - year_of_birth
         if (date_now.month, date_now.day) < (obj.birth_date.month, obj.birth_date.day):
             age_at_comp -= 1
@@ -237,10 +238,46 @@ class UpdateMemberSerializer(serializers.ModelSerializer):
 ### Monthly Payments Serializer Classes
 
 class MonthlyMemberPaymentSerializer(serializers.ModelSerializer):
+    inside_limit = serializers.SerializerMethodField()
+    predefined_amount = serializers.SerializerMethodField()
 
     class Meta:
         model = models.MonthlyMemberPayment
         fields = "__all__"
+    
+    def get_inside_limit(self, obj):
+        if obj.paid == True:
+            if obj.paid_at > obj.due_date:
+                return False
+            else: return True
+        if obj.due_date != None:
+            return timezone.now() < obj.due_date
+        else: return True
+
+    def get_predefined_amount(self, obj):
+        pred_amount = models.MonthlyMemberPaymentConfig.objects.get(member=obj.member)
+        return pred_amount.amount
+
+
+class PatchMonthlyMemberPaymentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.MonthlyMemberPayment
+        fields = ["paid"]
+
+    def update(self, instance, validated_data):
+        # If PATCH includes "paid": true → use your method
+        if validated_data.get("paid") is True and instance.paid is False:
+            instance.mark_as_paid()
+            validated_data.pop("paid", None)  # remove so DRF doesn't overwrite
+        
+        elif validated_data.get("paid") is False and instance.paid is True:
+            instance.paid = False
+            instance.paid_at = None
+            validated_data.pop("paid", None)
+
+        # For other fields (normally you wouldn’t allow them anyway)
+        return super().update(instance, validated_data)
 
 
 ### Teams Serializer Classes

@@ -1,21 +1,17 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from datetime import date
-from django.utils import timezone
 
 from .models import Member, Team, Classification, MonthlyMemberPayment
-from .filters import MembersFilters
+from .filters import MembersFilters, MonthlyMemberPaymentFilters
 from events.models import Event
 from core.models import User, Notification
 from core.permissions import MemberPermission
-import registration.serializers as serializers
+import registration.serializers as registration_serializers
 import events.serializers as event_serializers
 
 
 from rest_framework import viewsets, status, filters
-from rest_framework.decorators import action, permission_classes
+from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.decorators import authentication_classes, permission_classes
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
 
@@ -32,15 +28,15 @@ class MultipleSerializersMixIn:
 class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     # TODO: order get request by the category_index from the serializer
     queryset=Member.objects.all().order_by("first_name")
-    serializer_class = serializers.MembersSerializer
+    serializer_class = registration_serializers.MembersSerializer
     permission_classes = [MemberPermission]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     ordering_fields = ["first_name", "last_name", "gender", "member_type", "birth_date"]
     filterset_class = MembersFilters
 
     serializer_classes = {
-        "create": serializers.ClubsCreateMemberSerializer,
-        "update": serializers.UpdateMemberSerializer
+        "create": registration_serializers.ClubsCreateMemberSerializer,
+        "update": registration_serializers.UpdateMemberSerializer
     }
 
     def get_queryset(self):
@@ -59,17 +55,17 @@ class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         if self.action == "retrieve":
             user = self.request.user
             if user.role in ["free_club", "subed_club"]:
-                return serializers.NotAdminLikeTypeMembersSerializer
-            return serializers.AdminLikeTypeMembersSerializer
+                return registration_serializers.NotAdminLikeTypeMembersSerializer
+            return registration_serializers.AdminLikeTypeMembersSerializer
 
         elif self.action == "create":
             user = self.request.user
             if user.role in ["free_club", "subed_club"]:
-                return serializers.ClubsCreateMemberSerializer
-            return serializers.AdminCreateMemberSerializer
+                return registration_serializers.ClubsCreateMemberSerializer
+            return registration_serializers.AdminCreateMemberSerializer
         
         if self.request.query_params.get("not_in_event"):
-            return serializers.NotInEventMembersSerializer
+            return registration_serializers.NotInEventMembersSerializer
 
         return super().get_serializer_class()
     
@@ -99,7 +95,7 @@ class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     @action(detail=False, methods=["get"], url_path="last_five")
     def last_five(self, request):
         last_five = Member.objects.filter(club=request.user).order_by('-creation_date')[:5]
-        serializer = serializers.MembersSerializer(last_five, many=True)
+        serializer = registration_serializers.MembersSerializer(last_five, many=True)
         return Response(serializer.data)
 
     @action(detail=False, methods=['delete'], url_path="delete_all")
@@ -139,12 +135,14 @@ class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
 class MonthlyMemberPaymentViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=MonthlyMemberPayment.objects.all()
-    serializer_class = serializers.MonthlyMemberPaymentSerializer
+    serializer_class = registration_serializers.MonthlyMemberPaymentSerializer
+    pagination_class = None
+    filterset_class = MonthlyMemberPaymentFilters
     permission_classes = [IsAuthenticated]
 
     serializer_classes = {
         # "create": serializers.CreateMemberSerializer,
-        # "update": serializers.UpdateTeamsSerializer
+        "partial_update": registration_serializers.PatchMonthlyMemberPaymentSerializer
     }
 
     # def get_queryset(self):
@@ -153,13 +151,13 @@ class MonthlyMemberPaymentViewSet(MultipleSerializersMixIn, viewsets.ModelViewSe
 
 class TeamsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Team.objects.all()
-    serializer_class = serializers.TeamsSerializer
+    serializer_class = registration_serializers.TeamsSerializer
     # authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated, MemberPermission]
 
     serializer_classes = {
-        # "create": serializers.CreateMemberSerializer,
-        "update": serializers.UpdateTeamsSerializer
+        # "create": registration_serializers.CreateMemberSerializer,
+        "update": registration_serializers.UpdateTeamsSerializer
     }
 
     def get_queryset(self):
@@ -168,7 +166,7 @@ class TeamsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     @action(detail=False, methods=["get"], url_path="last_five")
     def last_five(self, request):
         last_five = Team.objects.filter(club=request.user).order_by('creation_date')[:5]
-        serializer = serializers.TeamsSerializer(last_five, many=True)
+        serializer = registration_serializers.TeamsSerializer(last_five, many=True)
         return Response(serializer.data)
 
     @action(detail=False, methods=['delete'], url_path="delete_all")
@@ -188,17 +186,17 @@ class TeamsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
 class ClassificationsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Classification.objects.all()
-    serializer_class = serializers.AllClassificationsSerializer
+    serializer_class = registration_serializers.AllClassificationsSerializer
     # permission_classes = [IsAuthenticated]
 
     serializer_classes = {
-        "create": serializers.CreateClassificationsSerializer,
+        "create": registration_serializers.CreateClassificationsSerializer,
     }
 
     @action(detail=False, methods=["get"], url_path="per_comp")
     def per_comp(self, request):
         queryset = Classification.objects.all()
-        serialized_data = serializers.AllClassificationsSerializer(queryset, many=True)
+        serialized_data = registration_serializers.AllClassificationsSerializer(queryset, many=True)
         final_classification = {}
         competition = ""
         for classification in serialized_data.data:
@@ -228,5 +226,5 @@ class ClassificationsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         if last_competition is None:
             return Response([])
         last_comp_quali = Classification.objects.filter(competition=last_competition.id)
-        serialized_data = serializers.ClassificationsSerializer(last_comp_quali, many=True)
+        serialized_data = registration_serializers.ClassificationsSerializer(last_comp_quali, many=True)
         return Response(serialized_data.data)

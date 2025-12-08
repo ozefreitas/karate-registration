@@ -1,5 +1,5 @@
 from django_filters import rest_framework as filters
-from registration.models import Member
+from registration.models import Member, MonthlyMemberPayment
 from events.models import Event
 from django.db.models import Q, Count
 
@@ -59,4 +59,18 @@ class MembersFilters(filters.FilterSet):
 
     class Meta:
         model = Member
+        fields = []
+
+
+
+class MonthlyMemberPaymentFilters(filters.FilterSet):
+    """Filter Monthly Subscription objects"""
+
+    member = filters.CharFilter(method='filter_member')
+
+    def filter_member(self, queryset, name, value):
+        return queryset.filter(member=value)
+
+    class Meta:
+        model = MonthlyMemberPayment
         fields = []
