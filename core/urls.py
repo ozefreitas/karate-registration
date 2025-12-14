@@ -11,6 +11,7 @@ router = routers.DefaultRouter()
 router.register(r'categories', views.CategoriesViewSet, basename='categories')
 router.register(r'request_acount', views.RequestedAcountViewSet, basename='request-acount')
 router.register(r'notifications', views.NotificationViewSet, basename='notifications')
+router.register(r'monthly_payment_plans', views.MonthlyPaymentPlanViewSet, basename='monthly-payment-plans')
 
 urlpatterns = [
     path('', include(router.urls)),

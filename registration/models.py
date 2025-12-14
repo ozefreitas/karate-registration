@@ -10,6 +10,7 @@ from nanoid import generate
 from datetime import date
 from core.constants import GENDERS, GRADUATIONS, MATCHES
 from events.models import Event
+from core.models import MonthlyPaymentPlan
 
 # Create your models here.
 
@@ -73,11 +74,11 @@ class Member(models.Model):
     def current_month_payment(self):
         """Returns True if the member paid this month's quota."""
         today = date.today()
-        return self.payments.filter(
-            year=today.year,
-            month=today.month,
-            paid=True,
-        ).exists()
+        if not self.quotes_legible:
+            return None
+        elif self.payments.filter(year=today.year, month=today.month, paid=True).exists():
+            return "paid"
+        else: return "unpaid"
 
     def clean(self):
         if self.member_type == "coach" and self.favorite == True:
@@ -119,7 +120,7 @@ class MonthlyMemberPayment(models.Model):
         ordering = ["-year", "-month"]
     
     def save(self, *args, **kwargs):
-        if not self.due_date:  # Generate only if no ID exists
+        if not self.due_date: 
             last_day_of_month = calendar.monthrange(self.year, self.month)[1]
 
             date_to_save = datetime(
@@ -148,24 +149,39 @@ class MonthlyMemberPaymentConfig(models.Model):
     """
     Stores payment amount for each Member.
     Each Member should have exactly one config row, with a fixed amount, that can then be changed by the Club of that Member.
+    That amount can be set just for this member, or chosen from a pre defined plan
     """
-    member = models.OneToOneField(
-        Member,
-        on_delete=models.CASCADE,
-        related_name="monthly_member_payment_config",
+    member = models.OneToOneField(Member, on_delete=models.CASCADE, related_name="monthly_member_payment_config")
+    base_plan = models.ForeignKey("core.MonthlyPaymentPlan", on_delete=models.PROTECT)
+    # This is the per-member amount (default copied from the base plan)
+    custom_amount = models.DecimalField(
+        max_digits=7,
+        decimal_places=2,
+        blank=True,
+        null=True
     )
-    amount = models.DecimalField(max_digits=7, decimal_places=2, default=100.00)
+    is_custom_active = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        # If custom amount not set, default to plan amount
+        if self.custom_amount is None:
+            self.custom_amount = self.base_plan.amount
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.member.first_name} {self.member.last_name} - subscription amount: {self.amount}"
+        return f"{self.member.first_name} {self.member.last_name} - subscription amount: {self.custom_amount}"
 
     @staticmethod
     def get_amount_for(member):
         """
-        Returns the member's amount, creating a config row if missing.
+        Returns the member's amount.
         """
-        obj, _ = MonthlyMemberPaymentConfig.objects.get_or_create(member=member)
-        return obj.amount
+        obj, _ = MonthlyMemberPaymentConfig.objects.get(member=member)
+        if obj.is_custom_active:
+            return obj.custom_amount
+        else:
+            obj.base_plan.amount
+
 
 ### Teams models ###
 

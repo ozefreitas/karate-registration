@@ -1,7 +1,7 @@
 from datetime import datetime
 from django.contrib import messages
 import requests
-from collections import Counter
+from registration.models import Member
 
 def range_decoder(some_range: list):
     """Function that returns a range 
@@ -162,3 +162,27 @@ def check_filter_data(request, filter_form, dojo_object):
         if len(dojo_object) == 0:
             not_found = True
     return dojo_object, not_found
+
+
+def get_real_member(member):
+            return Member.objects.filter(
+                first_name=member.first_name,
+                last_name=member.last_name,
+                birth_date=member.birth_date,
+                id_number=member.id_number,
+            ).order_by("creation_date").first()
+
+def get_identity_members(member, qs_object = False):
+            if qs_object:
+                return Member.objects.filter(
+                first_name=member.first_name,
+                last_name=member.last_name,
+                birth_date=member.birth_date,
+                id_number=member.id_number,
+            ).exclude(id=member.id)
+            return Member.objects.filter(
+                first_name=member.get("first_name"),
+                last_name=member.get("last_name"),
+                birth_date=member.get("birth_date"),
+                id_number=member.get("id_number"),
+            ).exclude(id=member.get("id"))

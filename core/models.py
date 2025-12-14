@@ -4,10 +4,10 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.conf import settings
 from django.db import models
-from events.models import Event
 from django.contrib.auth.models import AbstractUser
 from django.db.models import Q, UniqueConstraint
 
+from events.models import Event
 
 from datetime import timedelta
 from .constants import GRADUATIONS, GENDERS
@@ -59,13 +59,6 @@ class User(AbstractUser):
         blank=True,
         related_name="children",
         limit_choices_to={"role": Role.MAINADMIN},  # only MAINADMIN can be a parent
-    )
-
-    monthly_fee = models.DecimalField(
-        max_digits=7,
-        decimal_places=2,
-        default=0,
-        help_text="Monthly fee for members of this dojo",
     )
 
     # --------------------------
@@ -204,6 +197,7 @@ class Notification(models.Model):
 
     payment_object = models.CharField(max_length=32, choices=PAYMENT_TYPE.choices, default=PAYMENT_TYPE.NONE)
     target_event = models.ForeignKey(Event, on_delete=models.CASCADE, null=True, blank=True)
+    target_member = models.ForeignKey("registration.Member", on_delete=models.CASCADE, null=True, blank=True)
     club_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     can_remove = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -213,3 +207,20 @@ class Notification(models.Model):
     
     def __str__(self):
         return '{} {} notification'.format(self.club_user, self.type)
+    
+
+class MonthlyPaymentPlan(models.Model):
+    club_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, limit_choices_to={"role": "subed_club"},)
+    name = models.CharField(max_length=50)
+    amount = models.DecimalField(max_digits=7, decimal_places=2)
+    is_default = models.BooleanField(default=False)
+
+    # def save(self, *args, **kwargs):
+    #     if self.is_default:
+    #         # Unset default on all others
+    #         MonthlyPaymentPlan.objects.exclude(id=self.id).update(is_default=False)
+
+    #     super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.name} ({self.amount}€)"

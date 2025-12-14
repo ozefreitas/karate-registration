@@ -10,8 +10,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .filters import NotificationsFilters
 from core.permissions import IsAuthenticatedOrReadOnly, IsUnauthenticatedForPost, IsNationalForPostDelete, IsAdminRoleorHigher, IsPayingUserorAdminForGet
 from .models import Category, SignupToken, RequestedAcount, User, RequestPasswordReset
-from clubs.models import Club, ClubSubscription
-from .models import Notification
+from clubs.models import Club
+from .models import Notification, MonthlyPaymentPlan
 from core.serializers import base as BaseSerializers
 from core.serializers.categories import CategorySerializer, CreateCategorySerializer, CompactCategorySerializer
 from core.serializers.users import UsersSerializer
@@ -153,6 +153,17 @@ class RequestedAcountViewSet(viewsets.ModelViewSet):
             ).delete()
 
             instance.delete()
+
+
+class MonthlyPaymentPlanViewSet(viewsets.ModelViewSet):
+    queryset=MonthlyPaymentPlan.objects.all()
+    serializer_class=BaseSerializers.MonthlyPaymentPlanSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = None
+
+    def get_queryset(self):
+        user = self.request.user
+        return self.queryset.filter(club_user=user)
 
         
 @extend_schema(

@@ -7,31 +7,29 @@ from registration.utils.utils import get_comp_age
 from decouple import config
 from datetime import datetime
 from django.utils import timezone
+from registration.utils.utils import get_real_member, get_identity_members
+
 
 ### Members Serializer Classes 
-
 
 class MembersSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     age = serializers.SerializerMethodField()
+    can_update_sensitive = serializers.SerializerMethodField()
     club = UsersSerializer()
 
     class Meta:
         model = models.Member
-        fields = ("id", "first_name", "last_name", "full_name", "gender", "club", "age", "member_type")
+        fields = ("id", "first_name", "last_name", "full_name", "gender", "club", "age", "member_type", "can_update_sensitive")
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
 
     def get_age(self, obj):
-        """Normal Member table should display the real age at the time.
-        Registration modals should display the corrected age."""
-        year_of_birth = obj.birth_date.year
-        date_now = datetime.now()
-        age_at_comp = date_now.year - year_of_birth
-        if (date_now.month, date_now.day) < (obj.birth_date.month, obj.birth_date.day):
-            age_at_comp -= 1
-        return age_at_comp
+        return get_comp_age(obj.birth_date)
+
+    def get_can_update_sensitive(self, obj):
+        return obj.created_by == obj.club
 
 
 class CompactMembersSerializer(serializers.ModelSerializer):
@@ -118,11 +116,14 @@ class CompactCategorizedMembersSerializer(serializers.ModelSerializer):
 class NotAdminLikeTypeMembersSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     age = serializers.SerializerMethodField()
+    can_update_sensitive = serializers.SerializerMethodField()
     monthly_payment_status = serializers.SerializerMethodField()
+    monthly_payment_config = serializers.SerializerMethodField()
+    has_another = serializers.SerializerMethodField()
     
     class Meta:
         model = models.Member
-        exclude = ("creation_date", )
+        exclude = ("creation_date", "created_by", "club", "favorite")
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
@@ -130,8 +131,30 @@ class NotAdminLikeTypeMembersSerializer(serializers.ModelSerializer):
     def get_age(self, obj):
         return get_comp_age(obj.birth_date)
     
+    def get_can_update_sensitive(self, obj):
+        return obj.created_by == obj.club
+    
     def get_monthly_payment_status(self, obj):
         return obj.current_month_payment()
+
+    def get_monthly_payment_config(self, obj):
+        # Get or create the payment plan row
+        default_plan, _ = models.MonthlyPaymentPlan.objects.get_or_create(
+                club_user=obj.club,
+                is_default=True,
+                defaults={"name": "Default", "amount": 10}
+            )
+        # Get or create config row
+
+        config, _ = models.MonthlyMemberPaymentConfig.objects.get_or_create(
+            member=get_real_member(obj),
+            defaults={"base_plan": default_plan}
+        )
+
+        return MonthlyMemberPaymentConfigSerializer(config).data
+    
+    def get_has_another(self, obj):
+        return get_identity_members(obj, True).first().id
 
 
 class AdminLikeTypeMembersSerializer(serializers.ModelSerializer):
@@ -140,20 +163,13 @@ class AdminLikeTypeMembersSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Member
-        exclude = ("quotes_legible", "creation_date", "favorite", "club" )
+        exclude = ("quotes_legible", "creation_date", "favorite", "club", "created_by" )
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
 
     def get_age(self, obj):
-        """Normal Member table should display the real age at the time.
-        Registration modals should display the corrected age."""
-        year_of_birth = obj.birth_date.year
-        date_now = datetime.now()
-        age_at_comp = date_now.year - year_of_birth
-        if (date_now.month, date_now.day) < (obj.birth_date.month, obj.birth_date.day):
-            age_at_comp -= 1
-        return age_at_comp
+        return get_comp_age(obj.birth_date)
 
 
 class NotInEventMembersSerializer(serializers.ModelSerializer):
@@ -195,12 +211,12 @@ class ClubsCreateMemberSerializer(serializers.ModelSerializer):
 
         if stundent and weight != "":
             raise serializers.ValidationError({
-                'incompatible_member': ["Alunos não têm peso associado."]
+                'incompatible_member': ["Alunos não têm peso associado"]
             })
     
         if gender not in ["Masculino", "Feminino"]:
             raise serializers.ValidationError({
-                'impossible_gender': ['Género "Misto" apenas está disponível para Equipas.']
+                'impossible_gender': ['Género "Misto" apenas está disponível para Equipas']
             })
       
         return data
@@ -218,28 +234,76 @@ class AdminCreateMemberSerializer(serializers.ModelSerializer):
 
         if stundent and weight != "":
             raise serializers.ValidationError({
-                'incompatible_member': ["Alunos não têm peso associado."]
+                'incompatible_member': ["Alunos não têm peso associado"]
             })
     
         if gender not in ["Masculino", "Feminino"]:
             raise serializers.ValidationError({
-                'impossible_gender': ['Género "Misto" apenas está disponível para Equipas.']
+                'impossible_gender': ['Género "Misto" apenas está disponível para Equipas']
             })
       
         return data
 
 
 class UpdateMemberSerializer(serializers.ModelSerializer):
+    age = serializers.SerializerMethodField()
+
+    def get_age(self, obj):
+        return get_comp_age(obj.birth_date)
+    
     class Meta:
         model = models.Member
-        exclude = ("club", "id_number", "created_by", "creation_date")
+        exclude = ("club", "created_by", "creation_date")
+    
+    def get_fields(self):
+        fields = super().get_fields()
+
+        member = self.instance
+        request = self.context.get("request")
+
+        if member and request and member.created_by != member.club:
+             for field in ["id_number", "first_name", "last_name", "birth_date", "gender", "graduation"]:
+                fields.pop(field, None)
+
+        return fields
+
+    def validate(self, attrs):
+        member = self.instance 
+
+        if member.created_by != member.club:
+            for field in ["id_number", "first_name", "last_name", "birth_date", "gender", "graduation"]:
+                if field in attrs:
+                    raise serializers.ValidationError(
+                        {"not_allowed": "Não pode alterar campos sensíveis de um membro criado pelo seu administrador", "field": field}
+                    )
+
+        return attrs
 
 
 ### Monthly Payments Serializer Classes
 
+class MonthlyMemberPaymentConfigSerializer(serializers.ModelSerializer):
+    base_plan_amount = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.MonthlyMemberPaymentConfig
+        exclude = ("member", )
+
+    def get_base_plan_amount(self, obj):
+        return obj.base_plan.amount
+
+
+class PatchMonthlyMemberPaymentConfigSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.MonthlyMemberPaymentConfig
+        fields = "__all__"
+        read_only_fields = ["member"]
+
+
 class MonthlyMemberPaymentSerializer(serializers.ModelSerializer):
     inside_limit = serializers.SerializerMethodField()
     predefined_amount = serializers.SerializerMethodField()
+    is_custom = serializers.SerializerMethodField()
 
     class Meta:
         model = models.MonthlyMemberPayment
@@ -256,14 +320,21 @@ class MonthlyMemberPaymentSerializer(serializers.ModelSerializer):
 
     def get_predefined_amount(self, obj):
         pred_amount = models.MonthlyMemberPaymentConfig.objects.get(member=obj.member)
-        return pred_amount.amount
+        if pred_amount.is_custom_active:
+            return pred_amount.custom_amount
+        else:
+            return pred_amount.base_plan.amount
+    
+    def get_is_custom(self, obj):
+        is_custom = models.MonthlyMemberPaymentConfig.objects.get(member=obj.member)
+        return is_custom.is_custom_active
 
 
 class PatchMonthlyMemberPaymentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.MonthlyMemberPayment
-        fields = ["paid"]
+        fields = ["paid", "amount"]
 
     def update(self, instance, validated_data):
         # If PATCH includes "paid": true → use your method

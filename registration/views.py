@@ -1,13 +1,15 @@
 from django_filters.rest_framework import DjangoFilterBackend
 
-from .models import Member, Team, Classification, MonthlyMemberPayment
+from .models import Member, Team, Classification, MonthlyMemberPayment, MonthlyMemberPaymentConfig
 from .filters import MembersFilters, MonthlyMemberPaymentFilters
 from events.models import Event
-from core.models import User, Notification
+from core.models import User, Notification, MonthlyPaymentPlan
 from core.permissions import MemberPermission
 import registration.serializers as registration_serializers
 import events.serializers as event_serializers
+from registration.utils.utils import get_real_member, get_identity_members
 
+from datetime import datetime
 
 from rest_framework import viewsets, status, filters
 from rest_framework.decorators import action
@@ -52,14 +54,13 @@ class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         raise PermissionDenied("You do not have access to this data.")
 
     def get_serializer_class(self):
+        user = self.request.user
         if self.action == "retrieve":
-            user = self.request.user
             if user.role in ["free_club", "subed_club"]:
                 return registration_serializers.NotAdminLikeTypeMembersSerializer
             return registration_serializers.AdminLikeTypeMembersSerializer
 
         elif self.action == "create":
-            user = self.request.user
             if user.role in ["free_club", "subed_club"]:
                 return registration_serializers.ClubsCreateMemberSerializer
             return registration_serializers.AdminCreateMemberSerializer
@@ -88,9 +89,74 @@ class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                                         notification=f"Um novo Membro ({first_name} {last_name}) acabou de ser criado. Verifique os seus dados e adicione outros campos caso necessário.",
                                         can_remove=True,
                                         type="create_member")
-            serializer.save(id_number=id_number, created_by=request_user)
+            member = serializer.save(id_number=id_number, created_by=request_user)
         elif request_user.role == "subed_club":
-            serializer.save(id_number=id_number, club=request_user, created_by=request_user)
+            user = request_user
+            member = serializer.save(id_number=id_number, club=user, created_by=request_user)
+        
+        canonical = get_real_member(member)
+
+        default_plan, _ = MonthlyPaymentPlan.objects.get_or_create(
+                club_user=user,
+                is_default=True,
+                defaults={"name": "Default", "amount": 10}
+            )
+
+        member_base_plan, _ = MonthlyMemberPaymentConfig.objects.get_or_create(
+            member=canonical,
+            base_plan=default_plan
+        )
+
+        final_amount = None
+        if not member_base_plan.is_custom_active:
+            final_amount = member_base_plan.base_plan.amount
+        else:
+            final_amount=member_base_plan.custom_amount
+
+        today = datetime.today()
+        obj, was_created = MonthlyMemberPayment.objects.get_or_create(
+            member=canonical,
+            year=today.year,
+            month=today.month,
+            defaults={"amount": final_amount}
+        )
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+
+        old_identity = {
+            "id": instance.id,
+            "first_name": instance.first_name,
+            "last_name": instance.last_name,
+            "birth_date": instance.birth_date,
+            "id_number": instance.id_number,
+        }
+
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        updated_member = serializer.save()
+
+        others = get_identity_members(old_identity)
+
+        keep_count = others.count()
+
+        identity_fields = ["first_name", "last_name", "birth_date", "id_number"]
+        new_identity = {field: getattr(updated_member, field) for field in identity_fields}
+
+        if others.exists():
+            others.update(**new_identity)
+            message = f"Membros (total de {keep_count + 1}) atualizados com sucesso!"
+        else:
+            message = "Membro atualizado com sucesso!"
+
+        return Response(
+            {
+                "data": self.get_serializer(updated_member).data,
+                "message": message,
+            },
+            status=status.HTTP_200_OK
+        )
 
     @action(detail=False, methods=["get"], url_path="last_five")
     def last_five(self, request):
@@ -137,16 +203,50 @@ class MonthlyMemberPaymentViewSet(MultipleSerializersMixIn, viewsets.ModelViewSe
     queryset=MonthlyMemberPayment.objects.all()
     serializer_class = registration_serializers.MonthlyMemberPaymentSerializer
     pagination_class = None
-    filterset_class = MonthlyMemberPaymentFilters
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    ordering_fields = ["year", "month", "paid_at", "paid"]
     permission_classes = [IsAuthenticated]
+    filterset_class = MonthlyMemberPaymentFilters
 
     serializer_classes = {
         # "create": serializers.CreateMemberSerializer,
         "partial_update": registration_serializers.PatchMonthlyMemberPaymentSerializer
     }
 
-    # def get_queryset(self):
-    #     return self.queryset.filter(club=self.request.user)
+    def partial_update(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        sent_fields = set(request.data.keys())
+
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+
+        paid = serializer.validated_data.get("id_number")
+        if paid and "amount" in sent_fields:
+            raise PermissionDenied("You do not have permission to do this.")
+
+        self.perform_update(serializer)
+
+        # ---- Custom response logic ----
+        response_data = serializer.data
+
+        if "paid" in sent_fields:
+            if instance.paid:
+                response_data["message"] = "Quotas marcadas como Pago."
+            else:
+               response_data["message"] = "Quotas revertidas para Em Falta." 
+        elif "amount" in sent_fields:
+            response_data["message"] = "Montante atualizado."
+
+        return Response(response_data)
+
+
+class MonthlyMemberPaymentConfigViewSet(viewsets.ModelViewSet):
+    queryset = MonthlyMemberPaymentConfig.objects.all()
+    serializer_class = registration_serializers.MonthlyMemberPaymentConfigSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class TeamsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):

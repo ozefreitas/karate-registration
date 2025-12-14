@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from core.models import User, SignupToken, RequestedAcount, RequestPasswordReset, Notification
+from core.models import User, SignupToken, RequestedAcount, RequestPasswordReset, Notification, MonthlyPaymentPlan
 from events.serializers import CompactEventsSerializer
 
 
@@ -7,6 +7,12 @@ class CompactUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "username", "email"]
+
+
+class MonthlyPaymentPlanSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MonthlyPaymentPlan
+        fields = "__all__"
 
 
 class RequestedAcountSerializer(serializers.ModelSerializer):

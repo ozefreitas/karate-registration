@@ -176,3 +176,19 @@ class EventIndividualsPermission(BasePermission):
             return request.method in ["POST", "DELETE"]
 
         return False
+    
+
+class IsObjectOwner(BasePermission):
+    """
+    - Only
+    """
+    def has_permission(self, request, view):
+        return True
+
+    def has_object_permission(self, request, view, obj):
+        if request.method == "DELETE":
+            return (
+                getattr(request.user, "role", None) in ["main_admin", "superuser"]
+                or obj.club_user == request.user  # owner check
+            )
+        return True
