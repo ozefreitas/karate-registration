@@ -154,7 +154,9 @@ class NotAdminLikeTypeMembersSerializer(serializers.ModelSerializer):
         return MonthlyMemberPaymentConfigSerializer(config).data
     
     def get_has_another(self, obj):
-        return get_identity_members(obj, True).first().id
+        if get_identity_members(obj, True).exists():
+            return get_identity_members(obj, True).first().id
+        else: return None
 
 
 class AdminLikeTypeMembersSerializer(serializers.ModelSerializer):
