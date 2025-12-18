@@ -114,7 +114,7 @@ class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             final_amount=member_base_plan.custom_amount
 
         today = datetime.today()
-        obj, was_created = MonthlyMemberPayment.objects.get_or_create(
+        MonthlyMemberPayment.objects.get_or_create(
             member=canonical,
             year=today.year,
             month=today.month,
@@ -212,6 +212,13 @@ class MonthlyMemberPaymentViewSet(MultipleSerializersMixIn, viewsets.ModelViewSe
         # "create": serializers.CreateMemberSerializer,
         "partial_update": registration_serializers.PatchMonthlyMemberPaymentSerializer
     }
+
+    def get_queryset(self):
+        user = self.request.user
+        if not user.is_authenticated:
+            return MonthlyMemberPayment.objects.none()
+        return super().get_queryset().filter(member__club=user)
+    
 
     def partial_update(self, request, *args, **kwargs):
         instance = self.get_object()

@@ -215,12 +215,12 @@ class MonthlyPaymentPlan(models.Model):
     amount = models.DecimalField(max_digits=7, decimal_places=2)
     is_default = models.BooleanField(default=False)
 
-    # def save(self, *args, **kwargs):
-    #     if self.is_default:
-    #         # Unset default on all others
-    #         MonthlyPaymentPlan.objects.exclude(id=self.id).update(is_default=False)
+    def save(self, *args, **kwargs):
+        if self.is_default:
+            # Unset default on all others
+            MonthlyPaymentPlan.objects.exclude(id=self.id).update(is_default=False)
 
-    #     super().save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.name} ({self.amount}€)"

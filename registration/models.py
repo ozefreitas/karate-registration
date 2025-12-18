@@ -10,7 +10,6 @@ from nanoid import generate
 from datetime import date
 from core.constants import GENDERS, GRADUATIONS, MATCHES
 from events.models import Event
-from core.models import MonthlyPaymentPlan
 
 # Create your models here.
 
@@ -72,13 +71,53 @@ class Member(models.Model):
         ]
     
     def current_month_payment(self):
-        """Returns True if the member paid this month's quota."""
-        today = date.today()
+        """Returns paid if the member paid this month's quota."""
         if not self.quotes_legible:
             return None
-        elif self.payments.filter(year=today.year, month=today.month, paid=True).exists():
+        
+        today = date.today()
+        real_member = Member.objects.filter(
+                first_name=self.first_name,
+                last_name=self.last_name,
+                birth_date=self.birth_date,
+                id_number=self.id_number,
+            ).order_by("creation_date").first()
+        
+        if MonthlyMemberPayment.objects.filter(member=real_member, year=today.year, month=today.month, paid=True).exists():
             return "paid"
         else: return "unpaid"
+    
+    def past_month_payment(self):
+        """Returns 'paid', 'unpaid', or None for the previous month quota."""
+        if not self.quotes_legible:
+            return None
+
+        today = date.today()
+        if today.month == 1:
+            year = today.year - 1
+            month = 12
+        else:
+            year = today.year
+            month = today.month - 1
+
+        real_member = Member.objects.filter(
+            first_name=self.first_name,
+            last_name=self.last_name,
+            birth_date=self.birth_date,
+            id_number=self.id_number,
+        ).order_by("creation_date").first()
+
+        if not real_member:
+            return None
+
+        payment = MonthlyMemberPayment.objects.filter(
+            member=real_member,
+            year=year,
+            month=month,
+        ).first()
+
+        return None if not payment else ("paid" if payment.paid else "unpaid")
+
 
     def clean(self):
         if self.member_type == "coach" and self.favorite == True:

@@ -15,6 +15,12 @@ class MonthlyPaymentPlanSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class CreateMonthlyPaymentPlanSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MonthlyPaymentPlan
+        exclude = ["club_user"]
+
+
 class RequestedAcountSerializer(serializers.ModelSerializer):
     class Meta:
         model = RequestedAcount

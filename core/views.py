@@ -155,15 +155,25 @@ class RequestedAcountViewSet(viewsets.ModelViewSet):
             instance.delete()
 
 
-class MonthlyPaymentPlanViewSet(viewsets.ModelViewSet):
+class MonthlyPaymentPlanViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=MonthlyPaymentPlan.objects.all()
     serializer_class=BaseSerializers.MonthlyPaymentPlanSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = None
 
+    serializer_classes = {
+        "create": BaseSerializers.CreateMonthlyPaymentPlanSerializer,
+    }
+
     def get_queryset(self):
         user = self.request.user
         return self.queryset.filter(club_user=user)
+    
+    def perform_create(self, serializer):
+        user = self.request.user
+        if user.role != "subed_club":
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        serializer.save(club_user=user)
 
         
 @extend_schema(

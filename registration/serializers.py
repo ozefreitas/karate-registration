@@ -1,12 +1,13 @@
 from rest_framework import serializers
+from decouple import config
+from django.utils import timezone
+
 import registration.models as models
 from core.serializers.users import UsersSerializer
+from core.models import MonthlyPaymentPlan
 from core.utils.utils import calc_age
 from events.models import Event
 from registration.utils.utils import get_comp_age
-from decouple import config
-from datetime import datetime
-from django.utils import timezone
 from registration.utils.utils import get_real_member, get_identity_members
 
 
@@ -17,10 +18,12 @@ class MembersSerializer(serializers.ModelSerializer):
     age = serializers.SerializerMethodField()
     can_update_sensitive = serializers.SerializerMethodField()
     club = UsersSerializer()
+    current_month_payment_status = serializers.SerializerMethodField()
+    past_month_payment_status = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Member
-        fields = ("id", "first_name", "last_name", "full_name", "gender", "club", "age", "member_type", "can_update_sensitive")
+        fields = ("id", "full_name", "gender", "club", "age", "member_type", "can_update_sensitive", "current_month_payment_status", "past_month_payment_status")
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
@@ -30,6 +33,12 @@ class MembersSerializer(serializers.ModelSerializer):
 
     def get_can_update_sensitive(self, obj):
         return obj.created_by == obj.club
+    
+    def get_current_month_payment_status(self, obj):
+        return obj.current_month_payment()
+    
+    def get_past_month_payment_status(self, obj):
+        return obj.past_month_payment()
 
 
 class CompactMembersSerializer(serializers.ModelSerializer):
@@ -139,7 +148,7 @@ class NotAdminLikeTypeMembersSerializer(serializers.ModelSerializer):
 
     def get_monthly_payment_config(self, obj):
         # Get or create the payment plan row
-        default_plan, _ = models.MonthlyPaymentPlan.objects.get_or_create(
+        default_plan, _ = MonthlyPaymentPlan.objects.get_or_create(
                 club_user=obj.club,
                 is_default=True,
                 defaults={"name": "Default", "amount": 10}
@@ -306,6 +315,7 @@ class MonthlyMemberPaymentSerializer(serializers.ModelSerializer):
     inside_limit = serializers.SerializerMethodField()
     predefined_amount = serializers.SerializerMethodField()
     is_custom = serializers.SerializerMethodField()
+    member = CompactMembersSerializer()
 
     class Meta:
         model = models.MonthlyMemberPayment
@@ -330,6 +340,13 @@ class MonthlyMemberPaymentSerializer(serializers.ModelSerializer):
     def get_is_custom(self, obj):
         is_custom = models.MonthlyMemberPaymentConfig.objects.get(member=obj.member)
         return is_custom.is_custom_active
+
+
+class CreateMonthlyMemberPaymentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.MonthlyMemberPayment
+        fields = "__all__"
 
 
 class PatchMonthlyMemberPaymentSerializer(serializers.ModelSerializer):
