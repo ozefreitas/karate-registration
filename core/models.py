@@ -217,8 +217,11 @@ class MonthlyPaymentPlan(models.Model):
 
     def save(self, *args, **kwargs):
         if self.is_default:
-            # Unset default on all others
-            MonthlyPaymentPlan.objects.exclude(id=self.id).update(is_default=False)
+            MonthlyPaymentPlan.objects.filter(
+                club_user=self.club_user
+            ).exclude(
+                id=self.id
+            ).update(is_default=False)
 
         super().save(*args, **kwargs)
 

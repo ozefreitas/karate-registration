@@ -8,11 +8,22 @@ class CompactUserSerializer(serializers.ModelSerializer):
         model = User
         fields = ["id", "username", "email"]
 
-
 class MonthlyPaymentPlanSerializer(serializers.ModelSerializer):
     class Meta:
         model = MonthlyPaymentPlan
         fields = "__all__"
+        read_only_fields = ("club_user",)
+
+    def validate(self, attrs):
+        instance = self.instance
+
+        if instance and instance.is_default:
+            if "is_default" in attrs and attrs["is_default"] is False:
+                raise serializers.ValidationError({
+                    "is_default": "Tem de haver um Plano como padrão."
+                })
+
+        return attrs
 
 
 class CreateMonthlyPaymentPlanSerializer(serializers.ModelSerializer):

@@ -17,6 +17,7 @@ from core.serializers.categories import CategorySerializer, CreateCategorySerial
 from core.serializers.users import UsersSerializer
 
 from rest_framework.authtoken.models import Token
+from rest_framework.exceptions import ValidationError
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import action, permission_classes, api_view
 from drf_spectacular.utils import extend_schema
@@ -156,7 +157,7 @@ class RequestedAcountViewSet(viewsets.ModelViewSet):
 
 
 class MonthlyPaymentPlanViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
-    queryset=MonthlyPaymentPlan.objects.all()
+    queryset=MonthlyPaymentPlan.objects.all().order_by("name")
     serializer_class=BaseSerializers.MonthlyPaymentPlanSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = None
@@ -174,6 +175,13 @@ class MonthlyPaymentPlanViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet)
         if user.role != "subed_club":
             return Response(status=status.HTTP_403_FORBIDDEN)
         serializer.save(club_user=user)
+
+    def perform_destroy(self, instance):
+        if instance.is_default:
+            raise ValidationError({
+                "detail": "Não pode apagar um Plano padrão. Altere primeiro outro plano para padrão e tente novamente."
+            })
+        instance.delete()
 
         
 @extend_schema(
