@@ -1,8 +1,11 @@
-import datetime
 from django.db import transaction
+from django.core.exceptions import ValidationError
+
 from .models import Event
 from core.models import Notification
 from core.models import User
+
+import datetime
 from decouple import config
 
 
@@ -17,7 +20,10 @@ class CompetitionEndedMiddleware:
                 # if competition day passes by, "has ended" go true
                 if comp_detail.event_date < today:
                     comp_detail.has_ended=True
-                    comp_detail.save()
+                    try:
+                        comp_detail.save()
+                    except ValidationError:
+                        pass
                     config_main_admin = config('MAIN_ADMIN')
                     main_admin = User.objects.get(username=config_main_admin)
                     childrens = main_admin.children.all()
