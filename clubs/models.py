@@ -33,8 +33,9 @@ class Club(models.Model):
             if not self.mother_acount:
                 raise ValidationError({"mother_acount": "This field is required."})
 
-            if self.mother_acount.role != "main_admin":
-                raise ValidationError({"mother_acount": "Mother account must be a main_admin."})
+            ### TODO: Add this after
+            # if self.mother_acount.role != "main_admin":
+            #     raise ValidationError({"mother_acount": "Mother account must be a main_admin."})
         
         super().clean()
 
