@@ -12,6 +12,7 @@ router.register(r'categories', views.CategoriesViewSet, basename='categories')
 router.register(r'request_acount', views.RequestedAcountViewSet, basename='request-acount')
 router.register(r'notifications', views.NotificationViewSet, basename='notifications')
 router.register(r'monthly_payment_plans', views.MonthlyPaymentPlanViewSet, basename='monthly-payment-plans')
+router.register(r'member_validation', views.MemberValidationRequestViewSet, basename='member-validation-requests')
 
 urlpatterns = [
     path('', include(router.urls)),

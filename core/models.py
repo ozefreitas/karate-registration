@@ -175,6 +175,8 @@ class Notification(models.Model):
         REQ = "request", "Request"
         RES = "reset", "Reset"
         CREATE_MEMBER = "create_member", "Create Member"
+        MEMBER_UPDATED = "member_updated", "Member Updated"
+        MEMBER_REQUEST = "member_request", "Member Request"
         RATE_EVENT = "rate_event", "Rate Event"
         REGISTRATIONS_CLOSING = "registrations_closing", "Registrations Closing"
         REGISTRATIONS_CLOSE = "registrations_close", "Registrations Close"
@@ -227,3 +229,55 @@ class MonthlyPaymentPlan(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.amount}€)"
+    
+
+class MemberValidationRequest(models.Model):
+
+    class STATUS(models.TextChoices):
+        PENDING = 'pending', 'Pending'
+        APPROVED = 'approved', "Approved"
+        REJECTED = 'rejected', 'Rejected'
+
+    member = models.OneToOneField(
+        "registration.Member",
+        on_delete=models.CASCADE,
+        related_name='validation_request'
+    )
+
+    requested_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='member_validation_requests',
+        limit_choices_to={'role': 'subed_club'}
+    )
+
+    reviewed_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='reviewed_member_requests',
+        limit_choices_to={'role': 'main_admin'}
+    )
+
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS,
+        default=STATUS.PENDING
+    )
+
+    message = models.TextField(blank=True)
+    admin_comment = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['member'],
+                name='unique_validation_request_per_member'
+            )
+        ]
+
+    def __str__(self):
+        return f"Validation request for {self.member} ({self.status})"

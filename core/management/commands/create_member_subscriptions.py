@@ -75,7 +75,8 @@ class Command(BaseCommand):
                         can_remove=True,
                         type="payment_overdue",
                         club_user=club,
-                        payment_object="quotes"
+                        payment_object="quotes",
+                        target_member=member
                         )
 
                 if was_created:

@@ -42,6 +42,21 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='member',
+            name='modified_date',
+            field=models.DateTimeField(auto_now=True),
+        ),
+        migrations.AddField(
+            model_name='member',
+            name='updated_by',
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='updated_members', to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='member',
+            name='is_validated',
+            field=models.BooleanField(default=False),
+        ),
+        migrations.AddField(
+            model_name='member',
             name='national_card_number',
             field=models.PositiveIntegerField(blank=True, null=True, verbose_name='Nº CC/BI'),
         ),

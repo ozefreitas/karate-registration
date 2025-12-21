@@ -58,9 +58,17 @@ class Member(models.Model):
         related_name="created_members",
         null=True
     )
+    updated_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        related_name="updated_members",
+        null=True
+    )
     conditions = models.TextField("Condições Médicas", blank=True, null=True)
     observations = models.TextField("Observações", blank=True, null=True)
     creation_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now=True)
+    is_validated = models.BooleanField(default=False)
 
     class Meta:
         constraints = [
@@ -133,6 +141,9 @@ class Member(models.Model):
         
         if not self.registration_date:
             self.registration_date = date.today()
+        
+        if self.created_by.role == 'main_admin':
+            self.is_validated = True
 
         super().save(*args, **kwargs)
 

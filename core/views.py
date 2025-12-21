@@ -6,10 +6,11 @@ from django.utils.encoding import force_bytes
 from django.urls import reverse
 from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
+from registration.utils.utils import get_identity_members
 
 from .filters import NotificationsFilters
 from core.permissions import IsAuthenticatedOrReadOnly, IsUnauthenticatedForPost, IsNationalForPostDelete, IsAdminRoleorHigher, IsPayingUserorAdminForGet
-from .models import Category, SignupToken, RequestedAcount, User, RequestPasswordReset
+from .models import Category, SignupToken, RequestedAcount, User, RequestPasswordReset, MemberValidationRequest, Notification
 from clubs.models import Club
 from .models import Notification, MonthlyPaymentPlan
 from core.serializers import base as BaseSerializers
@@ -25,6 +26,7 @@ from rest_framework.response import Response
 from rest_framework import viewsets, filters, status, views, serializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.exceptions import PermissionDenied
 
 # Create your views here.
 
@@ -39,7 +41,8 @@ class NotificationViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Notification.objects.all()
     serializer_class=BaseSerializers.NotificationsSerializer
     permission_classes = [IsAuthenticatedOrReadOnly, IsNationalForPostDelete]
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    ordering_fields = ["type"]
     filterset_class = NotificationsFilters
 
     serializer_classes = {
@@ -79,7 +82,7 @@ class NotificationViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 # @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated, IsPayingUserorAdminForGet])
 def notifications(request):
-    notifications = Notification.objects.filter(club_user=request.user)
+    notifications = Notification.objects.filter(club_user=request.user).order_by("-created_at")
     serializer = BaseSerializers.NotificationsSerializer(notifications[:5], many=True)
     return Response({"response": serializer.data, "total": len(notifications)})
     
@@ -154,6 +157,52 @@ class RequestedAcountViewSet(viewsets.ModelViewSet):
             ).delete()
 
             instance.delete()
+
+
+class MemberValidationRequestViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
+    queryset=MemberValidationRequest.objects.all()
+    serializer_class=BaseSerializers.MemberValidationRequestSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend]
+
+    serializer_classes = {
+        "create": BaseSerializers.CreateMemberValidationRequestSerializer,
+        "partial_update": BaseSerializers.PatchMemberValidationRequestSerializer
+    }
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        if user.role != "subed_club":
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        
+        Notification.objects.create(type="member_request",
+                                        notification=f'O Membro {serializer.validated_data.get("member").first_name} {serializer.validated_data.get("member").last_name} está à espera de validação.',
+                                        target_member=serializer.validated_data.get("member"),
+                                        club_user=serializer.validated_data.get("member").club.parent,
+                                        )
+        
+        serializer.save(requested_by=user)
+
+    def perform_update(self, serializer):
+        instance = self.get_object()
+        member = instance.member
+        if serializer.validated_data["status"] == "approved":
+            others = get_identity_members(member, qs_object=True)
+            if others.exists():
+                for other_member in others:
+                    other_member.is_validated = True
+                    other_member.updated_by = self.request.user
+                    other_member.save()
+            member.is_validated = True
+            member.updated_by = self.request.user
+            member.save()
+        serializer.save(reviewed_by=self.request.user, reviewed_at=timezone.now())
+
+        try:
+            notification = Notification.objects.get(type="member_request", target_member=member, club_user=self.request.user)
+            notification.delete()
+        except:
+            pass
 
 
 class MonthlyPaymentPlanViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):

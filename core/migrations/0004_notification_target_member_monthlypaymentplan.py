@@ -28,4 +28,9 @@ class Migration(migrations.Migration):
                 ('club_user', models.ForeignKey(limit_choices_to={'role': 'subed_club'}, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
+        migrations.AlterField(
+            model_name='notification',
+            name='type',
+            field=models.CharField(choices=[('none', 'None'), ('request', 'Request'), ('reset', 'Reset'), ('create_member', 'Create Member'), ('member_updated', 'Member Updated'), ('member_request', 'Member Request'), ('rate_event', 'Rate Event'), ('registrations_closing', 'Registrations Closing'), ('registrations_close', 'Registrations Close'), ('classifications_available', 'Classifications Available'), ('open_registrations', 'Open Registrations'), ('payment_available', 'Payment Available'), ('payment_overdue', 'Payment Overdue'), ('administrative', 'Administrative'), ('system', 'System'), ('danger', 'Danger')], default='none', max_length=32),
+        ),
     ]

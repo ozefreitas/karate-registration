@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from core.models import User, SignupToken, RequestedAcount, RequestPasswordReset, Notification, MonthlyPaymentPlan
+from core.models import User, SignupToken, RequestedAcount, RequestPasswordReset, Notification, MonthlyPaymentPlan, MemberValidationRequest
 from events.serializers import CompactEventsSerializer
-
+from registration.serializers import CompactMembersSerializer
 
 class CompactUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -36,6 +36,31 @@ class RequestedAcountSerializer(serializers.ModelSerializer):
     class Meta:
         model = RequestedAcount
         fields = "__all__"
+
+
+class MemberValidationRequestSerializer(serializers.ModelSerializer):
+    member = CompactMembersSerializer()
+    requested_by = CompactUserSerializer()
+    member_birth_date = serializers.SerializerMethodField()
+
+    class Meta:
+        model = MemberValidationRequest
+        exclude = ["created_at"]
+    
+    def get_member_birth_date(self, obj):
+        return obj.member.birth_date
+
+
+class CreateMemberValidationRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MemberValidationRequest
+        fields = ["message", "member"]
+
+
+class PatchMemberValidationRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MemberValidationRequest
+        fields = ["status", "admin_comment"]
 
 
 class GenerateTokenSerializer(serializers.ModelSerializer):

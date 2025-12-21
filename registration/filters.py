@@ -11,6 +11,7 @@ class MembersFilters(filters.FilterSet):
     in_category = filters.CharFilter(method='filter_members_in_category')
     in_gender = filters.CharFilter(method='filter_members_in_gender')
     is_quotes_legible = filters.BooleanFilter(method='filter_members_is_quotes_legible')
+    is_validated = filters.BooleanFilter(method='filter_members_is_validated')
     coach_not_in_event = filters.CharFilter(method='filter_coach_not_in_event')
     monthly_payment_status = filters.CharFilter(method="filter_payment")
     in_member_type = filters.CharFilter(method='filter_members_in_member_type')
@@ -47,6 +48,9 @@ class MembersFilters(filters.FilterSet):
     
     def filter_members_is_quotes_legible(self, queryset, name, value):
         return queryset.filter(quotes_legible=value)
+    
+    def filter_members_is_validated(self, queryset, name, value):
+        return queryset.filter(is_validated=value)
     
     def filter_coach_not_in_event(self, queryset, name, value):
         event = Event.objects.filter(id=value).first()

@@ -135,7 +135,15 @@ class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
-        updated_member = serializer.save()
+        updated_member = serializer.save(updated_by=request.user)
+
+        if request.user != instance.club:
+            Notification.objects.create(type="member_updated",
+                                        notification=f'O Membro {old_identity["first_name"]} {old_identity["last_name"]} foi atualizado pelo seu administrador.',
+                                        target_member=updated_member,
+                                        can_remove=True,
+                                        club_user=instance.club,
+                                        )
 
         others = get_identity_members(old_identity)
 
@@ -145,7 +153,7 @@ class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         new_identity = {field: getattr(updated_member, field) for field in identity_fields}
 
         if others.exists():
-            others.update(**new_identity)
+            others.update(**new_identity, updated_by=request.user)
             message = f"Membros (total de {keep_count + 1}) atualizados com sucesso!"
         else:
             message = "Membro atualizado com sucesso!"

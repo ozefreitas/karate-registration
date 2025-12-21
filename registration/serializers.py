@@ -4,7 +4,7 @@ from django.utils import timezone
 
 import registration.models as models
 from core.serializers.users import UsersSerializer
-from core.models import MonthlyPaymentPlan
+from core.models import MemberValidationRequest, MonthlyPaymentPlan
 from core.utils.utils import calc_age
 from events.models import Event
 from registration.utils.utils import get_comp_age
@@ -16,23 +16,38 @@ from registration.utils.utils import get_real_member, get_identity_members
 class MembersSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     age = serializers.SerializerMethodField()
-    can_update_sensitive = serializers.SerializerMethodField()
+    request_status = serializers.SerializerMethodField()
     club = UsersSerializer()
+    updated_by = UsersSerializer()
     current_month_payment_status = serializers.SerializerMethodField()
     past_month_payment_status = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Member
-        fields = ("id", "full_name", "gender", "club", "age", "member_type", "can_update_sensitive", "current_month_payment_status", "past_month_payment_status")
+        fields = ("id", 
+                  "full_name", 
+                  "gender", 
+                  "club", 
+                  "updated_by", 
+                  "age", 
+                  "member_type", 
+                  "current_month_payment_status", 
+                  "past_month_payment_status", 
+                  "request_status",
+                  "is_validated")
+
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
 
     def get_age(self, obj):
         return get_comp_age(obj.birth_date)
-
-    def get_can_update_sensitive(self, obj):
-        return obj.created_by == obj.club
+    
+    def get_request_status(self, obj):
+        try:
+            return obj.validation_request.status
+        except MemberValidationRequest.DoesNotExist:
+            return None
     
     def get_current_month_payment_status(self, obj):
         return obj.current_month_payment()
@@ -125,7 +140,6 @@ class CompactCategorizedMembersSerializer(serializers.ModelSerializer):
 class NotAdminLikeTypeMembersSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     age = serializers.SerializerMethodField()
-    can_update_sensitive = serializers.SerializerMethodField()
     monthly_payment_status = serializers.SerializerMethodField()
     monthly_payment_config = serializers.SerializerMethodField()
     has_another = serializers.SerializerMethodField()
@@ -139,9 +153,6 @@ class NotAdminLikeTypeMembersSerializer(serializers.ModelSerializer):
 
     def get_age(self, obj):
         return get_comp_age(obj.birth_date)
-    
-    def get_can_update_sensitive(self, obj):
-        return obj.created_by == obj.club
     
     def get_monthly_payment_status(self, obj):
         return obj.current_month_payment()
@@ -174,7 +185,7 @@ class AdminLikeTypeMembersSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Member
-        exclude = ("quotes_legible", "creation_date", "favorite", "club", "created_by" )
+        exclude = ("quotes_legible", "creation_date", "favorite", "club", "created_by", "member_type")
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
@@ -272,7 +283,8 @@ class UpdateMemberSerializer(serializers.ModelSerializer):
         member = self.instance
         request = self.context.get("request")
 
-        if member and request and member.created_by != member.club:
+        if member and request:
+            if (member.created_by != member.club and member.created_by.role != "main_admin") or (member.created_by == member.club and member.created_by.role != "main_admin" and not member.is_validated):
              for field in ["id_number", "first_name", "last_name", "birth_date", "gender", "graduation"]:
                 fields.pop(field, None)
 
@@ -281,11 +293,11 @@ class UpdateMemberSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         member = self.instance 
 
-        if member.created_by != member.club:
+        if (member.created_by.role != "main_admin" and member.created_by != member.club) or (member.created_by.role != "main_admin" and member.created_by == member.club and member.is_validated):
             for field in ["id_number", "first_name", "last_name", "birth_date", "gender", "graduation"]:
                 if field in attrs:
                     raise serializers.ValidationError(
-                        {"not_allowed": "Não pode alterar campos sensíveis de um membro criado pelo seu administrador", "field": field}
+                        {"not_allowed": "Não pode alterar campos sensíveis de um membro criado/verificado pelo seu administrador", "field": field}
                     )
 
         return attrs
