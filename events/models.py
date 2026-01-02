@@ -57,7 +57,7 @@ class Discipline(models.Model):
     categories = models.ManyToManyField("core.category", related_name='event_categories', blank=True)
 
     def clean(self):
-        if self.is_team == self.is_coach:
+        if self.is_team == True and self.is_coach == True:
             raise ValidationError({"error": "Disciplines may not be for coaches and teams at the same time."})
         
         super().clean()
