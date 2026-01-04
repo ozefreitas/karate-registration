@@ -55,6 +55,11 @@ class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         user = self.request.user
+        if self.action == "list":
+            if user.role in ["free_club", "subed_club"]:
+                return registration_serializers.MembersSerializer
+            else:
+                return registration_serializers.AdminMembersSerializer
         if self.action == "retrieve":
             if user.role in ["free_club", "subed_club"]:
                 return registration_serializers.NotAdminLikeTypeMembersSerializer

@@ -17,7 +17,6 @@ class MembersSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     age = serializers.SerializerMethodField()
     request_status = serializers.SerializerMethodField()
-    club = UsersSerializer()
     updated_by = UsersSerializer()
     current_month_payment_status = serializers.SerializerMethodField()
     past_month_payment_status = serializers.SerializerMethodField()
@@ -26,8 +25,7 @@ class MembersSerializer(serializers.ModelSerializer):
         model = models.Member
         fields = ("id", 
                   "full_name", 
-                  "gender", 
-                  "club", 
+                  "gender",
                   "updated_by", 
                   "age", 
                   "member_type", 
@@ -54,6 +52,33 @@ class MembersSerializer(serializers.ModelSerializer):
     
     def get_past_month_payment_status(self, obj):
         return obj.past_month_payment()
+
+
+class AdminMembersSerializer(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
+    request_status = serializers.SerializerMethodField()
+    club = UsersSerializer()
+    updated_by = UsersSerializer()
+
+    class Meta:
+        model = models.Member
+        fields = ("id", 
+                  "full_name", 
+                  "gender", 
+                  "club", 
+                  "updated_by", 
+                  "request_status",
+                  "is_validated")
+
+
+    def get_full_name(self, obj):
+        return f"{obj.first_name} {obj.last_name}"
+    
+    def get_request_status(self, obj):
+        try:
+            return obj.validation_request.status
+        except MemberValidationRequest.DoesNotExist:
+            return None
 
 
 class CompactMembersSerializer(serializers.ModelSerializer):
