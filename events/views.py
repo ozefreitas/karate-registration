@@ -489,20 +489,41 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         except Member.DoesNotExist:
             return Response({"error": "Um erro ocurreu ao remover esta Equipa"}, status=status.HTTP_404_NOT_FOUND)
     
-    @action(detail=True, methods=["post"], url_path="add_category", serializer_class=serializers.AddCategorySerializer, permission_classes=[IsAuthenticated])
-    def add_category(self, request, pk=None):
+    @action(
+        detail=True,
+        methods=["patch"],
+        url_path="add_categories",
+        serializer_class=serializers.AddCategorySerializer,
+        permission_classes=[IsAuthenticated],
+    )
+    def update_categories(self, request, pk=None):
+        """
+        Adiciona múltiplos Escalões (Categories) a uma Modalidade (Discipline) dentro de um Evento.
+
+        - Recebe uma lista de IDs de Escalões
+        - Adiciona todos numa única operação
+        - Não remove Escalões já associados
+        """
         event = self.get_object()
-        serializer = serializers.AddCategorySerializer(data=request.data)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        category_id = serializer.validated_data["category_id"]
+        category_ids = serializer.validated_data["category_ids"]
+        categories = Category.objects.filter(id__in=category_ids)
+        
+        if not categories.exists():
+            return Response(
+                {"error": "Nenhum Escalão válido foi encontrado"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
-        try:
-            category = Category.objects.get(id=category_id)
-            event.categories.add(category)
-
-            return Response({"message": "Escalão(ões) adicionado(s) a esta modalidade"}, status=status.HTTP_200_OK)
-        except Category.DoesNotExist:
-            return Response({"error": "Um erro ocurreu ao adicionar este Escalão"}, status=status.HTTP_404_NOT_FOUND)
+        event.categories.add(*categories)
+        return Response(
+            {
+                "message": "Escalão(ões) adicionados com sucesso",
+                "added_count": categories.count(),
+            },
+            status=status.HTTP_200_OK,
+        )
 
     @action(detail=True, methods=["post"], url_path="delete_category", serializer_class=serializers.AddCategorySerializer, permission_classes=[IsAuthenticated])
     def delete_category(self, request, pk=None):

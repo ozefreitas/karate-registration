@@ -214,6 +214,14 @@ class DeleteMemberSerializer(serializers.Serializer):
 
 
 class AddCategorySerializer(serializers.Serializer):
+    category_ids = serializers.ListField(
+        child=serializers.IntegerField(),
+        allow_empty=False,
+        help_text="Lista de IDs dos Escalões a adicionar à modalidade"
+    )
+
+
+class RemoveCategorySerializer(serializers.Serializer):
     category_id = serializers.CharField()
 
 
