@@ -3,16 +3,15 @@ from django.db import transaction
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
-from django.urls import reverse
 from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
 from registration.utils.utils import get_identity_members
 
-from .filters import NotificationsFilters
+from .filters import NotificationsFilters, CategoriesFilters
 from core.permissions import IsAuthenticatedOrReadOnly, IsUnauthenticatedForPost, IsNationalForPostDelete, IsAdminRoleorHigher, IsPayingUserorAdminForGet
 from .models import Category, SignupToken, RequestedAcount, User, RequestPasswordReset, MemberValidationRequest, Notification
 from clubs.models import Club
-from .models import Notification, MonthlyPaymentPlan
+from .models import Notification, MonthlyPaymentPlan, MemberValidationRequest
 from core.serializers import base as BaseSerializers
 from core.serializers.categories import CategorySerializer, CreateCategorySerializer, CompactCategorySerializer
 from core.serializers.users import UsersSerializer
@@ -50,7 +49,6 @@ class NotificationViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     }
 
     def get_queryset(self):
-        user = self.request.user
         return Notification.objects.order_by("created_at")
     
     @action(detail=False, methods=['post'], url_path="create_all_users", serializer_class=BaseSerializers.AllUsersNotificationsSerializer)
@@ -88,9 +86,12 @@ def notifications(request):
     
 
 class CategoriesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
-    queryset=Category.objects.all().order_by("min_age")
+    queryset=Category.objects.all().order_by("min_age", "min_weight")
     serializer_class=CategorySerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    ordering_fields = ["min_age", "max_age", "min_grad", "max_grad", "min_weight", "max_weight", "name"]
+    filterset_class = CategoriesFilters
 
     serializer_classes = {
         "create": CreateCategorySerializer,
@@ -170,18 +171,69 @@ class MemberValidationRequestViewSet(MultipleSerializersMixIn, viewsets.ModelVie
         "partial_update": BaseSerializers.PatchMemberValidationRequestSerializer
     }
 
-    def perform_create(self, serializer):
-        user = self.request.user
+    def get_queryset(self):
+        return (
+            MemberValidationRequest.objects
+            .select_related("member")
+            .order_by(
+                "member__first_name",
+                "member__last_name",
+                "member__birth_date",
+                "member__id_number",
+                "created_at",
+            )
+            .distinct(
+                "member__first_name",
+                "member__last_name",
+                "member__birth_date",
+                "member__id_number",
+            )
+        )
+
+    def create(self, request, *args, **kwargs):
+        user = request.user
         if user.role != "subed_club":
-            return Response(status=status.HTTP_403_FORBIDDEN)
-        
-        Notification.objects.create(type="member_request",
-                                        notification=f'O Membro {serializer.validated_data.get("member").first_name} {serializer.validated_data.get("member").last_name} está à espera de validação.',
-                                        target_member=serializer.validated_data.get("member"),
-                                        club_user=serializer.validated_data.get("member").club.parent,
-                                        )
-        
-        serializer.save(requested_by=user)
+            raise PermissionDenied("You do not have permission to perform this action.")
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        member = serializer.validated_data["member"]
+        base_data = serializer.validated_data.copy()
+        base_data.pop("member")
+
+        Notification.objects.create(
+            type="member_request",
+            notification=(
+                f'O Membro {member.first_name} {member.last_name} '
+                f'está à espera de validação.'
+            ),
+            target_member=member,
+            club_user=member.club.parent,
+        )
+
+        others = get_identity_members(member, qs_object=True)
+        instances = []
+        instances.append(
+            MemberValidationRequest(
+                member=member,
+                requested_by=user,
+                **base_data
+            )
+        )
+
+        for other in others:
+            instances.append(
+                MemberValidationRequest(
+                    member=other,
+                    requested_by=user,
+                    **base_data
+                )
+            )
+        MemberValidationRequest.objects.bulk_create(instances)
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
 
     def perform_update(self, serializer):
         instance = self.get_object()
