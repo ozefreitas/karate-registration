@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Profile, ClubRatingAudit, Club, ClubSubscription, ClubSubscriptionConfig
+from .models import Profile, ClubRatingAudit, Club, ClubSubscription, ClubSubscriptionConfig, ClubSettings
 
 # Register your models here.
 
@@ -14,3 +14,4 @@ admin.site.register(Profile)
 admin.site.register(ClubRatingAudit, ClubsRatingAuditAdmin)
 admin.site.register(ClubSubscription, ClubSubscriptionAdmin)
 admin.site.register(ClubSubscriptionConfig)
+admin.site.register(ClubSettings)

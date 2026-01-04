@@ -2,6 +2,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.utils import timezone
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 from events.models import Event
 
@@ -111,6 +112,20 @@ class ClubSubscriptionConfig(models.Model):
         obj, _ = ClubSubscriptionConfig.objects.get_or_create(admin=admin)
         return obj.amount
     
+
+class ClubSettings(models.Model):
+    club = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="club_settings"
+    )
+    billing_day = models.PositiveSmallIntegerField(
+    default=1,
+    validators=[MinValueValidator(1), MaxValueValidator(28)]
+)
+
+    def __str__(self):
+        return f"{self.club} – billing day {self.billing_day}"
 
 class Profile(models.Model):
     club = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

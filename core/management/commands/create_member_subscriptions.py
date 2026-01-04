@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 
-from datetime import datetime
+from django.utils import timezone
 
 from registration.models import MonthlyMemberPaymentConfig, MonthlyPaymentPlan, MonthlyMemberPayment, Member
 from core.models import Notification
@@ -20,7 +20,10 @@ class Command(BaseCommand):
         ).order_by("id").first()
 
     def handle(self, *args, **kwargs):
-        clubs = User.objects.filter(role__in=["subed_club"])
+        clubs = User.objects.filter(
+            role__in=["subed_club"],
+            clubsettings__billing_day=today
+        )
 
         created, deleted = 0, 0
 
@@ -49,7 +52,7 @@ class Command(BaseCommand):
                     final_amount=member_base_plan.custom_amount
 
                 # payment is only created for one type of member
-                today = datetime.today()
+                today = timezone.now()
                 obj, was_created = MonthlyMemberPayment.objects.get_or_create(
                     member=real_member,
                     year=today.year,
@@ -58,12 +61,12 @@ class Command(BaseCommand):
                 )
                 
                 month_to_check, year_to_check = None, None
-                if datetime.today().month == 1:
+                if today.month == 1:
                     month_to_check = 12
-                    year_to_check = datetime.today().year - 1
+                    year_to_check = today.year - 1
                 else: 
-                    month_to_check = datetime.today().month - 1
-                    year_to_check = datetime.today().year
+                    month_to_check = today.month - 1
+                    year_to_check = today.year
 
                 if MonthlyMemberPayment.objects.filter(
                     member=real_member,
@@ -86,8 +89,8 @@ class Command(BaseCommand):
                     # will delete the payment object one prior, of exists
                     obj = MonthlyMemberPayment.objects.get(
                             member=real_member, 
-                            year=datetime.today().year - 1, 
-                            month=datetime.today().month
+                            year=today.year - 1, 
+                            month=today.month
                             )
                     obj.delete()
                     deleted += 1
