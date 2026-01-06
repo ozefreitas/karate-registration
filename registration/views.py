@@ -1,4 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db import transaction, IntegrityError
 
 from .models import Member, Team, Classification, MonthlyMemberPayment, MonthlyMemberPaymentConfig
 from .filters import MembersFilters, MonthlyMemberPaymentFilters
@@ -29,7 +30,7 @@ class MultipleSerializersMixIn:
 
 class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     # TODO: order get request by the category_index from the serializer
-    queryset=Member.objects.all().order_by("first_name")
+    queryset=Member.objects.all().order_by("first_name", "last_name")
     serializer_class = registration_serializers.MembersSerializer
     permission_classes = [MemberPermission]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
@@ -45,7 +46,7 @@ class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         user = self.request.user
         if user.role in ["main_admin", "superuser", "single_admin"]:
             # National-level user can see all Members
-            return self.queryset.filter(created_by=user)
+            return self.queryset.filter(is_validated=True, member_type__in=["athlete", "student"])
 
         if user.role in ["subed_club", "free_club"]:
             # paying clubs user sees only their own club Members
@@ -101,15 +102,22 @@ class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         
         canonical = get_real_member(member)
 
-        default_plan, _ = MonthlyPaymentPlan.objects.get_or_create(
+        try:
+            with transaction.atomic():
+                default_plan, _ = MonthlyPaymentPlan.objects.get_or_create(
+                    club_user=user,
+                    is_default=True,
+                    defaults={"name": "Default", "amount": 10}
+                )
+        except IntegrityError:
+            default_plan = MonthlyPaymentPlan.objects.get(
                 club_user=user,
-                is_default=True,
-                defaults={"name": "Default", "amount": 10}
+                is_default=True
             )
 
         member_base_plan, _ = MonthlyMemberPaymentConfig.objects.get_or_create(
             member=canonical,
-            base_plan=default_plan
+            defaults={"base_plan": default_plan}
         )
 
         final_amount = None
@@ -159,7 +167,10 @@ class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
         if others.exists():
             others.update(**new_identity, updated_by=request.user)
-            message = f"Membros (total de {keep_count + 1}) atualizados com sucesso!"
+            if request.user.role != "main_admin":
+                message = f"Membros (total de {keep_count + 1}) atualizados com sucesso!"
+            else:
+                message = "Membro atualizado com sucesso!"
         else:
             message = "Membro atualizado com sucesso!"
 

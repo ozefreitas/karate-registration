@@ -123,7 +123,7 @@ class MemberPermission(BasePermission):
 
         # Admins can access all
         if role in ['main_admin', 'single_admin', 'superuser']:
-            return obj.created_by == request.user
+            return obj.is_validated
 
         # Clubs only access their own members
         if role == 'subed_club':

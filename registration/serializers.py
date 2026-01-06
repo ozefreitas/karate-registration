@@ -43,7 +43,15 @@ class MembersSerializer(serializers.ModelSerializer):
     
     def get_request_status(self, obj):
         try:
-            return obj.validation_request.status
+            real = get_real_member(obj)
+            ola = real.validation_requests.all()
+            for coczinhos in ola:
+                if coczinhos.status == "approved":
+                    return "approved"
+                elif coczinhos.status == "pending":
+                    return "pending"
+                else:
+                    return "rejected"
         except MemberValidationRequest.DoesNotExist:
             return None
     
@@ -56,7 +64,6 @@ class MembersSerializer(serializers.ModelSerializer):
 
 class AdminMembersSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
-    request_status = serializers.SerializerMethodField()
     club = UsersSerializer()
     updated_by = UsersSerializer()
 
@@ -66,19 +73,11 @@ class AdminMembersSerializer(serializers.ModelSerializer):
                   "full_name", 
                   "gender", 
                   "club", 
-                  "updated_by", 
-                  "request_status",
-                  "is_validated")
+                  "updated_by")
 
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
-    
-    def get_request_status(self, obj):
-        try:
-            return obj.validation_request.status
-        except MemberValidationRequest.DoesNotExist:
-            return None
 
 
 class CompactMembersSerializer(serializers.ModelSerializer):
@@ -317,6 +316,9 @@ class UpdateMemberSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         member = self.instance 
+        request = self.context.get("request")
+        if request.user.role in ["main_admin", "superuser"]:
+            return attrs
 
         if (member.created_by.role != "main_admin" and member.created_by != member.club) or (member.created_by.role != "main_admin" and member.created_by == member.club and member.is_validated):
             for field in ["id_number", "first_name", "last_name", "birth_date", "gender", "graduation"]:

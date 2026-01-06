@@ -45,7 +45,7 @@ class MemberValidationRequestSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MemberValidationRequest
-        exclude = ["created_at"]
+        exclude = ["reviewed_by"]
     
     def get_member_birth_date(self, obj):
         return obj.member.birth_date

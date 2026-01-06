@@ -548,7 +548,7 @@ class ActiveAnnouncementView(APIView):
         announcements = Announcement.objects.filter(is_active=True).order_by('-created_at')
 
         if not announcements.exists():
-            return Response(None)
+            return Response([])
 
         serializer = serializers.AnnouncementSerializer(announcements, many=True)
         return Response(serializer.data)

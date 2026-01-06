@@ -5,7 +5,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
-from registration.utils.utils import get_identity_members
+from registration.utils.utils import get_identity_members, get_real_member
 
 from .filters import NotificationsFilters, CategoriesFilters
 from core.permissions import IsAuthenticatedOrReadOnly, IsUnauthenticatedForPost, IsNationalForPostDelete, IsAdminRoleorHigher, IsPayingUserorAdminForGet
@@ -161,7 +161,7 @@ class RequestedAcountViewSet(viewsets.ModelViewSet):
 
 
 class MemberValidationRequestViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
-    queryset=MemberValidationRequest.objects.all()
+    queryset=MemberValidationRequest.objects.all().order_by("-created_at")
     serializer_class=BaseSerializers.MemberValidationRequestSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend]
@@ -171,35 +171,33 @@ class MemberValidationRequestViewSet(MultipleSerializersMixIn, viewsets.ModelVie
         "partial_update": BaseSerializers.PatchMemberValidationRequestSerializer
     }
 
-    def get_queryset(self):
-        return (
-            MemberValidationRequest.objects
-            .select_related("member")
-            .order_by(
-                "member__first_name",
-                "member__last_name",
-                "member__birth_date",
-                "member__id_number",
-                "created_at",
-            )
-            .distinct(
-                "member__first_name",
-                "member__last_name",
-                "member__birth_date",
-                "member__id_number",
-            )
-        )
+    # def get_queryset(self):
+    #     return (
+    #         MemberValidationRequest.objects
+    #         .select_related("member")
+    #         .order_by(
+    #             "member__first_name",
+    #             "member__last_name",
+    #             "member__birth_date",
+    #             "member__id_number",
+    #             "created_at",
+    #         )
+    #         .distinct(
+    #             "member__first_name",
+    #             "member__last_name",
+    #             "member__birth_date",
+    #             "member__id_number",
+    #         )
+    #     )
 
-    def create(self, request, *args, **kwargs):
-        user = request.user
+    def perform_create(self, serializer):
+        user = self.request.user
         if user.role != "subed_club":
             raise PermissionDenied("You do not have permission to perform this action.")
 
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
         member = serializer.validated_data["member"]
-        base_data = serializer.validated_data.copy()
-        base_data.pop("member")
+        real_member = get_real_member(member)
+        serializer.save(requested_by=user, member=real_member)
 
         Notification.objects.create(
             type="member_request",
@@ -211,35 +209,12 @@ class MemberValidationRequestViewSet(MultipleSerializersMixIn, viewsets.ModelVie
             club_user=member.club.parent,
         )
 
-        others = get_identity_members(member, qs_object=True)
-        instances = []
-        instances.append(
-            MemberValidationRequest(
-                member=member,
-                requested_by=user,
-                **base_data
-            )
-        )
-
-        for other in others:
-            instances.append(
-                MemberValidationRequest(
-                    member=other,
-                    requested_by=user,
-                    **base_data
-                )
-            )
-        MemberValidationRequest.objects.bulk_create(instances)
-
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
 
     def perform_update(self, serializer):
         instance = self.get_object()
         member = instance.member
+        others = get_identity_members(member, qs_object=True)
         if serializer.validated_data["status"] == "approved":
-            others = get_identity_members(member, qs_object=True)
             if others.exists():
                 for other_member in others:
                     other_member.is_validated = True
@@ -248,11 +223,22 @@ class MemberValidationRequestViewSet(MultipleSerializersMixIn, viewsets.ModelVie
             member.is_validated = True
             member.updated_by = self.request.user
             member.save()
+        else:
+            member_club = member.club
+            if serializer.validated_data["admin_comment"] != "" or serializer.validated_data["admin_comment"] != None:
+                notification = f'A validação do Membro {member.first_name} {member.last_name} foi rejeitada pelo seu administrador com a seguinte mensagem: {serializer.validated_data["admin_comment"]}'
+            else:
+                notification = f'A validação do Membro {member.first_name} {member.last_name} foi rejeitada pelo seu administrador.'
+            Notification.objects.create(type="member_updated",
+                                        notification=notification,
+                                        target_member=member,
+                                        can_remove=True,
+                                        club_user=member_club,
+                                        )
         serializer.save(reviewed_by=self.request.user, reviewed_at=timezone.now())
 
         try:
-            notification = Notification.objects.get(type="member_request", target_member=member, club_user=self.request.user)
-            notification.delete()
+            Notification.objects.get(type="member_request", target_member=member, club_user=self.request.user).delete()
         except:
             pass
 
