@@ -62,7 +62,8 @@ class Member(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         related_name="updated_members",
-        null=True
+        null=True,
+        blank=True
     )
     conditions = models.TextField("Condições Médicas", blank=True, null=True)
     observations = models.TextField("Observações", blank=True, null=True)

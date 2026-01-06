@@ -3,8 +3,6 @@ from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.conf import settings
-from django.db import models
-from django.contrib.auth.models import AbstractUser
 from django.db.models import Q, UniqueConstraint
 
 from events.models import Event
@@ -216,6 +214,15 @@ class MonthlyPaymentPlan(models.Model):
     name = models.CharField(max_length=50)
     amount = models.DecimalField(max_digits=7, decimal_places=2)
     is_default = models.BooleanField(default=False)
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["club_user"],
+                condition=Q(is_default=True),
+                name="unique_default_plan_per_club",
+            )
+        ]
 
     def save(self, *args, **kwargs):
         if self.is_default:
@@ -238,10 +245,10 @@ class MemberValidationRequest(models.Model):
         APPROVED = 'approved', "Approved"
         REJECTED = 'rejected', 'Rejected'
 
-    member = models.OneToOneField(
+    member = models.ForeignKey(
         "registration.Member",
         on_delete=models.CASCADE,
-        related_name='validation_request'
+        related_name='validation_requests'
     )
 
     requested_by = models.ForeignKey(
@@ -275,7 +282,8 @@ class MemberValidationRequest(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['member'],
-                name='unique_validation_request_per_member'
+                condition=Q(status='pending'),
+                name='unique_pending_validation_request_per_member'
             )
         ]
 

@@ -21,12 +21,12 @@ class Migration(migrations.Migration):
                 ('admin_comment', models.TextField(blank=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('reviewed_at', models.DateTimeField(blank=True, null=True)),
-                ('member', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='validation_request', to='registration.member')),
+                ('member', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='validation_requests', to='registration.member')),
                 ('requested_by', models.ForeignKey(limit_choices_to={'role': 'subed_club'}, on_delete=django.db.models.deletion.CASCADE, related_name='member_validation_requests', to=settings.AUTH_USER_MODEL)),
                 ('reviewed_by', models.ForeignKey(blank=True, limit_choices_to={'role': 'main_admin'}, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='reviewed_member_requests', to=settings.AUTH_USER_MODEL)),
             ],
             options={
-                'constraints': [models.UniqueConstraint(fields=('member',), name='unique_validation_request_per_member')],
+                'constraints': [models.UniqueConstraint(condition=models.Q(('is_default', True)), fields=('club_user',), name='unique_default_plan_per_club')],
             },
         ),
     ]
