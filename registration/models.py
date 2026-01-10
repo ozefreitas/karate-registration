@@ -245,20 +245,15 @@ class Team(models.Model):
     athlete3 = models.ForeignKey(Member, verbose_name="Atleta 3", related_name="third_element", on_delete=models.CASCADE, blank=True, null=True)
     athlete4 = models.ForeignKey(Member, verbose_name="Atleta 4", related_name="forth_element", on_delete=models.CASCADE, blank=True, null=True)
     athlete5 = models.ForeignKey(Member, verbose_name="Atleta 5", related_name="fifth_element", on_delete=models.CASCADE, blank=True, null=True)
-    category = models.CharField("Escalão", max_length=99)
-    match_type = models.CharField("Prova", choices=MATCHES, max_length=10)
     gender = models.CharField("Género", choices=GENDERS, max_length=10)
     team_number = models.IntegerField("Nº Equipa")
-    competition = models.ForeignKey(Event, on_delete=models.CASCADE)
     creation_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
         if not self.id:  # Generate only if no ID exists
             self.id = generate_unique_nanoid("Team", "registration")
         super().save(*args, **kwargs)
-
-    def __str__(self):
-        return "{} {} {}".format(self.match_type, self.category, self.gender)
 
 
 ### Classification models ###

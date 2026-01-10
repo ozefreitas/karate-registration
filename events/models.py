@@ -2,7 +2,6 @@ from django.db import models
 from django.utils.text import slugify
 from django.core.exceptions import ValidationError
 from django.utils import timezone
-import datetime
 from core.constants import ENCOUNTERS, SEASONS
 
 # Create your models here.
@@ -25,7 +24,6 @@ class Event(models.Model):
     has_ended = models.BooleanField(default=False)
     has_registrations = models.BooleanField(default=False)
     has_categories = models.BooleanField(default=False)
-    has_teams = models.BooleanField(default=False)
     encounter = models.BooleanField("É estágio/encontro", default=False)
     encounter_type = models.CharField("Estágio", choices=ENCOUNTERS, max_length=16, blank=True, null=True, default=ENCOUNTERS["none"])
     rating = models.IntegerField("Avaliação", default=0)
@@ -61,13 +59,29 @@ class Discipline(models.Model):
         blank=True
     )
     
-    teams = models.ManyToManyField("registration.Team", related_name='disciplines_team', blank=True)
-    categories = models.ManyToManyField("core.category", related_name='event_categories', blank=True)
+    teams = models.ManyToManyField(
+        "registration.Team", 
+        through="DisciplineTeam", 
+        related_name='disciplines_team', 
+        blank=True
+    )
+
+    categories = models.ManyToManyField(
+        "core.category", 
+        related_name='event_categories', 
+        blank=True
+    )
 
     def add_member(self, member):
         DisciplineMember.objects.get_or_create(
             discipline=self,
             member=member
+        )
+    
+    def add_team(self, team):
+        DisciplineTeam.objects.get_or_create(
+            discipline=self,
+            team=team
         )
 
     def clean(self):
@@ -92,6 +106,15 @@ class DisciplineMember(models.Model):
 
     class Meta:
         unique_together = ('discipline', 'member') 
+
+
+class DisciplineTeam(models.Model):
+    discipline = models.ForeignKey("Discipline", on_delete=models.CASCADE)
+    team = models.ForeignKey("registration.Team", on_delete=models.CASCADE)
+    added_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        unique_together = ('discipline', 'team') 
 
 
 class FeedbackData(models.Model):

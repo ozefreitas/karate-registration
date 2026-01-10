@@ -338,6 +338,7 @@ class UserDetailView(views.APIView):
             "username": user.username,
             "email": user.email,
             "role": user.role,
+            "tier": user.tier
         }, status=status.HTTP_200_OK)
     
 

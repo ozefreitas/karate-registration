@@ -12,6 +12,9 @@ class EventsSerializer(serializers.ModelSerializer):
     is_closed = serializers.SerializerMethodField()
     is_retification = serializers.SerializerMethodField()
     number_registrations = serializers.SerializerMethodField()
+    has_any_team = serializers.SerializerMethodField()
+    has_any_indiv = serializers.SerializerMethodField()
+    has_coach = serializers.SerializerMethodField()
     
     class Meta:
         model = Event
@@ -57,6 +60,24 @@ class EventsSerializer(serializers.ModelSerializer):
         for discipline in disciplines:
             number += discipline.individuals.count()
         return number
+    
+    def get_has_any_team(self, obj):
+        disciplines = Discipline.objects.filter(event=obj, is_team=True, is_coach=False)
+        if disciplines.count() > 0:
+            return True
+        return False
+    
+    def get_has_any_indiv(self, obj):
+        disciplines = Discipline.objects.filter(event=obj, is_team=False, is_coach=False)
+        if disciplines.count() > 0:
+            return True
+        return False
+    
+    def get_has_coach(self, obj):
+        disciplines = Discipline.objects.filter(event=obj, is_team=False, is_coach=True)
+        if disciplines.count() > 0:
+            return True
+        return False
 
 
 class CompactEventsSerializer(serializers.ModelSerializer):
@@ -64,11 +85,21 @@ class CompactEventsSerializer(serializers.ModelSerializer):
     is_closed = serializers.SerializerMethodField()
     is_retification = serializers.SerializerMethodField()
     number_registrations = serializers.SerializerMethodField()
+    has_any_team = serializers.SerializerMethodField()
 
     class Meta:
         model = Event
-        fields = ["id", "name", "event_date", "is_open", "is_closed", "is_retification", "number_registrations"]
-    
+        fields = ["id", 
+                  "name", 
+                  "event_date", 
+                  "season",
+                  "has_registrations",
+                  "is_open", 
+                  "is_closed", 
+                  "is_retification", 
+                  "number_registrations", 
+                  "has_any_team"]
+
     def get_is_open(self, obj):
         if obj.has_registrations:
             today = date.today()
@@ -96,6 +127,13 @@ class CompactEventsSerializer(serializers.ModelSerializer):
         for discipline in disciplines:
             number += discipline.individuals.count()
         return number
+
+    def get_has_any_team(self, obj):
+        disciplines = Discipline.objects.filter(event=obj)
+        for discipline in disciplines:
+            if discipline.is_team:
+                return True
+        return False
 
 
 class CreateEventSerializer(serializers.ModelSerializer):

@@ -167,6 +167,7 @@ class NotAdminLikeTypeMembersSerializer(serializers.ModelSerializer):
     monthly_payment_status = serializers.SerializerMethodField()
     monthly_payment_config = serializers.SerializerMethodField()
     has_another = serializers.SerializerMethodField()
+    next_prev = serializers.SerializerMethodField()
     
     class Meta:
         model = models.Member
@@ -201,6 +202,27 @@ class NotAdminLikeTypeMembersSerializer(serializers.ModelSerializer):
         if get_identity_members(obj, True).exists():
             return get_identity_members(obj, True).first().id
         else: return None
+
+    def get_next_prev(self, obj):
+        qs = list(
+            models.Member.objects
+            .filter(club=obj.club)
+            .order_by("first_name", "last_name", "id")
+            .values_list("id", flat=True)
+        )
+
+        try:
+            index = qs.index(obj.id)
+        except ValueError:
+            return [{"prev": None, "next": None}]
+
+        prev_id = qs[index - 1] if index > 0 else None
+        next_id = qs[index + 1] if index < len(qs) - 1 else None
+
+        return {
+            "prev": next_id,
+            "next": prev_id,
+        }
 
 
 class AdminLikeTypeMembersSerializer(serializers.ModelSerializer):
@@ -254,6 +276,33 @@ class ClubsCreateMemberSerializer(serializers.ModelSerializer):
         weight = data.get("weight")
         stundent = data.get("student")
         gender = data.get("gender")
+        birth_date = data.get("birth_date")
+        member_type = data.get("member_type")
+
+        if member_type in ["student", "athlete"] and models.Member.objects.filter(first_name=data.get("first_name"),
+                                                                     last_name=data.get("last_name"),
+                                                                     birth_date=birth_date,
+                                                                     id_number=data.get("id_number"),
+                                                                     member_type__in=["athlete", "student"]).exists():
+
+            raise serializers.ValidationError({
+                'member_type_missmatch': ['Já existe um "Aluno" para este Membro']
+            })
+        
+        elif member_type == "coach" and models.Member.objects.filter(first_name=data.get("first_name"),
+                                                                     last_name=data.get("last_name"),
+                                                                     birth_date=birth_date,
+                                                                     id_number=data.get("id_number"),
+                                                                     member_type="coach").exists():
+            raise serializers.ValidationError({
+                        'member_type_missmatch': ['Já existe um "Treinador" para este Membro']
+                    })
+        
+        current_age = get_comp_age(birth_date)
+        if current_age <= 0:
+            raise serializers.ValidationError({
+                'impossible_age': [f"A data de nascimento não parece correta porque a idade resulta em {current_age}"]
+            })
 
         if stundent and weight != "":
             raise serializers.ValidationError({

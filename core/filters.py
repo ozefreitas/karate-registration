@@ -31,6 +31,8 @@ class CategoriesFilters(filters.FilterSet):
                                               method='filter_has_max_weight')
     gender = filters.CharFilter(field_name='gender',
                                               method='filter_gender')
+    not_in_discipline = filters.CharFilter(field_name='not_in_discipline',
+                                                method='filter_not_in_discipline')
 
     def filter_has_min_age(self, queryset, name, value):
         return queryset.filter(min_age__isnull=not value)
@@ -52,6 +54,9 @@ class CategoriesFilters(filters.FilterSet):
     
     def filter_gender(self, queryset, name, value):
         return queryset.filter(gender=value)
+    
+    def filter_not_in_discipline(self, queryset, name, value):
+        return queryset.exclude(event_categories__id=value)
     
     class Meta:
         model = Category

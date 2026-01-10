@@ -41,6 +41,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     filterset_class = EventsFilters
 
     serializer_classes = {
+        "list": serializers.CompactEventsSerializer,
         "create": serializers.CreateEventSerializer,
         "update": serializers.UpdateEventSerializer
     }
@@ -70,7 +71,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         next_event = Event.objects.filter(has_ended=False).order_by('event_date').first()
         if next_event is None:
             return Response([])
-        serializer = serializers.EventsSerializer(next_event, context={'request': request})
+        serializer = serializers.CompactEventsSerializer(next_event, context={'request': request})
         return Response(serializer.data)
     
     @action(detail=False, methods=["get"], url_path="last_event")
@@ -78,7 +79,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         last_event = Event.objects.filter(has_ended=True).order_by('event_date').last()
         if last_event is None:
             return Response([])
-        serializer = serializers.EventsSerializer(last_event, context={'request': request})
+        serializer = serializers.CompactEventsSerializer(last_event, context={'request': request})
         return Response(serializer.data)
     
     @action(detail=True, 
@@ -530,11 +531,12 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         event = self.get_object()
         serializer = serializers.AddCategorySerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        category_id = serializer.validated_data["category_id"]
+        category_ids = serializer.validated_data["category_ids"]
 
         try:
-            category = Category.objects.get(id=category_id)
-            event.categories.remove(category)
+            categories = Category.objects.filter(id__in=category_ids)
+            for category in categories:
+                event.categories.remove(category)
 
             return Response({"message": "Escalão(ões) removido(s) desta modalidade"}, status=status.HTTP_200_OK)
         except Category.DoesNotExist:

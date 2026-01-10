@@ -9,8 +9,8 @@ class MemberAdmin(admin.ModelAdmin):
 
 
 class TeamAdmin(admin.ModelAdmin):
-    list_display = ("category", "match_type", "gender", "team_number")
-    search_fields = ("category", "match_type", "gender", "club")
+    list_display = ("gender", "team_number")
+    search_fields = ("gender", "club")
 
 
 class ClassificationAdmin(admin.ModelAdmin):

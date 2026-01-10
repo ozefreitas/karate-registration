@@ -30,7 +30,7 @@ class MultipleSerializersMixIn:
 
 class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     # TODO: order get request by the category_index from the serializer
-    queryset=Member.objects.all().order_by("first_name", "last_name")
+    queryset=Member.objects.all().order_by("first_name", "last_name", "id")
     serializer_class = registration_serializers.MembersSerializer
     permission_classes = [MemberPermission]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
@@ -283,7 +283,6 @@ class MonthlyMemberPaymentConfigViewSet(viewsets.ModelViewSet):
 class TeamsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Team.objects.all()
     serializer_class = registration_serializers.TeamsSerializer
-    # authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated, MemberPermission]
 
     serializer_classes = {
