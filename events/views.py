@@ -460,7 +460,7 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 )
     
     @action(detail=True, methods=["post"], url_path="add_team", serializer_class=serializers.AddTeamSerializer)
-    def add_team(self, request):
+    def add_team(self, request, pk=None):
         discipline = self.get_object()
         serializer = serializers.AddTeamSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -468,7 +468,7 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
         try:
             team = Team.objects.get(id=team_id)
-            discipline.teams.add(team)
+            discipline.add_team(team)
 
             return Response({"message": "Equipa adicionada a esta Modalidade!"}, status=status.HTTP_200_OK)
         except Member.DoesNotExist:

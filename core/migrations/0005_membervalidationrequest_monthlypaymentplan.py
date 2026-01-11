@@ -8,8 +8,8 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0005_membervalidationrequest'),
-        ('registration', '0005_delete_athletefilter_delete_teamfilter_and_more'),
+        ('core', '0004_notification_target_member_monthlypaymentplan'),
+        ('registration', '0006_delete_athletefilter_delete_teamfilter_and_more'),
     ]
 
     operations = [

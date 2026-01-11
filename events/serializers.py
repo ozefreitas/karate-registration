@@ -2,7 +2,7 @@ from rest_framework import serializers
 import registration.serializers
 import core.serializers.categories
 from django.utils.text import slugify
-from .models import Event, Discipline, Announcement, DisciplineMember
+from .models import Event, Discipline, Announcement, DisciplineMember, DisciplineTeam
 from datetime import date
 
 
@@ -176,7 +176,7 @@ class UpdateEventSerializer(serializers.ModelSerializer):
 
 class DisciplinesSerializer(serializers.ModelSerializer):
     individuals = serializers.SerializerMethodField()
-    teams = registration.serializers.TeamsSerializer(many=True)
+    teams = serializers.SerializerMethodField()
     categories = core.serializers.categories.CategorySerializer(many=True)
     
     class Meta:
@@ -210,6 +210,34 @@ class DisciplinesSerializer(serializers.ModelSerializer):
                 'restricted': self.context['request'].query_params.get("restricted")
             }
         ).data
+    
+    def get_teams(self, obj):
+        user = self.context['request'].user
+        # event = self.context['request'].query_params.get("event_disciplines")
+
+        if not user.is_authenticated:
+            return []
+
+        # Start with through model queryset
+        qs = DisciplineTeam.objects.filter(discipline=obj)
+
+        if user.role in ['free_club', 'subed_club']:
+            qs = qs.filter(team__club=user)
+        elif user.role not in ['main_admin', 'superuser']:
+            return []
+
+        qs = qs.order_by('team__club__username')
+
+        return DisciplineTeamSerializer(
+            qs,
+            many=True,
+            # context={
+            #     **self.context,
+            #     'discipline_categories': list(obj.categories.all()),
+            #     'event_id': event,
+            #     'restricted': self.context['request'].query_params.get("restricted")
+            # }
+        ).data
 
 
 class DisciplineMemberSerializer(serializers.ModelSerializer):
@@ -218,6 +246,14 @@ class DisciplineMemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = DisciplineMember
         fields = ["member", "added_at"]
+
+
+class DisciplineTeamSerializer(serializers.ModelSerializer):
+    team = registration.serializers.TeamsSerializer()
+
+    class Meta:
+        model = DisciplineTeam
+        fields = ["team", "added_at"]
 
 
 class DisciplinesCompactSerializer(serializers.ModelSerializer):

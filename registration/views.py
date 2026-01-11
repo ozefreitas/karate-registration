@@ -286,12 +286,18 @@ class TeamsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, MemberPermission]
 
     serializer_classes = {
-        # "create": registration_serializers.CreateMemberSerializer,
+        "create": registration_serializers.CreateTeamSerializer,
         "update": registration_serializers.UpdateTeamsSerializer
     }
 
     def get_queryset(self):
         return self.queryset.filter(club=self.request.user)
+
+    def perform_create(self, serializer):
+        # Auto-generate id_number if it wasn't provided
+        last_team = Team.objects.filter(club=self.request.user).order_by("team_number").last()
+        team_number = (last_team.team_number if last_team else 0) + 1
+        serializer.save(club=self.request.user, team_number=team_number)
 
     @action(detail=False, methods=["get"], url_path="last_five")
     def last_five(self, request):

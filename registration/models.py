@@ -250,7 +250,24 @@ class Team(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
 
+    def clean(self):
+        athletes = [
+            self.athlete1,
+            self.athlete2,
+            self.athlete3,
+            self.athlete4,
+            self.athlete5,
+        ]
+        athletes = [a for a in athletes if a is not None]
+
+        if len(athletes) != len(set(athletes)):
+            raise ValidationError("A team cannot contain the same athlete more than once.")
+
+        return super().clean()
+
     def save(self, *args, **kwargs):
+        self.full_clean()
+
         if not self.id:  # Generate only if no ID exists
             self.id = generate_unique_nanoid("Team", "registration")
         super().save(*args, **kwargs)

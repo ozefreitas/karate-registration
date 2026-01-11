@@ -32,7 +32,8 @@ class MembersSerializer(serializers.ModelSerializer):
                   "current_month_payment_status", 
                   "past_month_payment_status", 
                   "request_status",
-                  "is_validated")
+                  "is_validated",
+                  "weight")
 
 
     def get_full_name(self, obj):
@@ -461,47 +462,52 @@ class PatchMonthlyMemberPaymentSerializer(serializers.ModelSerializer):
 ### Teams Serializer Classes
 
 class TeamsSerializer(serializers.ModelSerializer):
-    member1 = CompactMembersSerializer()
-    member1_full_name = serializers.SerializerMethodField()
-    member2 = CompactMembersSerializer()
-    member2_full_name = serializers.SerializerMethodField()
-    member3 = CompactMembersSerializer()
-    member3_full_name = serializers.SerializerMethodField()
-    member4 = CompactMembersSerializer()
-    member5 = CompactMembersSerializer()
-    match_type = serializers.SerializerMethodField()
+    athlete1 = CompactMembersSerializer()
+    athlete2 = CompactMembersSerializer()
+    athlete3 = CompactMembersSerializer()
+    athlete4 = CompactMembersSerializer()
+    athlete5 = CompactMembersSerializer()
     team_size = serializers.SerializerMethodField()
-    gender = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Team
         fields = "__all__"
     
-    def get_match_type(self, obj):
-        return obj.match_type.capitalize() if obj.match_type else ''
-    
-    def get_member1_full_name(self, obj):
-        return f"{obj.member1.first_name} {obj.member1.last_name}"
-    
-    def get_member2_full_name(self, obj):
-        return f"{obj.member2.first_name} {obj.member2.last_name}"
-    
-    def get_member3_full_name(self, obj):
-        return f"{obj.member3.first_name} {obj.member3.last_name}" if obj.member3 else None
-    
     def get_team_size(self, obj):
-        members = [obj.member1, obj.member2, obj.member3, obj.member4, obj.member5]
+        members = [obj.athlete1, obj.athlete2, obj.athlete3, obj.athlete4, obj.athlete5]
         return sum(1 for member in members if member is not None)
+
+
+class CreateTeamSerializer(serializers.ModelSerializer):
     
-    def get_gender(self, obj):
-        return obj.member1.gender.capitalize() if obj.member1.gender else ''
+    class Meta:
+        model = models.Team
+        exclude = ("club", "team_number")
+    
+    def validate(self, data):
+        athletes = [
+            data.get("athlete1"),
+            data.get("athlete2"),
+            data.get("athlete3"),
+            data.get("athlete4"),
+            data.get("athlete5"),
+        ]
+
+        athletes = [a for a in athletes if a is not None]
+
+        if len(athletes) != len(set(athletes)):
+            raise serializers.ValidationError({
+                "athletes": "Uma Equipa não pode ter Membros repetidos."
+            })
+
+        return data
     
 
 class UpdateTeamsSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = models.Team
-        exclude = ("club", "team_number", "match_type", "category", "gender", "competition", )
+        exclude = ("club", "team_number", "gender")
 
 
 ### Classifications Serializer Classes
