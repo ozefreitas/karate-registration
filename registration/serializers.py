@@ -463,7 +463,7 @@ class PatchMonthlyMemberPaymentSerializer(serializers.ModelSerializer):
 
 ### Teams Serializer Classes
 
-class nTeamsSerializer(serializers.ModelSerializer):
+class TeamsSerializer(serializers.ModelSerializer):
     athlete1 = CompactMembersSerializer()
     athlete2 = CompactMembersSerializer()
     athlete3 = CompactMembersSerializer()
@@ -496,16 +496,34 @@ class nTeamsSerializer(serializers.ModelSerializer):
         except Event.DoesNotExist:
             raise serializers.ValidationError("Event does not exist")
 
-        athletes_int = [obj.athlete1.birth_date, obj.athlete2.birth_date, obj.athlete3.birth_date]
+        athletes_int = [obj.athlete1, obj.athlete2, obj.athlete3]
 
-        current_ages = [get_comp_age(birth_date) for birth_date in athletes_int]
+        current_ages = [get_comp_age(member.birth_date) for member in athletes_int]
 
         age_method = config('AGE_CALC_REF')
-        event_ages = current_ages if age_method == "true" else [calc_age(age_method, birth_date, season) for birth_date in athletes_int]
+        event_age = max(current_ages) if age_method == "true" else max([calc_age(age_method, member.birth_date, season) for member in athletes_int])
         for category in categories:
-            print(category)
-
-        return "OLA"
+            if category.gender == obj.gender:
+                if category.min_age <= event_age <= category.max_age:
+                    
+                    for member in athletes_int:
+                        if member.weight is not None:
+                            if category.min_weight is not None and category.max_weight is not None:
+                                if category.min_weight <= member.weight <= category.max_weight:
+                                    return f'{category.name} +{category.max_weight}'
+                                else:
+                                    continue
+                            if category.max_weight is not None:
+                                if member.weight < category.max_weight:
+                                    return f'{category.name} -{category.max_weight}'
+                            elif category.min_weight is not None:
+                                if member.weight >= category.min_weight:
+                                    return f'{category.name} +{category.min_weight}'
+                            else:
+                                return category.name
+                        else:
+                            return category.name
+        return None
 
 
 class CreateTeamSerializer(serializers.ModelSerializer):
