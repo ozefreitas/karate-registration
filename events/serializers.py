@@ -213,7 +213,7 @@ class DisciplinesSerializer(serializers.ModelSerializer):
     
     def get_teams(self, obj):
         user = self.context['request'].user
-        # event = self.context['request'].query_params.get("event_disciplines")
+        event = self.context['request'].query_params.get("event_disciplines")
 
         if not user.is_authenticated:
             return []
@@ -231,12 +231,12 @@ class DisciplinesSerializer(serializers.ModelSerializer):
         return DisciplineTeamSerializer(
             qs,
             many=True,
-            # context={
-            #     **self.context,
-            #     'discipline_categories': list(obj.categories.all()),
-            #     'event_id': event,
-            #     'restricted': self.context['request'].query_params.get("restricted")
-            # }
+            context={
+                **self.context,
+                'discipline_categories': list(obj.categories.all()),
+                'event_id': event,
+                'restricted': self.context['request'].query_params.get("restricted")
+            }
         ).data
 
 

@@ -124,6 +124,9 @@ class CompactCategorizedMembersSerializer(serializers.ModelSerializer):
         Categories comming from the context are only the ones linked to the respective Discipline"""
         
         categories = self.context.get('discipline_categories', [])
+        if categories == []:
+            return None
+        
         event_id = self.context['request'].query_params.get("event_disciplines")
         try:
             event = Event.objects.get(id=event_id)
@@ -132,8 +135,7 @@ class CompactCategorizedMembersSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Event does not exist")
         
         current_age = get_comp_age(obj.birth_date)
-        if categories == []:
-            return None
+        
         if current_age <= 0 or current_age is None:
             return None
         
@@ -461,13 +463,14 @@ class PatchMonthlyMemberPaymentSerializer(serializers.ModelSerializer):
 
 ### Teams Serializer Classes
 
-class TeamsSerializer(serializers.ModelSerializer):
+class nTeamsSerializer(serializers.ModelSerializer):
     athlete1 = CompactMembersSerializer()
     athlete2 = CompactMembersSerializer()
     athlete3 = CompactMembersSerializer()
     athlete4 = CompactMembersSerializer()
     athlete5 = CompactMembersSerializer()
     team_size = serializers.SerializerMethodField()
+    category = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Team
@@ -476,6 +479,33 @@ class TeamsSerializer(serializers.ModelSerializer):
     def get_team_size(self, obj):
         members = [obj.athlete1, obj.athlete2, obj.athlete3, obj.athlete4, obj.athlete5]
         return sum(1 for member in members if member is not None)
+
+    def get_category(self, obj):
+        """
+        Sends the category of each team if a category is provided. 
+        Categories comming from the context are only the ones linked to the respective Discipline
+        """
+        categories = self.context.get('discipline_categories', [])
+        if categories == []:
+            return None
+        
+        event_id = self.context['request'].query_params.get("event_disciplines")
+        try:
+            event = Event.objects.get(id=event_id)
+            season = event.season.split("/")[0]
+        except Event.DoesNotExist:
+            raise serializers.ValidationError("Event does not exist")
+
+        athletes_int = [obj.athlete1.birth_date, obj.athlete2.birth_date, obj.athlete3.birth_date]
+
+        current_ages = [get_comp_age(birth_date) for birth_date in athletes_int]
+
+        age_method = config('AGE_CALC_REF')
+        event_ages = current_ages if age_method == "true" else [calc_age(age_method, birth_date, season) for birth_date in athletes_int]
+        for category in categories:
+            print(category)
+
+        return "OLA"
 
 
 class CreateTeamSerializer(serializers.ModelSerializer):

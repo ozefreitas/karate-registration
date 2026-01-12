@@ -8,7 +8,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ("id", "name", "gender", "has_age", "has_grad", "has_weight")
+        fields = ("id", "name", "gender", "has_age", "has_grad", "has_weight", "min_age", "max_age", "min_grad", "max_grad", "min_weight", "max_weight")
     
     def get_has_age(self, obj):
         if obj.min_age is not None or obj.max_age is not None:
