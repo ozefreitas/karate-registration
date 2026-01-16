@@ -527,6 +527,11 @@ class TeamsSerializer(serializers.ModelSerializer):
 
 
 class CreateTeamSerializer(serializers.ModelSerializer):
+    chosen_category = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        write_only=True
+    )
     
     class Meta:
         model = models.Team

@@ -58,7 +58,8 @@ class EventsSerializer(serializers.ModelSerializer):
         number = obj.individuals.count()
         disciplines = Discipline.objects.filter(event=obj)
         for discipline in disciplines:
-            number += discipline.individuals.count()
+            if not discipline.is_coach:
+                number += discipline.individuals.count()
         return number
     
     def get_has_any_team(self, obj):
@@ -126,7 +127,8 @@ class CompactEventsSerializer(serializers.ModelSerializer):
         number = obj.individuals.count()
         disciplines = Discipline.objects.filter(event=obj)
         for discipline in disciplines:
-            number += discipline.individuals.count()
+            if not discipline.is_coach:
+                number += discipline.individuals.count()
         return number
 
     def get_has_any_team(self, obj):
