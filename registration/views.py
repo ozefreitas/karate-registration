@@ -58,7 +58,10 @@ class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         user = self.request.user
         if self.action == "list":
             if user.role in ["free_club", "subed_club"]:
-                return registration_serializers.MembersSerializer
+                if self.request.query_params.get("not_in_event"):
+                    return registration_serializers.NotInEventMembersSerializer
+                else:
+                    return registration_serializers.MembersSerializer
             else:
                 return registration_serializers.AdminMembersSerializer
         if self.action == "retrieve":
@@ -70,9 +73,6 @@ class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             if user.role in ["free_club", "subed_club"]:
                 return registration_serializers.ClubsCreateMemberSerializer
             return registration_serializers.AdminCreateMemberSerializer
-        
-        if self.request.query_params.get("not_in_event"):
-            return registration_serializers.NotInEventMembersSerializer
 
         return super().get_serializer_class()
     

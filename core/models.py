@@ -152,6 +152,7 @@ class Category(models.Model):
     min_weight = models.PositiveSmallIntegerField("Peso Mínimo (inclusivé)", null=True, blank=True)
     max_weight = models.PositiveSmallIntegerField("Peso Máximo (inclusivé)", null=True, blank=True)
     gender = models.CharField("Género", choices=GENDERS, max_length=10)
+    max_athletes = models.PositiveSmallIntegerField("Número Máximo de Atletas (Equipas)", null=True, blank=True)
     creation_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:

@@ -302,7 +302,7 @@ class RemoveCategorySerializer(serializers.Serializer):
     category_id = serializers.CharField()
 
 
-class AddTeamSerializer(serializers.Serializer):
+class DeleteTeamSerializer(serializers.Serializer):
     team_id = serializers.CharField()
 
 

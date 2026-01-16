@@ -6,7 +6,7 @@ import registration.models as models
 from core.serializers.users import UsersSerializer
 from core.models import MemberValidationRequest, MonthlyPaymentPlan
 from core.utils.utils import calc_age
-from events.models import Event
+from events.models import Event, Discipline
 from registration.utils.utils import get_comp_age
 from registration.utils.utils import get_real_member, get_identity_members
 
@@ -246,10 +246,11 @@ class AdminLikeTypeMembersSerializer(serializers.ModelSerializer):
 class NotInEventMembersSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     age = serializers.SerializerMethodField()
+    category = serializers.SerializerMethodField()
     
     class Meta:
         model = models.Member
-        exclude = ["creation_date", "favorite", "member_type"]
+        fields = ["id", "weight", "gender", "age", "full_name", "category"]
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
@@ -267,6 +268,44 @@ class NotInEventMembersSerializer(serializers.ModelSerializer):
         current_age = get_comp_age(obj.birth_date)
         event_age = current_age if age_method == "true" else calc_age(age_method, obj.birth_date, season)
         return event_age
+    
+    def get_category(self, obj):
+        """Sends the category of each member if a category is provided. 
+        Categories comming from the context are only the ones linked to the respective Discipline"""
+        
+        discipline_id = self.context['request'].query_params.get("discipline_id", None)
+        if discipline_id is None:
+            return discipline_id
+        
+        try:
+            discipline = Discipline.objects.get(id=discipline_id)
+        except Discipline.DoesNotExist:
+            raise serializers.ValidationError("Discipline does not exist")
+
+        categories = list(discipline.categories.all())
+        if categories == []:
+            return None
+        
+        event_id = self.context['request'].query_params.get("not_in_event")
+
+        try:
+            event = Event.objects.get(id=event_id)
+            season = event.season.split("/")[0]
+        except Event.DoesNotExist:
+            raise serializers.ValidationError("Event does not exist")
+        
+        current_age = get_comp_age(obj.birth_date)
+        
+        if current_age <= 0 or current_age is None:
+            return None
+        
+        age_method = config('AGE_CALC_REF')
+        event_age = current_age if age_method == "true" else calc_age(age_method, obj.birth_date, season)
+        for category in categories:
+            if category.min_age <= event_age <= category.max_age:
+                return category.name
+                
+        return None
     
 
 class ClubsCreateMemberSerializer(serializers.ModelSerializer):
@@ -360,9 +399,9 @@ class UpdateMemberSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
 
         if member and request:
-            if (member.created_by != member.club and member.created_by.role != "main_admin") or (member.created_by == member.club and member.created_by.role != "main_admin" and not member.is_validated):
-             for field in ["id_number", "first_name", "last_name", "birth_date", "gender", "graduation"]:
-                fields.pop(field, None)
+            if member.created_by == member.club and member.created_by.role != "main_admin" and member.is_validated and request.user.role != "main_admin":
+                for field in ["id_number", "first_name", "last_name", "birth_date", "gender", "graduation"]:
+                    fields.pop(field, None)
 
         return fields
 

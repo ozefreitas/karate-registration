@@ -100,7 +100,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
             return Response({"message": "Atleta(s) adicionado(a)(s) a este evento!"}, status=status.HTTP_200_OK)
         except Member.DoesNotExist:
-            return Response({"error": "Um erro ocurreu ao adicionar este(s) Atleta(s)!"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Ocorreu um erro ao adicionar este(s) Atleta(s)!"}, status=status.HTTP_404_NOT_FOUND)
 
     @action(detail=True, 
             methods=["post"], 
@@ -119,7 +119,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
             return Response({"message": "Atleta(s) removido(a)(s) deste evento!"}, status=status.HTTP_200_OK)
         except Member.DoesNotExist:
-            return Response({"error": "Um erro ocurreu ao remover este(s) Atleta(s)!"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Ocorreu um erro ao remover este(s) Atleta(s)!"}, status=status.HTTP_404_NOT_FOUND)
         
         
     @action(detail=True, methods=["get"], url_path="check_event_rate", permission_classes=[IsAuthenticated])
@@ -191,7 +191,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             ClubRatingAudit.objects.create(club=request.user, event=event, rating=rating)
             return Response({"message": "Obrigado pela sua opinião!"}, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response({"error": "Um erro ocurreu ao avaliar este Evento!", "message": e}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Ocorreu um erro ao avaliar este Evento!", "message": e}, status=status.HTTP_400_BAD_REQUEST)
     
 
     @action(detail=True, methods=["get"], url_path="export_members_excel", permission_classes=[IsAdminRoleorHigherForGET])
@@ -354,7 +354,7 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
             if not event.has_categories:
                 discipline.add_member(member)
-                return Response({"message": "Membro(s) adicionado(s) a esta Modalidade"}, status=status.HTTP_200_OK)
+                return Response({"message": "Membro(s) adicionado(s) a esta Modalidade."}, status=status.HTTP_200_OK)
 
             # if targeted discipline has no categories, it is assumed that anyone can be registered
             if discipline.categories.count() == 0:
@@ -363,7 +363,7 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                     return Response({"error": "Treinadores têm de ter graduação superior a 1º Dan!"}, status=status.HTTP_400_BAD_REQUEST)
                 else:
                     discipline.add_member(member)
-                    return Response({"message": "Treinador(es) adicionado(s) a este Evento"}, status=status.HTTP_200_OK)
+                    return Response({"message": "Treinador(es) adicionado(s) a este Evento."}, status=status.HTTP_200_OK)
             
             categories = discipline.categories.filter(gender=member.gender, 
                                                       min_age__lte=event_age, 
@@ -371,7 +371,7 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                                                       )
 
             if list(categories) == []:
-                return Response({"error": "Não existem Escalões que satisfaçam este(s) Membro(s)"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"error": "Não existem Escalões que satisfaçam este(s) Membro(s)."}, status=status.HTTP_400_BAD_REQUEST)
 
             for category in categories:
 
@@ -386,13 +386,13 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                     if min_grad > grad > max_grad:
                         pass
                     else:
-                        return Response({"error": "Graduação não está dentro dos limites estipulados para o Escalão"}, status=status.HTTP_400_BAD_REQUEST)
+                        return Response({"error": "Graduação não está dentro dos limites estipulados para o Escalão."}, status=status.HTTP_400_BAD_REQUEST)
                 if max_grad is not None:
                     if grad < max_grad:
-                        return Response({"error": "Graduação máxima para este Escalão não respeitada"}, status=status.HTTP_400_BAD_REQUEST)
+                        return Response({"error": "Graduação máxima para este Escalão não respeitada."}, status=status.HTTP_400_BAD_REQUEST)
                 if min_grad is not None:
                     if grad > min_grad:
-                        return Response({"error": "Graduação mínima para este Escalão não respeitada"}, status=status.HTTP_400_BAD_REQUEST)
+                        return Response({"error": "Graduação mínima para este Escalão não respeitada."}, status=status.HTTP_400_BAD_REQUEST)
                     
                 # Weights
                 if category.min_weight is None and category.max_weight is None:  # category does not have any weight limit
@@ -419,9 +419,9 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             # if not success:
             #     return Response({"error": "Idade do Atleta não permite inscrever nos Escalões disponíveis"}, status=status.HTTP_400_BAD_REQUEST)
 
-            return Response({"message": "Membro(s) adicionado(s) a esta Modalidade"}, status=status.HTTP_200_OK)
+            return Response({"message": "Membro(s) adicionado(s) a esta Modalidade."}, status=status.HTTP_200_OK)
         except Member.DoesNotExist:
-            return Response({"error": "Um erro ocurreu ao adicionar este(s) Membro(s)"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Ocorreu um erro ao adicionar este(s) Membro(s)."}, status=status.HTTP_404_NOT_FOUND)
 
     @action(detail=True, methods=["post"], url_path="delete_member", serializer_class=serializers.DeleteMemberSerializer)
     def delete_member(self, request, pk=None):
@@ -434,31 +434,35 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             member = Member.objects.get(id=member_id)
             discipline.individuals.remove(member)
 
-            return Response({"message": "Atleta removido desta Modalidade"}, status=status.HTTP_200_OK)
+            return Response({"message": "Atleta removido desta Modalidade."}, status=status.HTTP_200_OK)
         except Member.DoesNotExist:
-            return Response({"error": "Um erro ocurreu ao remover este Atleta"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Ocorreu um erro ao remover este Atleta."}, status=status.HTTP_404_NOT_FOUND)
     
     @action(detail=True, methods=['delete'], url_path="delete_all_individuals")
     def delete_all_individuals(self, request, pk=None):
         try:
             discipline = self.get_object()
-            individuals_count = discipline.individuals.count()
-            discipline.individuals.clear()
-            if individuals_count <= 1:
-                return Response(
-                    {"message": f'Atleta removido de {discipline.name}'},
-                    status=status.HTTP_200_OK
-                )
-            else:
-                return Response(
-                    {"message": f"Removidos {individuals_count} Atletas de {discipline.name}"},
-                    status=status.HTTP_200_OK
-                )
         except Discipline.DoesNotExist:
             return Response(
                     {"error": "Ocorreu um erro a remover estes Atletas. Tente mais tarde ou contacte o administrador."},
                     status=status.HTTP_200_OK
                 )
+        try:
+            individuals_count = discipline.individuals.filter(club=request.user).count()
+            discipline.individuals.filter(club=request.user).clear()
+        except Member.DoesNotExist:
+            return Response({"error": "Ocorreu um erro ao remover todos os Atletas desta Modalidade."}, status=status.HTTP_404_NOT_FOUND)
+        
+        if individuals_count <= 1:
+            return Response(
+                {"message": f'Atleta removido de {discipline.name}'},
+                status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                {"message": f"Removidos {individuals_count} Atletas de {discipline.name}"},
+                status=status.HTTP_200_OK
+            )
     
     @action(detail=True, methods=["post"], url_path="add_team", serializer_class=registrationSerializers.CreateTeamSerializer)
     def add_team(self, request, pk=None):
@@ -481,6 +485,8 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 serializer.validated_data["athlete2"],
                 serializer.validated_data["athlete3"]
                 ]
+            
+            members = [a for a in members if a != ""]
 
             member_ages = {
                 member.id: athlete_age(member, age_method, season) for member in members
@@ -496,22 +502,26 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 categories = discipline.categories.filter(id=chosen_category)
 
             else:
-                categories = discipline.categories.filter(gender=members[0].gender, 
+                categories = discipline.categories.filter(gender=serializer.validated_data["gender"], 
                                                       min_age__lte=max_member_age, 
                                                       max_age__gte=max_member_age
                                                       )
             
             if list(categories) == []:
-                return Response({"error": "Não existem Escalões que satisfaçam este(s) Membro(s)"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"error": "Não existem Escalões que satisfaçam este(s) Membro(s) para o Género selecionado."
+                "."}, status=status.HTTP_400_BAD_REQUEST)
             
             if len(list(categories)) > 1:
                 return Response({
                     "status": "info", 
-                    "message": "Existe mais que um Escalão possível para inscrever esta equipa.",
+                    "message": "Existe mais que um Escalão possível para inscrever esta equipa. Selecione apenas um.",
                     "category_ids": categories.values_list("id", flat=True)}, 
                     status=status.HTTP_200_OK)
             
             base_category = categories.get()
+
+            if base_category.max_athletes is not None and base_category.max_athletes != len(members):
+                return Response({"error": f"Escalão determinado obriga a {base_category.max_athletes} Atletas, enviou {len(members)}."}, status=status.HTTP_400_BAD_REQUEST)
             
             lower_category = (
                 discipline.categories
@@ -537,7 +547,7 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                         else: 
                             return Response(
                                 {
-                                    "error": "Um dos Atletas é mais novo que o permitido para o Escalão determinado para esta Equipa"
+                                    "error": "Um dos Atletas é mais novo que o permitido para o Escalão determinado para esta Equipa."
                                 }, 
                                 status=status.HTTP_400_BAD_REQUEST
                             )
@@ -545,7 +555,7 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                     if len(outside_base) > 1:
                         return Response(
                             {
-                                "error": "Apenas um dos Atletas pode ser promovido do Escalão imediatamente inferior àquele determinado para esta Equipa"
+                                "error": "Apenas um dos Atletas pode ser promovido do Escalão imediatamente inferior àquele determinado para esta Equipa."
                             }, 
                             status=status.HTTP_400_BAD_REQUEST
                         )
@@ -557,11 +567,11 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 # Graduations
                 if min_grad is not None and max_grad is not None:
                     if not min_grad > grad > max_grad:
-                        return Response({"error": "Graduação não está dentro dos limites estipulados para o Escalão"}, status=status.HTTP_400_BAD_REQUEST)
+                        return Response({"error": "Graduação não está dentro dos limites estipulados para o Escalão."}, status=status.HTTP_400_BAD_REQUEST)
                 if max_grad is not None and grad < max_grad:
-                    return Response({"error": "Graduação máxima para este Escalão não respeitada"}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({"error": "Graduação máxima para este Escalão não respeitada."}, status=status.HTTP_400_BAD_REQUEST)
                 if min_grad is not None and grad > min_grad:
-                    return Response({"error": "Graduação mínima para este Escalão não respeitada"}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({"error": "Graduação mínima para este Escalão não respeitada."}, status=status.HTTP_400_BAD_REQUEST)
                     
                 # Weights
                 if base_category.min_weight is None and base_category.max_weight is None:  # category does not have any weight limit
@@ -577,61 +587,66 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                     if base_category.min_weight <= member.weight <= base_category.max_weight:
                         continue
                     else:
-                        return Response({"error": "Um dos Membros não tem o peso indicado para este Escalão"}, status=status.HTTP_400_BAD_REQUEST)
+                        return Response({"error": "Um dos Membros não tem o peso indicado para este Escalão."}, status=status.HTTP_400_BAD_REQUEST)
                 if base_category.max_weight is not None:
                     if member.weight < base_category.max_weight:
                         continue
                     else:
-                        return Response({"error": "Um dos Membros não tem o peso indicado para este Escalão"}, status=status.HTTP_400_BAD_REQUEST)
+                        return Response({"error": "Um dos Membros não tem o peso indicado para este Escalão."}, status=status.HTTP_400_BAD_REQUEST)
                 if base_category.min_weight is not None:
                     if member.weight >= base_category.min_weight:
                         continue
                     else: 
-                        return Response({"error": "Um dos Membros não tem o peso indicado para este Escalão"}, status=status.HTTP_400_BAD_REQUEST)
+                        return Response({"error": "Um dos Membros não tem o peso indicado para este Escalão."}, status=status.HTTP_400_BAD_REQUEST)
 
             discipline.add_team(created_team)
 
             return Response({"message": "Equipa adicionada a esta Modalidade!"}, status=status.HTTP_200_OK)
         except Member.DoesNotExist:
-            return Response({"error": "Um erro ocurreu ao adicionar esta Equipa!"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Ocorreu um erro ao adicionar esta Equipa!"}, status=status.HTTP_404_NOT_FOUND)
 
 
-    @action(detail=True, methods=["post"], url_path="delete_team", serializer_class=serializers.AddTeamSerializer)
+    @action(detail=True, methods=["post"], url_path="delete_team", serializer_class=serializers.DeleteTeamSerializer)
     def delete_team(self, request, pk=None):
-        discipline = self.get_object()
-        serializer = serializers.AddTeamSerializer(data=request.data)
+        serializer = serializers.DeleteTeamSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         team_id = serializer.validated_data["team_id"]
 
         try:
             team = Team.objects.get(id=team_id)
-            discipline.teams.remove(team)
+            team.delete()
 
-            return Response({"message": "Equipa removida desta Modalidade"}, status=status.HTTP_200_OK)
-        except Member.DoesNotExist:
-            return Response({"error": "Um erro ocurreu ao remover esta Equipa"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"message": "Equipa removida desta Modalidade."}, status=status.HTTP_200_OK)
+        except Team.DoesNotExist:
+            return Response({"error": "Ocorreu um erro ao remover esta Equipa."}, status=status.HTTP_404_NOT_FOUND)
     
     @action(detail=True, methods=['delete'], url_path="delete_all_teams")
     def delete_all_teams(self, request, pk=None):
         try:
             discipline = self.get_object()
-            teams_count = discipline.teams.count()
-            discipline.teams.clear()
-            if teams_count <= 1:
-                return Response(
-                    {"message": f'Equipa removida de {discipline.name}'},
-                    status=status.HTTP_200_OK
-                )
-            else:
-                return Response(
-                    {"message": f"Removidas {teams_count} Equipas de {discipline.name}"},
-                    status=status.HTTP_200_OK
-                )
         except Discipline.DoesNotExist:
             return Response(
-                    {"error": "Ocorreu um erro a remover estas Equipas. Tente mais tarde ou contacte o administrador."},
+                    {"error": "Ocorreu um erro ao remover todos as Equipas desta Modalidade. Tente mais tarde ou contacte o administrador."},
                     status=status.HTTP_200_OK
                 )
+        
+        try:
+            teams_count = discipline.teams.filter(club=request.user).count()
+            Team.objects.filter(club=request.user).delete()
+        except Team.DoesNotExist:
+            return Response({"error": "Ocorreu um erro ao remover todos as Equipas desta Modalidade. Tente mais tarde ou contacte o administrador."}, status=status.HTTP_404_NOT_FOUND)
+        
+        if teams_count <= 1:
+            return Response(
+                {"message": f'Equipa removida de {discipline.name}.'},
+                status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                {"message": f"Removidas {teams_count} Equipas de {discipline.name}."},
+                status=status.HTTP_200_OK
+            )
+        
         
     @action(
         detail=True,
@@ -656,14 +671,14 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         
         if not categories.exists():
             return Response(
-                {"error": "Nenhum Escalão válido foi encontrado"},
+                {"error": "Nenhum Escalão válido foi encontrado."},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
         event.categories.add(*categories)
         return Response(
             {
-                "message": "Escalão(ões) adicionados com sucesso",
+                "message": "Escalão(ões) adicionados com sucesso.",
                 "added_count": categories.count(),
             },
             status=status.HTTP_200_OK,
@@ -681,9 +696,9 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             for category in categories:
                 event.categories.remove(category)
 
-            return Response({"message": "Escalão(ões) removido(s) desta modalidade"}, status=status.HTTP_200_OK)
+            return Response({"message": "Escalão(ões) removido(s) desta modalidade."}, status=status.HTTP_200_OK)
         except Category.DoesNotExist:
-            return Response({"error": "Um erro ocurreu ao remover este Escalão"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Ocorreu um erro ao remover este Escalão."}, status=status.HTTP_404_NOT_FOUND)
         
 
 class ActiveAnnouncementView(APIView):
