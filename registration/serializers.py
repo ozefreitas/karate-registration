@@ -132,7 +132,7 @@ class CompactCategorizedMembersSerializer(serializers.ModelSerializer):
             event = Event.objects.get(id=event_id)
             season = event.season.split("/")[0]
         except Event.DoesNotExist:
-            raise serializers.ValidationError("Event does not exist")
+            raise serializers.ValidationError("Event does not exist.")
         
         current_age = get_comp_age(obj.birth_date)
         
@@ -262,7 +262,7 @@ class NotInEventMembersSerializer(serializers.ModelSerializer):
             event = Event.objects.get(id=event_id)
             season = event.season.split("/")[0]
         except Event.DoesNotExist:
-            raise serializers.ValidationError("Event does not exist")
+            raise serializers.ValidationError("Event does not exist.")
         
         age_method = config('AGE_CALC_REF')
         current_age = get_comp_age(obj.birth_date)
@@ -280,7 +280,7 @@ class NotInEventMembersSerializer(serializers.ModelSerializer):
         try:
             discipline = Discipline.objects.get(id=discipline_id)
         except Discipline.DoesNotExist:
-            raise serializers.ValidationError("Discipline does not exist")
+            raise serializers.ValidationError("Discipline does not exist.")
 
         categories = list(discipline.categories.all())
         if categories == []:
@@ -292,7 +292,7 @@ class NotInEventMembersSerializer(serializers.ModelSerializer):
             event = Event.objects.get(id=event_id)
             season = event.season.split("/")[0]
         except Event.DoesNotExist:
-            raise serializers.ValidationError("Event does not exist")
+            raise serializers.ValidationError("Event does not exist.")
         
         current_age = get_comp_age(obj.birth_date)
         
@@ -328,7 +328,7 @@ class ClubsCreateMemberSerializer(serializers.ModelSerializer):
                                                                      member_type__in=["athlete", "student"]).exists():
 
             raise serializers.ValidationError({
-                'member_type_missmatch': ['Já existe um "Aluno" para este Membro']
+                'member_type_missmatch': ['Já existe um "Aluno" para este Membro.']
             })
         
         elif member_type == "coach" and models.Member.objects.filter(first_name=data.get("first_name"),
@@ -337,23 +337,23 @@ class ClubsCreateMemberSerializer(serializers.ModelSerializer):
                                                                      id_number=data.get("id_number"),
                                                                      member_type="coach").exists():
             raise serializers.ValidationError({
-                        'member_type_missmatch': ['Já existe um "Treinador" para este Membro']
+                        'member_type_missmatch': ['Já existe um "Treinador" para este Membro.']
                     })
         
         current_age = get_comp_age(birth_date)
         if current_age <= 0:
             raise serializers.ValidationError({
-                'impossible_age': [f"A data de nascimento não parece correta porque a idade resulta em {current_age}"]
+                'impossible_age': [f"A data de nascimento não parece correta porque a idade resulta em {current_age} anos."]
             })
 
         if stundent and weight != "":
             raise serializers.ValidationError({
-                'incompatible_member': ["Alunos não têm peso associado"]
+                'incompatible_member': ["Alunos não têm peso associado."]
             })
     
         if gender not in ["Masculino", "Feminino"]:
             raise serializers.ValidationError({
-                'impossible_gender': ['Género "Misto" apenas está disponível para Equipas']
+                'impossible_gender': ['Género "Misto" apenas está disponível para Equipas.']
             })
       
         return data
@@ -371,12 +371,12 @@ class AdminCreateMemberSerializer(serializers.ModelSerializer):
 
         if stundent and weight != "":
             raise serializers.ValidationError({
-                'incompatible_member': ["Alunos não têm peso associado"]
+                'incompatible_member': ["Alunos não têm peso associado."]
             })
     
         if gender not in ["Masculino", "Feminino"]:
             raise serializers.ValidationError({
-                'impossible_gender': ['Género "Misto" apenas está disponível para Equipas']
+                'impossible_gender': ['Género "Misto" apenas está disponível para Equipas.']
             })
       
         return data
@@ -415,7 +415,7 @@ class UpdateMemberSerializer(serializers.ModelSerializer):
             for field in ["id_number", "first_name", "last_name", "birth_date", "gender", "graduation"]:
                 if field in attrs:
                     raise serializers.ValidationError(
-                        {"not_allowed": "Não pode alterar campos sensíveis de um membro criado/verificado pelo seu administrador", "field": field}
+                        {"not_allowed": "Não pode alterar campos sensíveis de um membro criado/verificado pelo seu administrador.", "field": field}
                     )
 
         return attrs
@@ -533,7 +533,7 @@ class TeamsSerializer(serializers.ModelSerializer):
             event = Event.objects.get(id=event_id)
             season = event.season.split("/")[0]
         except Event.DoesNotExist:
-            raise serializers.ValidationError("Event does not exist")
+            raise serializers.ValidationError("Event does not exist.")
 
         athletes_int = [obj.athlete1, obj.athlete2, obj.athlete3]
 
