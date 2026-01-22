@@ -33,6 +33,13 @@ class CompactCategorySerializer(serializers.ModelSerializer):
         fields = ("id", "name", "gender", "min_age", "max_age", "min_grad", "max_grad", "min_weight", "max_weight", "max_athletes")
 
 
+class NameCategorySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Category
+        fields = ("name",)
+
+
 class CreateCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category

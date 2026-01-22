@@ -246,6 +246,7 @@ class Team(models.Model):
     athlete4 = models.ForeignKey(Member, verbose_name="Atleta 4", related_name="forth_element", on_delete=models.CASCADE, blank=True, null=True)
     athlete5 = models.ForeignKey(Member, verbose_name="Atleta 5", related_name="fifth_element", on_delete=models.CASCADE, blank=True, null=True)
     gender = models.CharField("Género", choices=GENDERS, max_length=10)
+    category = models.ForeignKey("core.Category", on_delete=models.CASCADE, verbose_name="Escalão")
     team_number = models.IntegerField("Nº Equipa")
     creation_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)

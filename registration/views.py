@@ -60,6 +60,8 @@ class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             if user.role in ["free_club", "subed_club"]:
                 if self.request.query_params.get("not_in_event"):
                     return registration_serializers.NotInEventMembersSerializer
+                elif self.request.query_params.get("coach_not_in_event"):
+                    return registration_serializers.NotInEventCoachesSerializer
                 else:
                     return registration_serializers.MembersSerializer
             else:

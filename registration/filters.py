@@ -61,6 +61,7 @@ class MembersFilters(filters.FilterSet):
             discipline_count=Count('disciplines_indiv', filter=Q(disciplines_indiv__event=event), distinct=True)
             ).filter(
                 member_type="coach",
+                graduation__lt="8",
                 discipline_count__lt=number_disciplines
                 )
 

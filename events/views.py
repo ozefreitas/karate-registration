@@ -11,7 +11,7 @@ import openpyxl
 
 from .filters import DisciplinesFilters, EventsFilters
 from clubs.models import ClubRatingAudit
-from .models import Event, Discipline, Announcement
+from .models import Event, Discipline, Announcement, DisciplineMember
 from registration.models import Member, Team
 from core.permissions import IsAuthenticatedOrReadOnly, EventIndividualsPermission, EventPermission, IsAdminRoleorHigherForGET, IsAdminRoleorHigher
 from core.models import Category
@@ -434,7 +434,10 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             member = Member.objects.get(id=member_id)
             discipline.individuals.remove(member)
 
-            return Response({"message": "Atleta removido desta Modalidade."}, status=status.HTTP_200_OK)
+            if discipline.is_coach:
+                return Response({"message": "Treinador removido."}, status=status.HTTP_200_OK)
+            else:
+                return Response({"message": f"Atleta removido de {discipline.name}."}, status=status.HTTP_200_OK)
         except Member.DoesNotExist:
             return Response({"error": "Ocorreu um erro ao remover este Atleta."}, status=status.HTTP_404_NOT_FOUND)
     
@@ -449,18 +452,23 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 )
         try:
             individuals_count = discipline.individuals.filter(club=request.user).count()
-            discipline.individuals.filter(club=request.user).clear()
+            DisciplineMember.objects.filter(
+                discipline=discipline,
+                member__club=request.user
+            ).delete()
         except Member.DoesNotExist:
             return Response({"error": "Ocorreu um erro ao remover todos os Atletas desta Modalidade."}, status=status.HTTP_404_NOT_FOUND)
         
         if individuals_count <= 1:
+            message = f'Atleta removido de {discipline.name}.' if not discipline.is_coach else 'Treinador removido.'
             return Response(
-                {"message": f'Atleta removido de {discipline.name}'},
+                {"message": message},
                 status=status.HTTP_200_OK
             )
         else:
+            message = f"Removidos {individuals_count} Atletas de {discipline.name}." if not discipline.is_coach else f'Removidos {individuals_count} Treinadores.'
             return Response(
-                {"message": f"Removidos {individuals_count} Atletas de {discipline.name}"},
+                {"message": message},
                 status=status.HTTP_200_OK
             )
     
@@ -472,7 +480,6 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
         last_team = Team.objects.filter(club=self.request.user).order_by("team_number").last()
         team_number = (last_team.team_number if last_team else 0) + 1
-        created_team = Team.objects.create(**serializer.validated_data, club=self.request.user, team_number=team_number)
 
         discipline = self.get_object()
         age_method = config('AGE_CALC_REF')
@@ -599,6 +606,10 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                     else: 
                         return Response({"error": "Um dos Membros não tem o peso indicado para este Escalão."}, status=status.HTTP_400_BAD_REQUEST)
 
+            created_team = Team.objects.create(**serializer.validated_data, 
+                                               club=self.request.user, 
+                                               team_number=team_number,
+                                               category=base_category)
             discipline.add_team(created_team)
 
             return Response({"message": "Equipa adicionada a esta Modalidade!"}, status=status.HTTP_200_OK)

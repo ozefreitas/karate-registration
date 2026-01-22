@@ -4,6 +4,7 @@ from django.utils import timezone
 
 import registration.models as models
 from core.serializers.users import UsersSerializer
+from core.serializers.categories import NameCategorySerializer
 from core.models import MemberValidationRequest, MonthlyPaymentPlan
 from core.utils.utils import calc_age
 from events.models import Event, Discipline
@@ -84,16 +85,20 @@ class AdminMembersSerializer(serializers.ModelSerializer):
 class CompactMembersSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     club = serializers.SerializerMethodField()
+    age = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Member
-        fields = ["id" ,"first_name", "last_name", "gender", "club", "full_name"]
+        fields = ["id", "gender", "club", "full_name", "age", "weight"]
 
     def get_club(self, obj):
         return obj.club.username
     
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
+    
+    def get_age(self, obj):
+        return get_comp_age(obj.birth_date)
 
 
 class CompactCategorizedMembersSerializer(serializers.ModelSerializer):
@@ -241,6 +246,17 @@ class AdminLikeTypeMembersSerializer(serializers.ModelSerializer):
 
     def get_age(self, obj):
         return get_comp_age(obj.birth_date)
+    
+
+class NotInEventCoachesSerializer(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = models.Member
+        fields = ["id", "gender", "full_name", "graduation"]
+
+    def get_full_name(self, obj):
+        return f"{obj.first_name} {obj.last_name}"
 
 
 class NotInEventMembersSerializer(serializers.ModelSerializer):
@@ -509,60 +525,15 @@ class TeamsSerializer(serializers.ModelSerializer):
     athlete4 = CompactMembersSerializer()
     athlete5 = CompactMembersSerializer()
     team_size = serializers.SerializerMethodField()
-    category = serializers.SerializerMethodField()
+    category = NameCategorySerializer()
 
     class Meta:
         model = models.Team
-        fields = "__all__"
+        exclude = ["creation_date", "modified_date", "club"]
     
     def get_team_size(self, obj):
         members = [obj.athlete1, obj.athlete2, obj.athlete3, obj.athlete4, obj.athlete5]
         return sum(1 for member in members if member is not None)
-
-    def get_category(self, obj):
-        """
-        Sends the category of each team if a category is provided. 
-        Categories comming from the context are only the ones linked to the respective Discipline
-        """
-        categories = self.context.get('discipline_categories', [])
-        if categories == []:
-            return None
-        
-        event_id = self.context['request'].query_params.get("event_disciplines")
-        try:
-            event = Event.objects.get(id=event_id)
-            season = event.season.split("/")[0]
-        except Event.DoesNotExist:
-            raise serializers.ValidationError("Event does not exist.")
-
-        athletes_int = [obj.athlete1, obj.athlete2, obj.athlete3]
-
-        current_ages = [get_comp_age(member.birth_date) for member in athletes_int]
-
-        age_method = config('AGE_CALC_REF')
-        event_age = max(current_ages) if age_method == "true" else max([calc_age(age_method, member.birth_date, season) for member in athletes_int])
-        for category in categories:
-            if category.gender == obj.gender:
-                if category.min_age <= event_age <= category.max_age:
-                    
-                    for member in athletes_int:
-                        if member.weight is not None:
-                            if category.min_weight is not None and category.max_weight is not None:
-                                if category.min_weight <= member.weight <= category.max_weight:
-                                    return f'{category.name} +{category.max_weight}'
-                                else:
-                                    continue
-                            if category.max_weight is not None:
-                                if member.weight < category.max_weight:
-                                    return f'{category.name} -{category.max_weight}'
-                            elif category.min_weight is not None:
-                                if member.weight >= category.min_weight:
-                                    return f'{category.name} +{category.min_weight}'
-                            else:
-                                return category.name
-                        else:
-                            return category.name
-        return None
 
 
 class CreateTeamSerializer(serializers.ModelSerializer):
@@ -574,7 +545,7 @@ class CreateTeamSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = models.Team
-        exclude = ("club", "team_number")
+        exclude = ("club", "team_number", "category")
     
     def validate(self, data):
         athletes = [
