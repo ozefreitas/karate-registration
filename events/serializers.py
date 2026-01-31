@@ -284,6 +284,11 @@ class AddMemberSerializer(serializers.Serializer):
 class AddDisciplineMemberSerializer(serializers.Serializer):
     member_id = serializers.CharField()
     event_id = serializers.CharField()
+    chosen_category = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        write_only=True
+    )
 
 
 class DeleteMemberSerializer(serializers.Serializer):

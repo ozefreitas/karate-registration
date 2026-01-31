@@ -102,6 +102,7 @@ class Discipline(models.Model):
 class DisciplineMember(models.Model):
     discipline = models.ForeignKey("Discipline", on_delete=models.CASCADE)
     member = models.ForeignKey("registration.Member", on_delete=models.CASCADE)
+    category = models.ForeignKey("core.Category", on_delete=models.CASCADE, null=True, blank=True)
     added_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
