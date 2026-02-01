@@ -72,10 +72,11 @@ class Discipline(models.Model):
         blank=True
     )
 
-    def add_member(self, member):
+    def add_member(self, member, category):
         DisciplineMember.objects.get_or_create(
             discipline=self,
-            member=member
+            member=member,
+            category=category
         )
     
     def add_team(self, team):
@@ -106,7 +107,10 @@ class DisciplineMember(models.Model):
     added_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
-        unique_together = ('discipline', 'member') 
+        unique_together = ('discipline', 'member')
+
+    def __str__(self):
+        return '{} {} {}'.format(self.discipline.name, self.member.first_name, self.member.last_name)
 
 
 class DisciplineTeam(models.Model):

@@ -235,7 +235,7 @@ class MonthlyMemberPaymentViewSet(MultipleSerializersMixIn, viewsets.ModelViewSe
     filterset_class = MonthlyMemberPaymentFilters
 
     serializer_classes = {
-        # "create": serializers.CreateMemberSerializer,
+        "create": registration_serializers.CreateMonthlyMemberPaymentSerializer,
         "partial_update": registration_serializers.PatchMonthlyMemberPaymentSerializer
     }
 

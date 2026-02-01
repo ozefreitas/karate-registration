@@ -245,10 +245,11 @@ class DisciplinesSerializer(serializers.ModelSerializer):
 
 class DisciplineMemberSerializer(serializers.ModelSerializer):
     member = registration.serializers.CompactCategorizedMembersSerializer()
+    category = core.serializers.categories.NameCategorySerializer()
 
     class Meta:
         model = DisciplineMember
-        fields = ["member", "added_at"]
+        fields = ["member", "added_at", "category"]
 
 
 class DisciplineTeamSerializer(serializers.ModelSerializer):

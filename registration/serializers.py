@@ -12,7 +12,7 @@ from registration.utils.utils import get_comp_age
 from registration.utils.utils import get_real_member, get_identity_members
 
 
-### Members Serializer Classes 
+### Members Serializer Classes
 
 class MembersSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
@@ -103,12 +103,12 @@ class CompactMembersSerializer(serializers.ModelSerializer):
 
 class CompactCategorizedMembersSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
-    category = serializers.SerializerMethodField()
+    # category = serializers.SerializerMethodField()
     club = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Member
-        fields = ["id", "first_name", "last_name", "gender", "category", "club", "full_name"]
+        fields = ["id", "first_name", "last_name", "gender", "club", "full_name"]
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -124,49 +124,49 @@ class CompactCategorizedMembersSerializer(serializers.ModelSerializer):
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
     
-    def get_category(self, obj):
-        """Sends the category of each member if a category is provided. 
-        Categories comming from the context are only the ones linked to the respective Discipline"""
+    # def get_category(self, obj):
+    #     """Sends the category of each member if a category is provided. 
+    #     Categories comming from the context are only the ones linked to the respective Discipline"""
         
-        categories = self.context.get('discipline_categories', [])
-        if categories == []:
-            return None
+    #     categories = self.context.get('discipline_categories', [])
+    #     if categories == []:
+    #         return None
         
-        event_id = self.context['request'].query_params.get("event_disciplines")
-        try:
-            event = Event.objects.get(id=event_id)
-            season = event.season.split("/")[0]
-        except Event.DoesNotExist:
-            raise serializers.ValidationError("Event does not exist.")
+    #     event_id = self.context['request'].query_params.get("event_disciplines")
+    #     try:
+    #         event = Event.objects.get(id=event_id)
+    #         season = event.season.split("/")[0]
+    #     except Event.DoesNotExist:
+    #         raise serializers.ValidationError("Event does not exist.")
         
-        current_age = get_comp_age(obj.birth_date)
+    #     current_age = get_comp_age(obj.birth_date)
         
-        if current_age <= 0 or current_age is None:
-            return None
+    #     if current_age <= 0 or current_age is None:
+    #         return None
         
-        age_method = config('AGE_CALC_REF')
-        event_age = current_age if age_method == "true" else calc_age(age_method, obj.birth_date, season)
-        for category in categories:
-            if category.gender == obj.gender:
-                if category.min_age <= event_age <= category.max_age:
+    #     age_method = config('AGE_CALC_REF')
+    #     event_age = current_age if age_method == "true" else calc_age(age_method, obj.birth_date, season)
+    #     for category in categories:
+    #         if category.gender == obj.gender:
+    #             if category.min_age <= event_age <= category.max_age:
 
-                    if obj.weight is not None:
-                        if category.min_weight is not None and category.max_weight is not None:
-                            if category.min_weight <= obj.weight <= category.max_weight:
-                                return f'{category.name} +{category.max_weight}'
-                            else:
-                                continue
-                        if category.max_weight is not None:
-                            if obj.weight < category.max_weight:
-                                return f'{category.name} -{category.max_weight}'
-                        elif category.min_weight is not None:
-                            if obj.weight >= category.min_weight:
-                                return f'{category.name} +{category.min_weight}'
-                        else:
-                            return category.name
-                    else:
-                        return category.name
-        return None
+    #                 if obj.weight is not None:
+    #                     if category.min_weight is not None and category.max_weight is not None:
+    #                         if category.min_weight <= obj.weight <= category.max_weight:
+    #                             return f'{category.name} +{category.max_weight}'
+    #                         else:
+    #                             continue
+    #                     if category.max_weight is not None:
+    #                         if obj.weight < category.max_weight:
+    #                             return f'{category.name} -{category.max_weight}'
+    #                     elif category.min_weight is not None:
+    #                         if obj.weight >= category.min_weight:
+    #                             return f'{category.name} +{category.min_weight}'
+    #                     else:
+    #                         return category.name
+    #                 else:
+    #                     return category.name
+    #     return None
 
 
 class NotAdminLikeTypeMembersSerializer(serializers.ModelSerializer):
@@ -489,10 +489,63 @@ class MonthlyMemberPaymentSerializer(serializers.ModelSerializer):
 
 
 class CreateMonthlyMemberPaymentSerializer(serializers.ModelSerializer):
+    amount = serializers.CharField(read_only=True)
+
+    customAmount = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        write_only=True
+    )
+
+    plan = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        write_only=True
+    )
+
+    is_default = serializers.BooleanField(
+        required=False,
+        write_only=True
+    )
 
     class Meta:
         model = models.MonthlyMemberPayment
-        fields = "__all__"
+        exclude = ["due_date", "paid", "paid_at"]
+
+    def validate(self, attrs):
+        if attrs.get("customAmount") and attrs.get("is_default"):
+            raise serializers.ValidationError(
+                "customAmount and is_default cannot be provided at the same time."
+            )
+        return attrs
+    
+    def create(self, validated_data):
+        custom_amount = validated_data.pop("customAmount", None)
+        is_default = validated_data.pop("is_default", False)
+        plan = validated_data.pop("plan", None)
+        old_member = validated_data.pop("member", False)
+
+        request = self.context["request"]
+
+        if is_default:
+            default_plan = MonthlyPaymentPlan.objects.get(
+                club_user=request.user,
+                is_default=True
+            )
+            amount = default_plan.amount
+        elif plan != None:
+            custom_plan = MonthlyPaymentPlan.objects.get(id=plan)
+            amount = custom_plan.amount
+        else:
+            amount = custom_amount or 0
+
+        cannonical = get_real_member(old_member)
+
+        return models.MonthlyMemberPayment.objects.create(
+            **validated_data,
+            member=cannonical,
+            amount=amount
+        )
 
 
 class PatchMonthlyMemberPaymentSerializer(serializers.ModelSerializer):

@@ -3,7 +3,8 @@ from django.contrib.auth import get_user_model
 
 from django.utils import timezone
 
-from registration.models import MonthlyMemberPaymentConfig, MonthlyPaymentPlan, MonthlyMemberPayment, Member
+from registration.models import MonthlyMemberPaymentConfig, MonthlyMemberPayment, Member
+from core.models import MonthlyPaymentPlan
 from core.models import Notification
 
 User = get_user_model()

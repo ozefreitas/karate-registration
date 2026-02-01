@@ -372,7 +372,7 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         event_age = get_comp_age(member.birth_date) if age_method == "true" else calc_age(age_method, member.birth_date, season)
 
         if not event.has_categories:
-            discipline.add_member(member)
+            discipline.add_member(member, None)
             return Response({"message": "Membro(s) adicionado(s) a esta Modalidade"}, status=status.HTTP_200_OK)
 
         # if targeted discipline has no categories, it is assumed that anyone can be registered
@@ -381,8 +381,8 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             if float(member.graduation) > 6:
                 return Response({"error": "Treinadores têm de ter graduação superior a 1º Dan!"}, status=status.HTTP_400_BAD_REQUEST)
             else:
-                discipline.add_member(member)
-                return Response({"message": "Treinador(es) adicionado(s) a este Evento"}, status=status.HTTP_200_OK)
+                discipline.add_member(member, None)
+                return Response({"message": "Treinador(es) adicionado(s) a este Evento."}, status=status.HTTP_200_OK)
         
         if chosen_category is not None and chosen_category != "":
             categories = discipline.categories.filter(id=chosen_category)
@@ -393,7 +393,7 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                                                     )
 
         if list(categories) == []:
-            return Response({"error": "Não existem Escalões que satisfaçam este(s) Membro(s)"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Não existem Escalões que satisfaçam este(s) Membro(s)."}, status=status.HTTP_400_BAD_REQUEST)
 
         if len(list(categories)) > 1:
             return Response({
@@ -402,53 +402,50 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 "category_ids": categories.values_list("id", flat=True)}, 
                 status=status.HTTP_200_OK)
 
-        for category in categories:
+        base_category = categories.get()
 
-            min_grad = float(category.min_grad) if category.min_grad is not None and category.min_grad != "" else None
-            max_grad = float(category.max_grad) if category.max_grad is not None and category.max_grad != "" else None
-            grad = float(member.graduation) if member.graduation is not None and member.graduation != "" else None
+        min_grad = float(base_category.min_grad) if base_category.min_grad is not None and base_category.min_grad != "" else None
+        max_grad = float(base_category.max_grad) if base_category.max_grad is not None and base_category.max_grad != "" else None
+        grad = float(member.graduation) if member.graduation is not None and member.graduation != "" else None
 
-            # Graduations
-            if min_grad is None and max_grad is None:
+        # Graduations
+        if min_grad is None and max_grad is None:
+            pass
+        if min_grad is not None and max_grad is not None:
+            if min_grad > grad > max_grad:
                 pass
-            if min_grad is not None and max_grad is not None:
-                if min_grad > grad > max_grad:
-                    pass
-                else:
-                    return Response({"error": "Graduação não está dentro dos limites estipulados para o Escalão"}, status=status.HTTP_400_BAD_REQUEST)
-            if max_grad is not None:
-                if grad < max_grad:
-                    return Response({"error": "Graduação máxima para este Escalão não respeitada"}, status=status.HTTP_400_BAD_REQUEST)
-            if min_grad is not None:
-                if grad > min_grad:
-                    return Response({"error": "Graduação mínima para este Escalão não respeitada"}, status=status.HTTP_400_BAD_REQUEST)
-                
-            # Weights
-            if category.min_weight is None and category.max_weight is None:  # category does not have any weight limit
-                discipline.add_member(member)
             else:
-                if member.weight is None:
-                    return Response({"status": "info", 
-                                        "message": "O escalão disponível para este Atleta pede que adicione um peso."}, 
-                                        status=status.HTTP_200_OK)
-                
-
-            if category.min_weight is not None and category.max_weight is not None:
-                if category.min_weight <= member.weight <= category.max_weight:
-                        discipline.add_member(member)
-                else:
-                    continue
-            if category.max_weight is not None:
-                if member.weight < category.max_weight:
-                    discipline.add_member(member)
-            if category.min_weight is not None:
-                if member.weight >= category.min_weight:
-                    discipline.add_member(member)
+                return Response({"error": "Graduação não está dentro dos limites estipulados para o Escalão."}, status=status.HTTP_400_BAD_REQUEST)
+        if max_grad is not None:
+            if grad < max_grad:
+                return Response({"error": "Graduação máxima para este Escalão não respeitada."}, status=status.HTTP_400_BAD_REQUEST)
+        if min_grad is not None:
+            if grad > min_grad:
+                return Response({"error": "Graduação mínima para este Escalão não respeitada."}, status=status.HTTP_400_BAD_REQUEST)
             
-        # if not success:
-        #     return Response({"error": "Idade do Atleta não permite inscrever nos Escalões disponíveis"}, status=status.HTTP_400_BAD_REQUEST)
+        # Weights
+        if base_category.min_weight is None and base_category.max_weight is None:  # category does not have any weight limit
+            discipline.add_member(member, base_category)
+        else:
+            if member.weight is None:
+                return Response({"status": "info", 
+                                    "message": "O escalão disponível para este Atleta pede que adicione um peso."}, 
+                                    status=status.HTTP_200_OK)
+            
 
-        return Response({"message": "Membro(s) adicionado(s) a esta Modalidade"}, status=status.HTTP_200_OK)
+        if base_category.min_weight is not None and base_category.max_weight is not None:
+            if base_category.min_weight <= member.weight <= base_category.max_weight:
+                    discipline.add_member(member, base_category)
+            else:
+                pass
+        if base_category.max_weight is not None:
+            if member.weight < base_category.max_weight:
+                discipline.add_member(member, base_category)
+        if base_category.min_weight is not None:
+            if member.weight >= base_category.min_weight:
+                discipline.add_member(member, base_category)
+
+        return Response({"message": "Membro adicionado a esta(s) Modalidade(s)."}, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["post"], url_path="delete_member", serializer_class=serializers.DeleteMemberSerializer)
     def delete_member(self, request, pk=None):
@@ -737,7 +734,7 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             return Response({"message": "Escalão(ões) removido(s) desta modalidade."}, status=status.HTTP_200_OK)
         except Category.DoesNotExist:
             return Response({"error": "Ocorreu um erro ao remover este Escalão."}, status=status.HTTP_404_NOT_FOUND)
-        
+
 
 class ActiveAnnouncementView(APIView):
     @extend_schema(description="Returns a list of currently active annoucements")
