@@ -43,21 +43,38 @@ class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     }
 
     def get_queryset(self):
-        user = self.request.user
-        if user.role in ["main_admin", "superuser", "single_admin"]:
-            # National-level user can see all Members
-            return self.queryset.filter(is_validated=True, member_type__in=["athlete", "student"])
+        if getattr(self, "swagger_fake_view", False):
+            return self.queryset.none()
 
-        if user.role in ["subed_club", "free_club"]:
-            # paying clubs user sees only their own club Members
+        user = self.request.user
+
+        # safety guard
+        if not user.is_authenticated:
+            return self.queryset.none()
+
+        role = getattr(user, "role", None)
+
+        if role in ["main_admin", "superuser", "single_admin"]:
+            return self.queryset.filter(
+                is_validated=True,
+                member_type__in=["athlete", "student"]
+            )
+
+        if role in ["subed_club", "free_club"]:
             return self.queryset.filter(club=user)
-        
+
         raise PermissionDenied("You do not have access to this data.")
 
+
     def get_serializer_class(self):
+        if getattr(self, "swagger_fake_view", False):
+            return registration_serializers.MembersSerializer
+
         user = self.request.user
+        role = getattr(user, "role", None)
+
         if self.action == "list":
-            if user.role in ["free_club", "subed_club"]:
+            if role in ["free_club", "subed_club"]:
                 if self.request.query_params.get("not_in_event"):
                     return registration_serializers.NotInEventMembersSerializer
                 elif self.request.query_params.get("coach_not_in_event"):
@@ -66,17 +83,19 @@ class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                     return registration_serializers.MembersSerializer
             else:
                 return registration_serializers.AdminMembersSerializer
+
         if self.action == "retrieve":
-            if user.role in ["free_club", "subed_club"]:
+            if role in ["free_club", "subed_club"]:
                 return registration_serializers.NotAdminLikeTypeMembersSerializer
             return registration_serializers.AdminLikeTypeMembersSerializer
 
         elif self.action == "create":
-            if user.role in ["free_club", "subed_club"]:
+            if role in ["free_club", "subed_club"]:
                 return registration_serializers.ClubsCreateMemberSerializer
             return registration_serializers.AdminCreateMemberSerializer
 
         return super().get_serializer_class()
+
     
     def perform_create(self, serializer):
         request_user = self.request.user

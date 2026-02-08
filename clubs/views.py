@@ -11,7 +11,6 @@ from core.views import MultipleSerializersMixIn
 
 from rest_framework import viewsets, filters, status
 from rest_framework.decorators import authentication_classes, permission_classes
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, action
@@ -39,30 +38,46 @@ class ClubsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         serializer.save(mother_acount=user)
     
 
+@extend_schema(
+    description="Returns member statistics per club",
+    responses=ClubSerializers.ClubMemberStatsSerializer(many=True),
+)
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, IsAdminRoleorHigher])
 def club_members(request):
-    data = User.objects.exclude(role__in=["main_admin", "superuser", "technician"])\
-                        .annotate(member_count=Count('member'),
-                                    student_count=Count(
-                                        Case(
-                                            When(member__member_type='student', then=1),
-                                            output_field=IntegerField(),
-                                        )
-                                    ),
-                                    coach_count=Count(
-                                        Case(
-                                            When(member__member_type='coach', then=1),
-                                            output_field=IntegerField(),
-                                        )
-                                    ),
-                                    athlete_count=Count(
-                                        Case(
-                                            When(member__member_type='athlete', then=1),
-                                            output_field=IntegerField(),
-                                        )
-                                    ),
-                                ).values('username', 'member_count', 'student_count', 'coach_count', 'athlete_count')
+    data = (
+        User.objects
+        .exclude(role__in=["main_admin", "superuser", "technician"])
+        .annotate(
+            member_count=Count('member'),
+            student_count=Count(
+                Case(
+                    When(member__member_type='student', then=1),
+                    output_field=IntegerField(),
+                )
+            ),
+            coach_count=Count(
+                Case(
+                    When(member__member_type='coach', then=1),
+                    output_field=IntegerField(),
+                )
+            ),
+            athlete_count=Count(
+                Case(
+                    When(member__member_type='athlete', then=1),
+                    output_field=IntegerField(),
+                )
+            ),
+        )
+        .values(
+            'username',
+            'member_count',
+            'student_count',
+            'coach_count',
+            'athlete_count'
+        )
+    )
+
     return Response(data)
 
 

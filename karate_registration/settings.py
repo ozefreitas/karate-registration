@@ -39,7 +39,8 @@ DEFAULT_FROM_EMAIL = 'jpsfreitas12@gmail.com'
 
 
 ALLOWED_HOSTS = ['karatescorappregistration.pythonanywhere.com', 
-                 "127.0.0.1", 
+                 "127.0.0.1",
+                 "web",
                  "localhost", 
                  "karate-registration.onrender.com",
                  "fight-tech.com"]
@@ -124,11 +125,18 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10
 }
 
+SPECTACULAR_SETTINGS = {
+    "TITLE": "FightTec API",
+    "DESCRIPTION": "Production API",
+    "VERSION": "1.0.0",
+    "ENUM_ADD_EXPLICIT_BLANK_NULL_CHOICE": False
+}
+
 from datetime import timedelta
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
-    "ROTATE_REFRESH_TOKENS": True,  # issue new refresh token each time
+    "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
 }
 

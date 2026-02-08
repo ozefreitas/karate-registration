@@ -343,15 +343,16 @@ class UserDetailView(views.APIView):
     
 
 class CustomAuthToken(ObtainAuthToken):
+    serializer_class = BaseSerializers.AuthLoginSerializer
+
     def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data,
-                                           context={'request': request})
+        serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        # Delete old token (if exists) and create new one
+        username = serializer.validated_data['username']
+        user = User.objects.get(username=username)
         Token.objects.filter(user=user).delete()
         token = Token.objects.create(user=user)
-        return Response({'token': token.key})
+        return Response(BaseSerializers.TokenSerializer({'token': token.key}).data)
     
 
 class LogoutView(views.APIView):

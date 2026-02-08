@@ -74,3 +74,11 @@ class CreateAllClubsSubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ClubSubscription
         fields = ["year"]
+
+
+class ClubMemberStatsSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    member_count = serializers.IntegerField()
+    student_count = serializers.IntegerField()
+    coach_count = serializers.IntegerField()
+    athlete_count = serializers.IntegerField()

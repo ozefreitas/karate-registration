@@ -23,13 +23,10 @@ from registration.utils.utils import get_comp_age, athlete_age
 from core.views import MultipleSerializersMixIn
 
 from rest_framework import viewsets, filters, status
-from rest_framework.decorators import authentication_classes, permission_classes
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from rest_framework. views import APIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, action
-from drf_spectacular.utils import extend_schema
 
 # Create your views here.
 
@@ -736,17 +733,13 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             return Response({"error": "Ocorreu um erro ao remover este Escalão."}, status=status.HTTP_404_NOT_FOUND)
 
 
-class ActiveAnnouncementView(APIView):
-    @extend_schema(description="Returns a list of currently active annoucements")
-    @permission_classes(IsAuthenticatedOrReadOnly)
-    def get(self, request):
-        announcements = Announcement.objects.filter(is_active=True).order_by('-created_at')
+class ActiveAnnouncementView(ListAPIView):
+    serializer_class = serializers.AnnouncementSerializer
+    pagination_class = None
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
-        if not announcements.exists():
-            return Response([])
-
-        serializer = serializers.AnnouncementSerializer(announcements, many=True)
-        return Response(serializer.data)
+    def get_queryset(self):
+        return Announcement.objects.filter(is_active=True).order_by("-created_at")
     
  # return Response({
             #     "id": announcement.id,

@@ -73,6 +73,11 @@ class TokenSerializer(serializers.Serializer):
     token = serializers.UUIDField()
 
 
+class AuthLoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
+
+
 class UsernameSerializer(serializers.Serializer):
     username = serializers.CharField()
 
