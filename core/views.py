@@ -207,6 +207,7 @@ class MemberValidationRequestViewSet(MultipleSerializersMixIn, viewsets.ModelVie
             ),
             target_member=member,
             club_user=member.club.parent,
+            can_remove=True
         )
 
 
@@ -239,7 +240,7 @@ class MemberValidationRequestViewSet(MultipleSerializersMixIn, viewsets.ModelVie
 
         try:
             Notification.objects.get(type="member_request", target_member=member, club_user=self.request.user).delete()
-        except:
+        except Exception:
             pass
 
 

@@ -569,6 +569,11 @@ class PatchMonthlyMemberPaymentSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 
+class MembersPaymentsStatusSerializer(serializers.Serializer):
+    number = serializers.IntegerField()
+    unpaid_members = serializers.IntegerField()
+
+
 ### Teams Serializer Classes
 
 class TeamsSerializer(serializers.ModelSerializer):
@@ -579,6 +584,8 @@ class TeamsSerializer(serializers.ModelSerializer):
     athlete5 = CompactMembersSerializer()
     team_size = serializers.SerializerMethodField()
     category = NameCategorySerializer()
+    disciplines = serializers.SerializerMethodField()
+    events = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Team
@@ -587,6 +594,12 @@ class TeamsSerializer(serializers.ModelSerializer):
     def get_team_size(self, obj):
         members = [obj.athlete1, obj.athlete2, obj.athlete3, obj.athlete4, obj.athlete5]
         return sum(1 for member in members if member is not None)
+    
+    def get_disciplines(self, obj):
+        return obj.disciplines_team.values_list("name", flat=True)
+    
+    def get_events(self, obj):
+        return obj.disciplines_team.values_list("event__name", flat=True).distinct()
 
 
 class CreateTeamSerializer(serializers.ModelSerializer):

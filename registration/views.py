@@ -1,5 +1,6 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db import transaction, IntegrityError
+from django.utils import timezone
 
 from .models import Member, Team, Classification, MonthlyMemberPayment, MonthlyMemberPaymentConfig
 from .filters import MembersFilters, MonthlyMemberPaymentFilters
@@ -18,6 +19,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
 
+from drf_spectacular.utils import extend_schema
 
 # views for the athlets registrations
 
@@ -222,6 +224,47 @@ class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 {"message": f"Eliminados {deleted_count} Membros"},
                 status=status.HTTP_200_OK
             )
+    
+    @extend_schema(
+        responses=registration_serializers.MembersPaymentsStatusSerializer
+    )
+    @action(detail=False, methods=['get'], url_path="members_payments_status")
+    def members_payments_status(self, request):
+        paying_members = Member.objects.filter(
+            club=request.user,
+            quotes_legible=True
+        ).values(
+            "first_name",
+            "last_name",
+            "birth_date",
+            "id_number"
+        ).distinct().count()
+
+        today = timezone.now()
+
+        if today.month == 1:
+            prev_month = 12
+            prev_year = today.year - 1
+        else:
+            prev_month = today.month - 1
+            prev_year = today.year
+
+        unpaid_members = Member.objects.filter(
+            club=request.user,
+            payments__year=prev_year,
+            payments__month=prev_month,
+            payments__paid=False
+        ).values(
+            "first_name",
+            "last_name",
+            "birth_date",
+            "id_number"
+        ).distinct().count()
+
+        return Response(
+            {"number": paying_members, "unpaid_members": unpaid_members},
+            status=status.HTTP_200_OK
+        )
     
     @action(detail=True, methods=['get'], url_path='unregistered_modalities/(?P<event_id>[^/.]+)')
     def unregistered_modalities(self, request, pk=None, event_id=None):

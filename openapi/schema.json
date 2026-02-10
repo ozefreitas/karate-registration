@@ -4658,6 +4658,37 @@
                 }
             }
         },
+        "/members/members_payments_status/": {
+            "get": {
+                "operationId": "members_members_payments_status_retrieve",
+                "tags": [
+                    "members"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MembersPaymentsStatus"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/monthly_member_payment_configs/": {
             "get": {
                 "operationId": "monthly_member_payment_configs_list",
@@ -8782,6 +8813,21 @@
                     "updated_by"
                 ]
             },
+            "MembersPaymentsStatus": {
+                "type": "object",
+                "properties": {
+                    "number": {
+                        "type": "integer"
+                    },
+                    "unpaid_members": {
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "number",
+                    "unpaid_members"
+                ]
+            },
             "MinGradEnum": {
                 "enum": [
                     "15",
@@ -10082,6 +10128,14 @@
                     "category": {
                         "$ref": "#/components/schemas/NameCategory"
                     },
+                    "disciplines": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "events": {
+                        "type": "string",
+                        "readOnly": true
+                    },
                     "gender": {
                         "allOf": [
                             {
@@ -10322,6 +10376,14 @@
                     "category": {
                         "$ref": "#/components/schemas/NameCategory"
                     },
+                    "disciplines": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "events": {
+                        "type": "string",
+                        "readOnly": true
+                    },
                     "gender": {
                         "allOf": [
                             {
@@ -10344,6 +10406,8 @@
                     "athlete4",
                     "athlete5",
                     "category",
+                    "disciplines",
+                    "events",
                     "gender",
                     "id",
                     "team_number",
