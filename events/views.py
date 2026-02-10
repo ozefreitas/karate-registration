@@ -11,7 +11,7 @@ import openpyxl
 
 from .filters import DisciplinesFilters, EventsFilters
 from clubs.models import ClubRatingAudit
-from .models import Event, Discipline, Announcement, DisciplineMember
+from .models import Event, Discipline, Announcement, DisciplineMember, DisciplineTeam
 from registration.models import Member, Team
 from core.permissions import IsAuthenticatedOrReadOnly, EventIndividualsPermission, EventPermission, IsAdminRoleorHigherForGET, IsAdminRoleorHigher
 from core.models import Category
@@ -21,6 +21,7 @@ from clubs.serializers import RatingSerializer
 from core.utils.utils import calc_age
 from registration.utils.utils import get_comp_age, athlete_age
 from core.views import MultipleSerializersMixIn
+from draw.models import Match, Bracket
 
 from rest_framework import viewsets, filters, status
 from rest_framework.permissions import IsAuthenticated
@@ -318,6 +319,30 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         wb.save(response)
 
         return response
+
+
+    @action(detail=True, methods=["get"], url_path="generate_draw", permission_classes=[IsAdminRoleorHigher])
+    def generate_draw(self, request, pk=None):
+        event = self.get_object()
+        disciplines = event.disciplines.exclude(is_coach=True)
+
+        for discipline in disciplines:
+            
+            registrations = discipline.teams.all() if discipline.is_team else discipline.individuals.all()
+            
+            for category in discipline.categories.all():
+
+                new_bracket = Bracket.objects.get_or_create(
+                                                            name=f'{discipline.name} {category.name} {category.gender}',
+                                                            category=category,
+                                                            discipline=discipline
+                                                            )
+                
+                for member_team in registrations:
+
+                    coiso = DisciplineMember.objects.filter(member=member_team, discipline=discipline).first()
+
+        return Response({"message": coiso.added_at})
     
 
 class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
