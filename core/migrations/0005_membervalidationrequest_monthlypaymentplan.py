@@ -30,17 +30,4 @@ class Migration(migrations.Migration):
                 'constraints': [models.UniqueConstraint(condition=models.Q(('status', 'pending')), fields=('member',), name='unique_pending_validation_request_per_member')],
             },
         ),
-        migrations.CreateModel(
-            name='MonthlyPaymentPlan',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=50)),
-                ('amount', models.DecimalField(decimal_places=2, max_digits=7)),
-                ('is_default', models.BooleanField(default=False)),
-                ('club_user', models.ForeignKey(limit_choices_to={'role': 'subed_club'}, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-            ],
-            options={
-                'constraints': [models.UniqueConstraint(condition=models.Q(('is_default', True)), fields=('club_user',), name='unique_default_plan_per_club')],
-            },
-        ),
     ]
