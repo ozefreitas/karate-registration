@@ -24,3 +24,7 @@ class CreateMatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Match
         fields = "__all__"
+
+
+class PatchMatchWinnerSerializer(serializers.Serializer):
+    winner = serializers.ChoiceField(choices=[1, 2])

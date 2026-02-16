@@ -196,26 +196,53 @@ class MemberValidationRequestViewSet(MultipleSerializersMixIn, viewsets.ModelVie
             raise PermissionDenied("You do not have permission to perform this action.")
 
         member = serializer.validated_data["member"]
+        request_type = serializer.validated_data["request_type"]
         real_member = get_real_member(member)
         serializer.save(requested_by=user, member=real_member)
 
-        Notification.objects.create(
-            type="member_request",
-            notification=(
-                f'O Membro {member.first_name} {member.last_name} '
-                f'está à espera de validação.'
-            ),
-            target_member=member,
-            club_user=member.club.parent,
-            can_remove=True
-        )
+        if request_type == "verify":
+            Notification.objects.create(
+                type="member_request",
+                notification=(
+                    f'O Membro {member.first_name} {member.last_name} do Clube {member.club.username} '
+                    f'está à espera de Validação.'
+                ),
+                target_member=member,
+                club_user=member.club.parent,
+                can_remove=True
+            )
+
+            try:
+                Notification.objects.get(type="member_updated", target_member=member, club_user=user).delete()
+            except Exception:
+                pass
+
+        elif request_type == "exams":
+            Notification.objects.create(
+                type="exam_prop",
+                notification=(
+                    f'O Clube {member.club.username} enviou uma Proposta de Exame para o Membro {member.first_name} {member.last_name}.'
+                ),
+                target_member=member,
+                club_user=member.club.parent,
+                can_remove=True
+            )
+
+            try:
+                Notification.objects.get(type="member_updated", target_member=member, club_user=user).delete()
+            except Exception:
+                pass
 
 
     def perform_update(self, serializer):
         instance = self.get_object()
         member = instance.member
+        member_club = member.club
+        status = serializer.validated_data["status"]
+        request_type = serializer.validated_data["request_type"]
+        admin_comment = serializer.validated_data["admin_comment"]
         others = get_identity_members(member, qs_object=True)
-        if serializer.validated_data["status"] == "approved":
+        if status == "approved" and request_type == "verify":
             if others.exists():
                 for other_member in others:
                     other_member.is_validated = True
@@ -224,22 +251,62 @@ class MemberValidationRequestViewSet(MultipleSerializersMixIn, viewsets.ModelVie
             member.is_validated = True
             member.updated_by = self.request.user
             member.save()
-        else:
-            member_club = member.club
-            if serializer.validated_data["admin_comment"] != "" or serializer.validated_data["admin_comment"] != None:
-                notification = f'A validação do Membro {member.first_name} {member.last_name} foi rejeitada pelo seu administrador com a seguinte mensagem: {serializer.validated_data["admin_comment"]}'
+
+            if admin_comment != "" or admin_comment != None:
+                notification = (f'A Validação do Membro {member.first_name} {member.last_name} foi aceite pelo seu administrador com a seguinte mensagem: {serializer.validated_data["admin_comment"]}.'
+                'Este Membro está agora "Verificado" e pode ser inscrito em Eventos e ser proposto a exames de graduação.')
             else:
-                notification = f'A validação do Membro {member.first_name} {member.last_name} foi rejeitada pelo seu administrador.'
+                notification = (f'A Validação do Membro {member.first_name} {member.last_name} foi aceite pelo seu administrador.'
+                'Este Membro está agora "Verificado" e pode ser inscrito em Eventos e ser proposto a exames de graduação.')
             Notification.objects.create(type="member_updated",
                                         notification=notification,
                                         target_member=member,
                                         can_remove=True,
                                         club_user=member_club,
                                         )
+
+        elif status != "approved" and request_type == "verify":
+            if admin_comment != "" or admin_comment != None:
+                notification = f'A Validação do Membro {member.first_name} {member.last_name} foi rejeitada pelo seu administrador com a seguinte mensagem: {serializer.validated_data["admin_comment"]}'
+            else:
+                notification = f'A Validação do Membro {member.first_name} {member.last_name} foi rejeitada pelo seu administrador.'
+            Notification.objects.create(type="member_updated",
+                                        notification=notification,
+                                        target_member=member,
+                                        can_remove=True,
+                                        club_user=member_club,
+                                        )
+        
+        elif status == "approved" and request_type == "exams":
+            if admin_comment != "" or admin_comment != None:
+                notification = (f'A Proposta de Exame do {member.first_name} {member.last_name} foi aceite pelo seu administrador com a seguinte mensagem: {serializer.validated_data["admin_comment"]}.'
+                'Este Membro transitou agora para a graduação proposta.')
+            else:
+                notification = (f'A Proposta de Exame {member.first_name} {member.last_name} foi aceite pelo seu administrador.'
+                'Este Membro transitou agora para a graduação proposta.')
+            Notification.objects.create(type="member_updated",
+                                        notification=notification,
+                                        target_member=member,
+                                        can_remove=True,
+                                        club_user=member_club,
+                                        )
+        
+        elif status != "approved" and request_type == "exams":
+            if admin_comment != "" or admin_comment != None:
+                notification = f'A Proposta de Exame do Membro {member.first_name} {member.last_name} foi rejeitada pelo seu administrador com a seguinte mensagem: {serializer.validated_data["admin_comment"]}'
+            else:
+                notification = f'A Proposta de Exame do Membro {member.first_name} {member.last_name} foi rejeitada pelo seu administrador.'
+            Notification.objects.create(type="member_updated",
+                                        notification=notification,
+                                        target_member=member,
+                                        can_remove=True,
+                                        club_user=member_club,
+                                        )
+
         serializer.save(reviewed_by=self.request.user, reviewed_at=timezone.now())
 
         try:
-            Notification.objects.get(type="member_request", target_member=member, club_user=self.request.user).delete()
+            Notification.objects.get(type="member_request", target_member=member, club_user=member_club).delete()
         except Exception:
             pass
 

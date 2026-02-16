@@ -35,6 +35,11 @@ class Member(models.Model):
         COACH = "coach", "Coach"
 
     id = models.CharField(primary_key=True, max_length=10, unique=True, editable=False)
+    profile_image = models.ImageField(
+        upload_to="members/profile_images/",
+        blank=True,
+        null=True
+    )
     member_type = models.CharField(max_length=16, choices=MEMBER_TYPE.choices, default=MEMBER_TYPE.ATHLETE)
     first_name = models.CharField("Primeiro Nome", max_length=200)
     last_name = models.CharField("Último Nome", max_length=200)

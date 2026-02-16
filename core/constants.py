@@ -62,3 +62,10 @@ ENCOUNTERS = {
         "exames": "Sessão de Exames",
         "seminario": "Seminário"
     }
+
+ROUNDS = {
+    "final": "Final",
+    "semi": "Semi-Final",
+    "quartos": "Quartos-Final",
+    "oitavos": "Oitavos-Final"
+}

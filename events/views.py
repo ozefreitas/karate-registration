@@ -1,6 +1,5 @@
 from django.conf import settings
 from django_filters.rest_framework import DjangoFilterBackend
-from django.db.models import Count
 from django.utils import timezone
 from django.http import HttpResponse
 from django.db.models import Q
@@ -8,13 +7,14 @@ from decouple import config
 import statistics
 from datetime import timedelta, datetime, date
 import openpyxl
+import math
 
 from .filters import DisciplinesFilters, EventsFilters
 from clubs.models import ClubRatingAudit
 from .models import Event, Discipline, Announcement, DisciplineMember, DisciplineTeam
 from registration.models import Member, Team
 from core.permissions import IsAuthenticatedOrReadOnly, EventIndividualsPermission, EventPermission, IsAdminRoleorHigherForGET, IsAdminRoleorHigher
-from core.models import Category
+from core.models import Category, Notification
 from events import serializers
 from registration import serializers as registrationSerializers
 from clubs.serializers import RatingSerializer
@@ -22,12 +22,14 @@ from core.utils.utils import calc_age
 from registration.utils.utils import get_comp_age, athlete_age
 from core.views import MultipleSerializersMixIn
 from draw.models import Match, Bracket
+from registration.utils.utils import next_power_of_2
 
 from rest_framework import viewsets, filters, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, action
+from rest_framework.decorators import action
+from drf_spectacular.utils import extend_schema
 
 # Create your views here.
 
@@ -317,33 +319,185 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             f'attachment; filename="event_{event.id}_members.xlsx"'
         )
         wb.save(response)
-
         return response
 
 
-    @action(detail=True, methods=["get"], url_path="generate_draw", permission_classes=[IsAdminRoleorHigher])
+    @extend_schema(
+        request=serializers.GenerateDrawRequestSerializer,
+        responses=serializers.GenerateDrawResponseSerializer,
+    )
+    @action(
+        detail=True,
+        methods=["post"],
+        url_path="generate_draw",
+        permission_classes=[IsAdminRoleorHigher]
+    )
     def generate_draw(self, request, pk=None):
         event = self.get_object()
         disciplines = event.disciplines.exclude(is_coach=True)
 
+        serializer = serializers.GenerateDrawRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        to_deletion = Bracket.objects.filter(event=event)
+        for to_delete in to_deletion:
+            to_delete.delete()
+
         for discipline in disciplines:
             
-            registrations = discipline.teams.all() if discipline.is_team else discipline.individuals.all()
-            
             for category in discipline.categories.all():
-
-                new_bracket = Bracket.objects.get_or_create(
-                                                            name=f'{discipline.name} {category.name} {category.gender}',
-                                                            category=category,
-                                                            discipline=discipline
-                                                            )
                 
-                for member_team in registrations:
+                # Retrieves all registrations for the current category
+                category_registrations = DisciplineMember.objects.filter(
+                    category=category,
+                    discipline=discipline
+                ).order_by("id")
 
-                    coiso = DisciplineMember.objects.filter(member=member_team, discipline=discipline).first()
+                registrations = list(category_registrations)
+                total_players = len(registrations)
 
-        return Response({"message": coiso.added_at})
+                # Categories with less than 2 registration will not take place, so proceed to the next category
+                if len(registrations) < 2:
+                    continue
+
+                new_bracket = Bracket.objects.create(
+                                                    name=f'{discipline.name} {category.name} {category.gender}',
+                                                    category=category,
+                                                    discipline=discipline,
+                                                    event=event
+                                                    )
+
+                bracket_size = next_power_of_2(total_players)
+                total_rounds = int(math.log2(bracket_size))
+
+                for round_number in range(total_rounds):
+                    matches_in_round = bracket_size // (2 ** (round_number + 1))
+
+                    for match_number in range(1, matches_in_round + 1):
+                        Match.objects.create(
+                            bracket=new_bracket,
+                            round_number=round_number,
+                            match_number=match_number
+                        )
+
+                first_round_matches = Match.objects.filter(
+                    bracket=new_bracket,
+                    round_number=0
+                ).order_by("match_number")
+
+                reg_index = 0
+
+                for match in first_round_matches:
+                    if reg_index < total_players:
+                        match.contender_1 = registrations[reg_index].member
+                        reg_index += 1
+
+                    if reg_index < total_players:
+                        match.contender_2 = registrations[reg_index].member
+                        reg_index += 1
+
+                    match.save()
+
+                for match in first_round_matches:
+                    if match.contender_1 and not match.contender_2:
+                        match.winner = match.contender_1
+                        match.save()
+                        match.advance_winner()
+
+                    elif match.contender_2 and not match.contender_1:
+                        match.winner = match.contender_2
+                        match.save()
+                        match.advance_winner()
+
+        # remove previous notification for available draw for this event
+        previous_notifications = Notification.objects.filter(type__in=["draw_available", "draw_patched"], target_event=event)
+        for previous_notification in previous_notifications:
+            previous_notification.delete()
+
+        if serializer.validated_data["notificate"]:
+            children_acounts = request.user.children.exclude(role="technician")
+        
+            for children in children_acounts:
+                Notification.objects.create(
+                                    notification=f'O sorteio para o Evento {event.name} foi criado e pode agora ser consultado.',
+                                    type="draw_available",
+                                    target_event=event,
+                                    club_user=children,
+                                    can_remove=True
+                                )
+
+        return Response(
+                    {"message": "Sorteio gerado com sucesso."},
+                    status=status.HTTP_200_OK
+                 )
     
+
+    @action(
+        detail=True,
+        methods=["post"],
+        url_path="generate_draw_pdf",
+        permission_classes=[IsAdminRoleorHigher]
+    )
+    def generate_draw_pdf(self, request, pk=None):
+        event = self.get_object()
+        disciplines = event.disciplines.all()
+        age_method = config('AGE_CALC_REF')
+
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Members"
+        
+        response = HttpResponse(
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        response["Content-Disposition"] = (
+            f'attachment; filename="event_{event.id}_members.xlsx"'
+        )
+        wb.save(response)
+        return response
+    
+
+    @extend_schema(
+        responses=serializers.GenerateDrawResponseSerializer,
+    )
+    @action(
+        detail=True, 
+        methods=["delete"], 
+        url_path="delete_draw", 
+        permission_classes=[IsAdminRoleorHigher]
+        )
+    def delete_draw(self, request, pk=None):
+        event = self.get_object()
+
+        brackets = event.brackets.all()
+
+        if len(brackets) == 0:
+            return Response({"message": "Sorteio não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+        for bracket in brackets:
+            bracket.delete()
+        
+        children_acounts = request.user.children.exclude(role="technician")
+
+        # remove previous notification for available draw for this event
+        previous_notifications = Notification.objects.filter(type="draw_available", target_event=event)
+        for previous_notification in previous_notifications:
+            previous_notification.delete()
+
+        for children in children_acounts:
+            Notification.objects.create(
+                                        notification=f'O sorteio para o Evento {event.name} foi eliminado.',
+                                        target_event=event,
+                                        type="draw_patched",
+                                        can_remove=True,
+                                        club_user=children
+                                    )
+
+        return Response(
+                {"message": "Sorteio eliminado."},
+                status=status.HTTP_200_OK
+            )
+
 
 class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Discipline.objects.all().order_by("name")

@@ -16,14 +16,14 @@ class Bracket(models.Model):
     }
 
     name = models.CharField("Prova", max_length=100)
-    event=models.ForeignKey(Event, on_delete=models.CASCADE, verbose_name="Evento")
+    event=models.ForeignKey(Event, on_delete=models.CASCADE, verbose_name="Evento", related_name="brackets")
     discipline = models.ForeignKey(Discipline, on_delete=models.CASCADE, verbose_name="Modalidade")
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name="Escalão")
     draw_type = models.CharField("Tipo", choices=DRAW_TYPES, max_length=16, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.name
+        return f'{self.name} - {self.event.name} {self.event.season}'
     
 
 class Match(models.Model):
@@ -38,5 +38,75 @@ class Match(models.Model):
     class Meta:
         unique_together = ['bracket', 'contender_1', 'contender_2']
 
+    def set_winner(self, winner):
+        if self.winner:
+            raise ValueError("Winner already set.")
+
+        if winner not in [1, 2]:
+            raise ValueError("Winner must be either 1 or 2.")
+
+        self.winner = self.contender_1 if winner == 1 else self.contender_2
+        self.save()
+
+        self.advance_winner()
+    
+    def advance_winner(self):
+        """
+        When this match gets a winner,
+        try to create/update next round match.
+        """
+        if not self.winner:
+            return
+
+        bracket = self.bracket
+        current_round = self.round_number
+        current_match_number = self.match_number
+
+        # find paired match
+        if current_match_number % 2 == 1:
+            pair_number = current_match_number + 1
+            is_first_in_pair = True
+        else:
+            pair_number = current_match_number - 1
+            is_first_in_pair = False
+
+        try:
+            pair_match = Match.objects.get(
+                bracket=bracket,
+                round_number=current_round,
+                match_number=pair_number
+            )
+        except Match.DoesNotExist:
+            return  # no pair yet
+
+        # only continue if both matches have winners
+        if not pair_match.winner:
+            return
+
+        # next round info
+        next_round = current_round + 1
+        next_match_number = (min(current_match_number, pair_number) + 1) // 2
+
+        # Gets the match
+        next_match, _ = Match.objects.get_or_create(
+            bracket=bracket,
+            round_number=next_round,
+            match_number=next_match_number,
+            defaults={
+                "contender_1": None,
+                "contender_2": None,
+            }
+        )
+
+        # assign contenders
+        if is_first_in_pair:
+            next_match.contender_1 = self.winner
+            next_match.contender_2 = pair_match.winner
+        else:
+            next_match.contender_1 = pair_match.winner
+            next_match.contender_2 = self.winner
+
+        next_match.save()
+
     def __str__(self):
-        return f"{self.contender_1} vs {self.contender_2} (Round {self.round_number})"
+        return f'{self.bracket.discipline.name} {self.bracket.category.name} {self.bracket.category.gender} | {self.contender_1.first_name if self.contender_1 is not None else "bye"} {self.contender_1.last_name if self.contender_1 is not None else ""} vs {self.contender_2.first_name if self.contender_2 is not None else "bye"} {self.contender_2.last_name if self.contender_2 is not None else ""} | (Round {self.round_number})'

@@ -176,11 +176,14 @@ class Notification(models.Model):
         CREATE_MEMBER = "create_member", "Create Member"
         MEMBER_UPDATED = "member_updated", "Member Updated"
         MEMBER_REQUEST = "member_request", "Member Request"
+        EXAM_PROP = "exam_prop", "Exam Prop"
         RATE_EVENT = "rate_event", "Rate Event"
         REGISTRATIONS_CLOSING = "registrations_closing", "Registrations Closing"
         REGISTRATIONS_CLOSE = "registrations_close", "Registrations Close"
         CLASSIFICATIONS_AVAILABLE = "classifications_available", "Classifications Available"
         OPEN_REGISTRATIONS = "open_registrations", "Open Registrations"
+        DRAW_AVAILABLE = "draw_available", "Draw Available"
+        DRAW_PATCHED = "draw_patched", "Draw Patched"
         PAYMENT_AVAILABLE = "payment_available", "Payment Available"
         PAYMENT_OVERDUE = "payment_overdue", "Payment Overdue"
         ADMINISTRATIVE = "administrative", "Administrative"
@@ -241,6 +244,11 @@ class MonthlyPaymentPlan(models.Model):
 
 class MemberValidationRequest(models.Model):
 
+    class REQUEST_TYPE(models.TextChoices):
+        GENERAL = 'general', 'General'
+        VERIFY = 'verify', 'Verify'
+        EXAMS = 'exams', 'Exams'
+
     class STATUS(models.TextChoices):
         PENDING = 'pending', 'Pending'
         APPROVED = 'approved', "Approved"
@@ -266,6 +274,12 @@ class MemberValidationRequest(models.Model):
         blank=True,
         related_name='reviewed_member_requests',
         limit_choices_to={'role': 'main_admin'}
+    )
+
+    request_type = models.CharField(
+        max_length=10,
+        choices=REQUEST_TYPE,
+        default=REQUEST_TYPE.GENERAL
     )
 
     status = models.CharField(

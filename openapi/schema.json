@@ -127,21 +127,10 @@
                 "operationId": "bracket_list",
                 "parameters": [
                     {
-                        "name": "page",
-                        "required": false,
                         "in": "query",
-                        "description": "A page number within the paginated result set.",
+                        "name": "event",
                         "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "name": "page_size",
-                        "required": false,
-                        "in": "query",
-                        "description": "Number of results to return per page.",
-                        "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     }
                 ],
@@ -164,7 +153,10 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/PaginatedBracketList"
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Bracket"
+                                    }
                                 }
                             }
                         },
@@ -3241,6 +3233,41 @@
                 }
             }
         },
+        "/events/{id}/delete_draw/": {
+            "delete": {
+                "operationId": "events_delete_draw_destroy",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "A unique value identifying this event.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "events"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
         "/events/{id}/delete_member/": {
             "post": {
                 "operationId": "events_delete_member_create",
@@ -3320,6 +3347,130 @@
                 "tags": [
                     "events"
                 ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Events"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/events/{id}/generate_draw/": {
+            "post": {
+                "operationId": "events_generate_draw_create",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "A unique value identifying this event.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "events"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GenerateDrawRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GenerateDrawRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GenerateDrawRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GenerateDrawResponse"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/events/{id}/generate_draw_pdf/": {
+            "post": {
+                "operationId": "events_generate_draw_pdf_create",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "A unique value identifying this event.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "events"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Events"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Events"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Events"
+                            }
+                        }
+                    },
+                    "required": true
+                },
                 "security": [
                     {
                         "basicAuth": []
@@ -3865,6 +4016,67 @@
                 "responses": {
                     "204": {
                         "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/match/{id}/set_winner/": {
+            "patch": {
+                "operationId": "match_set_winner_partial_update",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this match.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "match"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedPatchMatchWinner"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedPatchMatchWinner"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedPatchMatchWinner"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PatchMatchWinner"
+                                }
+                            }
+                        },
+                        "description": ""
                     }
                 }
             }
@@ -4578,6 +4790,67 @@
                 "tags": [
                     "members"
                 ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Members"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/members/{id}/upload-image/": {
+            "post": {
+                "operationId": "members_upload_image_create",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "A unique value identifying this member.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "members"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UploadMemberProfilePicture"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UploadMemberProfilePicture"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UploadMemberProfilePicture"
+                            }
+                        }
+                    }
+                },
                 "security": [
                     {
                         "basicAuth": []
@@ -7231,7 +7504,7 @@
                         "type": "string"
                     },
                     "type": {
-                        "$ref": "#/components/schemas/Type736Enum"
+                        "$ref": "#/components/schemas/TypeEnum"
                     },
                     "request_acount": {
                         "type": "string",
@@ -7316,40 +7589,38 @@
                         "title": "Prova",
                         "maxLength": 100
                     },
-                    "type": {
+                    "draw_type": {
                         "allOf": [
                             {
-                                "$ref": "#/components/schemas/Type85fEnum"
+                                "$ref": "#/components/schemas/DrawTypeEnum"
                             }
                         ],
                         "nullable": true,
-                        "title": "Peso"
-                    },
-                    "gender": {
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/GenderEnum"
-                            }
-                        ],
-                        "title": "Género"
+                        "title": "Tipo"
                     },
                     "created_at": {
                         "type": "string",
                         "format": "date-time",
                         "readOnly": true
                     },
+                    "event": {
+                        "type": "string",
+                        "title": "Evento"
+                    },
                     "discipline": {
-                        "type": "integer"
+                        "type": "integer",
+                        "title": "Modalidade"
                     },
                     "category": {
-                        "type": "integer"
+                        "type": "integer",
+                        "title": "Escalão"
                     }
                 },
                 "required": [
                     "category",
                     "created_at",
                     "discipline",
-                    "gender",
+                    "event",
                     "id",
                     "name"
                 ]
@@ -7786,40 +8057,38 @@
                         "title": "Prova",
                         "maxLength": 100
                     },
-                    "type": {
+                    "draw_type": {
                         "allOf": [
                             {
-                                "$ref": "#/components/schemas/Type85fEnum"
+                                "$ref": "#/components/schemas/DrawTypeEnum"
                             }
                         ],
                         "nullable": true,
-                        "title": "Peso"
-                    },
-                    "gender": {
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/GenderEnum"
-                            }
-                        ],
-                        "title": "Género"
+                        "title": "Tipo"
                     },
                     "created_at": {
                         "type": "string",
                         "format": "date-time",
                         "readOnly": true
                     },
+                    "event": {
+                        "type": "string",
+                        "title": "Evento"
+                    },
                     "discipline": {
-                        "type": "integer"
+                        "type": "integer",
+                        "title": "Modalidade"
                     },
                     "category": {
-                        "type": "integer"
+                        "type": "integer",
+                        "title": "Escalão"
                     }
                 },
                 "required": [
                     "category",
                     "created_at",
                     "discipline",
-                    "gender",
+                    "event",
                     "id",
                     "name"
                 ]
@@ -8155,11 +8424,13 @@
                     "bracket": {
                         "type": "integer"
                     },
-                    "athlete_red": {
-                        "type": "string"
+                    "contender_1": {
+                        "type": "string",
+                        "nullable": true
                     },
-                    "athlete_blue": {
-                        "type": "string"
+                    "contender_2": {
+                        "type": "string",
+                        "nullable": true
                     },
                     "winner": {
                         "type": "string",
@@ -8167,8 +8438,6 @@
                     }
                 },
                 "required": [
-                    "athlete_blue",
-                    "athlete_red",
                     "bracket",
                     "created_at",
                     "id",
@@ -8184,6 +8453,9 @@
                     },
                     "member": {
                         "type": "string"
+                    },
+                    "request_type": {
+                        "$ref": "#/components/schemas/RequestTypeEnum"
                     }
                 },
                 "required": [
@@ -8272,7 +8544,7 @@
                         "type": "string"
                     },
                     "type": {
-                        "$ref": "#/components/schemas/Type736Enum"
+                        "$ref": "#/components/schemas/TypeEnum"
                     },
                     "payment_object": {
                         "$ref": "#/components/schemas/PaymentObjectEnum"
@@ -8432,6 +8704,15 @@
                     "name",
                     "teams"
                 ]
+            },
+            "DrawTypeEnum": {
+                "enum": [
+                    "Liga",
+                    "Torneio/Finais",
+                    "Misto"
+                ],
+                "type": "string",
+                "description": "* `Liga` - Liga\n* `Torneio/Finais` - Torneio/Finais\n* `Misto` - Torneio"
             },
             "EncounterTypeEnum": {
                 "enum": [
@@ -8606,6 +8887,46 @@
                 "type": "string",
                 "description": "* `Masculino` - Masculino\n* `Feminino` - Feminino\n* `Misto` - Misto"
             },
+            "GenerateDrawRequest": {
+                "type": "object",
+                "properties": {
+                    "splitClubs": {
+                        "type": "boolean"
+                    },
+                    "splitFavourites": {
+                        "type": "boolean"
+                    },
+                    "format": {
+                        "type": "string"
+                    },
+                    "maxMembersPerGroup": {
+                        "type": "string"
+                    },
+                    "minMembersPerGroup": {
+                        "type": "string"
+                    },
+                    "notificate": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "format",
+                    "notificate",
+                    "splitClubs",
+                    "splitFavourites"
+                ]
+            },
+            "GenerateDrawResponse": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "message"
+                ]
+            },
             "GenerateToken": {
                 "type": "object",
                 "properties": {
@@ -8648,11 +8969,13 @@
                     "bracket": {
                         "type": "integer"
                     },
-                    "athlete_red": {
-                        "type": "string"
+                    "contender_1": {
+                        "type": "string",
+                        "nullable": true
                     },
-                    "athlete_blue": {
-                        "type": "string"
+                    "contender_2": {
+                        "type": "string",
+                        "nullable": true
                     },
                     "winner": {
                         "type": "string",
@@ -8660,8 +8983,6 @@
                     }
                 },
                 "required": [
-                    "athlete_blue",
-                    "athlete_red",
                     "bracket",
                     "created_at",
                     "id",
@@ -8721,6 +9042,9 @@
                     "member_birth_date": {
                         "type": "string",
                         "readOnly": true
+                    },
+                    "request_type": {
+                        "$ref": "#/components/schemas/RequestTypeEnum"
                     },
                     "status": {
                         "$ref": "#/components/schemas/StatusEnum"
@@ -9005,7 +9329,7 @@
                         "type": "string"
                     },
                     "type": {
-                        "$ref": "#/components/schemas/Type736Enum"
+                        "$ref": "#/components/schemas/TypeEnum"
                     },
                     "request_acount": {
                         "type": "string",
@@ -9066,37 +9390,6 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/AllClassifications"
-                        }
-                    }
-                }
-            },
-            "PaginatedBracketList": {
-                "type": "object",
-                "required": [
-                    "count",
-                    "results"
-                ],
-                "properties": {
-                    "count": {
-                        "type": "integer",
-                        "example": 123
-                    },
-                    "next": {
-                        "type": "string",
-                        "nullable": true,
-                        "format": "uri",
-                        "example": "http://api.example.org/accounts/?page=4"
-                    },
-                    "previous": {
-                        "type": "string",
-                        "nullable": true,
-                        "format": "uri",
-                        "example": "http://api.example.org/accounts/?page=2"
-                    },
-                    "results": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Bracket"
                         }
                     }
                 }
@@ -9462,6 +9755,17 @@
                     }
                 }
             },
+            "PatchMatchWinner": {
+                "type": "object",
+                "properties": {
+                    "winner": {
+                        "$ref": "#/components/schemas/WinnerEnum"
+                    }
+                },
+                "required": [
+                    "winner"
+                ]
+            },
             "PatchMemberValidationRequest": {
                 "type": "object",
                 "properties": {
@@ -9470,6 +9774,9 @@
                     },
                     "admin_comment": {
                         "type": "string"
+                    },
+                    "request_type": {
+                        "$ref": "#/components/schemas/RequestTypeEnum"
                     }
                 }
             },
@@ -9542,33 +9849,31 @@
                         "title": "Prova",
                         "maxLength": 100
                     },
-                    "type": {
+                    "draw_type": {
                         "allOf": [
                             {
-                                "$ref": "#/components/schemas/Type85fEnum"
+                                "$ref": "#/components/schemas/DrawTypeEnum"
                             }
                         ],
                         "nullable": true,
-                        "title": "Peso"
-                    },
-                    "gender": {
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/GenderEnum"
-                            }
-                        ],
-                        "title": "Género"
+                        "title": "Tipo"
                     },
                     "created_at": {
                         "type": "string",
                         "format": "date-time",
                         "readOnly": true
                     },
+                    "event": {
+                        "type": "string",
+                        "title": "Evento"
+                    },
                     "discipline": {
-                        "type": "integer"
+                        "type": "integer",
+                        "title": "Modalidade"
                     },
                     "category": {
-                        "type": "integer"
+                        "type": "integer",
+                        "title": "Escalão"
                     }
                 }
             },
@@ -9881,11 +10186,13 @@
                     "bracket": {
                         "type": "integer"
                     },
-                    "athlete_red": {
-                        "type": "string"
+                    "contender_1": {
+                        "type": "string",
+                        "nullable": true
                     },
-                    "athlete_blue": {
-                        "type": "string"
+                    "contender_2": {
+                        "type": "string",
+                        "nullable": true
                     },
                     "winner": {
                         "type": "string",
@@ -10010,7 +10317,7 @@
                         "type": "string"
                     },
                     "type": {
-                        "$ref": "#/components/schemas/Type736Enum"
+                        "$ref": "#/components/schemas/TypeEnum"
                     },
                     "request_acount": {
                         "type": "string",
@@ -10045,6 +10352,14 @@
                     }
                 }
             },
+            "PatchedPatchMatchWinner": {
+                "type": "object",
+                "properties": {
+                    "winner": {
+                        "$ref": "#/components/schemas/WinnerEnum"
+                    }
+                }
+            },
             "PatchedPatchMemberValidationRequest": {
                 "type": "object",
                 "properties": {
@@ -10053,6 +10368,9 @@
                     },
                     "admin_comment": {
                         "type": "string"
+                    },
+                    "request_type": {
+                        "$ref": "#/components/schemas/RequestTypeEnum"
                     }
                 }
             },
@@ -10266,6 +10584,15 @@
                     "username_or_email"
                 ]
             },
+            "RequestTypeEnum": {
+                "enum": [
+                    "general",
+                    "verify",
+                    "exams"
+                ],
+                "type": "string",
+                "description": "* `general` - General\n* `verify` - Verify\n* `exams` - Exams"
+            },
             "RequestedAcount": {
                 "type": "object",
                 "properties": {
@@ -10466,7 +10793,7 @@
                     "refresh"
                 ]
             },
-            "Type736Enum": {
+            "TypeEnum": {
                 "enum": [
                     "none",
                     "request",
@@ -10474,11 +10801,14 @@
                     "create_member",
                     "member_updated",
                     "member_request",
+                    "exam_prop",
                     "rate_event",
                     "registrations_closing",
                     "registrations_close",
                     "classifications_available",
                     "open_registrations",
+                    "draw_available",
+                    "draw_patched",
                     "payment_available",
                     "payment_overdue",
                     "administrative",
@@ -10486,16 +10816,7 @@
                     "danger"
                 ],
                 "type": "string",
-                "description": "* `none` - None\n* `request` - Request\n* `reset` - Reset\n* `create_member` - Create Member\n* `member_updated` - Member Updated\n* `member_request` - Member Request\n* `rate_event` - Rate Event\n* `registrations_closing` - Registrations Closing\n* `registrations_close` - Registrations Close\n* `classifications_available` - Classifications Available\n* `open_registrations` - Open Registrations\n* `payment_available` - Payment Available\n* `payment_overdue` - Payment Overdue\n* `administrative` - Administrative\n* `system` - System\n* `danger` - Danger"
-            },
-            "Type85fEnum": {
-                "enum": [
-                    "Liga",
-                    "Torneio/Finais",
-                    "Misto"
-                ],
-                "type": "string",
-                "description": "* `Liga` - Liga\n* `Torneio/Finais` - Torneio/Finais\n* `Misto` - Torneio"
+                "description": "* `none` - None\n* `request` - Request\n* `reset` - Reset\n* `create_member` - Create Member\n* `member_updated` - Member Updated\n* `member_request` - Member Request\n* `exam_prop` - Exam Prop\n* `rate_event` - Rate Event\n* `registrations_closing` - Registrations Closing\n* `registrations_close` - Registrations Close\n* `classifications_available` - Classifications Available\n* `open_registrations` - Open Registrations\n* `draw_available` - Draw Available\n* `draw_patched` - Draw Patched\n* `payment_available` - Payment Available\n* `payment_overdue` - Payment Overdue\n* `administrative` - Administrative\n* `system` - System\n* `danger` - Danger"
             },
             "UpdateClubSubscriptionAmount": {
                 "type": "object",
@@ -10751,6 +11072,15 @@
                     "modified_date"
                 ]
             },
+            "UploadMemberProfilePicture": {
+                "type": "object",
+                "properties": {
+                    "profile_image": {
+                        "type": "string",
+                        "format": "uri"
+                    }
+                }
+            },
             "Username": {
                 "type": "object",
                 "properties": {
@@ -10787,6 +11117,14 @@
                     "id",
                     "username"
                 ]
+            },
+            "WinnerEnum": {
+                "enum": [
+                    1,
+                    2
+                ],
+                "type": "integer",
+                "description": "* `1` - 1\n* `2` - 2"
             }
         },
         "securitySchemes": {

@@ -1,6 +1,8 @@
 from datetime import datetime
 from registration.models import Member
 from core.utils.utils import calc_age
+import math
+
 
 def get_comp_age(date_of_birth: datetime) -> int:
     """Function that return the current age of an athlete, in real time
@@ -78,3 +80,7 @@ def athlete_age(member, age_method, season):
         if age_method == "true"
         else calc_age(age_method, member.birth_date, season)
     )
+
+
+def next_power_of_2(n):
+    return 1 if n == 0 else 2 ** math.ceil(math.log2(n))

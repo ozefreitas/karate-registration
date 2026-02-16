@@ -54,13 +54,13 @@ class MemberValidationRequestSerializer(serializers.ModelSerializer):
 class CreateMemberValidationRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = MemberValidationRequest
-        fields = ["message", "member"]
+        fields = ["message", "member", "request_type"]
 
 
 class PatchMemberValidationRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = MemberValidationRequest
-        fields = ["status", "admin_comment"]
+        fields = ["status", "admin_comment", "request_type"]
 
 
 class GenerateTokenSerializer(serializers.ModelSerializer):

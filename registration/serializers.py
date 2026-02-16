@@ -18,6 +18,7 @@ class MembersSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     age = serializers.SerializerMethodField()
     request_status = serializers.SerializerMethodField()
+    exam_request_status = serializers.SerializerMethodField()
     updated_by = UsersSerializer()
     current_month_payment_status = serializers.SerializerMethodField()
     past_month_payment_status = serializers.SerializerMethodField()
@@ -33,6 +34,7 @@ class MembersSerializer(serializers.ModelSerializer):
                   "current_month_payment_status", 
                   "past_month_payment_status", 
                   "request_status",
+                  "exam_request_status",
                   "is_validated",
                   "weight")
 
@@ -46,7 +48,21 @@ class MembersSerializer(serializers.ModelSerializer):
     def get_request_status(self, obj):
         try:
             real = get_real_member(obj)
-            ola = real.validation_requests.all()
+            ola = real.validation_requests.filter(request_type="verify")
+            for coczinhos in ola:
+                if coczinhos.status == "approved":
+                    return "approved"
+                elif coczinhos.status == "pending":
+                    return "pending"
+                else:
+                    return "rejected"
+        except MemberValidationRequest.DoesNotExist:
+            return None
+
+    def get_exam_request_status(self, obj):
+        try:
+            real = get_real_member(obj)
+            ola = real.validation_requests.filter(request_type="exams")
             for coczinhos in ola:
                 if coczinhos.status == "approved":
                     return "approved"
@@ -323,6 +339,14 @@ class NotInEventMembersSerializer(serializers.ModelSerializer):
                 
         return None
     
+
+class UploadMemberProfilePictureSerializer(serializers.Serializer):
+    profile_image = serializers.ImageField(required=False)
+
+    class Meta:
+        model = models.Member
+        fields = "__all__"
+
 
 class ClubsCreateMemberSerializer(serializers.ModelSerializer):
     class Meta:

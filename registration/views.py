@@ -286,6 +286,24 @@ class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         serializer = event_serializers.DisciplinesCompactSerializer(unregistered, many=True)
         return Response(serializer.data)
     
+    @extend_schema(request=registration_serializers.UploadMemberProfilePictureSerializer)
+    @action(detail=True, methods=["post"], url_path="upload-image")
+    def upload_image(self, request, pk=None):
+        member = self.get_object()
+
+        file = request.FILES.get("profile_image")
+        if not file:
+            return Response({"error": "No file provided"}, status=400)
+
+        member.profile_image = file
+
+        member.save()
+
+        return Response({
+            "status": "image uploaded",
+            "image_url": member.profile_image.url
+        }, status=status.HTTP_200_OK)
+    
 
 class MonthlyMemberPaymentViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=MonthlyMemberPayment.objects.all()

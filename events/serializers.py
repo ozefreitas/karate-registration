@@ -177,6 +177,25 @@ class UpdateEventSerializer(serializers.ModelSerializer):
         exclude = ("id", "has_ended")
 
 
+class GenerateDrawResponseSerializer(serializers.Serializer):
+    message = serializers.CharField()
+
+
+class GenerateDrawRequestSerializer(serializers.Serializer): 
+    splitClubs = serializers.BooleanField()
+    splitFavourites = serializers.BooleanField()
+    format = serializers.CharField()
+    maxMembersPerGroup = serializers.CharField(
+        required=False,
+        allow_blank=True
+        )
+    minMembersPerGroup = serializers.CharField(
+        required=False,
+        allow_blank=True
+        )
+    notificate = serializers.BooleanField()
+
+
 class DisciplinesSerializer(serializers.ModelSerializer):
     individuals = serializers.SerializerMethodField()
     teams = serializers.SerializerMethodField()
