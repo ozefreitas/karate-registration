@@ -13,11 +13,16 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='notification',
             name='type',
-            field=models.CharField(choices=[('none', 'None'), ('request', 'Request'), ('reset', 'Reset'), ('create_member', 'Create Member'), ('member_updated', 'Member Updated'), ('member_request', 'Member Request'), ('rate_event', 'Rate Event'), ('registrations_closing', 'Registrations Closing'), ('registrations_close', 'Registrations Close'), ('classifications_available', 'Classifications Available'), ('open_registrations', 'Open Registrations'), ('draw_available', 'Draw Available'), ('draw_patched', 'Draw Patched'), ('payment_available', 'Payment Available'), ('payment_overdue', 'Payment Overdue'), ('administrative', 'Administrative'), ('system', 'System'), ('danger', 'Danger')], default='none', max_length=32),
+            field=models.CharField(choices=[('none', 'None'), ('request', 'Request'), ('reset', 'Reset'), ('create_member', 'Create Member'), ('member_updated', 'Member Updated'), ('member_request', 'Member Request'), ('exam_prop', 'Exam Prop'), ('rate_event', 'Rate Event'), ('registrations_closing', 'Registrations Closing'), ('registrations_close', 'Registrations Close'), ('classifications_available', 'Classifications Available'), ('open_registrations', 'Open Registrations'), ('draw_available', 'Draw Available'), ('draw_patched', 'Draw Patched'), ('payment_available', 'Payment Available'), ('payment_overdue', 'Payment Overdue'), ('administrative', 'Administrative'), ('system', 'System'), ('danger', 'Danger')], default='none', max_length=32),
         ),
         migrations.AddField(
             model_name='membervalidationrequest',
             name='request_type',
             field=models.CharField(choices=[('general', 'General'), ('verify', 'Verify'), ('exams', 'Exams')], default='general', max_length=10),
+        ),
+        migrations.AddField(
+            model_name='membervalidationrequest',
+            name='file',
+            field=models.FileField(blank=True, null=True, upload_to='member_requests/request_files/'),
         ),
     ]

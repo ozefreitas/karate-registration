@@ -91,7 +91,7 @@ class IsGETforClubs(BasePermission):
                                                                             or request.user.role == 'single_admin'))
 
 
-class MemberPermission(BasePermission):
+class PersonPermission(BasePermission):
     """
     Permission used for Members and Teams.
     - Admin-like users (main_admin, single_admin, superuser) have access to everything.

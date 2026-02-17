@@ -24,13 +24,12 @@ class MembersSerializer(serializers.ModelSerializer):
     past_month_payment_status = serializers.SerializerMethodField()
 
     class Meta:
-        model = models.Member
+        model = models.Person
         fields = ("id", 
                   "full_name", 
                   "gender",
                   "updated_by", 
-                  "age", 
-                  "member_type", 
+                  "age",
                   "current_month_payment_status", 
                   "past_month_payment_status", 
                   "request_status",
@@ -80,13 +79,20 @@ class MembersSerializer(serializers.ModelSerializer):
         return obj.past_month_payment()
 
 
+class PersonSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Person
+        fields = "__all__"
+
+
 class AdminMembersSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     club = UsersSerializer()
     updated_by = UsersSerializer()
 
     class Meta:
-        model = models.Member
+        model = models.Person
         fields = ("id", 
                   "full_name", 
                   "gender", 
@@ -96,6 +102,14 @@ class AdminMembersSerializer(serializers.ModelSerializer):
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
+    
+
+class MemberShipsSerializer(serializers.ModelSerializer):
+    person = MembersSerializer()
+
+    class Meta:
+        model = models.Membership
+        fields = "__all__"
 
 
 class CompactMembersSerializer(serializers.ModelSerializer):
@@ -105,7 +119,7 @@ class CompactMembersSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Member
-        fields = ["id", "gender", "club", "full_name", "age", "weight"]
+        fields = ["id", "gender", "club", "full_name", "age", "weight", "graduation"]
 
     def get_club(self, obj):
         return obj.club.username
@@ -194,7 +208,7 @@ class NotAdminLikeTypeMembersSerializer(serializers.ModelSerializer):
     next_prev = serializers.SerializerMethodField()
     
     class Meta:
-        model = models.Member
+        model = models.Person
         exclude = ("creation_date", "created_by", "club", "favorite")
 
     def get_full_name(self, obj):
@@ -255,7 +269,7 @@ class AdminLikeTypeMembersSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Member
-        exclude = ("quotes_legible", "creation_date", "favorite", "club", "created_by", "member_type")
+        exclude = ("quotes_legible", "creation_date", "favorite", "club", "created_by")
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"

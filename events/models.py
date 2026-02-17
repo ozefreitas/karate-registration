@@ -27,6 +27,7 @@ class Event(models.Model):
     encounter = models.BooleanField("É estágio/encontro", default=False)
     encounter_type = models.CharField("Estágio", choices=ENCOUNTERS, max_length=16, blank=True, null=True, default=ENCOUNTERS["none"])
     rating = models.IntegerField("Avaliação", default=0)
+    file = models.FileField(upload_to="events/info/", null=True, blank=True)
 
     # def clean(self):
     #     super().clean()

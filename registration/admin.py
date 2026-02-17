@@ -1,10 +1,10 @@
 from django.contrib import admin
-from .models import Member, Team, Classification, MonthlyMemberPayment, MonthlyMemberPaymentConfig
+from .models import Member, Team, Classification, MonthlyMemberPayment, MonthlyMemberPaymentConfig, Person, Membership
 
 # Register your models here.
 
-class MemberAdmin(admin.ModelAdmin):
-    list_display = ("first_name", "last_name", "gender", "member_type")
+class PersonAdmin(admin.ModelAdmin):
+    list_display = ("first_name", "last_name", "gender")
     search_fields = ("first_name", "last_name", "club")
 
 
@@ -19,7 +19,9 @@ class ClassificationAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
 
-admin.site.register(Member, MemberAdmin)
+admin.site.register(Member)
+admin.site.register(Person, PersonAdmin)
+admin.site.register(Membership)
 admin.site.register(MonthlyMemberPayment)
 admin.site.register(MonthlyMemberPaymentConfig)
 admin.site.register(Team, TeamAdmin)

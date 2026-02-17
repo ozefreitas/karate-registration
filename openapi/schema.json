@@ -4162,7 +4162,7 @@
                 ],
                 "requestBody": {
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "$ref": "#/components/schemas/CreateMemberValidationRequest"
                             }
@@ -4172,7 +4172,7 @@
                                 "$ref": "#/components/schemas/CreateMemberValidationRequest"
                             }
                         },
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
                                 "$ref": "#/components/schemas/CreateMemberValidationRequest"
                             }
@@ -4264,7 +4264,7 @@
                 ],
                 "requestBody": {
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "$ref": "#/components/schemas/MemberValidationRequest"
                             }
@@ -4274,7 +4274,7 @@
                                 "$ref": "#/components/schemas/MemberValidationRequest"
                             }
                         },
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
                                 "$ref": "#/components/schemas/MemberValidationRequest"
                             }
@@ -4324,7 +4324,7 @@
                 ],
                 "requestBody": {
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "$ref": "#/components/schemas/PatchedPatchMemberValidationRequest"
                             }
@@ -4334,7 +4334,7 @@
                                 "$ref": "#/components/schemas/PatchedPatchMemberValidationRequest"
                             }
                         },
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
                                 "$ref": "#/components/schemas/PatchedPatchMemberValidationRequest"
                             }
@@ -4399,73 +4399,10 @@
                 }
             }
         },
-        "/members/": {
+        "/memberships/": {
             "get": {
-                "operationId": "members_list",
+                "operationId": "memberships_list",
                 "parameters": [
-                    {
-                        "in": "query",
-                        "name": "coach_not_in_event",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "in": "query",
-                        "name": "in_category",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "in": "query",
-                        "name": "in_gender",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "in": "query",
-                        "name": "in_member_type",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "in": "query",
-                        "name": "in_user",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "in": "query",
-                        "name": "is_quotes_legible",
-                        "schema": {
-                            "type": "boolean"
-                        }
-                    },
-                    {
-                        "in": "query",
-                        "name": "is_validated",
-                        "schema": {
-                            "type": "boolean"
-                        }
-                    },
-                    {
-                        "in": "query",
-                        "name": "monthly_payment_status",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "in": "query",
-                        "name": "not_in_event",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
                     {
                         "name": "ordering",
                         "required": false,
@@ -4495,7 +4432,7 @@
                     }
                 ],
                 "tags": [
-                    "members"
+                    "memberships"
                 ],
                 "security": [
                     {
@@ -4513,7 +4450,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/PaginatedMembersList"
+                                    "$ref": "#/components/schemas/PaginatedMemberShipsList"
                                 }
                             }
                         },
@@ -4522,25 +4459,25 @@
                 }
             },
             "post": {
-                "operationId": "members_create",
+                "operationId": "memberships_create",
                 "tags": [
-                    "members"
+                    "memberships"
                 ],
                 "requestBody": {
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/Members"
+                                "$ref": "#/components/schemas/MemberShips"
                             }
                         },
                         "application/x-www-form-urlencoded": {
                             "schema": {
-                                "$ref": "#/components/schemas/Members"
+                                "$ref": "#/components/schemas/MemberShips"
                             }
                         },
                         "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/Members"
+                                "$ref": "#/components/schemas/MemberShips"
                             }
                         }
                     },
@@ -4562,7 +4499,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Members"
+                                    "$ref": "#/components/schemas/MemberShips"
                                 }
                             }
                         },
@@ -4571,22 +4508,22 @@
                 }
             }
         },
-        "/members/{id}/": {
+        "/memberships/{id}/": {
             "get": {
-                "operationId": "members_retrieve",
+                "operationId": "memberships_retrieve",
                 "parameters": [
                     {
                         "in": "path",
                         "name": "id",
                         "schema": {
-                            "type": "string"
+                            "type": "integer"
                         },
-                        "description": "A unique value identifying this member.",
+                        "description": "A unique integer value identifying this membership.",
                         "required": true
                     }
                 ],
                 "tags": [
-                    "members"
+                    "memberships"
                 ],
                 "security": [
                     {
@@ -4604,7 +4541,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Members"
+                                    "$ref": "#/components/schemas/MemberShips"
                                 }
                             }
                         },
@@ -4613,36 +4550,36 @@
                 }
             },
             "put": {
-                "operationId": "members_update",
+                "operationId": "memberships_update",
                 "parameters": [
                     {
                         "in": "path",
                         "name": "id",
                         "schema": {
-                            "type": "string"
+                            "type": "integer"
                         },
-                        "description": "A unique value identifying this member.",
+                        "description": "A unique integer value identifying this membership.",
                         "required": true
                     }
                 ],
                 "tags": [
-                    "members"
+                    "memberships"
                 ],
                 "requestBody": {
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/Members"
+                                "$ref": "#/components/schemas/MemberShips"
                             }
                         },
                         "application/x-www-form-urlencoded": {
                             "schema": {
-                                "$ref": "#/components/schemas/Members"
+                                "$ref": "#/components/schemas/MemberShips"
                             }
                         },
                         "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/Members"
+                                "$ref": "#/components/schemas/MemberShips"
                             }
                         }
                     },
@@ -4664,7 +4601,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Members"
+                                    "$ref": "#/components/schemas/MemberShips"
                                 }
                             }
                         },
@@ -4673,36 +4610,36 @@
                 }
             },
             "patch": {
-                "operationId": "members_partial_update",
+                "operationId": "memberships_partial_update",
                 "parameters": [
                     {
                         "in": "path",
                         "name": "id",
                         "schema": {
-                            "type": "string"
+                            "type": "integer"
                         },
-                        "description": "A unique value identifying this member.",
+                        "description": "A unique integer value identifying this membership.",
                         "required": true
                     }
                 ],
                 "tags": [
-                    "members"
+                    "memberships"
                 ],
                 "requestBody": {
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/PatchedMembers"
+                                "$ref": "#/components/schemas/PatchedMemberShips"
                             }
                         },
                         "application/x-www-form-urlencoded": {
                             "schema": {
-                                "$ref": "#/components/schemas/PatchedMembers"
+                                "$ref": "#/components/schemas/PatchedMemberShips"
                             }
                         },
                         "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/PatchedMembers"
+                                "$ref": "#/components/schemas/PatchedMemberShips"
                             }
                         }
                     }
@@ -4723,7 +4660,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Members"
+                                    "$ref": "#/components/schemas/MemberShips"
                                 }
                             }
                         },
@@ -4732,20 +4669,20 @@
                 }
             },
             "delete": {
-                "operationId": "members_destroy",
+                "operationId": "memberships_destroy",
                 "parameters": [
                     {
                         "in": "path",
                         "name": "id",
                         "schema": {
-                            "type": "string"
+                            "type": "integer"
                         },
-                        "description": "A unique value identifying this member.",
+                        "description": "A unique integer value identifying this membership.",
                         "required": true
                     }
                 ],
                 "tags": [
-                    "members"
+                    "memberships"
                 ],
                 "security": [
                     {
@@ -4761,203 +4698,6 @@
                 "responses": {
                     "204": {
                         "description": "No response body"
-                    }
-                }
-            }
-        },
-        "/members/{id}/unregistered_modalities/{event_id}/": {
-            "get": {
-                "operationId": "members_unregistered_modalities_retrieve",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "event_id",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "required": true
-                    },
-                    {
-                        "in": "path",
-                        "name": "id",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "description": "A unique value identifying this member.",
-                        "required": true
-                    }
-                ],
-                "tags": [
-                    "members"
-                ],
-                "security": [
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Members"
-                                }
-                            }
-                        },
-                        "description": ""
-                    }
-                }
-            }
-        },
-        "/members/{id}/upload-image/": {
-            "post": {
-                "operationId": "members_upload_image_create",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "id",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "description": "A unique value identifying this member.",
-                        "required": true
-                    }
-                ],
-                "tags": [
-                    "members"
-                ],
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/UploadMemberProfilePicture"
-                            }
-                        },
-                        "application/x-www-form-urlencoded": {
-                            "schema": {
-                                "$ref": "#/components/schemas/UploadMemberProfilePicture"
-                            }
-                        },
-                        "multipart/form-data": {
-                            "schema": {
-                                "$ref": "#/components/schemas/UploadMemberProfilePicture"
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Members"
-                                }
-                            }
-                        },
-                        "description": ""
-                    }
-                }
-            }
-        },
-        "/members/delete_all/": {
-            "delete": {
-                "operationId": "members_delete_all_destroy",
-                "tags": [
-                    "members"
-                ],
-                "security": [
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No response body"
-                    }
-                }
-            }
-        },
-        "/members/last_five/": {
-            "get": {
-                "operationId": "members_last_five_retrieve",
-                "tags": [
-                    "members"
-                ],
-                "security": [
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Members"
-                                }
-                            }
-                        },
-                        "description": ""
-                    }
-                }
-            }
-        },
-        "/members/members_payments_status/": {
-            "get": {
-                "operationId": "members_members_payments_status_retrieve",
-                "tags": [
-                    "members"
-                ],
-                "security": [
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/MembersPaymentsStatus"
-                                }
-                            }
-                        },
-                        "description": ""
                     }
                 }
             }
@@ -6378,6 +6118,569 @@
                 }
             }
         },
+        "/persons/": {
+            "get": {
+                "operationId": "persons_list",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "coach_not_in_event",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "in_category",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "in_gender",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "in_member_type",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "in_user",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "is_quotes_legible",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "is_validated",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "monthly_payment_status",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "not_in_event",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ordering",
+                        "required": false,
+                        "in": "query",
+                        "description": "Which field to use when ordering the results.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "required": false,
+                        "in": "query",
+                        "description": "A page number within the paginated result set.",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page_size",
+                        "required": false,
+                        "in": "query",
+                        "description": "Number of results to return per page.",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "tags": [
+                    "persons"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedPersonList"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "operationId": "persons_create",
+                "tags": [
+                    "persons"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Person"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Person"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Person"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Person"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/persons/{id}/": {
+            "get": {
+                "operationId": "persons_retrieve",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "A unique value identifying this person.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "persons"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Person"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "put": {
+                "operationId": "persons_update",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "A unique value identifying this person.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "persons"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Person"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Person"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Person"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Person"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "patch": {
+                "operationId": "persons_partial_update",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "A unique value identifying this person.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "persons"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedPerson"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedPerson"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedPerson"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Person"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "persons_destroy",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "A unique value identifying this person.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "persons"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/persons/{id}/unregistered_modalities/{event_id}/": {
+            "get": {
+                "operationId": "persons_unregistered_modalities_retrieve",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "event_id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "A unique value identifying this person.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "persons"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Person"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/persons/{id}/upload-image/": {
+            "post": {
+                "operationId": "persons_upload_image_create",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "A unique value identifying this person.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "persons"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UploadMemberProfilePicture"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UploadMemberProfilePicture"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UploadMemberProfilePicture"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Person"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/persons/delete_all/": {
+            "delete": {
+                "operationId": "persons_delete_all_destroy",
+                "tags": [
+                    "persons"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/persons/last_five/": {
+            "get": {
+                "operationId": "persons_last_five_retrieve",
+                "tags": [
+                    "persons"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Person"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/persons/members_payments_status/": {
+            "get": {
+                "operationId": "persons_members_payments_status_retrieve",
+                "tags": [
+                    "persons"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MembersPaymentsStatus"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/request_acount/": {
             "get": {
                 "operationId": "request_acount_list",
@@ -7674,7 +7977,7 @@
                     "min_grad": {
                         "allOf": [
                             {
-                                "$ref": "#/components/schemas/MinGradEnum"
+                                "$ref": "#/components/schemas/GraduationEnum"
                             }
                         ],
                         "nullable": true,
@@ -7683,7 +7986,7 @@
                     "max_grad": {
                         "allOf": [
                             {
-                                "$ref": "#/components/schemas/MaxGradEnum"
+                                "$ref": "#/components/schemas/GraduationEnum"
                             }
                         ],
                         "nullable": true,
@@ -7853,7 +8156,7 @@
                     "min_grad": {
                         "allOf": [
                             {
-                                "$ref": "#/components/schemas/MinGradEnum"
+                                "$ref": "#/components/schemas/GraduationEnum"
                             }
                         ],
                         "nullable": true,
@@ -7862,7 +8165,7 @@
                     "max_grad": {
                         "allOf": [
                             {
-                                "$ref": "#/components/schemas/MaxGradEnum"
+                                "$ref": "#/components/schemas/GraduationEnum"
                             }
                         ],
                         "nullable": true,
@@ -7996,6 +8299,14 @@
                         "minimum": 0,
                         "nullable": true,
                         "title": "Peso"
+                    },
+                    "graduation": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/GraduationEnum"
+                            }
+                        ],
+                        "title": "Graduação"
                     }
                 },
                 "required": [
@@ -8003,6 +8314,7 @@
                     "club",
                     "full_name",
                     "gender",
+                    "graduation",
                     "id"
                 ]
             },
@@ -8122,7 +8434,7 @@
                     "min_grad": {
                         "allOf": [
                             {
-                                "$ref": "#/components/schemas/MinGradEnum"
+                                "$ref": "#/components/schemas/GraduationEnum"
                             }
                         ],
                         "nullable": true,
@@ -8131,7 +8443,7 @@
                     "max_grad": {
                         "allOf": [
                             {
-                                "$ref": "#/components/schemas/MaxGradEnum"
+                                "$ref": "#/components/schemas/GraduationEnum"
                             }
                         ],
                         "nullable": true,
@@ -8390,6 +8702,11 @@
                         ],
                         "nullable": true,
                         "title": "Estágio"
+                    },
+                    "file": {
+                        "type": "string",
+                        "format": "uri",
+                        "nullable": true
                     }
                 },
                 "required": [
@@ -8456,6 +8773,11 @@
                     },
                     "request_type": {
                         "$ref": "#/components/schemas/RequestTypeEnum"
+                    },
+                    "file": {
+                        "type": "string",
+                        "format": "uri",
+                        "nullable": true
                     }
                 },
                 "required": [
@@ -8861,6 +9183,11 @@
                         "maximum": 2147483647,
                         "minimum": -2147483648,
                         "title": "Avaliação"
+                    },
+                    "file": {
+                        "type": "string",
+                        "format": "uri",
+                        "nullable": true
                     }
                 },
                 "required": [
@@ -8944,6 +9271,33 @@
                     "username"
                 ]
             },
+            "GraduationEnum": {
+                "enum": [
+                    "15",
+                    "14.5",
+                    "14",
+                    "13.5",
+                    "13",
+                    "12.5",
+                    "12",
+                    "11.5",
+                    "11",
+                    "10.5",
+                    "10",
+                    "9.5",
+                    "9",
+                    "8",
+                    "7",
+                    "6",
+                    "5",
+                    "4",
+                    "3",
+                    "2",
+                    "1"
+                ],
+                "type": "string",
+                "description": "* `15` - 9º Kyu\n* `14.5` - 8º Kyu Kari\n* `14` - 8º Kyu\n* `13.5` - 7º Kyu Kari\n* `13` - 7º Kyu\n* `12.5` - 6º Kyu Kari\n* `12` - 6º Kyu\n* `11.5` - 5º Kyu Kari\n* `11` - 5º Kyu\n* `10.5` - 4º Kyu Kari\n* `10` - 4º Kyu\n* `9.5` - 3º Kyu Kari\n* `9` - 3º Kyu\n* `8` - 2º Kyu\n* `7` - 1º Kyu\n* `6` - 1º Dan\n* `5` - 2º Dan\n* `4` - 3º Dan\n* `3` - 4º Dan\n* `2` - 5º Dan\n* `1` - 6º Dan"
+            },
             "Match": {
                 "type": "object",
                 "properties": {
@@ -8990,32 +9344,29 @@
                     "round_number"
                 ]
             },
-            "MaxGradEnum": {
-                "enum": [
-                    "15",
-                    "14.5",
-                    "14",
-                    "13.5",
-                    "13",
-                    "12.5",
-                    "12",
-                    "11.5",
-                    "11",
-                    "10.5",
-                    "10",
-                    "9.5",
-                    "9",
-                    "8",
-                    "7",
-                    "6",
-                    "5",
-                    "4",
-                    "3",
-                    "2",
-                    "1"
-                ],
-                "type": "string",
-                "description": "* `15` - 9º Kyu\n* `14.5` - 8º Kyu Kari\n* `14` - 8º Kyu\n* `13.5` - 7º Kyu Kari\n* `13` - 7º Kyu\n* `12.5` - 6º Kyu Kari\n* `12` - 6º Kyu\n* `11.5` - 5º Kyu Kari\n* `11` - 5º Kyu\n* `10.5` - 4º Kyu Kari\n* `10` - 4º Kyu\n* `9.5` - 3º Kyu Kari\n* `9` - 3º Kyu\n* `8` - 2º Kyu\n* `7` - 1º Kyu\n* `6` - 1º Dan\n* `5` - 2º Dan\n* `4` - 3º Dan\n* `3` - 4º Dan\n* `2` - 5º Dan\n* `1` - 6º Dan"
+            "MemberShips": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "person": {
+                        "$ref": "#/components/schemas/Members"
+                    },
+                    "member_type": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MemberTypeEnum"
+                            }
+                        ],
+                        "default": "athlete"
+                    }
+                },
+                "required": [
+                    "id",
+                    "person"
+                ]
             },
             "MemberTypeEnum": {
                 "enum": [
@@ -9054,6 +9405,11 @@
                     },
                     "admin_comment": {
                         "type": "string"
+                    },
+                    "file": {
+                        "type": "string",
+                        "format": "uri",
+                        "nullable": true
                     },
                     "created_at": {
                         "type": "string",
@@ -9100,9 +9456,6 @@
                         "type": "string",
                         "readOnly": true
                     },
-                    "member_type": {
-                        "$ref": "#/components/schemas/MemberTypeEnum"
-                    },
                     "current_month_payment_status": {
                         "type": "string",
                         "readOnly": true
@@ -9112,6 +9465,10 @@
                         "readOnly": true
                     },
                     "request_status": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "exam_request_status": {
                         "type": "string",
                         "readOnly": true
                     },
@@ -9129,6 +9486,7 @@
                 "required": [
                     "age",
                     "current_month_payment_status",
+                    "exam_request_status",
                     "full_name",
                     "gender",
                     "id",
@@ -9151,33 +9509,6 @@
                     "number",
                     "unpaid_members"
                 ]
-            },
-            "MinGradEnum": {
-                "enum": [
-                    "15",
-                    "14.5",
-                    "14",
-                    "13.5",
-                    "13",
-                    "12.5",
-                    "12",
-                    "11.5",
-                    "11",
-                    "10.5",
-                    "10",
-                    "9.5",
-                    "9",
-                    "8",
-                    "7",
-                    "6",
-                    "5",
-                    "4",
-                    "3",
-                    "2",
-                    "1"
-                ],
-                "type": "string",
-                "description": "* `15` - 9º Kyu\n* `14.5` - 8º Kyu Kari\n* `14` - 8º Kyu\n* `13.5` - 7º Kyu Kari\n* `13` - 7º Kyu\n* `12.5` - 6º Kyu Kari\n* `12` - 6º Kyu\n* `11.5` - 5º Kyu Kari\n* `11` - 5º Kyu\n* `10.5` - 4º Kyu Kari\n* `10` - 4º Kyu\n* `9.5` - 3º Kyu Kari\n* `9` - 3º Kyu\n* `8` - 2º Kyu\n* `7` - 1º Kyu\n* `6` - 1º Dan\n* `5` - 2º Dan\n* `4` - 3º Dan\n* `3` - 4º Dan\n* `2` - 5º Dan\n* `1` - 6º Dan"
             },
             "MonthlyMemberPayment": {
                 "type": "object",
@@ -9549,6 +9880,37 @@
                     }
                 }
             },
+            "PaginatedMemberShipsList": {
+                "type": "object",
+                "required": [
+                    "count",
+                    "results"
+                ],
+                "properties": {
+                    "count": {
+                        "type": "integer",
+                        "example": 123
+                    },
+                    "next": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://api.example.org/accounts/?page=4"
+                    },
+                    "previous": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://api.example.org/accounts/?page=2"
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MemberShips"
+                        }
+                    }
+                }
+            },
             "PaginatedMemberValidationRequestList": {
                 "type": "object",
                 "required": [
@@ -9576,37 +9938,6 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/MemberValidationRequest"
-                        }
-                    }
-                }
-            },
-            "PaginatedMembersList": {
-                "type": "object",
-                "required": [
-                    "count",
-                    "results"
-                ],
-                "properties": {
-                    "count": {
-                        "type": "integer",
-                        "example": 123
-                    },
-                    "next": {
-                        "type": "string",
-                        "nullable": true,
-                        "format": "uri",
-                        "example": "http://api.example.org/accounts/?page=4"
-                    },
-                    "previous": {
-                        "type": "string",
-                        "nullable": true,
-                        "format": "uri",
-                        "example": "http://api.example.org/accounts/?page=2"
-                    },
-                    "results": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Members"
                         }
                     }
                 }
@@ -9669,6 +10000,37 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Notifications"
+                        }
+                    }
+                }
+            },
+            "PaginatedPersonList": {
+                "type": "object",
+                "required": [
+                    "count",
+                    "results"
+                ],
+                "properties": {
+                    "count": {
+                        "type": "integer",
+                        "example": 123
+                    },
+                    "next": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://api.example.org/accounts/?page=4"
+                    },
+                    "previous": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://api.example.org/accounts/?page=2"
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Person"
                         }
                     }
                 }
@@ -9926,7 +10288,7 @@
                     "min_grad": {
                         "allOf": [
                             {
-                                "$ref": "#/components/schemas/MinGradEnum"
+                                "$ref": "#/components/schemas/GraduationEnum"
                             }
                         ],
                         "nullable": true,
@@ -9935,7 +10297,7 @@
                     "max_grad": {
                         "allOf": [
                             {
-                                "$ref": "#/components/schemas/MaxGradEnum"
+                                "$ref": "#/components/schemas/GraduationEnum"
                             }
                         ],
                         "nullable": true,
@@ -10158,6 +10520,11 @@
                         "maximum": 2147483647,
                         "minimum": -2147483648,
                         "title": "Avaliação"
+                    },
+                    "file": {
+                        "type": "string",
+                        "format": "uri",
+                        "nullable": true
                     }
                 }
             },
@@ -10200,56 +10567,23 @@
                     }
                 }
             },
-            "PatchedMembers": {
+            "PatchedMemberShips": {
                 "type": "object",
                 "properties": {
                     "id": {
-                        "type": "string",
+                        "type": "integer",
                         "readOnly": true
                     },
-                    "full_name": {
-                        "type": "string",
-                        "readOnly": true
-                    },
-                    "gender": {
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/GenderEnum"
-                            }
-                        ],
-                        "title": "Género"
-                    },
-                    "updated_by": {
-                        "$ref": "#/components/schemas/Users"
-                    },
-                    "age": {
-                        "type": "string",
-                        "readOnly": true
+                    "person": {
+                        "$ref": "#/components/schemas/Members"
                     },
                     "member_type": {
-                        "$ref": "#/components/schemas/MemberTypeEnum"
-                    },
-                    "current_month_payment_status": {
-                        "type": "string",
-                        "readOnly": true
-                    },
-                    "past_month_payment_status": {
-                        "type": "string",
-                        "readOnly": true
-                    },
-                    "request_status": {
-                        "type": "string",
-                        "readOnly": true
-                    },
-                    "is_validated": {
-                        "type": "boolean"
-                    },
-                    "weight": {
-                        "type": "integer",
-                        "maximum": 2147483647,
-                        "minimum": 0,
-                        "nullable": true,
-                        "title": "Peso"
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MemberTypeEnum"
+                            }
+                        ],
+                        "default": "athlete"
                     }
                 }
             },
@@ -10387,6 +10721,139 @@
                     }
                 }
             },
+            "PatchedPerson": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "profile_image": {
+                        "type": "string",
+                        "format": "uri",
+                        "nullable": true
+                    },
+                    "first_name": {
+                        "type": "string",
+                        "title": "Primeiro Nome",
+                        "maxLength": 200
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "title": "Último Nome",
+                        "maxLength": 200
+                    },
+                    "graduation": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/GraduationEnum"
+                            }
+                        ],
+                        "title": "Graduação"
+                    },
+                    "birth_date": {
+                        "type": "string",
+                        "format": "date",
+                        "title": "Data de Nascimento"
+                    },
+                    "address": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Morada",
+                        "maxLength": 200
+                    },
+                    "post_code": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "Código Postal"
+                    },
+                    "id_number": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "Nº SKI-P"
+                    },
+                    "favorite": {
+                        "type": "boolean",
+                        "title": "Favorito"
+                    },
+                    "registration_date": {
+                        "type": "string",
+                        "format": "date",
+                        "title": "Data de Inscrição"
+                    },
+                    "national_card_number": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "Nº CC/BI"
+                    },
+                    "taxpayer_number": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "NIF"
+                    },
+                    "gender": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/GenderEnum"
+                            }
+                        ],
+                        "title": "Género"
+                    },
+                    "weight": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "Peso"
+                    },
+                    "quotes_legible": {
+                        "type": "boolean",
+                        "title": "Paga Quotas"
+                    },
+                    "conditions": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Condições Médicas"
+                    },
+                    "observations": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Observações"
+                    },
+                    "creation_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "modified_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "is_validated": {
+                        "type": "boolean"
+                    },
+                    "club": {
+                        "type": "integer"
+                    },
+                    "created_by": {
+                        "type": "integer",
+                        "nullable": true
+                    },
+                    "updated_by": {
+                        "type": "integer",
+                        "nullable": true
+                    }
+                }
+            },
             "PatchedRequestedAcount": {
                 "type": "object",
                 "properties": {
@@ -10518,6 +10985,150 @@
                 ],
                 "type": "string",
                 "description": "* `none` - None\n* `quotes` - Quotes\n* `insurance` - Insurance\n* `events` - Events"
+            },
+            "Person": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "profile_image": {
+                        "type": "string",
+                        "format": "uri",
+                        "nullable": true
+                    },
+                    "first_name": {
+                        "type": "string",
+                        "title": "Primeiro Nome",
+                        "maxLength": 200
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "title": "Último Nome",
+                        "maxLength": 200
+                    },
+                    "graduation": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/GraduationEnum"
+                            }
+                        ],
+                        "title": "Graduação"
+                    },
+                    "birth_date": {
+                        "type": "string",
+                        "format": "date",
+                        "title": "Data de Nascimento"
+                    },
+                    "address": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Morada",
+                        "maxLength": 200
+                    },
+                    "post_code": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "Código Postal"
+                    },
+                    "id_number": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "Nº SKI-P"
+                    },
+                    "favorite": {
+                        "type": "boolean",
+                        "title": "Favorito"
+                    },
+                    "registration_date": {
+                        "type": "string",
+                        "format": "date",
+                        "title": "Data de Inscrição"
+                    },
+                    "national_card_number": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "Nº CC/BI"
+                    },
+                    "taxpayer_number": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "NIF"
+                    },
+                    "gender": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/GenderEnum"
+                            }
+                        ],
+                        "title": "Género"
+                    },
+                    "weight": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "Peso"
+                    },
+                    "quotes_legible": {
+                        "type": "boolean",
+                        "title": "Paga Quotas"
+                    },
+                    "conditions": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Condições Médicas"
+                    },
+                    "observations": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Observações"
+                    },
+                    "creation_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "modified_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "is_validated": {
+                        "type": "boolean"
+                    },
+                    "club": {
+                        "type": "integer"
+                    },
+                    "created_by": {
+                        "type": "integer",
+                        "nullable": true
+                    },
+                    "updated_by": {
+                        "type": "integer",
+                        "nullable": true
+                    }
+                },
+                "required": [
+                    "birth_date",
+                    "club",
+                    "creation_date",
+                    "first_name",
+                    "gender",
+                    "graduation",
+                    "id",
+                    "last_name",
+                    "modified_date"
+                ]
             },
             "Rating": {
                 "type": "object",
@@ -11004,6 +11615,11 @@
                         "minimum": -2147483648,
                         "title": "Avaliação"
                     },
+                    "file": {
+                        "type": "string",
+                        "format": "uri",
+                        "nullable": true
+                    },
                     "individuals": {
                         "type": "array",
                         "items": {
@@ -11111,6 +11727,12 @@
                     },
                     "tier": {
                         "$ref": "#/components/schemas/TierEnum"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "title": "Endereço de email",
+                        "maxLength": 254
                     }
                 },
                 "required": [

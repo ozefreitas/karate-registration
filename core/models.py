@@ -290,6 +290,7 @@ class MemberValidationRequest(models.Model):
 
     message = models.TextField(blank=True)
     admin_comment = models.TextField(blank=True)
+    file = models.FileField(upload_to="member_requests/request_files/", null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     reviewed_at = models.DateTimeField(null=True, blank=True)
 

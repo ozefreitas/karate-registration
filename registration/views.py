@@ -2,11 +2,11 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.db import transaction, IntegrityError
 from django.utils import timezone
 
-from .models import Member, Team, Classification, MonthlyMemberPayment, MonthlyMemberPaymentConfig
-from .filters import MembersFilters, MonthlyMemberPaymentFilters
+from .models import Member, Team, Classification, MonthlyMemberPayment, MonthlyMemberPaymentConfig, Person, Membership
+from .filters import PersonsFilters, MonthlyMemberPaymentFilters
 from events.models import Event
 from core.models import User, Notification, MonthlyPaymentPlan
-from core.permissions import MemberPermission
+from core.permissions import PersonPermission
 import registration.serializers as registration_serializers
 import events.serializers as event_serializers
 from registration.utils.utils import get_real_member, get_identity_members
@@ -30,14 +30,13 @@ class MultipleSerializersMixIn:
         return self.serializer_classes.get(self.action, self.serializer_class)
 
 
-class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
-    # TODO: order get request by the category_index from the serializer
-    queryset=Member.objects.all().order_by("first_name", "last_name", "id")
-    serializer_class = registration_serializers.MembersSerializer
-    permission_classes = [MemberPermission]
+class PersonsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
+    queryset=Person.objects.all().order_by("first_name", "last_name", "id")
+    serializer_class = registration_serializers.PersonSerializer
+    permission_classes = [PersonPermission]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
-    ordering_fields = ["first_name", "last_name", "gender", "member_type", "birth_date"]
-    filterset_class = MembersFilters
+    ordering_fields = ["first_name", "last_name", "gender", "birth_date"]
+    filterset_class = PersonsFilters
 
     serializer_classes = {
         "create": registration_serializers.ClubsCreateMemberSerializer,
@@ -59,7 +58,7 @@ class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         if role in ["main_admin", "superuser", "single_admin"]:
             return self.queryset.filter(
                 is_validated=True,
-                member_type__in=["athlete", "student"]
+                member_types__member_type__in=["athlete", "student"]
             )
 
         if role in ["subed_club", "free_club"]:
@@ -70,7 +69,7 @@ class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         if getattr(self, "swagger_fake_view", False):
-            return registration_serializers.MembersSerializer
+            return registration_serializers.PersonSerializer
 
         user = self.request.user
         role = getattr(user, "role", None)
@@ -82,7 +81,7 @@ class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 elif self.request.query_params.get("coach_not_in_event"):
                     return registration_serializers.NotInEventCoachesSerializer
                 else:
-                    return registration_serializers.MembersSerializer
+                    return registration_serializers.PersonSerializer
             else:
                 return registration_serializers.AdminMembersSerializer
 
@@ -118,12 +117,10 @@ class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                                         notification=f"Um novo Membro ({first_name} {last_name}) acabou de ser criado. Verifique os seus dados e adicione outros campos caso necessário.",
                                         can_remove=True,
                                         type="create_member")
-            member = serializer.save(id_number=id_number, created_by=request_user)
+            person = serializer.save(id_number=id_number, created_by=request_user)
         elif request_user.role == "subed_club":
             user = request_user
-            member = serializer.save(id_number=id_number, club=user, created_by=request_user)
-        
-        canonical = get_real_member(member)
+            person = serializer.save(id_number=id_number, club=user, created_by=request_user)
 
         try:
             with transaction.atomic():
@@ -139,7 +136,7 @@ class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             )
 
         member_base_plan, _ = MonthlyMemberPaymentConfig.objects.get_or_create(
-            member=canonical,
+            member=person,
             defaults={"base_plan": default_plan}
         )
 
@@ -151,7 +148,7 @@ class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
         today = datetime.today()
         MonthlyMemberPayment.objects.get_or_create(
-            member=canonical,
+            member=person,
             year=today.year,
             month=today.month,
             defaults={"amount": final_amount}
@@ -184,8 +181,10 @@ class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         others = get_identity_members(old_identity)
 
         keep_count = others.count()
-
-        identity_fields = ["first_name", "last_name", "birth_date", "id_number"]
+        if request.user.role == "main_admin":
+            identity_fields = ["first_name", "last_name", "birth_date", "id_number"]
+        else:
+            identity_fields = ["gender", "weight", "tax_number", "identification_number", "address", ""]
         new_identity = {field: getattr(updated_member, field) for field in identity_fields}
 
         if others.exists():
@@ -303,6 +302,34 @@ class MembersViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             "status": "image uploaded",
             "image_url": member.profile_image.url
         }, status=status.HTTP_200_OK)
+
+
+class MemberShipsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
+    # TODO: order get request by the category_index from the serializer
+    queryset=Membership.objects.all().order_by("person__first_name", "person__last_name", "person__id")
+    serializer_class = registration_serializers.MemberShipsSerializer
+    permission_classes = [PersonPermission]
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    # ordering_fields = ["first_name", "last_name", "gender", "birth_date"]
+    # filterset_class = PersonsFilters
+
+    # serializer_classes = {
+    #     "create": registration_serializers.ClubsCreateMemberSerializer,
+    #     "update": registration_serializers.UpdateMemberSerializer
+    # }
+
+    def get_queryset(self):
+        if getattr(self, "swagger_fake_view", False):
+            return self.queryset.none()
+        
+        user = self.request.user
+        if not user.is_authenticated:
+            return self.queryset.none()
+        
+        if user.role == "main_admin":
+            raise PermissionDenied("You do not have access to this data.")
+        
+        else: return self.queryset
     
 
 class MonthlyMemberPaymentViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
@@ -328,11 +355,12 @@ class MonthlyMemberPaymentViewSet(MultipleSerializersMixIn, viewsets.ModelViewSe
 
     def partial_update(self, request, *args, **kwargs):
         instance = self.get_object()
+        real_member = get_real_member(instance)
 
         sent_fields = set(request.data.keys())
 
         serializer = self.get_serializer(
-            instance, data=request.data, partial=True
+            real_member, data=request.data, partial=True
         )
         serializer.is_valid(raise_exception=True)
 
@@ -365,7 +393,7 @@ class MonthlyMemberPaymentConfigViewSet(viewsets.ModelViewSet):
 class TeamsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Team.objects.all()
     serializer_class = registration_serializers.TeamsSerializer
-    permission_classes = [IsAuthenticated, MemberPermission]
+    permission_classes = [IsAuthenticated, PersonPermission]
 
     serializer_classes = {
         "create": registration_serializers.CreateTeamSerializer,

@@ -54,7 +54,7 @@ class MemberValidationRequestSerializer(serializers.ModelSerializer):
 class CreateMemberValidationRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = MemberValidationRequest
-        fields = ["message", "member", "request_type"]
+        fields = ["message", "member", "request_type", "file"]
 
 
 class PatchMemberValidationRequestSerializer(serializers.ModelSerializer):

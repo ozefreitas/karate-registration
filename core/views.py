@@ -17,6 +17,7 @@ from core.serializers.categories import CategorySerializer, CreateCategorySerial
 from core.serializers.users import UsersSerializer
 
 from rest_framework.authtoken.models import Token
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.exceptions import ValidationError
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import action, permission_classes, api_view
@@ -165,6 +166,7 @@ class MemberValidationRequestViewSet(MultipleSerializersMixIn, viewsets.ModelVie
     serializer_class=BaseSerializers.MemberValidationRequestSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     serializer_classes = {
         "create": BaseSerializers.CreateMemberValidationRequestSerializer,
@@ -253,10 +255,10 @@ class MemberValidationRequestViewSet(MultipleSerializersMixIn, viewsets.ModelVie
             member.save()
 
             if admin_comment != "" or admin_comment != None:
-                notification = (f'A Validação do Membro {member.first_name} {member.last_name} foi aceite pelo seu administrador com a seguinte mensagem: {serializer.validated_data["admin_comment"]}.'
+                notification = (f'A Validação do Membro {member.first_name} {member.last_name} foi aceite pelo seu administrador com a seguinte mensagem: {serializer.validated_data["admin_comment"]}. '
                 'Este Membro está agora "Verificado" e pode ser inscrito em Eventos e ser proposto a exames de graduação.')
             else:
-                notification = (f'A Validação do Membro {member.first_name} {member.last_name} foi aceite pelo seu administrador.'
+                notification = (f'A Validação do Membro {member.first_name} {member.last_name} foi aceite pelo seu administrador. '
                 'Este Membro está agora "Verificado" e pode ser inscrito em Eventos e ser proposto a exames de graduação.')
             Notification.objects.create(type="member_updated",
                                         notification=notification,
@@ -267,7 +269,7 @@ class MemberValidationRequestViewSet(MultipleSerializersMixIn, viewsets.ModelVie
 
         elif status != "approved" and request_type == "verify":
             if admin_comment != "" or admin_comment != None:
-                notification = f'A Validação do Membro {member.first_name} {member.last_name} foi rejeitada pelo seu administrador com a seguinte mensagem: {serializer.validated_data["admin_comment"]}'
+                notification = f'A Validação do Membro {member.first_name} {member.last_name} foi rejeitada pelo seu administrador com a seguinte mensagem: {serializer.validated_data["admin_comment"]}.'
             else:
                 notification = f'A Validação do Membro {member.first_name} {member.last_name} foi rejeitada pelo seu administrador.'
             Notification.objects.create(type="member_updated",
@@ -279,10 +281,10 @@ class MemberValidationRequestViewSet(MultipleSerializersMixIn, viewsets.ModelVie
         
         elif status == "approved" and request_type == "exams":
             if admin_comment != "" or admin_comment != None:
-                notification = (f'A Proposta de Exame do {member.first_name} {member.last_name} foi aceite pelo seu administrador com a seguinte mensagem: {serializer.validated_data["admin_comment"]}.'
+                notification = (f'A Proposta de Exame do {member.first_name} {member.last_name} foi aceite pelo seu administrador com a seguinte mensagem: {serializer.validated_data["admin_comment"]}. '
                 'Este Membro transitou agora para a graduação proposta.')
             else:
-                notification = (f'A Proposta de Exame {member.first_name} {member.last_name} foi aceite pelo seu administrador.'
+                notification = (f'A Proposta de Exame {member.first_name} {member.last_name} foi aceite pelo seu administrador. '
                 'Este Membro transitou agora para a graduação proposta.')
             Notification.objects.create(type="member_updated",
                                         notification=notification,
@@ -293,7 +295,7 @@ class MemberValidationRequestViewSet(MultipleSerializersMixIn, viewsets.ModelVie
         
         elif status != "approved" and request_type == "exams":
             if admin_comment != "" or admin_comment != None:
-                notification = f'A Proposta de Exame do Membro {member.first_name} {member.last_name} foi rejeitada pelo seu administrador com a seguinte mensagem: {serializer.validated_data["admin_comment"]}'
+                notification = f'A Proposta de Exame do Membro {member.first_name} {member.last_name} foi rejeitada pelo seu administrador com a seguinte mensagem: {serializer.validated_data["admin_comment"]}.'
             else:
                 notification = f'A Proposta de Exame do Membro {member.first_name} {member.last_name} foi rejeitada pelo seu administrador.'
             Notification.objects.create(type="member_updated",
