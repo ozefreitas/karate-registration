@@ -201,7 +201,7 @@ class Notification(models.Model):
 
     payment_object = models.CharField(max_length=32, choices=PAYMENT_TYPE.choices, default=PAYMENT_TYPE.NONE)
     target_event = models.ForeignKey(Event, on_delete=models.CASCADE, null=True, blank=True)
-    target_member = models.ForeignKey("registration.Member", on_delete=models.CASCADE, null=True, blank=True)
+    target_person = models.ForeignKey("registration.Person", on_delete=models.CASCADE, null=True, blank=True)
     club_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     can_remove = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -254,8 +254,8 @@ class MemberValidationRequest(models.Model):
         APPROVED = 'approved', "Approved"
         REJECTED = 'rejected', 'Rejected'
 
-    member = models.ForeignKey(
-        "registration.Member",
+    person = models.ForeignKey(
+        "registration.Person",
         on_delete=models.CASCADE,
         related_name='validation_requests'
     )
@@ -263,7 +263,7 @@ class MemberValidationRequest(models.Model):
     requested_by = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='member_validation_requests',
+        related_name='person_validation_requests',
         limit_choices_to={'role': 'subed_club'}
     )
 
@@ -272,7 +272,7 @@ class MemberValidationRequest(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='reviewed_member_requests',
+        related_name='reviewed_person_requests',
         limit_choices_to={'role': 'main_admin'}
     )
 
@@ -290,18 +290,18 @@ class MemberValidationRequest(models.Model):
 
     message = models.TextField(blank=True)
     admin_comment = models.TextField(blank=True)
-    file = models.FileField(upload_to="member_requests/request_files/", null=True, blank=True)
+    file = models.FileField(upload_to="person_requests/request_files/", null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     reviewed_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['member'],
+                fields=['person'],
                 condition=Q(status='pending'),
-                name='unique_pending_validation_request_per_member'
+                name='unique_pending_validation_request_per_person'
             )
         ]
 
     def __str__(self):
-        return f"Validation request for {self.member} ({self.status})"
+        return f"Validation request for {self.person} ({self.status})"

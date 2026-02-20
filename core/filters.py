@@ -6,9 +6,21 @@ class NotificationsFilters(filters.FilterSet):
     """Filter Notifications"""
     user_id = filters.CharFilter(field_name='user_id',
                                               method='filter_user_id')
+    type = filters.CharFilter(field_name='type', method='filter_notifications_in_type')
+    can_remove = filters.BooleanFilter(field_name='can_remove',
+                                              method='filter_can_remove')
 
     def filter_user_id(self, queryset, name, value):
         return queryset.filter(club_user=value)
+    
+    def filter_notifications_in_type(self, queryset, name, value):
+        types = [v.strip() for v in value.split(",") if v.strip()]
+        return queryset.filter(type__in=types)
+    
+    def filter_can_remove(self, queryset, name, value):
+        if value:
+            return queryset.filter(can_remove=True)
+        else: return queryset
 
     class Meta:
         model = Notification

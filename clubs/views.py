@@ -49,24 +49,21 @@ def club_members(request):
         User.objects
         .exclude(role__in=["main_admin", "superuser", "technician"])
         .annotate(
-            member_count=Count('member'),
+            member_count=Count('person', distinct=True),
             student_count=Count(
-                Case(
-                    When(member__member_type='student', then=1),
-                    output_field=IntegerField(),
-                )
+                'person',
+                filter=Q(person__member_types__member_type='student'),
+                distinct=True
             ),
             coach_count=Count(
-                Case(
-                    When(member__member_type='coach', then=1),
-                    output_field=IntegerField(),
-                )
+                'person',
+                filter=Q(person__member_types__member_type='coach'),
+                distinct=True
             ),
             athlete_count=Count(
-                Case(
-                    When(member__member_type='athlete', then=1),
-                    output_field=IntegerField(),
-                )
+                'person',
+                filter=Q(person__member_types__member_type='athlete'),
+                distinct=True
             ),
         )
         .values(

@@ -9,17 +9,20 @@ from core.models import MemberValidationRequest, MonthlyPaymentPlan
 from core.utils.utils import calc_age
 from events.models import Event, Discipline
 from registration.utils.utils import get_comp_age
-from registration.utils.utils import get_real_member, get_identity_members
+from registration.utils.utils import get_real_member
+
+from drf_spectacular.utils import extend_schema_field
 
 
 ### Members Serializer Classes
 
-class MembersSerializer(serializers.ModelSerializer):
+class PersonSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     age = serializers.SerializerMethodField()
     request_status = serializers.SerializerMethodField()
     exam_request_status = serializers.SerializerMethodField()
     updated_by = UsersSerializer()
+    member_types = serializers.SerializerMethodField()
     current_month_payment_status = serializers.SerializerMethodField()
     past_month_payment_status = serializers.SerializerMethodField()
 
@@ -35,8 +38,7 @@ class MembersSerializer(serializers.ModelSerializer):
                   "request_status",
                   "exam_request_status",
                   "is_validated",
-                  "weight")
-
+                  "member_types")
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
@@ -46,8 +48,7 @@ class MembersSerializer(serializers.ModelSerializer):
     
     def get_request_status(self, obj):
         try:
-            real = get_real_member(obj)
-            ola = real.validation_requests.filter(request_type="verify")
+            ola = obj.validation_requests.filter(request_type="verify")
             for coczinhos in ola:
                 if coczinhos.status == "approved":
                     return "approved"
@@ -60,12 +61,11 @@ class MembersSerializer(serializers.ModelSerializer):
 
     def get_exam_request_status(self, obj):
         try:
-            real = get_real_member(obj)
-            ola = real.validation_requests.filter(request_type="exams")
-            for coczinhos in ola:
-                if coczinhos.status == "approved":
+            last_exam_request = obj.validation_requests.filter(request_type="exams").order_by("created_at").first()
+            if last_exam_request != None:
+                if last_exam_request.status == "approved":
                     return "approved"
-                elif coczinhos.status == "pending":
+                elif last_exam_request.status == "pending":
                     return "pending"
                 else:
                     return "rejected"
@@ -77,13 +77,12 @@ class MembersSerializer(serializers.ModelSerializer):
     
     def get_past_month_payment_status(self, obj):
         return obj.past_month_payment()
-
-
-class PersonSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = models.Person
-        fields = "__all__"
+    
+    @extend_schema_field(serializers.ListField(child=serializers.CharField()))
+    def get_member_types(self, obj):
+        return list(
+            obj.member_types.values_list("member_type", flat=True)
+        )
 
 
 class AdminMembersSerializer(serializers.ModelSerializer):
@@ -97,15 +96,15 @@ class AdminMembersSerializer(serializers.ModelSerializer):
                   "full_name", 
                   "gender", 
                   "club", 
-                  "updated_by")
-
+                  "updated_by",
+                  )
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
     
 
 class MemberShipsSerializer(serializers.ModelSerializer):
-    person = MembersSerializer()
+    person = PersonSerializer()
 
     class Meta:
         model = models.Membership
@@ -118,7 +117,7 @@ class CompactMembersSerializer(serializers.ModelSerializer):
     age = serializers.SerializerMethodField()
 
     class Meta:
-        model = models.Member
+        model = models.Person
         fields = ["id", "gender", "club", "full_name", "age", "weight", "graduation"]
 
     def get_club(self, obj):
@@ -133,11 +132,10 @@ class CompactMembersSerializer(serializers.ModelSerializer):
 
 class CompactCategorizedMembersSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
-    # category = serializers.SerializerMethodField()
     club = serializers.SerializerMethodField()
 
     class Meta:
-        model = models.Member
+        model = models.Person
         fields = ["id", "first_name", "last_name", "gender", "club", "full_name"]
     
     def __init__(self, *args, **kwargs):
@@ -153,50 +151,6 @@ class CompactCategorizedMembersSerializer(serializers.ModelSerializer):
     
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
-    
-    # def get_category(self, obj):
-    #     """Sends the category of each member if a category is provided. 
-    #     Categories comming from the context are only the ones linked to the respective Discipline"""
-        
-    #     categories = self.context.get('discipline_categories', [])
-    #     if categories == []:
-    #         return None
-        
-    #     event_id = self.context['request'].query_params.get("event_disciplines")
-    #     try:
-    #         event = Event.objects.get(id=event_id)
-    #         season = event.season.split("/")[0]
-    #     except Event.DoesNotExist:
-    #         raise serializers.ValidationError("Event does not exist.")
-        
-    #     current_age = get_comp_age(obj.birth_date)
-        
-    #     if current_age <= 0 or current_age is None:
-    #         return None
-        
-    #     age_method = config('AGE_CALC_REF')
-    #     event_age = current_age if age_method == "true" else calc_age(age_method, obj.birth_date, season)
-    #     for category in categories:
-    #         if category.gender == obj.gender:
-    #             if category.min_age <= event_age <= category.max_age:
-
-    #                 if obj.weight is not None:
-    #                     if category.min_weight is not None and category.max_weight is not None:
-    #                         if category.min_weight <= obj.weight <= category.max_weight:
-    #                             return f'{category.name} +{category.max_weight}'
-    #                         else:
-    #                             continue
-    #                     if category.max_weight is not None:
-    #                         if obj.weight < category.max_weight:
-    #                             return f'{category.name} -{category.max_weight}'
-    #                     elif category.min_weight is not None:
-    #                         if obj.weight >= category.min_weight:
-    #                             return f'{category.name} +{category.min_weight}'
-    #                     else:
-    #                         return category.name
-    #                 else:
-    #                     return category.name
-    #     return None
 
 
 class NotAdminLikeTypeMembersSerializer(serializers.ModelSerializer):
@@ -204,12 +158,13 @@ class NotAdminLikeTypeMembersSerializer(serializers.ModelSerializer):
     age = serializers.SerializerMethodField()
     monthly_payment_status = serializers.SerializerMethodField()
     monthly_payment_config = serializers.SerializerMethodField()
-    has_another = serializers.SerializerMethodField()
     next_prev = serializers.SerializerMethodField()
+    member_types = serializers.SerializerMethodField()
+    exam_request_status = serializers.SerializerMethodField()
     
     class Meta:
         model = models.Person
-        exclude = ("creation_date", "created_by", "club", "favorite")
+        exclude = ("creation_date", "modified_date", "created_by", "updated_by", "club", "favorite")
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
@@ -229,21 +184,16 @@ class NotAdminLikeTypeMembersSerializer(serializers.ModelSerializer):
             )
         # Get or create config row
 
-        config, _ = models.MonthlyMemberPaymentConfig.objects.get_or_create(
-            member=get_real_member(obj),
+        config, _ = models.MonthlyPersonPaymentConfig.objects.get_or_create(
+            person=obj,
             defaults={"base_plan": default_plan}
         )
 
         return MonthlyMemberPaymentConfigSerializer(config).data
-    
-    def get_has_another(self, obj):
-        if get_identity_members(obj, True).exists():
-            return get_identity_members(obj, True).first().id
-        else: return None
 
     def get_next_prev(self, obj):
         qs = list(
-            models.Member.objects
+            models.Person.objects
             .filter(club=obj.club)
             .order_by("first_name", "last_name", "id")
             .values_list("id", flat=True)
@@ -261,15 +211,35 @@ class NotAdminLikeTypeMembersSerializer(serializers.ModelSerializer):
             "prev": next_id,
             "next": prev_id,
         }
+    
+    @extend_schema_field(serializers.ListField(child=serializers.CharField()))
+    def get_member_types(self, obj):
+        return list(
+            obj.member_types.values_list("member_type", flat=True)
+        )
+    
+    def get_exam_request_status(self, obj):
+        try:
+            last_exam_request = obj.validation_requests.filter(request_type="exams").order_by("-created_at").first()
+            if last_exam_request != None:
+                if last_exam_request.status == "approved":
+                    return "approved"
+                elif last_exam_request.status == "pending":
+                    return "pending"
+                else:
+                    return "rejected"
+        except MemberValidationRequest.DoesNotExist:
+            return None
 
 
-class AdminLikeTypeMembersSerializer(serializers.ModelSerializer):
+class AdminPersonRetrieveSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     age = serializers.SerializerMethodField()
+    next_prev = serializers.SerializerMethodField()
 
     class Meta:
-        model = models.Member
-        exclude = ("quotes_legible", "creation_date", "favorite", "club", "created_by")
+        model = models.Person
+        exclude = ("quotes_legible", "creation_date", "modified_date", "favorite", "club", "created_by", "updated_by")
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
@@ -277,12 +247,33 @@ class AdminLikeTypeMembersSerializer(serializers.ModelSerializer):
     def get_age(self, obj):
         return get_comp_age(obj.birth_date)
     
+    def get_next_prev(self, obj):
+        qs = list(
+            models.Person.objects
+            .filter(is_validated=True)
+            .order_by("first_name", "last_name", "id")
+            .values_list("id", flat=True)
+        )
+
+        try:
+            index = qs.index(obj.id)
+        except ValueError:
+            return [{"prev": None, "next": None}]
+
+        prev_id = qs[index - 1] if index > 0 else None
+        next_id = qs[index + 1] if index < len(qs) - 1 else None
+
+        return {
+            "prev": next_id,
+            "next": prev_id,
+        }
+    
 
 class NotInEventCoachesSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     
     class Meta:
-        model = models.Member
+        model = models.Person
         fields = ["id", "gender", "full_name", "graduation"]
 
     def get_full_name(self, obj):
@@ -295,7 +286,7 @@ class NotInEventMembersSerializer(serializers.ModelSerializer):
     category = serializers.SerializerMethodField()
     
     class Meta:
-        model = models.Member
+        model = models.Person
         fields = ["id", "weight", "gender", "age", "full_name", "category"]
 
     def get_full_name(self, obj):
@@ -354,18 +345,20 @@ class NotInEventMembersSerializer(serializers.ModelSerializer):
         return None
     
 
-class UploadMemberProfilePictureSerializer(serializers.Serializer):
+class UploadPersonProfilePictureSerializer(serializers.Serializer):
     profile_image = serializers.ImageField(required=False)
 
     class Meta:
-        model = models.Member
+        model = models.Person
         fields = "__all__"
 
 
 class ClubsCreateMemberSerializer(serializers.ModelSerializer):
+    member_type = serializers.CharField(required=True, write_only=True)
+
     class Meta:
-        model = models.Member
-        fields = "__all__"
+        model = models.Person
+        exclude = ["created_by", "updated_by", "profile_image"]
         read_only_fields = ("club", ) 
 
     def validate(self, data):
@@ -373,7 +366,12 @@ class ClubsCreateMemberSerializer(serializers.ModelSerializer):
         stundent = data.get("student")
         gender = data.get("gender")
         birth_date = data.get("birth_date")
-        member_type = data.get("member_type")
+        member_type = data.get("member_type", None)
+
+        if member_type == None:
+           raise serializers.ValidationError({
+                'member_type_missing': ['Tem que selecionar um Tipo de Praticante.']
+            }) 
 
         if member_type in ["student", "athlete"] and models.Member.objects.filter(first_name=data.get("first_name"),
                                                                      last_name=data.get("last_name"),
@@ -382,7 +380,7 @@ class ClubsCreateMemberSerializer(serializers.ModelSerializer):
                                                                      member_type__in=["athlete", "student"]).exists():
 
             raise serializers.ValidationError({
-                'member_type_missmatch': ['Já existe um "Aluno" para este Membro.']
+                'member_type_missmatch': ['Já existe um Aluno/Competidor para este Membro.']
             })
         
         elif member_type == "coach" and models.Member.objects.filter(first_name=data.get("first_name"),
@@ -415,8 +413,8 @@ class ClubsCreateMemberSerializer(serializers.ModelSerializer):
 
 class AdminCreateMemberSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Member
-        exclude = ("address", "post_code", "national_card_number", "taxpayer_number")
+        model = models.Person
+        exclude = ("address", "post_code", "national_card_number", "taxpayer_number", "created_by", "updated_by", "profile_image")
 
     def validate(self, data):
         weight = data.get("weight")
@@ -443,21 +441,21 @@ class UpdateMemberSerializer(serializers.ModelSerializer):
         return get_comp_age(obj.birth_date)
     
     class Meta:
-        model = models.Member
+        model = models.Person
         exclude = ("club", "created_by", "creation_date")
     
-    def get_fields(self):
-        fields = super().get_fields()
+    # def get_fields(self):
+    #     fields = super().get_fields()
 
-        member = self.instance
-        request = self.context.get("request")
+    #     member = self.instance
+    #     request = self.context.get("request")
 
-        if member and request:
-            if member.created_by == member.club and member.created_by.role != "main_admin" and member.is_validated and request.user.role != "main_admin":
-                for field in ["id_number", "first_name", "last_name", "birth_date", "gender", "graduation"]:
-                    fields.pop(field, None)
+    #     if member and request:
+    #         if member.created_by == member.club and member.created_by.role != "main_admin" and member.is_validated and request.user.role != "main_admin":
+    #             for field in ["id_number", "first_name", "last_name", "birth_date", "gender", "graduation"]:
+    #                 fields.pop(field, None)
 
-        return fields
+    #     return fields
 
     def validate(self, attrs):
         member = self.instance 
@@ -473,6 +471,18 @@ class UpdateMemberSerializer(serializers.ModelSerializer):
                     )
 
         return attrs
+    
+    def update(self, instance, validated_data):
+        request = self.context.get("request")
+        user = request.user
+
+        # If user is main_admin and tries to change profile_image
+        if user.role == "main_admin" and "profile_image" in validated_data:
+            raise serializers.ValidationError(
+                {"profile_image": "Main admins are not allowed to change Members profile images."}
+            )
+
+        return super().update(instance, validated_data)
 
 
 ### Monthly Payments Serializer Classes
@@ -481,8 +491,8 @@ class MonthlyMemberPaymentConfigSerializer(serializers.ModelSerializer):
     base_plan_amount = serializers.SerializerMethodField()
 
     class Meta:
-        model = models.MonthlyMemberPaymentConfig
-        exclude = ("member", )
+        model = models.MonthlyPersonPaymentConfig
+        exclude = ("person", )
 
     def get_base_plan_amount(self, obj):
         return obj.base_plan.amount
@@ -490,19 +500,19 @@ class MonthlyMemberPaymentConfigSerializer(serializers.ModelSerializer):
 
 class PatchMonthlyMemberPaymentConfigSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.MonthlyMemberPaymentConfig
+        model = models.MonthlyPersonPaymentConfig
         fields = "__all__"
-        read_only_fields = ["member"]
+        read_only_fields = ["person"]
 
 
 class MonthlyMemberPaymentSerializer(serializers.ModelSerializer):
     inside_limit = serializers.SerializerMethodField()
     predefined_amount = serializers.SerializerMethodField()
     is_custom = serializers.SerializerMethodField()
-    member = CompactMembersSerializer()
+    person = CompactMembersSerializer()
 
     class Meta:
-        model = models.MonthlyMemberPayment
+        model = models.MonthlyPersonPayment
         fields = "__all__"
     
     def get_inside_limit(self, obj):
@@ -515,14 +525,14 @@ class MonthlyMemberPaymentSerializer(serializers.ModelSerializer):
         else: return True
 
     def get_predefined_amount(self, obj):
-        pred_amount = models.MonthlyMemberPaymentConfig.objects.get(member=obj.member)
+        pred_amount = models.MonthlyPersonPaymentConfig.objects.get(person=obj.person)
         if pred_amount.is_custom_active:
             return pred_amount.custom_amount
         else:
             return pred_amount.base_plan.amount
     
     def get_is_custom(self, obj):
-        is_custom = models.MonthlyMemberPaymentConfig.objects.get(member=obj.member)
+        is_custom = models.MonthlyPersonPaymentConfig.objects.get(person=obj.person)
         return is_custom.is_custom_active
 
 
@@ -547,7 +557,7 @@ class CreateMonthlyMemberPaymentSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = models.MonthlyMemberPayment
+        model = models.MonthlyPersonPayment
         exclude = ["due_date", "paid", "paid_at"]
 
     def validate(self, attrs):
@@ -561,7 +571,7 @@ class CreateMonthlyMemberPaymentSerializer(serializers.ModelSerializer):
         custom_amount = validated_data.pop("customAmount", None)
         is_default = validated_data.pop("is_default", False)
         plan = validated_data.pop("plan", None)
-        old_member = validated_data.pop("member", False)
+        old_person = validated_data.pop("person", False)
 
         request = self.context["request"]
 
@@ -577,11 +587,9 @@ class CreateMonthlyMemberPaymentSerializer(serializers.ModelSerializer):
         else:
             amount = custom_amount or 0
 
-        cannonical = get_real_member(old_member)
-
-        return models.MonthlyMemberPayment.objects.create(
+        return models.MonthlyPersonPayment.objects.create(
             **validated_data,
-            member=cannonical,
+            person=old_person,
             amount=amount
         )
 
@@ -589,7 +597,7 @@ class CreateMonthlyMemberPaymentSerializer(serializers.ModelSerializer):
 class PatchMonthlyMemberPaymentSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = models.MonthlyMemberPayment
+        model = models.MonthlyPersonPayment
         fields = ["paid", "amount"]
 
     def update(self, instance, validated_data):

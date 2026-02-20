@@ -8,7 +8,7 @@ import calendar
 
 from nanoid import generate
 from datetime import date
-from core.constants import GENDERS, GRADUATIONS, MATCHES
+from core.constants import GENDERS, GRADUATIONS
 from events.models import Event
 
 # Create your models here.
@@ -25,7 +25,7 @@ def generate_unique_nanoid(model_name, app_label, size=10):
             return new_id
 
 
-### Member model ###
+### Person model ###
 
 class Person(models.Model):
 
@@ -84,14 +84,11 @@ class Person(models.Model):
             return None
         
         today = date.today()
-        real_member = Member.objects.filter(
-                first_name=self.first_name,
-                last_name=self.last_name,
-                birth_date=self.birth_date,
-                id_number=self.id_number,
-            ).order_by("creation_date").first()
         
-        if MonthlyMemberPayment.objects.filter(member=real_member, year=today.year, month=today.month, paid=True).exists():
+        if MonthlyPersonPayment.objects.filter(person=self, 
+                                               year=today.year, 
+                                               month=today.month, 
+                                               paid=True).exists():
             return "paid"
         else: return "unpaid"
     
@@ -108,18 +105,8 @@ class Person(models.Model):
             year = today.year
             month = today.month - 1
 
-        real_member = Member.objects.filter(
-            first_name=self.first_name,
-            last_name=self.last_name,
-            birth_date=self.birth_date,
-            id_number=self.id_number,
-        ).order_by("creation_date").first()
-
-        if not real_member:
-            return None
-
-        payment = MonthlyMemberPayment.objects.filter(
-            member=real_member,
+        payment = MonthlyPersonPayment.objects.filter(
+            person=self,
             year=year,
             month=month,
         ).first()
@@ -127,7 +114,8 @@ class Person(models.Model):
         return None if not payment else ("paid" if payment.paid else "unpaid")
 
     def clean(self):
-        if self.member_type == "coach" and self.favorite == True:
+        member_types = self.member_types.values_list("member_type", flat=True)
+        if "coach" in member_types and self.favorite == True:
             raise ValidationError("Coaches are not qualified as favorite.")
         
         return super().clean()
@@ -159,6 +147,8 @@ class Membership(models.Model):
     
     member_type = models.CharField(max_length=16, choices=MEMBER_TYPE.choices, default=MEMBER_TYPE.ATHLETE)
     person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="member_types")
+    creation_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = ("person", "member_type")
@@ -237,7 +227,7 @@ class Member(models.Model):
                 id_number=self.id_number,
             ).order_by("creation_date").first()
         
-        if MonthlyMemberPayment.objects.filter(member=real_member, year=today.year, month=today.month, paid=True).exists():
+        if MonthlyPersonPayment.objects.filter(member=real_member, year=today.year, month=today.month, paid=True).exists():
             return "paid"
         else: return "unpaid"
     
@@ -264,7 +254,7 @@ class Member(models.Model):
         if not real_member:
             return None
 
-        payment = MonthlyMemberPayment.objects.filter(
+        payment = MonthlyPersonPayment.objects.filter(
             member=real_member,
             year=year,
             month=month,
@@ -297,9 +287,9 @@ class Member(models.Model):
         return "{} {} | {}".format(self.first_name, self.last_name, self.club.username)
 
 
-class MonthlyMemberPayment(models.Model):
-    member = models.ForeignKey(
-        Member,
+class MonthlyPersonPayment(models.Model):
+    person = models.ForeignKey(
+        Person,
         on_delete=models.CASCADE,
         related_name="payments"
     )
@@ -311,7 +301,7 @@ class MonthlyMemberPayment(models.Model):
     paid_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
-        unique_together = ("member", "year", "month")
+        unique_together = ("person", "year", "month")
         ordering = ["-year", "-month"]
     
     def save(self, *args, **kwargs):
@@ -337,18 +327,18 @@ class MonthlyMemberPayment(models.Model):
         self.save()
 
     def __str__(self):
-        return f"{self.member.first_name} {self.member.last_name} {self.month}-{self.year} subscription"
+        return f"{self.person.first_name} {self.person.last_name} {self.month}-{self.year} subscription"
 
 
-class MonthlyMemberPaymentConfig(models.Model):
+class MonthlyPersonPaymentConfig(models.Model):
     """
-    Stores payment amount for each Member.
-    Each Member should have exactly one config row, with a fixed amount, that can then be changed by the Club of that Member.
-    That amount can be set just for this member, or chosen from a pre defined plan
+    Stores payment amount for each Person.
+    Each Person should have exactly one config row, with a fixed amount, that can then be changed by the Club of that Person.
+    That amount can be set just for this person, or chosen from a pre defined plan
     """
-    member = models.OneToOneField(Member, on_delete=models.CASCADE, related_name="monthly_member_payment_config")
+    person = models.OneToOneField(Person, on_delete=models.CASCADE, related_name="monthly_person_payment_config")
     base_plan = models.ForeignKey("core.MonthlyPaymentPlan", on_delete=models.PROTECT)
-    # This is the per-member amount (default copied from the base plan)
+    # This is the per-person amount (default copied from the base plan)
     custom_amount = models.DecimalField(
         max_digits=7,
         decimal_places=2,
@@ -364,14 +354,14 @@ class MonthlyMemberPaymentConfig(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.member.first_name} {self.member.last_name} - subscription amount: {self.custom_amount}"
+        return f"{self.person.first_name} {self.person.last_name} - subscription amount: {self.custom_amount}"
 
     @staticmethod
-    def get_amount_for(member):
+    def get_amount_for(person):
         """
-        Returns the member's amount.
+        Returns the person's amount.
         """
-        obj, _ = MonthlyMemberPaymentConfig.objects.get(member=member)
+        obj, _ = MonthlyPersonPaymentConfig.objects.get(person=person)
         if obj.is_custom_active:
             return obj.custom_amount
         else:
@@ -384,11 +374,11 @@ class Team(models.Model):
 
     id = models.CharField(primary_key=True, max_length=10, unique=True, editable=False)
     club = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    athlete1 = models.ForeignKey(Member, verbose_name="Atleta 1", related_name="first_element", on_delete=models.CASCADE)
-    athlete2 = models.ForeignKey(Member, verbose_name="Atleta 2", related_name="second_element", on_delete=models.CASCADE)
-    athlete3 = models.ForeignKey(Member, verbose_name="Atleta 3", related_name="third_element", on_delete=models.CASCADE, blank=True, null=True)
-    athlete4 = models.ForeignKey(Member, verbose_name="Atleta 4", related_name="forth_element", on_delete=models.CASCADE, blank=True, null=True)
-    athlete5 = models.ForeignKey(Member, verbose_name="Atleta 5", related_name="fifth_element", on_delete=models.CASCADE, blank=True, null=True)
+    athlete1 = models.ForeignKey(Person, verbose_name="Atleta 1", related_name="first_element", on_delete=models.CASCADE)
+    athlete2 = models.ForeignKey(Person, verbose_name="Atleta 2", related_name="second_element", on_delete=models.CASCADE)
+    athlete3 = models.ForeignKey(Person, verbose_name="Atleta 3", related_name="third_element", on_delete=models.CASCADE, blank=True, null=True)
+    athlete4 = models.ForeignKey(Person, verbose_name="Atleta 4", related_name="forth_element", on_delete=models.CASCADE, blank=True, null=True)
+    athlete5 = models.ForeignKey(Person, verbose_name="Atleta 5", related_name="fifth_element", on_delete=models.CASCADE, blank=True, null=True)
     gender = models.CharField("Género", choices=GENDERS, max_length=10)
     category = models.ForeignKey("core.Category", on_delete=models.CASCADE, verbose_name="Escalão")
     team_number = models.IntegerField("Nº Equipa")
@@ -422,9 +412,9 @@ class Team(models.Model):
 
 class Classification(models.Model):
     competition = models.ForeignKey(Event, on_delete=models.CASCADE)
-    first_place = models.ForeignKey(Member, verbose_name="Primeiro Classificado", related_name="first_place", on_delete=models.CASCADE)
-    second_place = models.ForeignKey(Member, verbose_name="Segundo Classificado", related_name="second_place", on_delete=models.CASCADE, null=True, blank=True)
-    third_place = models.ForeignKey(Member, verbose_name="Terceiro Classificado", related_name="third_place", on_delete=models.CASCADE, null=True, blank=True)
+    first_place = models.ForeignKey(Person, verbose_name="Primeiro Classificado", related_name="first_place", on_delete=models.CASCADE)
+    second_place = models.ForeignKey(Person, verbose_name="Segundo Classificado", related_name="second_place", on_delete=models.CASCADE, null=True, blank=True)
+    third_place = models.ForeignKey(Person, verbose_name="Terceiro Classificado", related_name="third_place", on_delete=models.CASCADE, null=True, blank=True)
 
     def clean(self):
         super().clean()

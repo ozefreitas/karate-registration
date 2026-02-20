@@ -80,7 +80,7 @@ class Command(BaseCommand):
                         type="payment_overdue",
                         club_user=club,
                         payment_object="quotes",
-                        target_member=member
+                        target_person=member
                         )
 
                 if was_created:

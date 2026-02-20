@@ -39,7 +39,7 @@ class RequestedAcountSerializer(serializers.ModelSerializer):
 
 
 class MemberValidationRequestSerializer(serializers.ModelSerializer):
-    member = CompactMembersSerializer()
+    person = CompactMembersSerializer()
     requested_by = CompactUserSerializer()
     member_birth_date = serializers.SerializerMethodField()
 
@@ -48,13 +48,13 @@ class MemberValidationRequestSerializer(serializers.ModelSerializer):
         exclude = ["reviewed_by"]
     
     def get_member_birth_date(self, obj):
-        return obj.member.birth_date
+        return obj.person.birth_date
 
 
 class CreateMemberValidationRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = MemberValidationRequest
-        fields = ["message", "member", "request_type", "file"]
+        fields = ["message", "person", "request_type", "file"]
 
 
 class PatchMemberValidationRequestSerializer(serializers.ModelSerializer):

@@ -4812,7 +4812,7 @@
                         "schema": {
                             "type": "integer"
                         },
-                        "description": "A unique integer value identifying this monthly member payment config.",
+                        "description": "A unique integer value identifying this monthly person payment config.",
                         "required": true
                     }
                 ],
@@ -4852,7 +4852,7 @@
                         "schema": {
                             "type": "integer"
                         },
-                        "description": "A unique integer value identifying this monthly member payment config.",
+                        "description": "A unique integer value identifying this monthly person payment config.",
                         "required": true
                     }
                 ],
@@ -4912,7 +4912,7 @@
                         "schema": {
                             "type": "integer"
                         },
-                        "description": "A unique integer value identifying this monthly member payment config.",
+                        "description": "A unique integer value identifying this monthly person payment config.",
                         "required": true
                     }
                 ],
@@ -4971,7 +4971,7 @@
                         "schema": {
                             "type": "integer"
                         },
-                        "description": "A unique integer value identifying this monthly member payment config.",
+                        "description": "A unique integer value identifying this monthly person payment config.",
                         "required": true
                     }
                 ],
@@ -5278,17 +5278,17 @@
                 "operationId": "monthly_payments_list",
                 "parameters": [
                     {
+                        "name": "ordering",
+                        "required": false,
                         "in": "query",
-                        "name": "member",
+                        "description": "Which field to use when ordering the results.",
                         "schema": {
                             "type": "string"
                         }
                     },
                     {
-                        "name": "ordering",
-                        "required": false,
                         "in": "query",
-                        "description": "Which field to use when ordering the results.",
+                        "name": "person",
                         "schema": {
                             "type": "string"
                         }
@@ -5384,7 +5384,7 @@
                         "schema": {
                             "type": "integer"
                         },
-                        "description": "A unique integer value identifying this monthly member payment.",
+                        "description": "A unique integer value identifying this monthly person payment.",
                         "required": true
                     }
                 ],
@@ -5424,7 +5424,7 @@
                         "schema": {
                             "type": "integer"
                         },
-                        "description": "A unique integer value identifying this monthly member payment.",
+                        "description": "A unique integer value identifying this monthly person payment.",
                         "required": true
                     }
                 ],
@@ -5484,7 +5484,7 @@
                         "schema": {
                             "type": "integer"
                         },
-                        "description": "A unique integer value identifying this monthly member payment.",
+                        "description": "A unique integer value identifying this monthly person payment.",
                         "required": true
                     }
                 ],
@@ -5543,7 +5543,7 @@
                         "schema": {
                             "type": "integer"
                         },
-                        "description": "A unique integer value identifying this monthly member payment.",
+                        "description": "A unique integer value identifying this monthly person payment.",
                         "required": true
                     }
                 ],
@@ -5573,6 +5573,13 @@
                 "operationId": "notifications_list",
                 "parameters": [
                     {
+                        "in": "query",
+                        "name": "can_remove",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
                         "name": "ordering",
                         "required": false,
                         "in": "query",
@@ -5597,6 +5604,13 @@
                         "description": "Number of results to return per page.",
                         "schema": {
                             "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "type",
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     {
@@ -6247,7 +6261,7 @@
                 ],
                 "requestBody": {
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "$ref": "#/components/schemas/Person"
                             }
@@ -6257,7 +6271,7 @@
                                 "$ref": "#/components/schemas/Person"
                             }
                         },
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
                                 "$ref": "#/components/schemas/Person"
                             }
@@ -6349,7 +6363,7 @@
                 ],
                 "requestBody": {
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "$ref": "#/components/schemas/Person"
                             }
@@ -6359,7 +6373,7 @@
                                 "$ref": "#/components/schemas/Person"
                             }
                         },
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
                                 "$ref": "#/components/schemas/Person"
                             }
@@ -6409,7 +6423,7 @@
                 ],
                 "requestBody": {
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "$ref": "#/components/schemas/PatchedPerson"
                             }
@@ -6419,7 +6433,7 @@
                                 "$ref": "#/components/schemas/PatchedPerson"
                             }
                         },
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
                                 "$ref": "#/components/schemas/PatchedPerson"
                             }
@@ -6553,19 +6567,19 @@
                 ],
                 "requestBody": {
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/UploadMemberProfilePicture"
+                                "$ref": "#/components/schemas/UploadPersonProfilePicture"
                             }
                         },
                         "application/x-www-form-urlencoded": {
                             "schema": {
-                                "$ref": "#/components/schemas/UploadMemberProfilePicture"
+                                "$ref": "#/components/schemas/UploadPersonProfilePicture"
                             }
                         },
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/UploadMemberProfilePicture"
+                                "$ref": "#/components/schemas/UploadPersonProfilePicture"
                             }
                         }
                     }
@@ -6621,7 +6635,81 @@
         },
         "/persons/last_five/": {
             "get": {
-                "operationId": "persons_last_five_retrieve",
+                "operationId": "persons_last_five_list",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "coach_not_in_event",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "in_category",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "in_gender",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "in_member_type",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "in_user",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "is_quotes_legible",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "is_validated",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "monthly_payment_status",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "not_in_event",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ordering",
+                        "required": false,
+                        "in": "query",
+                        "description": "Which field to use when ordering the results.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "tags": [
                     "persons"
                 ],
@@ -6641,7 +6729,10 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Person"
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Person"
+                                    }
                                 }
                             }
                         },
@@ -7829,7 +7920,7 @@
                         "type": "string",
                         "nullable": true
                     },
-                    "target_member": {
+                    "target_person": {
                         "type": "string",
                         "nullable": true
                     }
@@ -8768,7 +8859,7 @@
                     "message": {
                         "type": "string"
                     },
-                    "member": {
+                    "person": {
                         "type": "string"
                     },
                     "request_type": {
@@ -8781,7 +8872,7 @@
                     }
                 },
                 "required": [
-                    "member"
+                    "person"
                 ]
             },
             "CreateMonthlyMemberPayment": {
@@ -8817,15 +8908,15 @@
                         "maximum": 32767,
                         "minimum": 0
                     },
-                    "member": {
+                    "person": {
                         "type": "string"
                     }
                 },
                 "required": [
                     "amount",
                     "id",
-                    "member",
                     "month",
+                    "person",
                     "year"
                 ]
             },
@@ -8883,7 +8974,7 @@
                         "type": "string",
                         "nullable": true
                     },
-                    "target_member": {
+                    "target_person": {
                         "type": "string",
                         "nullable": true
                     },
@@ -9352,7 +9443,7 @@
                         "readOnly": true
                     },
                     "person": {
-                        "$ref": "#/components/schemas/Members"
+                        "$ref": "#/components/schemas/Person"
                     },
                     "member_type": {
                         "allOf": [
@@ -9361,10 +9452,22 @@
                             }
                         ],
                         "default": "athlete"
+                    },
+                    "creation_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "modified_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
                     }
                 },
                 "required": [
+                    "creation_date",
                     "id",
+                    "modified_date",
                     "person"
                 ]
             },
@@ -9384,7 +9487,7 @@
                         "type": "integer",
                         "readOnly": true
                     },
-                    "member": {
+                    "person": {
                         "$ref": "#/components/schemas/CompactMembers"
                     },
                     "requested_by": {
@@ -9425,74 +9528,9 @@
                 "required": [
                     "created_at",
                     "id",
-                    "member",
                     "member_birth_date",
+                    "person",
                     "requested_by"
-                ]
-            },
-            "Members": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "string",
-                        "readOnly": true
-                    },
-                    "full_name": {
-                        "type": "string",
-                        "readOnly": true
-                    },
-                    "gender": {
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/GenderEnum"
-                            }
-                        ],
-                        "title": "Género"
-                    },
-                    "updated_by": {
-                        "$ref": "#/components/schemas/Users"
-                    },
-                    "age": {
-                        "type": "string",
-                        "readOnly": true
-                    },
-                    "current_month_payment_status": {
-                        "type": "string",
-                        "readOnly": true
-                    },
-                    "past_month_payment_status": {
-                        "type": "string",
-                        "readOnly": true
-                    },
-                    "request_status": {
-                        "type": "string",
-                        "readOnly": true
-                    },
-                    "exam_request_status": {
-                        "type": "string",
-                        "readOnly": true
-                    },
-                    "is_validated": {
-                        "type": "boolean"
-                    },
-                    "weight": {
-                        "type": "integer",
-                        "maximum": 2147483647,
-                        "minimum": 0,
-                        "nullable": true,
-                        "title": "Peso"
-                    }
-                },
-                "required": [
-                    "age",
-                    "current_month_payment_status",
-                    "exam_request_status",
-                    "full_name",
-                    "gender",
-                    "id",
-                    "past_month_payment_status",
-                    "request_status",
-                    "updated_by"
                 ]
             },
             "MembersPaymentsStatus": {
@@ -9529,7 +9567,7 @@
                         "type": "string",
                         "readOnly": true
                     },
-                    "member": {
+                    "person": {
                         "$ref": "#/components/schemas/CompactMembers"
                     },
                     "year": {
@@ -9566,8 +9604,8 @@
                     "id",
                     "inside_limit",
                     "is_custom",
-                    "member",
                     "month",
+                    "person",
                     "predefined_amount",
                     "year"
                 ]
@@ -9678,7 +9716,7 @@
                         "format": "date-time",
                         "readOnly": true
                     },
-                    "target_member": {
+                    "target_person": {
                         "type": "string",
                         "nullable": true
                     },
@@ -10575,7 +10613,7 @@
                         "readOnly": true
                     },
                     "person": {
-                        "$ref": "#/components/schemas/Members"
+                        "$ref": "#/components/schemas/Person"
                     },
                     "member_type": {
                         "allOf": [
@@ -10584,6 +10622,16 @@
                             }
                         ],
                         "default": "athlete"
+                    },
+                    "creation_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "modified_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
                     }
                 }
             },
@@ -10669,7 +10717,7 @@
                         "format": "date-time",
                         "readOnly": true
                     },
-                    "target_member": {
+                    "target_person": {
                         "type": "string",
                         "nullable": true
                     },
@@ -10728,76 +10776,9 @@
                         "type": "string",
                         "readOnly": true
                     },
-                    "profile_image": {
+                    "full_name": {
                         "type": "string",
-                        "format": "uri",
-                        "nullable": true
-                    },
-                    "first_name": {
-                        "type": "string",
-                        "title": "Primeiro Nome",
-                        "maxLength": 200
-                    },
-                    "last_name": {
-                        "type": "string",
-                        "title": "Último Nome",
-                        "maxLength": 200
-                    },
-                    "graduation": {
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/GraduationEnum"
-                            }
-                        ],
-                        "title": "Graduação"
-                    },
-                    "birth_date": {
-                        "type": "string",
-                        "format": "date",
-                        "title": "Data de Nascimento"
-                    },
-                    "address": {
-                        "type": "string",
-                        "nullable": true,
-                        "title": "Morada",
-                        "maxLength": 200
-                    },
-                    "post_code": {
-                        "type": "integer",
-                        "maximum": 2147483647,
-                        "minimum": 0,
-                        "nullable": true,
-                        "title": "Código Postal"
-                    },
-                    "id_number": {
-                        "type": "integer",
-                        "maximum": 2147483647,
-                        "minimum": 0,
-                        "nullable": true,
-                        "title": "Nº SKI-P"
-                    },
-                    "favorite": {
-                        "type": "boolean",
-                        "title": "Favorito"
-                    },
-                    "registration_date": {
-                        "type": "string",
-                        "format": "date",
-                        "title": "Data de Inscrição"
-                    },
-                    "national_card_number": {
-                        "type": "integer",
-                        "maximum": 2147483647,
-                        "minimum": 0,
-                        "nullable": true,
-                        "title": "Nº CC/BI"
-                    },
-                    "taxpayer_number": {
-                        "type": "integer",
-                        "maximum": 2147483647,
-                        "minimum": 0,
-                        "nullable": true,
-                        "title": "NIF"
+                        "readOnly": true
                     },
                     "gender": {
                         "allOf": [
@@ -10807,50 +10788,38 @@
                         ],
                         "title": "Género"
                     },
-                    "weight": {
-                        "type": "integer",
-                        "maximum": 2147483647,
-                        "minimum": 0,
-                        "nullable": true,
-                        "title": "Peso"
+                    "updated_by": {
+                        "$ref": "#/components/schemas/Users"
                     },
-                    "quotes_legible": {
-                        "type": "boolean",
-                        "title": "Paga Quotas"
-                    },
-                    "conditions": {
+                    "age": {
                         "type": "string",
-                        "nullable": true,
-                        "title": "Condições Médicas"
-                    },
-                    "observations": {
-                        "type": "string",
-                        "nullable": true,
-                        "title": "Observações"
-                    },
-                    "creation_date": {
-                        "type": "string",
-                        "format": "date-time",
                         "readOnly": true
                     },
-                    "modified_date": {
+                    "current_month_payment_status": {
                         "type": "string",
-                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "past_month_payment_status": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "request_status": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "exam_request_status": {
+                        "type": "string",
                         "readOnly": true
                     },
                     "is_validated": {
                         "type": "boolean"
                     },
-                    "club": {
-                        "type": "integer"
-                    },
-                    "created_by": {
-                        "type": "integer",
-                        "nullable": true
-                    },
-                    "updated_by": {
-                        "type": "integer",
-                        "nullable": true
+                    "member_types": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "readOnly": true
                     }
                 }
             },
@@ -10993,76 +10962,9 @@
                         "type": "string",
                         "readOnly": true
                     },
-                    "profile_image": {
+                    "full_name": {
                         "type": "string",
-                        "format": "uri",
-                        "nullable": true
-                    },
-                    "first_name": {
-                        "type": "string",
-                        "title": "Primeiro Nome",
-                        "maxLength": 200
-                    },
-                    "last_name": {
-                        "type": "string",
-                        "title": "Último Nome",
-                        "maxLength": 200
-                    },
-                    "graduation": {
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/GraduationEnum"
-                            }
-                        ],
-                        "title": "Graduação"
-                    },
-                    "birth_date": {
-                        "type": "string",
-                        "format": "date",
-                        "title": "Data de Nascimento"
-                    },
-                    "address": {
-                        "type": "string",
-                        "nullable": true,
-                        "title": "Morada",
-                        "maxLength": 200
-                    },
-                    "post_code": {
-                        "type": "integer",
-                        "maximum": 2147483647,
-                        "minimum": 0,
-                        "nullable": true,
-                        "title": "Código Postal"
-                    },
-                    "id_number": {
-                        "type": "integer",
-                        "maximum": 2147483647,
-                        "minimum": 0,
-                        "nullable": true,
-                        "title": "Nº SKI-P"
-                    },
-                    "favorite": {
-                        "type": "boolean",
-                        "title": "Favorito"
-                    },
-                    "registration_date": {
-                        "type": "string",
-                        "format": "date",
-                        "title": "Data de Inscrição"
-                    },
-                    "national_card_number": {
-                        "type": "integer",
-                        "maximum": 2147483647,
-                        "minimum": 0,
-                        "nullable": true,
-                        "title": "Nº CC/BI"
-                    },
-                    "taxpayer_number": {
-                        "type": "integer",
-                        "maximum": 2147483647,
-                        "minimum": 0,
-                        "nullable": true,
-                        "title": "NIF"
+                        "readOnly": true
                     },
                     "gender": {
                         "allOf": [
@@ -11072,62 +10974,51 @@
                         ],
                         "title": "Género"
                     },
-                    "weight": {
-                        "type": "integer",
-                        "maximum": 2147483647,
-                        "minimum": 0,
-                        "nullable": true,
-                        "title": "Peso"
+                    "updated_by": {
+                        "$ref": "#/components/schemas/Users"
                     },
-                    "quotes_legible": {
-                        "type": "boolean",
-                        "title": "Paga Quotas"
-                    },
-                    "conditions": {
+                    "age": {
                         "type": "string",
-                        "nullable": true,
-                        "title": "Condições Médicas"
-                    },
-                    "observations": {
-                        "type": "string",
-                        "nullable": true,
-                        "title": "Observações"
-                    },
-                    "creation_date": {
-                        "type": "string",
-                        "format": "date-time",
                         "readOnly": true
                     },
-                    "modified_date": {
+                    "current_month_payment_status": {
                         "type": "string",
-                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "past_month_payment_status": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "request_status": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "exam_request_status": {
+                        "type": "string",
                         "readOnly": true
                     },
                     "is_validated": {
                         "type": "boolean"
                     },
-                    "club": {
-                        "type": "integer"
-                    },
-                    "created_by": {
-                        "type": "integer",
-                        "nullable": true
-                    },
-                    "updated_by": {
-                        "type": "integer",
-                        "nullable": true
+                    "member_types": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "readOnly": true
                     }
                 },
                 "required": [
-                    "birth_date",
-                    "club",
-                    "creation_date",
-                    "first_name",
+                    "age",
+                    "current_month_payment_status",
+                    "exam_request_status",
+                    "full_name",
                     "gender",
-                    "graduation",
                     "id",
-                    "last_name",
-                    "modified_date"
+                    "member_types",
+                    "past_month_payment_status",
+                    "request_status",
+                    "updated_by"
                 ]
             },
             "Rating": {
@@ -11688,7 +11579,7 @@
                     "modified_date"
                 ]
             },
-            "UploadMemberProfilePicture": {
+            "UploadPersonProfilePicture": {
                 "type": "object",
                 "properties": {
                     "profile_image": {

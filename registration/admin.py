@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Member, Team, Classification, MonthlyMemberPayment, MonthlyMemberPaymentConfig, Person, Membership
+from .models import Member, Team, Classification, MonthlyPersonPayment, MonthlyPersonPaymentConfig, Person, Membership
 
 # Register your models here.
 
@@ -22,7 +22,7 @@ class ClassificationAdmin(admin.ModelAdmin):
 admin.site.register(Member)
 admin.site.register(Person, PersonAdmin)
 admin.site.register(Membership)
-admin.site.register(MonthlyMemberPayment)
-admin.site.register(MonthlyMemberPaymentConfig)
+admin.site.register(MonthlyPersonPayment)
+admin.site.register(MonthlyPersonPaymentConfig)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Classification, ClassificationAdmin)

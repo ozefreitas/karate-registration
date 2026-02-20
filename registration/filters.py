@@ -1,5 +1,5 @@
 from django_filters import rest_framework as filters
-from registration.models import MonthlyMemberPayment, Person
+from registration.models import MonthlyPersonPayment, Person
 from events.models import Event
 from django.db.models import Q, Count
 from registration.utils.utils import get_real_member
@@ -85,7 +85,7 @@ class PersonsFilters(filters.FilterSet):
     
     def filter_persons_in_member_type(self, queryset, name, value):
         types = [v.strip() for v in value.split(",") if v.strip()]
-        return queryset.filter(member_type__in=types)
+        return queryset.filter(member_types__member_type__in=types)
 
     def filter_persons_in_user(self, queryset, name, value):
         users = [v.strip() for v in value.split(",") if v.strip()]
@@ -99,14 +99,13 @@ class PersonsFilters(filters.FilterSet):
 class MonthlyMemberPaymentFilters(filters.FilterSet):
     """Filter Monthly Subscription objects"""
 
-    member = filters.CharFilter(method='filter_member')
+    person = filters.CharFilter(method='filter_person')
     
-    def filter_member(self, queryset, name, value):
+    def filter_person(self, queryset, name, value):
         """Will retrieve the first occurance with the unique together fields from the member, and retrieve its payments info for all member types"""
         person_to_search = Person.objects.get(id=value)
-        # real_member = get_real_member(person_to_search)
-        return queryset.filter(member=person_to_search)
+        return queryset.filter(person=person_to_search)
 
     class Meta:
-        model = MonthlyMemberPayment
+        model = MonthlyPersonPayment
         fields = []
