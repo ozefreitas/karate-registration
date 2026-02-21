@@ -2,14 +2,13 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.db import transaction, IntegrityError
 from django.utils import timezone
 
-from .models import Member, Team, Classification, MonthlyPersonPayment, MonthlyPersonPaymentConfig, Person, Membership
-from .filters import PersonsFilters, MonthlyMemberPaymentFilters
+from .models import Team, Classification, MonthlyPersonPayment, MonthlyPersonPaymentConfig, Person, Membership
+from .filters import PersonsFilters, MonthlyPersonPaymentFilters
 from events.models import Event
 from core.models import User, Notification, MonthlyPaymentPlan
 from core.permissions import PersonPermission
 import registration.serializers as registration_serializers
 import events.serializers as event_serializers
-from registration.utils.utils import get_real_member, get_identity_members
 
 from datetime import datetime
 
@@ -33,7 +32,7 @@ class MultipleSerializersMixIn:
 
 class PersonsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=queryset = Person.objects.prefetch_related("member_types").order_by("first_name", "last_name", "id")
-    serializer_class = registration_serializers.PersonSerializer  
+    serializer_class = registration_serializers.PersonsSerializer  
     permission_classes = [PersonPermission]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     ordering_fields = ["first_name", "last_name", "gender", "birth_date"]
@@ -41,9 +40,9 @@ class PersonsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     serializer_classes = {
-        "create": registration_serializers.ClubsCreateMemberSerializer,
-        "update": registration_serializers.UpdateMemberSerializer,
-        "partial_update": registration_serializers.UpdateMemberSerializer
+        "create": registration_serializers.ClubsCreatePersonSerializer,
+        "update": registration_serializers.UpdatePersonSerializer,
+        "partial_update": registration_serializers.UpdatePersonSerializer
     }
 
     def get_queryset(self):
@@ -58,10 +57,15 @@ class PersonsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
         role = getattr(user, "role", None)
 
-        if role in ["main_admin", "superuser", "single_admin"]:
+        if role == "superuser":
+            return self.queryset
+
+        if role in ["main_admin", "single_admin"]:
             return self.queryset.filter(
                 is_validated=True,
                 member_types__member_type__in=["athlete", "student"]
+            ).exclude(
+                club__role__in=["superuser"]
             )
 
         if role in ["subed_club", "free_club"]:
@@ -71,7 +75,7 @@ class PersonsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         if getattr(self, "swagger_fake_view", False):
-            return registration_serializers.PersonSerializer
+            return registration_serializers.PersonsSerializer
 
         user = self.request.user
         role = getattr(user, "role", None)
@@ -79,23 +83,23 @@ class PersonsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         if self.action == "list":
             if role in ["free_club", "subed_club"]:
                 if self.request.query_params.get("not_in_event"):
-                    return registration_serializers.NotInEventMembersSerializer
+                    return registration_serializers.NotInEventPersonsSerializer
                 elif self.request.query_params.get("coach_not_in_event"):
                     return registration_serializers.NotInEventCoachesSerializer
                 else:
-                    return registration_serializers.PersonSerializer
+                    return registration_serializers.PersonsSerializer
             else:
-                return registration_serializers.AdminMembersSerializer
+                return registration_serializers.AdminPersonsSerializer
 
         if self.action == "retrieve":
             if role in ["free_club", "subed_club"]:
-                return registration_serializers.NotAdminLikeTypeMembersSerializer
+                return registration_serializers.NotAdminLikeTypePersonsSerializer
             return registration_serializers.AdminPersonRetrieveSerializer
 
         elif self.action == "create":
             if role in ["free_club", "subed_club"]:
-                return registration_serializers.ClubsCreateMemberSerializer
-            return registration_serializers.AdminCreateMemberSerializer
+                return registration_serializers.ClubsCreatePersonSerializer
+            return registration_serializers.AdminCreatePersonSerializer
 
         return super().get_serializer_class()
 
@@ -173,12 +177,12 @@ class PersonsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
-        updated_member = serializer.save(updated_by=request.user)
+        updated_person = serializer.save(updated_by=request.user)
 
         if request.user != instance.club:
             Notification.objects.create(type="member_updated",
                                         notification=f'O Membro {old_identity["first_name"]} {old_identity["last_name"]} foi atualizado pelo seu administrador.',
-                                        target_person=updated_member,
+                                        target_person=updated_person,
                                         can_remove=True,
                                         club_user=instance.club,
                                         )
@@ -187,13 +191,13 @@ class PersonsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             identity_fields = ["first_name", "last_name", "birth_date", "id_number"]
         else:
             identity_fields = ["gender", "weight", "taxpayer_number", "national_card_number", "address"]
-        new_identity = {field: getattr(updated_member, field) for field in identity_fields}
+        new_identity = {field: getattr(updated_person, field) for field in identity_fields}
 
         #  others.update(**new_identity, updated_by=request.user)
 
         return Response(
             {
-                "data": self.get_serializer(updated_member).data,
+                "data": self.get_serializer(updated_person).data,
                 "message": "Membro atualizado com sucesso!",
                 "merda": "Eu"
             },
@@ -201,12 +205,12 @@ class PersonsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         )
 
     @extend_schema(
-        responses=registration_serializers.PersonSerializer(many=True),
+        responses=registration_serializers.PersonsSerializer(many=True),
     )
     @action(detail=False, methods=["get"], url_path="last_five", pagination_class=None)
     def last_five(self, request):
         last_five = Person.objects.filter(club=request.user).order_by('-creation_date')[:5]
-        serializer = registration_serializers.PersonSerializer(last_five, many=True)
+        serializer = registration_serializers.PersonsSerializer(last_five, many=True)
         return Response(serializer.data)
 
     @action(detail=False, methods=['delete'], url_path="delete_all")
@@ -224,11 +228,11 @@ class PersonsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             )
     
     @extend_schema(
-        responses=registration_serializers.MembersPaymentsStatusSerializer
+        responses=registration_serializers.PersonsPaymentsStatusSerializer
     )
     @action(detail=False, methods=['get'], url_path="members_payments_status")
     def members_payments_status(self, request):
-        paying_members = Member.objects.filter(
+        paying_members = Person.objects.filter(
             club=request.user,
             quotes_legible=True
         ).values(
@@ -267,7 +271,7 @@ class PersonsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     @action(detail=True, methods=['get'], url_path='unregistered_modalities/(?P<event_id>[^/.]+)')
     def unregistered_modalities(self, request, pk=None, event_id=None):
         try:
-            member = self.get_object()
+            person = self.get_object()
             event = Event.objects.get(pk=event_id)
         except Event.DoesNotExist:
             return Response({"detail": "Event not found."}, status=status.HTTP_404_NOT_FOUND)
@@ -276,31 +280,13 @@ class PersonsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         event_disciplines = event.disciplines.all()
 
         # Modalities where the member is already registered
-        registered = member.disciplines_indiv.filter(event=event)
+        registered = person.disciplines_indiv.filter(event=event)
 
         # Difference = unregistered
         unregistered = event_disciplines.exclude(id__in=registered.values_list('id', flat=True))
 
         serializer = event_serializers.DisciplinesCompactSerializer(unregistered, many=True)
         return Response(serializer.data)
-    
-    @extend_schema(request=registration_serializers.UploadPersonProfilePictureSerializer)
-    @action(detail=True, methods=["post"], url_path="upload-image")
-    def upload_image(self, request, pk=None):
-        member = self.get_object()
-
-        file = request.FILES.get("profile_image")
-        if not file:
-            return Response({"error": "No file provided"}, status=400)
-
-        member.profile_image = file
-
-        member.save()
-
-        return Response({
-            "status": "image uploaded",
-            "image_url": member.profile_image.url
-        }, status=status.HTTP_200_OK)
 
 
 class MemberShipsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
@@ -331,18 +317,18 @@ class MemberShipsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         else: return self.queryset
     
 
-class MonthlyMemberPaymentViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
+class MonthlyPersonPaymentViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=MonthlyPersonPayment.objects.all()
-    serializer_class = registration_serializers.MonthlyMemberPaymentSerializer
+    serializer_class = registration_serializers.MonthlyPersonPaymentSerializer
     pagination_class = None
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     ordering_fields = ["year", "month", "paid_at", "paid"]
     permission_classes = [IsAuthenticated]
-    filterset_class = MonthlyMemberPaymentFilters
+    filterset_class = MonthlyPersonPaymentFilters
 
     serializer_classes = {
-        "create": registration_serializers.CreateMonthlyMemberPaymentSerializer,
-        "partial_update": registration_serializers.PatchMonthlyMemberPaymentSerializer
+        "create": registration_serializers.CreateMonthlyPersonPaymentSerializer,
+        "partial_update": registration_serializers.PatchMonthlyPersonPaymentSerializer
     }
 
     def get_queryset(self):
@@ -354,12 +340,11 @@ class MonthlyMemberPaymentViewSet(MultipleSerializersMixIn, viewsets.ModelViewSe
 
     def partial_update(self, request, *args, **kwargs):
         instance = self.get_object()
-        real_member = get_real_member(instance)
 
         sent_fields = set(request.data.keys())
 
         serializer = self.get_serializer(
-            real_member, data=request.data, partial=True
+            instance, data=request.data, partial=True
         )
         serializer.is_valid(raise_exception=True)
 
@@ -383,9 +368,9 @@ class MonthlyMemberPaymentViewSet(MultipleSerializersMixIn, viewsets.ModelViewSe
         return Response(response_data)
 
 
-class MonthlyMemberPaymentConfigViewSet(viewsets.ModelViewSet):
+class MonthlyPersonPaymentConfigViewSet(viewsets.ModelViewSet):
     queryset = MonthlyPersonPaymentConfig.objects.all()
-    serializer_class = registration_serializers.MonthlyMemberPaymentConfigSerializer
+    serializer_class = registration_serializers.MonthlyPersonPaymentConfigSerializer
     permission_classes = [IsAuthenticated]
 
 

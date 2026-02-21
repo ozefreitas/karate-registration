@@ -8,7 +8,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from registration.utils.utils import get_identity_members, get_real_member
 
 from .filters import NotificationsFilters, CategoriesFilters
-from core.permissions import IsAuthenticatedOrReadOnly, IsUnauthenticatedForPost, IsNationalForPostDelete, IsAdminRoleorHigher, IsPayingUserorAdminForGet
+from core.permissions import IsAuthenticatedOrReadOnly, IsUnauthenticatedForPost, IsNationalForPostDelete, IsAdminRoleorHigher, IsPayingUserorAdminForGet, CanFilterByUserPermission
 from .models import Category, SignupToken, RequestedAcount, User, RequestPasswordReset, MemberValidationRequest, Notification
 from clubs.models import Club
 from .models import Notification, MonthlyPaymentPlan, MemberValidationRequest
@@ -40,7 +40,7 @@ class MultipleSerializersMixIn:
 class NotificationViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Notification.objects.all()
     serializer_class=BaseSerializers.NotificationsSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, IsNationalForPostDelete]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsNationalForPostDelete, CanFilterByUserPermission]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     ordering_fields = ["notification", "type", "created_at"]
     filterset_class = NotificationsFilters
@@ -50,7 +50,17 @@ class NotificationViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     }
 
     def get_queryset(self):
-        return Notification.objects.order_by("-created_at")
+        user = self.request.user
+
+        if not user.is_authenticated:
+            return Notification.objects.none()
+
+        # if admin can see everything
+        if user.role in ["main_admin", "single_admin", "superuser"]:
+            return Notification.objects.all().order_by("-created_at")
+
+        # normal users -> only their own
+        return Notification.objects.filter(club_user=user).order_by("-created_at")
     
     @action(detail=False, methods=['post'], url_path="create_all_users", serializer_class=BaseSerializers.AllUsersNotificationsSerializer)
     def create_all_user(self, request):
@@ -262,7 +272,7 @@ class MemberValidationRequestViewSet(MultipleSerializersMixIn, viewsets.ModelVie
 
         elif status != "approved" and request_type == "verify":
             if admin_comment != "" or admin_comment != None:
-                notification = f'A Validação do Membro {person.first_name} {person.last_name} foi rejeitada pelo seu administrador com a seguinte mensagem: {serializer.validated_data["admin_comment"]}.'
+                notification = f'A Validação do Membro {person.first_name} {person.last_name} foi rejeitada pelo seu administrador com a seguinte mensagem: {serializer.validated_data["admin_comment"]}. '
             else:
                 notification = f'A Validação do Membro {person.first_name} {person.last_name} foi rejeitada pelo seu administrador.'
             Notification.objects.create(type="member_updated",

@@ -1,6 +1,11 @@
 from rest_framework import serializers
-from decouple import config
+
 from django.utils import timezone
+from django.core.files.images import get_image_dimensions
+
+from PIL import Image
+import os
+from decouple import config
 
 import registration.models as models
 from core.serializers.users import UsersSerializer
@@ -9,14 +14,13 @@ from core.models import MemberValidationRequest, MonthlyPaymentPlan
 from core.utils.utils import calc_age
 from events.models import Event, Discipline
 from registration.utils.utils import get_comp_age
-from registration.utils.utils import get_real_member
 
 from drf_spectacular.utils import extend_schema_field
 
 
 ### Members Serializer Classes
 
-class PersonSerializer(serializers.ModelSerializer):
+class PersonsSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     age = serializers.SerializerMethodField()
     request_status = serializers.SerializerMethodField()
@@ -85,7 +89,7 @@ class PersonSerializer(serializers.ModelSerializer):
         )
 
 
-class AdminMembersSerializer(serializers.ModelSerializer):
+class AdminPersonsSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     club = UsersSerializer()
     updated_by = UsersSerializer()
@@ -104,14 +108,14 @@ class AdminMembersSerializer(serializers.ModelSerializer):
     
 
 class MemberShipsSerializer(serializers.ModelSerializer):
-    person = PersonSerializer()
+    person = PersonsSerializer()
 
     class Meta:
         model = models.Membership
         fields = "__all__"
 
 
-class CompactMembersSerializer(serializers.ModelSerializer):
+class CompactPersonSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     club = serializers.SerializerMethodField()
     age = serializers.SerializerMethodField()
@@ -130,7 +134,7 @@ class CompactMembersSerializer(serializers.ModelSerializer):
         return get_comp_age(obj.birth_date)
 
 
-class CompactCategorizedMembersSerializer(serializers.ModelSerializer):
+class CompactCategorizedPersonsSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     club = serializers.SerializerMethodField()
 
@@ -153,7 +157,7 @@ class CompactCategorizedMembersSerializer(serializers.ModelSerializer):
         return f"{obj.first_name} {obj.last_name}"
 
 
-class NotAdminLikeTypeMembersSerializer(serializers.ModelSerializer):
+class NotAdminLikeTypePersonsSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     age = serializers.SerializerMethodField()
     monthly_payment_status = serializers.SerializerMethodField()
@@ -189,7 +193,7 @@ class NotAdminLikeTypeMembersSerializer(serializers.ModelSerializer):
             defaults={"base_plan": default_plan}
         )
 
-        return MonthlyMemberPaymentConfigSerializer(config).data
+        return MonthlyPersonPaymentConfigSerializer(config).data
 
     def get_next_prev(self, obj):
         qs = list(
@@ -251,6 +255,7 @@ class AdminPersonRetrieveSerializer(serializers.ModelSerializer):
         qs = list(
             models.Person.objects
             .filter(is_validated=True)
+            .exclude(club__role__in=["superuser"])
             .order_by("first_name", "last_name", "id")
             .values_list("id", flat=True)
         )
@@ -280,7 +285,7 @@ class NotInEventCoachesSerializer(serializers.ModelSerializer):
         return f"{obj.first_name} {obj.last_name}"
 
 
-class NotInEventMembersSerializer(serializers.ModelSerializer):
+class NotInEventPersonsSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     age = serializers.SerializerMethodField()
     category = serializers.SerializerMethodField()
@@ -343,17 +348,9 @@ class NotInEventMembersSerializer(serializers.ModelSerializer):
                 return category.name
                 
         return None
-    
-
-class UploadPersonProfilePictureSerializer(serializers.Serializer):
-    profile_image = serializers.ImageField(required=False)
-
-    class Meta:
-        model = models.Person
-        fields = "__all__"
 
 
-class ClubsCreateMemberSerializer(serializers.ModelSerializer):
+class ClubsCreatePersonSerializer(serializers.ModelSerializer):
     member_type = serializers.CharField(required=True, write_only=True)
 
     class Meta:
@@ -373,21 +370,21 @@ class ClubsCreateMemberSerializer(serializers.ModelSerializer):
                 'member_type_missing': ['Tem que selecionar um Tipo de Praticante.']
             }) 
 
-        if member_type in ["student", "athlete"] and models.Member.objects.filter(first_name=data.get("first_name"),
+        if member_type in ["student", "athlete"] and models.Person.objects.filter(first_name=data.get("first_name"),
                                                                      last_name=data.get("last_name"),
                                                                      birth_date=birth_date,
                                                                      id_number=data.get("id_number"),
-                                                                     member_type__in=["athlete", "student"]).exists():
+                                                                     member_types__member_type__in=["athlete", "student"]).exists():
 
             raise serializers.ValidationError({
                 'member_type_missmatch': ['Já existe um Aluno/Competidor para este Membro.']
             })
         
-        elif member_type == "coach" and models.Member.objects.filter(first_name=data.get("first_name"),
+        elif member_type == "coach" and models.Person.objects.filter(first_name=data.get("first_name"),
                                                                      last_name=data.get("last_name"),
                                                                      birth_date=birth_date,
                                                                      id_number=data.get("id_number"),
-                                                                     member_type="coach").exists():
+                                                                     member_types__member_type="coach").exists():
             raise serializers.ValidationError({
                         'member_type_missmatch': ['Já existe um "Treinador" para este Membro.']
                     })
@@ -411,7 +408,7 @@ class ClubsCreateMemberSerializer(serializers.ModelSerializer):
         return data
     
 
-class AdminCreateMemberSerializer(serializers.ModelSerializer):
+class AdminCreatePersonSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Person
         exclude = ("address", "post_code", "national_card_number", "taxpayer_number", "created_by", "updated_by", "profile_image")
@@ -434,7 +431,10 @@ class AdminCreateMemberSerializer(serializers.ModelSerializer):
         return data
 
 
-class UpdateMemberSerializer(serializers.ModelSerializer):
+MAX_IMAGE_SIZE_MB = 5
+ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"]
+
+class UpdatePersonSerializer(serializers.ModelSerializer):
     age = serializers.SerializerMethodField()
 
     def get_age(self, obj):
@@ -457,13 +457,34 @@ class UpdateMemberSerializer(serializers.ModelSerializer):
 
     #     return fields
 
+    def validate_profile_image(self, value):
+        request = self.context.get("request")
+        user = request.user
+
+        if user.role in ["main_admin", "superuser"]:
+            raise serializers.ValidationError(
+                "Main admins are not allowed to change Members profile images."
+            )
+
+        if value.size > MAX_IMAGE_SIZE_MB * 1024 * 1024:
+            raise serializers.ValidationError(
+                f"Image must be smaller than {MAX_IMAGE_SIZE_MB}MB."
+            )
+
+        if value.content_type not in ALLOWED_IMAGE_TYPES:
+            raise serializers.ValidationError(
+                "Only JPEG, PNG and WEBP images are allowed."
+            )
+
+        return value
+
     def validate(self, attrs):
-        member = self.instance 
+        person = self.instance 
         request = self.context.get("request")
         if request.user.role in ["main_admin", "superuser"]:
             return attrs
 
-        if (member.created_by.role != "main_admin" and member.created_by != member.club) or (member.created_by.role != "main_admin" and member.created_by == member.club and member.is_validated):
+        if (person.created_by.role != "main_admin" and person.created_by != person.club) or (person.created_by.role != "main_admin" and person.created_by == person.club and person.is_validated):
             for field in ["id_number", "first_name", "last_name", "birth_date", "gender", "graduation"]:
                 if field in attrs:
                     raise serializers.ValidationError(
@@ -481,13 +502,20 @@ class UpdateMemberSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 {"profile_image": "Main admins are not allowed to change Members profile images."}
             )
+        
+        new_image = validated_data.get("profile_image", None)
+
+        # If replacing image, delete old one safely
+        if new_image and instance.profile_image:
+            if os.path.isfile(instance.profile_image.path):
+                os.remove(instance.profile_image.path)
 
         return super().update(instance, validated_data)
 
 
 ### Monthly Payments Serializer Classes
 
-class MonthlyMemberPaymentConfigSerializer(serializers.ModelSerializer):
+class MonthlyPersonPaymentConfigSerializer(serializers.ModelSerializer):
     base_plan_amount = serializers.SerializerMethodField()
 
     class Meta:
@@ -498,18 +526,18 @@ class MonthlyMemberPaymentConfigSerializer(serializers.ModelSerializer):
         return obj.base_plan.amount
 
 
-class PatchMonthlyMemberPaymentConfigSerializer(serializers.ModelSerializer):
+class PatchMonthlyPersonPaymentConfigSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.MonthlyPersonPaymentConfig
         fields = "__all__"
         read_only_fields = ["person"]
 
 
-class MonthlyMemberPaymentSerializer(serializers.ModelSerializer):
+class MonthlyPersonPaymentSerializer(serializers.ModelSerializer):
     inside_limit = serializers.SerializerMethodField()
     predefined_amount = serializers.SerializerMethodField()
     is_custom = serializers.SerializerMethodField()
-    person = CompactMembersSerializer()
+    person = CompactPersonSerializer()
 
     class Meta:
         model = models.MonthlyPersonPayment
@@ -536,7 +564,7 @@ class MonthlyMemberPaymentSerializer(serializers.ModelSerializer):
         return is_custom.is_custom_active
 
 
-class CreateMonthlyMemberPaymentSerializer(serializers.ModelSerializer):
+class CreateMonthlyPersonPaymentSerializer(serializers.ModelSerializer):
     amount = serializers.CharField(read_only=True)
 
     customAmount = serializers.CharField(
@@ -594,7 +622,7 @@ class CreateMonthlyMemberPaymentSerializer(serializers.ModelSerializer):
         )
 
 
-class PatchMonthlyMemberPaymentSerializer(serializers.ModelSerializer):
+class PatchMonthlyPersonPaymentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.MonthlyPersonPayment
@@ -615,7 +643,7 @@ class PatchMonthlyMemberPaymentSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 
-class MembersPaymentsStatusSerializer(serializers.Serializer):
+class PersonsPaymentsStatusSerializer(serializers.Serializer):
     number = serializers.IntegerField()
     unpaid_members = serializers.IntegerField()
 
@@ -623,11 +651,11 @@ class MembersPaymentsStatusSerializer(serializers.Serializer):
 ### Teams Serializer Classes
 
 class TeamsSerializer(serializers.ModelSerializer):
-    athlete1 = CompactMembersSerializer()
-    athlete2 = CompactMembersSerializer()
-    athlete3 = CompactMembersSerializer()
-    athlete4 = CompactMembersSerializer()
-    athlete5 = CompactMembersSerializer()
+    athlete1 = CompactPersonSerializer()
+    athlete2 = CompactPersonSerializer()
+    athlete3 = CompactPersonSerializer()
+    athlete4 = CompactPersonSerializer()
+    athlete5 = CompactPersonSerializer()
     team_size = serializers.SerializerMethodField()
     category = NameCategorySerializer()
     disciplines = serializers.SerializerMethodField()
@@ -719,9 +747,9 @@ class AllClassificationsSerializer(serializers.ModelSerializer):
 
 class ClassificationsSerializer(serializers.ModelSerializer):
     full_category = serializers.SerializerMethodField()
-    first_place = CompactMembersSerializer()
-    second_place = CompactMembersSerializer()
-    third_place = CompactMembersSerializer()
+    first_place = CompactPersonSerializer()
+    second_place = CompactPersonSerializer()
+    third_place = CompactPersonSerializer()
 
     class Meta:
         model = models.Classification

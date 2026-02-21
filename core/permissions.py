@@ -192,3 +192,19 @@ class IsObjectOwner(BasePermission):
                 or obj.club_user == request.user  # owner check
             )
         return True
+    
+
+class CanFilterByUserPermission(BasePermission):
+    """
+    Only admin users can filter notifications by user_id.
+    """
+
+    def has_permission(self, request, view):
+        user_id = request.query_params.get("user_id")
+
+        # if no filtering by user_id, allow
+        if not user_id:
+            return True
+
+        # if filtering, only admin allowed
+        return request.user.is_authenticated and request.user.role in ['main_admin', 'single_admin', 'superuser']

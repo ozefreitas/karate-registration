@@ -31,7 +31,7 @@ class EventsSerializer(serializers.ModelSerializer):
             qs = obj.individuals.all()
         else:
             return []
-        return registration.serializers.CompactMembersSerializer(qs, many=True).data
+        return registration.serializers.CompactPersonSerializer(qs, many=True).data
     
     def get_is_open(self, obj):
         if obj.has_registrations:
@@ -263,7 +263,7 @@ class DisciplinesSerializer(serializers.ModelSerializer):
 
 
 class DisciplineMemberSerializer(serializers.ModelSerializer):
-    member = registration.serializers.CompactCategorizedMembersSerializer()
+    member = registration.serializers.CompactCategorizedPersonsSerializer()
     category = core.serializers.categories.NameCategorySerializer()
 
     class Meta:

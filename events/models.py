@@ -20,7 +20,7 @@ class Event(models.Model):
     custody = models.CharField("Tutela", max_length=99, default="", null=True, blank=True)
     email_contact = models.EmailField("Email", default="jpsfreitas19@gmail.com", null=True, blank=True)
     contact = models.PositiveIntegerField("Contacto", default="123456789", null=True, blank=True)
-    individuals = models.ManyToManyField("registration.Member", related_name='general_events', blank=True)
+    individuals = models.ManyToManyField("registration.Person", related_name='general_events', blank=True)
     has_ended = models.BooleanField(default=False)
     has_registrations = models.BooleanField(default=False)
     has_categories = models.BooleanField(default=False)
@@ -54,7 +54,7 @@ class Discipline(models.Model):
     is_coach = models.BooleanField(default=False)
     
     individuals = models.ManyToManyField(
-        "registration.Member",
+        "registration.Person",
         through="DisciplineMember",
         related_name="disciplines_indiv",
         blank=True
@@ -73,10 +73,10 @@ class Discipline(models.Model):
         blank=True
     )
 
-    def add_member(self, member, category):
+    def add_member(self, person, category):
         DisciplineMember.objects.get_or_create(
             discipline=self,
-            member=member,
+            person=person,
             category=category
         )
     
@@ -103,15 +103,15 @@ class Discipline(models.Model):
 
 class DisciplineMember(models.Model):
     discipline = models.ForeignKey("Discipline", on_delete=models.CASCADE)
-    member = models.ForeignKey("registration.Member", on_delete=models.CASCADE)
+    person = models.ForeignKey("registration.Person", on_delete=models.CASCADE)
     category = models.ForeignKey("core.Category", on_delete=models.CASCADE, null=True, blank=True)
     added_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
-        unique_together = ('discipline', 'member')
+        unique_together = ('discipline', 'person')
 
     def __str__(self):
-        return '{} {} {}'.format(self.discipline.name, self.member.first_name, self.member.last_name)
+        return '{} {} {}'.format(self.discipline.name, self.person.first_name, self.person.last_name)
 
 
 class DisciplineTeam(models.Model):

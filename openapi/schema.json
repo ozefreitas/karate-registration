@@ -4744,7 +4744,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/PaginatedMonthlyMemberPaymentConfigList"
+                                    "$ref": "#/components/schemas/PaginatedMonthlyPersonPaymentConfigList"
                                 }
                             }
                         },
@@ -4761,17 +4761,17 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/MonthlyMemberPaymentConfig"
+                                "$ref": "#/components/schemas/MonthlyPersonPaymentConfig"
                             }
                         },
                         "application/x-www-form-urlencoded": {
                             "schema": {
-                                "$ref": "#/components/schemas/MonthlyMemberPaymentConfig"
+                                "$ref": "#/components/schemas/MonthlyPersonPaymentConfig"
                             }
                         },
                         "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/MonthlyMemberPaymentConfig"
+                                "$ref": "#/components/schemas/MonthlyPersonPaymentConfig"
                             }
                         }
                     },
@@ -4793,7 +4793,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/MonthlyMemberPaymentConfig"
+                                    "$ref": "#/components/schemas/MonthlyPersonPaymentConfig"
                                 }
                             }
                         },
@@ -4835,7 +4835,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/MonthlyMemberPaymentConfig"
+                                    "$ref": "#/components/schemas/MonthlyPersonPaymentConfig"
                                 }
                             }
                         },
@@ -4863,17 +4863,17 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/MonthlyMemberPaymentConfig"
+                                "$ref": "#/components/schemas/MonthlyPersonPaymentConfig"
                             }
                         },
                         "application/x-www-form-urlencoded": {
                             "schema": {
-                                "$ref": "#/components/schemas/MonthlyMemberPaymentConfig"
+                                "$ref": "#/components/schemas/MonthlyPersonPaymentConfig"
                             }
                         },
                         "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/MonthlyMemberPaymentConfig"
+                                "$ref": "#/components/schemas/MonthlyPersonPaymentConfig"
                             }
                         }
                     },
@@ -4895,7 +4895,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/MonthlyMemberPaymentConfig"
+                                    "$ref": "#/components/schemas/MonthlyPersonPaymentConfig"
                                 }
                             }
                         },
@@ -4923,17 +4923,17 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/PatchedMonthlyMemberPaymentConfig"
+                                "$ref": "#/components/schemas/PatchedMonthlyPersonPaymentConfig"
                             }
                         },
                         "application/x-www-form-urlencoded": {
                             "schema": {
-                                "$ref": "#/components/schemas/PatchedMonthlyMemberPaymentConfig"
+                                "$ref": "#/components/schemas/PatchedMonthlyPersonPaymentConfig"
                             }
                         },
                         "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/PatchedMonthlyMemberPaymentConfig"
+                                "$ref": "#/components/schemas/PatchedMonthlyPersonPaymentConfig"
                             }
                         }
                     }
@@ -4954,7 +4954,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/MonthlyMemberPaymentConfig"
+                                    "$ref": "#/components/schemas/MonthlyPersonPaymentConfig"
                                 }
                             }
                         },
@@ -6246,7 +6246,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/PaginatedPersonList"
+                                    "$ref": "#/components/schemas/PaginatedPersonsList"
                                 }
                             }
                         },
@@ -6263,17 +6263,17 @@
                     "content": {
                         "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/Person"
+                                "$ref": "#/components/schemas/Persons"
                             }
                         },
                         "application/x-www-form-urlencoded": {
                             "schema": {
-                                "$ref": "#/components/schemas/Person"
+                                "$ref": "#/components/schemas/Persons"
                             }
                         },
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/Person"
+                                "$ref": "#/components/schemas/Persons"
                             }
                         }
                     },
@@ -6295,7 +6295,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Person"
+                                    "$ref": "#/components/schemas/Persons"
                                 }
                             }
                         },
@@ -6337,7 +6337,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Person"
+                                    "$ref": "#/components/schemas/Persons"
                                 }
                             }
                         },
@@ -6365,17 +6365,17 @@
                     "content": {
                         "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/Person"
+                                "$ref": "#/components/schemas/Persons"
                             }
                         },
                         "application/x-www-form-urlencoded": {
                             "schema": {
-                                "$ref": "#/components/schemas/Person"
+                                "$ref": "#/components/schemas/Persons"
                             }
                         },
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/Person"
+                                "$ref": "#/components/schemas/Persons"
                             }
                         }
                     },
@@ -6397,7 +6397,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Person"
+                                    "$ref": "#/components/schemas/Persons"
                                 }
                             }
                         },
@@ -6425,17 +6425,17 @@
                     "content": {
                         "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/PatchedPerson"
+                                "$ref": "#/components/schemas/PatchedPersons"
                             }
                         },
                         "application/x-www-form-urlencoded": {
                             "schema": {
-                                "$ref": "#/components/schemas/PatchedPerson"
+                                "$ref": "#/components/schemas/PatchedPersons"
                             }
                         },
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/PatchedPerson"
+                                "$ref": "#/components/schemas/PatchedPersons"
                             }
                         }
                     }
@@ -6456,7 +6456,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Person"
+                                    "$ref": "#/components/schemas/Persons"
                                 }
                             }
                         },
@@ -6539,68 +6539,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Person"
-                                }
-                            }
-                        },
-                        "description": ""
-                    }
-                }
-            }
-        },
-        "/persons/{id}/upload-image/": {
-            "post": {
-                "operationId": "persons_upload_image_create",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "id",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "description": "A unique value identifying this person.",
-                        "required": true
-                    }
-                ],
-                "tags": [
-                    "persons"
-                ],
-                "requestBody": {
-                    "content": {
-                        "multipart/form-data": {
-                            "schema": {
-                                "$ref": "#/components/schemas/UploadPersonProfilePicture"
-                            }
-                        },
-                        "application/x-www-form-urlencoded": {
-                            "schema": {
-                                "$ref": "#/components/schemas/UploadPersonProfilePicture"
-                            }
-                        },
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/UploadPersonProfilePicture"
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Person"
+                                    "$ref": "#/components/schemas/Persons"
                                 }
                             }
                         },
@@ -6731,7 +6670,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/Person"
+                                        "$ref": "#/components/schemas/Persons"
                                     }
                                 }
                             }
@@ -8357,7 +8296,7 @@
                     "season"
                 ]
             },
-            "CompactMembers": {
+            "CompactPerson": {
                 "type": "object",
                 "properties": {
                     "id": {
@@ -9443,7 +9382,7 @@
                         "readOnly": true
                     },
                     "person": {
-                        "$ref": "#/components/schemas/Person"
+                        "$ref": "#/components/schemas/Persons"
                     },
                     "member_type": {
                         "allOf": [
@@ -9488,7 +9427,7 @@
                         "readOnly": true
                     },
                     "person": {
-                        "$ref": "#/components/schemas/CompactMembers"
+                        "$ref": "#/components/schemas/CompactPerson"
                     },
                     "requested_by": {
                         "$ref": "#/components/schemas/CompactUser"
@@ -9568,7 +9507,7 @@
                         "readOnly": true
                     },
                     "person": {
-                        "$ref": "#/components/schemas/CompactMembers"
+                        "$ref": "#/components/schemas/CompactPerson"
                     },
                     "year": {
                         "type": "integer",
@@ -9610,36 +9549,6 @@
                     "year"
                 ]
             },
-            "MonthlyMemberPaymentConfig": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "readOnly": true
-                    },
-                    "base_plan_amount": {
-                        "type": "string",
-                        "readOnly": true
-                    },
-                    "custom_amount": {
-                        "type": "string",
-                        "format": "decimal",
-                        "pattern": "^-?\\d{0,5}(?:\\.\\d{0,2})?$",
-                        "nullable": true
-                    },
-                    "is_custom_active": {
-                        "type": "boolean"
-                    },
-                    "base_plan": {
-                        "type": "integer"
-                    }
-                },
-                "required": [
-                    "base_plan",
-                    "base_plan_amount",
-                    "id"
-                ]
-            },
             "MonthlyPaymentPlan": {
                 "type": "object",
                 "properties": {
@@ -9669,6 +9578,36 @@
                     "club_user",
                     "id",
                     "name"
+                ]
+            },
+            "MonthlyPersonPaymentConfig": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "base_plan_amount": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "custom_amount": {
+                        "type": "string",
+                        "format": "decimal",
+                        "pattern": "^-?\\d{0,5}(?:\\.\\d{0,2})?$",
+                        "nullable": true
+                    },
+                    "is_custom_active": {
+                        "type": "boolean"
+                    },
+                    "base_plan": {
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "base_plan",
+                    "base_plan_amount",
+                    "id"
                 ]
             },
             "NameCategory": {
@@ -9980,7 +9919,7 @@
                     }
                 }
             },
-            "PaginatedMonthlyMemberPaymentConfigList": {
+            "PaginatedMonthlyPersonPaymentConfigList": {
                 "type": "object",
                 "required": [
                     "count",
@@ -10006,7 +9945,7 @@
                     "results": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/MonthlyMemberPaymentConfig"
+                            "$ref": "#/components/schemas/MonthlyPersonPaymentConfig"
                         }
                     }
                 }
@@ -10042,7 +9981,7 @@
                     }
                 }
             },
-            "PaginatedPersonList": {
+            "PaginatedPersonsList": {
                 "type": "object",
                 "required": [
                     "count",
@@ -10068,7 +10007,7 @@
                     "results": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/Person"
+                            "$ref": "#/components/schemas/Persons"
                         }
                     }
                 }
@@ -10613,7 +10552,7 @@
                         "readOnly": true
                     },
                     "person": {
-                        "$ref": "#/components/schemas/Person"
+                        "$ref": "#/components/schemas/Persons"
                     },
                     "member_type": {
                         "allOf": [
@@ -10632,31 +10571,6 @@
                         "type": "string",
                         "format": "date-time",
                         "readOnly": true
-                    }
-                }
-            },
-            "PatchedMonthlyMemberPaymentConfig": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "readOnly": true
-                    },
-                    "base_plan_amount": {
-                        "type": "string",
-                        "readOnly": true
-                    },
-                    "custom_amount": {
-                        "type": "string",
-                        "format": "decimal",
-                        "pattern": "^-?\\d{0,5}(?:\\.\\d{0,2})?$",
-                        "nullable": true
-                    },
-                    "is_custom_active": {
-                        "type": "boolean"
-                    },
-                    "base_plan": {
-                        "type": "integer"
                     }
                 }
             },
@@ -10682,6 +10596,31 @@
                     "club_user": {
                         "type": "integer",
                         "readOnly": true
+                    }
+                }
+            },
+            "PatchedMonthlyPersonPaymentConfig": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "base_plan_amount": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "custom_amount": {
+                        "type": "string",
+                        "format": "decimal",
+                        "pattern": "^-?\\d{0,5}(?:\\.\\d{0,2})?$",
+                        "nullable": true
+                    },
+                    "is_custom_active": {
+                        "type": "boolean"
+                    },
+                    "base_plan": {
+                        "type": "integer"
                     }
                 }
             },
@@ -10769,7 +10708,7 @@
                     }
                 }
             },
-            "PatchedPerson": {
+            "PatchedPersons": {
                 "type": "object",
                 "properties": {
                     "id": {
@@ -10861,19 +10800,19 @@
                         "readOnly": true
                     },
                     "athlete1": {
-                        "$ref": "#/components/schemas/CompactMembers"
+                        "$ref": "#/components/schemas/CompactPerson"
                     },
                     "athlete2": {
-                        "$ref": "#/components/schemas/CompactMembers"
+                        "$ref": "#/components/schemas/CompactPerson"
                     },
                     "athlete3": {
-                        "$ref": "#/components/schemas/CompactMembers"
+                        "$ref": "#/components/schemas/CompactPerson"
                     },
                     "athlete4": {
-                        "$ref": "#/components/schemas/CompactMembers"
+                        "$ref": "#/components/schemas/CompactPerson"
                     },
                     "athlete5": {
-                        "$ref": "#/components/schemas/CompactMembers"
+                        "$ref": "#/components/schemas/CompactPerson"
                     },
                     "team_size": {
                         "type": "string",
@@ -10955,7 +10894,7 @@
                 "type": "string",
                 "description": "* `none` - None\n* `quotes` - Quotes\n* `insurance` - Insurance\n* `events` - Events"
             },
-            "Person": {
+            "Persons": {
                 "type": "object",
                 "properties": {
                     "id": {
@@ -11184,19 +11123,19 @@
                         "readOnly": true
                     },
                     "athlete1": {
-                        "$ref": "#/components/schemas/CompactMembers"
+                        "$ref": "#/components/schemas/CompactPerson"
                     },
                     "athlete2": {
-                        "$ref": "#/components/schemas/CompactMembers"
+                        "$ref": "#/components/schemas/CompactPerson"
                     },
                     "athlete3": {
-                        "$ref": "#/components/schemas/CompactMembers"
+                        "$ref": "#/components/schemas/CompactPerson"
                     },
                     "athlete4": {
-                        "$ref": "#/components/schemas/CompactMembers"
+                        "$ref": "#/components/schemas/CompactPerson"
                     },
                     "athlete5": {
-                        "$ref": "#/components/schemas/CompactMembers"
+                        "$ref": "#/components/schemas/CompactPerson"
                     },
                     "team_size": {
                         "type": "string",
@@ -11578,15 +11517,6 @@
                     "id",
                     "modified_date"
                 ]
-            },
-            "UploadPersonProfilePicture": {
-                "type": "object",
-                "properties": {
-                    "profile_image": {
-                        "type": "string",
-                        "format": "uri"
-                    }
-                }
             },
             "Username": {
                 "type": "object",

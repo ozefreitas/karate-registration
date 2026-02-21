@@ -96,7 +96,7 @@ class PersonsFilters(filters.FilterSet):
         fields = []
 
 
-class MonthlyMemberPaymentFilters(filters.FilterSet):
+class MonthlyPersonPaymentFilters(filters.FilterSet):
     """Filter Monthly Subscription objects"""
 
     person = filters.CharFilter(method='filter_person')
