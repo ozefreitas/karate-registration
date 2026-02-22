@@ -5315,7 +5315,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/MonthlyMemberPayment"
+                                        "$ref": "#/components/schemas/MonthlyPersonPayment"
                                     }
                                 }
                             }
@@ -5333,17 +5333,17 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/CreateMonthlyMemberPayment"
+                                "$ref": "#/components/schemas/CreateMonthlyPersonPayment"
                             }
                         },
                         "application/x-www-form-urlencoded": {
                             "schema": {
-                                "$ref": "#/components/schemas/CreateMonthlyMemberPayment"
+                                "$ref": "#/components/schemas/CreateMonthlyPersonPayment"
                             }
                         },
                         "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/CreateMonthlyMemberPayment"
+                                "$ref": "#/components/schemas/CreateMonthlyPersonPayment"
                             }
                         }
                     },
@@ -5365,7 +5365,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/CreateMonthlyMemberPayment"
+                                    "$ref": "#/components/schemas/CreateMonthlyPersonPayment"
                                 }
                             }
                         },
@@ -5407,7 +5407,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/MonthlyMemberPayment"
+                                    "$ref": "#/components/schemas/MonthlyPersonPayment"
                                 }
                             }
                         },
@@ -5435,17 +5435,17 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/MonthlyMemberPayment"
+                                "$ref": "#/components/schemas/MonthlyPersonPayment"
                             }
                         },
                         "application/x-www-form-urlencoded": {
                             "schema": {
-                                "$ref": "#/components/schemas/MonthlyMemberPayment"
+                                "$ref": "#/components/schemas/MonthlyPersonPayment"
                             }
                         },
                         "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/MonthlyMemberPayment"
+                                "$ref": "#/components/schemas/MonthlyPersonPayment"
                             }
                         }
                     },
@@ -5467,7 +5467,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/MonthlyMemberPayment"
+                                    "$ref": "#/components/schemas/MonthlyPersonPayment"
                                 }
                             }
                         },
@@ -5495,17 +5495,17 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/PatchedPatchMonthlyMemberPayment"
+                                "$ref": "#/components/schemas/PatchedPatchMonthlyPersonPayment"
                             }
                         },
                         "application/x-www-form-urlencoded": {
                             "schema": {
-                                "$ref": "#/components/schemas/PatchedPatchMonthlyMemberPayment"
+                                "$ref": "#/components/schemas/PatchedPatchMonthlyPersonPayment"
                             }
                         },
                         "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/PatchedPatchMonthlyMemberPayment"
+                                "$ref": "#/components/schemas/PatchedPatchMonthlyPersonPayment"
                             }
                         }
                     }
@@ -5526,7 +5526,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/PatchMonthlyMemberPayment"
+                                    "$ref": "#/components/schemas/PatchMonthlyPersonPayment"
                                 }
                             }
                         },
@@ -6702,7 +6702,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/MembersPaymentsStatus"
+                                    "$ref": "#/components/schemas/PersonsPaymentsStatus"
                                 }
                             }
                         },
@@ -8282,6 +8282,19 @@
                     "has_any_team": {
                         "type": "string",
                         "readOnly": true
+                    },
+                    "encounter_type": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/EncounterTypeEnum"
+                            }
+                        ],
+                        "title": "Estágio"
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Descrição"
                     }
                 },
                 "required": [
@@ -8720,17 +8733,12 @@
                     "has_categories": {
                         "type": "boolean"
                     },
-                    "encounter": {
-                        "type": "boolean",
-                        "title": "É estágio/encontro"
-                    },
                     "encounter_type": {
                         "allOf": [
                             {
                                 "$ref": "#/components/schemas/EncounterTypeEnum"
                             }
                         ],
-                        "nullable": true,
                         "title": "Estágio"
                     },
                     "file": {
@@ -8814,7 +8822,33 @@
                     "person"
                 ]
             },
-            "CreateMonthlyMemberPayment": {
+            "CreateMonthlyPaymentPlan": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 50
+                    },
+                    "amount": {
+                        "type": "string",
+                        "format": "decimal",
+                        "pattern": "^-?\\d{0,5}(?:\\.\\d{0,2})?$"
+                    },
+                    "is_default": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "amount",
+                    "id",
+                    "name"
+                ]
+            },
+            "CreateMonthlyPersonPayment": {
                 "type": "object",
                 "properties": {
                     "id": {
@@ -8857,32 +8891,6 @@
                     "month",
                     "person",
                     "year"
-                ]
-            },
-            "CreateMonthlyPaymentPlan": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "readOnly": true
-                    },
-                    "name": {
-                        "type": "string",
-                        "maxLength": 50
-                    },
-                    "amount": {
-                        "type": "string",
-                        "format": "decimal",
-                        "pattern": "^-?\\d{0,5}(?:\\.\\d{0,2})?$"
-                    },
-                    "is_default": {
-                        "type": "boolean"
-                    }
-                },
-                "required": [
-                    "amount",
-                    "id",
-                    "name"
                 ]
             },
             "CreateNotifications": {
@@ -9068,17 +9076,18 @@
             },
             "EncounterTypeEnum": {
                 "enum": [
-                    "none",
+                    "comp",
                     "regional",
                     "nacional",
                     "internacional",
                     "intrutores",
                     "formacao",
                     "exames",
-                    "seminario"
+                    "seminario",
+                    "workshop"
                 ],
                 "type": "string",
-                "description": "* `none` - None\n* `regional` - Regional\n* `nacional` - Nacional\n* `internacional` - Internacional\n* `intrutores` - Instrutores\n* `formacao` - Formação\n* `exames` - Sessão de Exames\n* `seminario` - Seminário"
+                "description": "* `comp` - Competição/Torneio\n* `regional` - Regional\n* `nacional` - Nacional\n* `internacional` - Internacional\n* `intrutores` - Instrutores\n* `formacao` - Formação\n* `exames` - Sessão de Exames\n* `seminario` - Seminário\n* `workshop` - Workshop"
             },
             "Events": {
                 "type": "object",
@@ -9195,17 +9204,12 @@
                     "has_categories": {
                         "type": "boolean"
                     },
-                    "encounter": {
-                        "type": "boolean",
-                        "title": "É estágio/encontro"
-                    },
                     "encounter_type": {
                         "allOf": [
                             {
                                 "$ref": "#/components/schemas/EncounterTypeEnum"
                             }
                         ],
-                        "nullable": true,
                         "title": "Estágio"
                     },
                     "rating": {
@@ -9472,22 +9476,38 @@
                     "requested_by"
                 ]
             },
-            "MembersPaymentsStatus": {
+            "MonthlyPaymentPlan": {
                 "type": "object",
                 "properties": {
-                    "number": {
-                        "type": "integer"
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
                     },
-                    "unpaid_members": {
-                        "type": "integer"
+                    "name": {
+                        "type": "string",
+                        "maxLength": 50
+                    },
+                    "amount": {
+                        "type": "string",
+                        "format": "decimal",
+                        "pattern": "^-?\\d{0,5}(?:\\.\\d{0,2})?$"
+                    },
+                    "is_default": {
+                        "type": "boolean"
+                    },
+                    "club_user": {
+                        "type": "integer",
+                        "readOnly": true
                     }
                 },
                 "required": [
-                    "number",
-                    "unpaid_members"
+                    "amount",
+                    "club_user",
+                    "id",
+                    "name"
                 ]
             },
-            "MonthlyMemberPayment": {
+            "MonthlyPersonPayment": {
                 "type": "object",
                 "properties": {
                     "id": {
@@ -9547,37 +9567,6 @@
                     "person",
                     "predefined_amount",
                     "year"
-                ]
-            },
-            "MonthlyPaymentPlan": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "readOnly": true
-                    },
-                    "name": {
-                        "type": "string",
-                        "maxLength": 50
-                    },
-                    "amount": {
-                        "type": "string",
-                        "format": "decimal",
-                        "pattern": "^-?\\d{0,5}(?:\\.\\d{0,2})?$"
-                    },
-                    "is_default": {
-                        "type": "boolean"
-                    },
-                    "club_user": {
-                        "type": "integer",
-                        "readOnly": true
-                    }
-                },
-                "required": [
-                    "amount",
-                    "club_user",
-                    "id",
-                    "name"
                 ]
             },
             "MonthlyPersonPaymentConfig": {
@@ -10119,7 +10108,7 @@
                     }
                 }
             },
-            "PatchMonthlyMemberPayment": {
+            "PatchMonthlyPersonPayment": {
                 "type": "object",
                 "properties": {
                     "paid": {
@@ -10479,17 +10468,12 @@
                     "has_categories": {
                         "type": "boolean"
                     },
-                    "encounter": {
-                        "type": "boolean",
-                        "title": "É estágio/encontro"
-                    },
                     "encounter_type": {
                         "allOf": [
                             {
                                 "$ref": "#/components/schemas/EncounterTypeEnum"
                             }
                         ],
-                        "nullable": true,
                         "title": "Estágio"
                     },
                     "rating": {
@@ -10695,7 +10679,7 @@
                     }
                 }
             },
-            "PatchedPatchMonthlyMemberPayment": {
+            "PatchedPatchMonthlyPersonPayment": {
                 "type": "object",
                 "properties": {
                     "paid": {
@@ -10958,6 +10942,21 @@
                     "past_month_payment_status",
                     "request_status",
                     "updated_by"
+                ]
+            },
+            "PersonsPaymentsStatus": {
+                "type": "object",
+                "properties": {
+                    "number": {
+                        "type": "integer"
+                    },
+                    "unpaid_members": {
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "number",
+                    "unpaid_members"
                 ]
             },
             "Rating": {
@@ -11426,17 +11425,12 @@
                     "has_categories": {
                         "type": "boolean"
                     },
-                    "encounter": {
-                        "type": "boolean",
-                        "title": "É estágio/encontro"
-                    },
                     "encounter_type": {
                         "allOf": [
                             {
                                 "$ref": "#/components/schemas/EncounterTypeEnum"
                             }
                         ],
-                        "nullable": true,
                         "title": "Estágio"
                     },
                     "rating": {

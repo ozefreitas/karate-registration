@@ -4,6 +4,7 @@ from .models import Event, FeedbackData, Announcement, Discipline, DisciplineMem
 # Register your models here.
 
 class EventAdmin(admin.ModelAdmin):
+    readonly_fields = ("id",)
     list_display = ("name", "location", "season")
     search_fields = ("name", "location")
     ordering = ("start_registration", "event_date")

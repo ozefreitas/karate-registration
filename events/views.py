@@ -12,7 +12,7 @@ import math
 from .filters import DisciplinesFilters, EventsFilters
 from clubs.models import ClubRatingAudit
 from .models import Event, Discipline, Announcement, DisciplineMember, DisciplineTeam
-from registration.models import Member, Team
+from registration.models import Person, Team
 from core.permissions import IsAuthenticatedOrReadOnly, EventIndividualsPermission, EventPermission, IsAdminRoleorHigherForGET, IsAdminRoleorHigher
 from core.models import Category, Notification
 from events import serializers
@@ -95,7 +95,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         member_id = serializer.validated_data["member_id"]
 
         try:
-            member = Member.objects.get(id=member_id)
+            member = Person.objects.get(id=member_id)
 
             if event.has_registrations and datetime.date.today() > event.retifications_deadline:
                 return Response({"error": "As inscrições para este Evento estão fechadas!"}, status=status.HTTP_403_FORBIDDEN)
@@ -103,7 +103,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             event.individuals.add(member)
 
             return Response({"message": "Atleta(s) adicionado(a)(s) a este evento!"}, status=status.HTTP_200_OK)
-        except Member.DoesNotExist:
+        except Person.DoesNotExist:
             return Response({"error": "Ocorreu um erro ao adicionar este(s) Atleta(s)!"}, status=status.HTTP_404_NOT_FOUND)
 
     @action(detail=True, 
@@ -118,11 +118,11 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         member_id = serializer.validated_data["member_id"]
 
         try:
-            member = Member.objects.get(id=member_id)
+            member = Person.objects.get(id=member_id)
             event.individuals.remove(member)
 
             return Response({"message": "Atleta(s) removido(a)(s) deste evento!"}, status=status.HTTP_200_OK)
-        except Member.DoesNotExist:
+        except Person.DoesNotExist:
             return Response({"error": "Ocorreu um erro ao remover este(s) Atleta(s)!"}, status=status.HTTP_404_NOT_FOUND)
         
         
@@ -217,7 +217,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         if event.has_categories:
             headers.append("Escalão")
 
-        if not event.encounter:
+        if event.encounter_type == "comp":
             headers.append("Dorsal")
 
         ws.append(headers)
@@ -528,8 +528,8 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         chosen_category = serializer.validated_data.pop("chosen_category", None)
 
         try:
-            member = Member.objects.get(id=member_id)
-        except Member.DoesNotExist:
+            member = Person.objects.get(id=member_id)
+        except Person.DoesNotExist:
             return Response({"error": "Um erro ocurreu ao adicionar este(s) Membro(s)"}, status=status.HTTP_404_NOT_FOUND)
     
         try:
@@ -631,14 +631,14 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         member_id = serializer.validated_data["member_id"]
 
         try:
-            member = Member.objects.get(id=member_id)
+            member = Person.objects.get(id=member_id)
             discipline.individuals.remove(member)
 
             if discipline.is_coach:
                 return Response({"message": "Treinador removido."}, status=status.HTTP_200_OK)
             else:
                 return Response({"message": f"Atleta removido de {discipline.name}."}, status=status.HTTP_200_OK)
-        except Member.DoesNotExist:
+        except Person.DoesNotExist:
             return Response({"error": "Ocorreu um erro ao remover este Atleta."}, status=status.HTTP_404_NOT_FOUND)
     
     @action(detail=True, methods=['delete'], url_path="delete_all_individuals")

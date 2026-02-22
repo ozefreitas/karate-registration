@@ -100,7 +100,9 @@ class CompactEventsSerializer(serializers.ModelSerializer):
                   "is_closed", 
                   "is_retification", 
                   "number_registrations", 
-                  "has_any_team"]
+                  "has_any_team", 
+                  "encounter_type",
+                  "description"]
 
     def get_is_open(self, obj):
         if obj.has_registrations:
@@ -216,11 +218,11 @@ class DisciplinesSerializer(serializers.ModelSerializer):
         qs = DisciplineMember.objects.filter(discipline=obj)
 
         if user.role in ['free_club', 'subed_club']:
-            qs = qs.filter(member__club=user)
+            qs = qs.filter(person__club=user)
         elif user.role not in ['main_admin', 'superuser']:
             return []
 
-        qs = qs.order_by('member__club__username')
+        qs = qs.order_by('person__club__username')
 
         return DisciplineMemberSerializer(
             qs,
@@ -263,12 +265,12 @@ class DisciplinesSerializer(serializers.ModelSerializer):
 
 
 class DisciplineMemberSerializer(serializers.ModelSerializer):
-    member = registration.serializers.CompactCategorizedPersonsSerializer()
+    person = registration.serializers.CompactCategorizedPersonsSerializer()
     category = core.serializers.categories.NameCategorySerializer()
 
     class Meta:
         model = DisciplineMember
-        fields = ["member", "added_at", "category"]
+        fields = ["person", "added_at", "category"]
 
 
 class DisciplineTeamSerializer(serializers.ModelSerializer):

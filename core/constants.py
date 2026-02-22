@@ -52,15 +52,16 @@ SEASONS = {
         "2039/2040": "2039/2040",
     }
 
-ENCOUNTERS = {
-        "none": "None",
+EVENT_TYPES = {
+        "comp": "Competição/Torneio",
         "regional": "Regional",
         "nacional": "Nacional",
         "internacional": "Internacional",
         "intrutores": "Instrutores",
         "formacao": "Formação",
         "exames": "Sessão de Exames",
-        "seminario": "Seminário"
+        "seminario": "Seminário",
+        "workshop": "Workshop"
     }
 
 ROUNDS = {

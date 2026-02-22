@@ -25,8 +25,8 @@ class PersonsFilters(filters.FilterSet):
         if number_disciplines == 0:
             return queryset.exclude(general_events__id=value)
         
-        # if the event is an encounter all students are retrieved
-        if event.encounter:
+        # if the event is not a competition, all students are retrieved
+        if event.encounter_type != "comp":
             return queryset.annotate(
                 discipline_count=Count('disciplines_indiv', filter=Q(disciplines_indiv__event=event), distinct=True)
                 ).filter(

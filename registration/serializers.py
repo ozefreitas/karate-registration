@@ -292,7 +292,7 @@ class NotInEventPersonsSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = models.Person
-        fields = ["id", "weight", "gender", "age", "full_name", "category"]
+        fields = ["id", "weight", "gender", "age", "full_name", "category", "graduation"]
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
