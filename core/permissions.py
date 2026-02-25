@@ -178,6 +178,24 @@ class EventIndividualsPermission(BasePermission):
         return False
     
 
+class MemberValidationRequestPermissions(BasePermission):
+    def has_permission(self, request, view):
+        if not request.user or not request.user.is_authenticated:
+            return False
+
+        role = getattr(request.user, "role", None)
+        if role in ['main_admin', 'single_admin', 'superuser'] and request.method in SAFE_METHODS:
+            return True
+
+        if role in ['main_admin', 'single_admin', 'superuser'] and request.method in ["DELETE", "PATCH"]:
+            return True
+        
+        if role in ['subed_club', "superuser"] and request.method in ["POST"]:
+            return True
+        
+        return False
+
+
 class IsObjectOwner(BasePermission):
     """
     - Only

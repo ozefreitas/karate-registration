@@ -302,6 +302,16 @@ class MemberValidationRequest(models.Model):
                 name='unique_pending_validation_request_per_person'
             )
         ]
+    
+    def clean(self):
+        if self.person and self.person.is_validated:
+            raise ValidationError(
+                {"person": "Este Membro já está validado!"}
+            )
+    
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Validation request for {self.person} ({self.status})"

@@ -16,6 +16,7 @@ class PersonsFilters(filters.FilterSet):
     monthly_payment_status = filters.CharFilter(method="filter_payment")
     in_member_type = filters.CharFilter(method='filter_persons_in_member_type')
     in_user = filters.CharFilter(method='filter_persons_in_user')
+    discipline_id = filters.CharFilter(method='filter_discipline_id')
 
     def filter_persons_not_in_event(self, queryset, name, value):
         event = Event.objects.filter(id=value).first()
@@ -90,6 +91,9 @@ class PersonsFilters(filters.FilterSet):
     def filter_persons_in_user(self, queryset, name, value):
         users = [v.strip() for v in value.split(",") if v.strip()]
         return queryset.filter(club__in=users)
+    
+    def filter_discipline_id(self, queryset, name, value):
+        return queryset
 
     class Meta:
         model = Person

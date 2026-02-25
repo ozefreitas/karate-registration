@@ -78,6 +78,8 @@ class DisciplinesFilters(filters.FilterSet):
                                               method='filter_is_coach')
     is_team = filters.BooleanFilter(field_name='is_team',
                                               method='filter_is_team')
+    restricted = filters.BooleanFilter(field_name='restricted',
+                                              method='filter_restricted')
 
     def filter_event_disciplines(self, queryset, name, value):
         return queryset.filter(event=value)
@@ -87,6 +89,9 @@ class DisciplinesFilters(filters.FilterSet):
     
     def filter_is_team(self, queryset, name, value):
         return queryset.filter(is_team=value)
+
+    def filter_restricted(self, queryset, name, value):
+        return queryset
 
     class Meta:
         model = Discipline

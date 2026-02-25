@@ -56,6 +56,16 @@ class CreateMemberValidationRequestSerializer(serializers.ModelSerializer):
         model = MemberValidationRequest
         fields = ["message", "person", "request_type", "file"]
 
+    def validate(self, attrs):
+        person = attrs.get("person")
+
+        if person and person.is_validated:
+            raise serializers.ValidationError(
+                {"person": "Este Membro já está validado!"}
+            )
+
+        return attrs
+
 
 class PatchMemberValidationRequestSerializer(serializers.ModelSerializer):
     class Meta:

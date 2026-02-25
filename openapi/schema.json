@@ -2062,6 +2062,13 @@
                         "schema": {
                             "type": "integer"
                         }
+                    },
+                    {
+                        "in": "query",
+                        "name": "restricted",
+                        "schema": {
+                            "type": "boolean"
+                        }
                     }
                 ],
                 "tags": [
@@ -3550,37 +3557,6 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/Rating"
-                                }
-                            }
-                        },
-                        "description": ""
-                    }
-                }
-            }
-        },
-        "/events/events_days_per_month/": {
-            "get": {
-                "operationId": "events_events_days_per_month_retrieve",
-                "tags": [
-                    "events"
-                ],
-                "security": [
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Events"
                                 }
                             }
                         },
@@ -6145,6 +6121,13 @@
                     },
                     {
                         "in": "query",
+                        "name": "discipline_id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
                         "name": "in_category",
                         "schema": {
                             "type": "string"
@@ -6579,6 +6562,13 @@
                     {
                         "in": "query",
                         "name": "coach_not_in_event",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "discipline_id",
                         "schema": {
                             "type": "string"
                         }

@@ -8,7 +8,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from registration.utils.utils import get_identity_members, get_real_member
 
 from .filters import NotificationsFilters, CategoriesFilters
-from core.permissions import IsAuthenticatedOrReadOnly, IsUnauthenticatedForPost, IsNationalForPostDelete, IsAdminRoleorHigher, IsPayingUserorAdminForGet, CanFilterByUserPermission
+from core.permissions import IsAuthenticatedOrReadOnly, IsUnauthenticatedForPost, IsNationalForPostDelete, IsAdminRoleorHigher, IsPayingUserorAdminForGet, CanFilterByUserPermission, MemberValidationRequestPermissions
 from .models import Category, SignupToken, RequestedAcount, User, RequestPasswordReset, MemberValidationRequest, Notification
 from clubs.models import Club
 from .models import Notification, MonthlyPaymentPlan, MemberValidationRequest
@@ -174,7 +174,7 @@ class RequestedAcountViewSet(viewsets.ModelViewSet):
 class MemberValidationRequestViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=MemberValidationRequest.objects.all().order_by("-created_at")
     serializer_class=BaseSerializers.MemberValidationRequestSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [MemberValidationRequestPermissions]
     filter_backends = [DjangoFilterBackend]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
 
@@ -183,31 +183,11 @@ class MemberValidationRequestViewSet(MultipleSerializersMixIn, viewsets.ModelVie
         "partial_update": BaseSerializers.PatchMemberValidationRequestSerializer
     }
 
-    # def get_queryset(self):
-    #     return (
-    #         MemberValidationRequest.objects
-    #         .select_related("member")
-    #         .order_by(
-    #             "member__first_name",
-    #             "member__last_name",
-    #             "member__birth_date",
-    #             "member__id_number",
-    #             "created_at",
-    #         )
-    #         .distinct(
-    #             "member__first_name",
-    #             "member__last_name",
-    #             "member__birth_date",
-    #             "member__id_number",
-    #         )
-    #     )
-
     def perform_create(self, serializer):
         user = self.request.user
-        if user.role != "subed_club":
-            raise PermissionDenied("You do not have permission to perform this action.")
 
         person = serializer.validated_data["person"]
+        
         request_type = serializer.validated_data["request_type"]
         serializer.save(requested_by=user, person=person)
 

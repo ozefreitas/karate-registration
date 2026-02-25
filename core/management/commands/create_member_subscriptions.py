@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 
 from django.utils import timezone
 
-from registration.models import MonthlyMemberPaymentConfig, MonthlyMemberPayment, Member
+from registration.models import MonthlyPersonPaymentConfig, MonthlyPersonPayment, Person
 from core.models import MonthlyPaymentPlan
 from core.models import Notification
 
@@ -11,14 +11,6 @@ User = get_user_model()
 
 class Command(BaseCommand):
     help = "Creates yearly subscriptions for all clubs."
-
-    def get_real_member(self, member):
-        return Member.objects.filter(
-            first_name=member.first_name,
-            last_name=member.last_name,
-            birth_date=member.birth_date,
-            id_number=member.id_number,
-        ).order_by("id").first()
 
     def handle(self, *args, **kwargs):
         clubs = User.objects.filter(
@@ -34,15 +26,13 @@ class Command(BaseCommand):
                 is_default=True,
                 defaults={"name": "Default", "amount": 10}
             )
-            members = Member.objects.filter(club=club, quotes_legible=True)
+            members = Person.objects.filter(club=club, quotes_legible=True)
 
             for member in members:
                 
-                real_member = self.get_real_member(member)
-                
                 # config is only created for one type of member
-                member_base_plan, _ = MonthlyMemberPaymentConfig.objects.get_or_create(
-                    member=real_member,
+                member_base_plan, _ = MonthlyPersonPaymentConfig.objects.get_or_create(
+                    member=member,
                     defaults={"base_plan": default_plan}
                 )
 
@@ -54,8 +44,8 @@ class Command(BaseCommand):
 
                 # payment is only created for one type of member
                 today = timezone.now()
-                obj, was_created = MonthlyMemberPayment.objects.get_or_create(
-                    member=real_member,
+                obj, was_created = MonthlyPersonPayment.objects.get_or_create(
+                    person=member,
                     year=today.year,
                     month=today.month,
                     defaults={"amount": final_amount}
@@ -69,8 +59,8 @@ class Command(BaseCommand):
                     month_to_check = today.month - 1
                     year_to_check = today.year
 
-                if MonthlyMemberPayment.objects.filter(
-                    member=real_member,
+                if MonthlyPersonPayment.objects.filter(
+                    person=member,
                     year=year_to_check, 
                     month=month_to_check
                     ).exists():
@@ -88,14 +78,14 @@ class Command(BaseCommand):
                 
                 try:
                     # will delete the payment object one prior, of exists
-                    obj = MonthlyMemberPayment.objects.get(
-                            member=real_member, 
+                    obj = MonthlyPersonPayment.objects.get(
+                            person=member, 
                             year=today.year - 1, 
                             month=today.month
                             )
                     obj.delete()
                     deleted += 1
-                except MonthlyMemberPayment.DoesNotExist:
+                except MonthlyPersonPayment.DoesNotExist:
                     continue
 
         if created > 0:
@@ -104,7 +94,7 @@ class Command(BaseCommand):
             )
         else:
             self.stdout.write(
-                self.style.WARNING(f"No payment added")
+                self.style.WARNING("No payment added")
             )
 
         if deleted > 0:
