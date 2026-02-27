@@ -16,6 +16,8 @@ from events.models import Event, Discipline
 from registration.utils.utils import get_comp_age
 
 from drf_spectacular.utils import extend_schema_field
+from drf_spectacular.utils import extend_schema_field
+from drf_spectacular.types import OpenApiTypes
 
 
 ### Members Serializer Classes
@@ -100,8 +102,7 @@ class AdminPersonsSerializer(serializers.ModelSerializer):
                   "full_name", 
                   "gender", 
                   "club", 
-                  "updated_by",
-                  )
+                  "updated_by")
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
@@ -195,6 +196,13 @@ class NotAdminLikeTypePersonsSerializer(serializers.ModelSerializer):
 
         return MonthlyPersonPaymentConfigSerializer(config).data
 
+    @extend_schema_field({
+        "type": "object",
+        "properties": {
+            "prev": {"type": "string", "format": "uuid", "nullable": True},
+            "next": {"type": "string", "format": "uuid", "nullable": True},
+        }
+    })
     def get_next_prev(self, obj):
         qs = list(
             models.Person.objects
@@ -206,7 +214,7 @@ class NotAdminLikeTypePersonsSerializer(serializers.ModelSerializer):
         try:
             index = qs.index(obj.id)
         except ValueError:
-            return [{"prev": None, "next": None}]
+            return {"prev": None, "next": None}
 
         prev_id = qs[index - 1] if index > 0 else None
         next_id = qs[index + 1] if index < len(qs) - 1 else None
@@ -251,11 +259,17 @@ class AdminPersonRetrieveSerializer(serializers.ModelSerializer):
     def get_age(self, obj):
         return get_comp_age(obj.birth_date)
     
+    @extend_schema_field({
+        "type": "object",
+        "properties": {
+            "prev": {"type": "string", "format": "uuid", "nullable": True},
+            "next": {"type": "string", "format": "uuid", "nullable": True},
+        }
+    })
     def get_next_prev(self, obj):
         qs = list(
             models.Person.objects
-            .filter(is_validated=True)
-            .exclude(club__role__in=["superuser"])
+            .filter(club=obj.club)
             .order_by("first_name", "last_name", "id")
             .values_list("id", flat=True)
         )
@@ -263,7 +277,7 @@ class AdminPersonRetrieveSerializer(serializers.ModelSerializer):
         try:
             index = qs.index(obj.id)
         except ValueError:
-            return [{"prev": None, "next": None}]
+            return {"prev": None, "next": None}
 
         prev_id = qs[index - 1] if index > 0 else None
         next_id = qs[index + 1] if index < len(qs) - 1 else None
@@ -718,9 +732,9 @@ class UpdateTeamsSerializer(serializers.ModelSerializer):
 class AllClassificationsSerializer(serializers.ModelSerializer):
     competition = serializers.SerializerMethodField()
     full_category = serializers.SerializerMethodField()
-    first_place = serializers.SerializerMethodField()
-    second_place = serializers.SerializerMethodField()
-    third_place = serializers.SerializerMethodField()
+    first_place = CompactPersonSerializer()
+    second_place = CompactPersonSerializer()
+    third_place = CompactPersonSerializer()
 
     def format_member_name(self, name: str) -> str:
         return name.lower().capitalize()

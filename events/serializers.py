@@ -96,6 +96,7 @@ class CompactEventsSerializer(serializers.ModelSerializer):
                   "season",
                   "location",
                   "has_registrations",
+                  "has_ended",
                   "is_open", 
                   "is_closed", 
                   "is_retification", 

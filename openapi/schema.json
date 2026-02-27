@@ -968,7 +968,8 @@
                                 "$ref": "#/components/schemas/AllClassifications"
                             }
                         }
-                    }
+                    },
+                    "required": true
                 },
                 "security": [
                     {
@@ -3231,7 +3232,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Events"
+                                    "$ref": "#/components/schemas/CheckEventRate"
                                 }
                             }
                         },
@@ -3556,7 +3557,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Rating"
+                                    "$ref": "#/components/schemas/CheckEventRate"
                                 }
                             }
                         },
@@ -6320,7 +6321,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Persons"
+                                    "$ref": "#/components/schemas/NotAdminLikeTypePersons"
                                 }
                             }
                         },
@@ -6380,7 +6381,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Persons"
+                                    "$ref": "#/components/schemas/UpdatePerson"
                                 }
                             }
                         },
@@ -6439,7 +6440,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Persons"
+                                    "$ref": "#/components/schemas/UpdatePerson"
                                 }
                             }
                         },
@@ -7795,16 +7796,13 @@
                         "readOnly": true
                     },
                     "first_place": {
-                        "type": "string",
-                        "readOnly": true
+                        "$ref": "#/components/schemas/CompactPerson"
                     },
                     "second_place": {
-                        "type": "string",
-                        "readOnly": true
+                        "$ref": "#/components/schemas/CompactPerson"
                     },
                     "third_place": {
-                        "type": "string",
-                        "readOnly": true
+                        "$ref": "#/components/schemas/CompactPerson"
                     }
                 },
                 "required": [
@@ -8043,6 +8041,34 @@
                     "name"
                 ]
             },
+            "CheckEventRate": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "$ref": "#/components/schemas/CheckEventRateStatusEnum"
+                    },
+                    "code": {
+                        "$ref": "#/components/schemas/CodeEnum"
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "code",
+                    "message",
+                    "status"
+                ]
+            },
+            "CheckEventRateStatusEnum": {
+                "enum": [
+                    "error",
+                    "warning",
+                    "success"
+                ],
+                "type": "string",
+                "description": "* `error` - error\n* `warning` - warning\n* `success` - success"
+            },
             "ClubMemberStats": {
                 "type": "object",
                 "properties": {
@@ -8138,6 +8164,15 @@
                     "id",
                     "name"
                 ]
+            },
+            "CodeEnum": {
+                "enum": [
+                    "event_not_ended",
+                    "already_rated",
+                    "can_rate"
+                ],
+                "type": "string",
+                "description": "* `event_not_ended` - event_not_ended\n* `already_rated` - already_rated\n* `can_rate` - can_rate"
             },
             "CompactCategory": {
                 "type": "object",
@@ -8251,6 +8286,9 @@
                         "maxLength": 99
                     },
                     "has_registrations": {
+                        "type": "boolean"
+                    },
+                    "has_ended": {
                         "type": "boolean"
                     },
                     "is_open": {
@@ -9434,7 +9472,7 @@
                         "$ref": "#/components/schemas/RequestTypeEnum"
                     },
                     "status": {
-                        "$ref": "#/components/schemas/StatusEnum"
+                        "$ref": "#/components/schemas/StatusDe3Enum"
                     },
                     "message": {
                         "type": "string"
@@ -9600,6 +9638,172 @@
                 },
                 "required": [
                     "name"
+                ]
+            },
+            "NotAdminLikeTypePersons": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "full_name": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "age": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "monthly_payment_status": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "monthly_payment_config": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "next_prev": {
+                        "type": "object",
+                        "properties": {
+                            "prev": {
+                                "type": "string",
+                                "format": "uuid",
+                                "nullable": true
+                            },
+                            "next": {
+                                "type": "string",
+                                "format": "uuid",
+                                "nullable": true
+                            }
+                        },
+                        "readOnly": true
+                    },
+                    "member_types": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "readOnly": true
+                    },
+                    "exam_request_status": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "profile_image": {
+                        "type": "string",
+                        "format": "uri",
+                        "nullable": true
+                    },
+                    "first_name": {
+                        "type": "string",
+                        "title": "Primeiro Nome",
+                        "maxLength": 200
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "title": "Último Nome",
+                        "maxLength": 200
+                    },
+                    "graduation": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/GraduationEnum"
+                            }
+                        ],
+                        "title": "Graduação"
+                    },
+                    "birth_date": {
+                        "type": "string",
+                        "format": "date",
+                        "title": "Data de Nascimento"
+                    },
+                    "address": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Morada",
+                        "maxLength": 200
+                    },
+                    "post_code": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "Código Postal"
+                    },
+                    "id_number": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "Nº SKI-P"
+                    },
+                    "registration_date": {
+                        "type": "string",
+                        "format": "date",
+                        "title": "Data de Inscrição"
+                    },
+                    "national_card_number": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "Nº CC/BI"
+                    },
+                    "taxpayer_number": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "NIF"
+                    },
+                    "gender": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/GenderEnum"
+                            }
+                        ],
+                        "title": "Género"
+                    },
+                    "weight": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "Peso"
+                    },
+                    "quotes_legible": {
+                        "type": "boolean",
+                        "title": "Paga Quotas"
+                    },
+                    "conditions": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Condições Médicas"
+                    },
+                    "observations": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Observações"
+                    },
+                    "is_validated": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "age",
+                    "birth_date",
+                    "exam_request_status",
+                    "first_name",
+                    "full_name",
+                    "gender",
+                    "graduation",
+                    "id",
+                    "last_name",
+                    "member_types",
+                    "monthly_payment_config",
+                    "monthly_payment_status",
+                    "next_prev"
                 ]
             },
             "Notifications": {
@@ -10088,7 +10292,7 @@
                 "type": "object",
                 "properties": {
                     "status": {
-                        "$ref": "#/components/schemas/StatusEnum"
+                        "$ref": "#/components/schemas/StatusDe3Enum"
                     },
                     "admin_comment": {
                         "type": "string"
@@ -10142,16 +10346,13 @@
                         "readOnly": true
                     },
                     "first_place": {
-                        "type": "string",
-                        "readOnly": true
+                        "$ref": "#/components/schemas/CompactPerson"
                     },
                     "second_place": {
-                        "type": "string",
-                        "readOnly": true
+                        "$ref": "#/components/schemas/CompactPerson"
                     },
                     "third_place": {
-                        "type": "string",
-                        "readOnly": true
+                        "$ref": "#/components/schemas/CompactPerson"
                     }
                 }
             },
@@ -10659,7 +10860,7 @@
                 "type": "object",
                 "properties": {
                     "status": {
-                        "$ref": "#/components/schemas/StatusEnum"
+                        "$ref": "#/components/schemas/StatusDe3Enum"
                     },
                     "admin_comment": {
                         "type": "string"
@@ -11095,7 +11296,7 @@
                 "type": "string",
                 "description": "* `2024/2025` - 2024/2025\n* `2025/2026` - 2025/2026\n* `2026/2027` - 2026/2027\n* `2027/2028` - 2027/2028\n* `2028/2029` - 2028/2029\n* `2029/2030` - 2029/2030\n* `2030/2031` - 2030/2031\n* `2031/2032` - 2031/2032\n* `2032/2033` - 2032/2033\n* `2033/2034` - 2033/2034\n* `2034/2035` - 2034/2035\n* `2035/2036` - 2035/2036\n* `2036/2037` - 2036/2037\n* `2037/2038` - 2037/2038\n* `2038/2039` - 2038/2039\n* `2039/2040` - 2039/2040"
             },
-            "StatusEnum": {
+            "StatusDe3Enum": {
                 "enum": [
                     "pending",
                     "approved",
@@ -11446,6 +11647,141 @@
                     "location",
                     "name",
                     "season"
+                ]
+            },
+            "UpdatePerson": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "age": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "profile_image": {
+                        "type": "string",
+                        "format": "uri",
+                        "nullable": true
+                    },
+                    "first_name": {
+                        "type": "string",
+                        "title": "Primeiro Nome",
+                        "maxLength": 200
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "title": "Último Nome",
+                        "maxLength": 200
+                    },
+                    "graduation": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/GraduationEnum"
+                            }
+                        ],
+                        "title": "Graduação"
+                    },
+                    "birth_date": {
+                        "type": "string",
+                        "format": "date",
+                        "title": "Data de Nascimento"
+                    },
+                    "address": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Morada",
+                        "maxLength": 200
+                    },
+                    "post_code": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "Código Postal"
+                    },
+                    "id_number": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "Nº SKI-P"
+                    },
+                    "favorite": {
+                        "type": "boolean",
+                        "title": "Favorito"
+                    },
+                    "registration_date": {
+                        "type": "string",
+                        "format": "date",
+                        "title": "Data de Inscrição"
+                    },
+                    "national_card_number": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "Nº CC/BI"
+                    },
+                    "taxpayer_number": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "NIF"
+                    },
+                    "gender": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/GenderEnum"
+                            }
+                        ],
+                        "title": "Género"
+                    },
+                    "weight": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "Peso"
+                    },
+                    "quotes_legible": {
+                        "type": "boolean",
+                        "title": "Paga Quotas"
+                    },
+                    "conditions": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Condições Médicas"
+                    },
+                    "observations": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Observações"
+                    },
+                    "modified_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "is_validated": {
+                        "type": "boolean"
+                    },
+                    "updated_by": {
+                        "type": "integer",
+                        "nullable": true
+                    }
+                },
+                "required": [
+                    "age",
+                    "birth_date",
+                    "first_name",
+                    "gender",
+                    "graduation",
+                    "id",
+                    "last_name",
+                    "modified_date"
                 ]
             },
             "UpdateTeams": {

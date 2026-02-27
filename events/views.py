@@ -17,7 +17,7 @@ from core.permissions import IsAuthenticatedOrReadOnly, EventIndividualsPermissi
 from core.models import Category, Notification
 from events import serializers
 from registration import serializers as registrationSerializers
-from clubs.serializers import RatingSerializer
+from clubs.serializers import RatingSerializer, CheckEventRateSerializer
 from core.utils.utils import calc_age
 from registration.utils.utils import get_comp_age, athlete_age
 from core.views import MultipleSerializersMixIn
@@ -29,7 +29,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiResponse
+from drf_spectacular.openapi import AutoSchema
+from drf_spectacular.utils import OpenApiTypes
 
 # Create your views here.
 
@@ -124,8 +126,9 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             return Response({"message": "Atleta(s) removido(a)(s) deste evento!"}, status=status.HTTP_200_OK)
         except Person.DoesNotExist:
             return Response({"error": "Ocorreu um erro ao remover este(s) Atleta(s)!"}, status=status.HTTP_404_NOT_FOUND)
-        
-        
+
+
+    @extend_schema(responses=CheckEventRateSerializer)
     @action(detail=True, methods=["get"], url_path="check_event_rate", permission_classes=[IsAuthenticated])
     def check_event_rate(self, request, pk=None):
         event = self.get_object()
@@ -149,6 +152,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         }, status=status.HTTP_200_OK)
     
 
+    @extend_schema(responses=CheckEventRateSerializer)
     @action(detail=True, methods=["post"], url_path="rate_event", serializer_class=RatingSerializer)
     def rate_event(self, request, pk=None):
         event = self.get_object()
@@ -171,9 +175,18 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             return Response({"error": "Ocorreu um erro ao avaliar este Evento!", "message": e}, status=status.HTTP_400_BAD_REQUEST)
     
 
+    # @extend_schema(
+    #     responses={
+    #         200: OpenApiResponse(
+    #             response=OpenApiTypes.BINARY,
+    #             description="Excel file with event members",
+    #         )
+    #     }
+    # )
     @action(detail=True, methods=["get"], url_path="export_members_excel", permission_classes=[IsAdminRoleorHigherForGET])
     def export_members_excel(self, request, pk=None):
         event = self.get_object()
+        season = event.season.split("/")[0]
         disciplines = event.disciplines.all()
         age_method = config('AGE_CALC_REF')
 
@@ -181,7 +194,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         ws = wb.active
         ws.title = "Members"
 
-        # Headers (add what you need)
+        # Headers
         headers = ["Dojo", "Nome", "Idade", f"Nº {config('MAIN_ADMIN')}", "Género"]
 
         if list(disciplines) != []:
@@ -196,13 +209,15 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         ws.append(headers)
 
         if list(disciplines) == []:
-            ws.append([
-                    getattr(member.club, "username", ""),
-                    getattr(member, "first_name", "") + getattr(member, "last_name", ""),
-                    event_age,
-                    getattr(member, "id_number", ""),
-                    getattr(member, "gender", ""),
-                ])
+            for member in event.individuals.select_related("club").all():
+                event_age = get_comp_age(member.birth_date) if age_method == "true" else calc_age(age_method, member.birth_date, season)
+                ws.append([
+                        getattr(member.club, "username", ""),
+                        getattr(member, "first_name", "") + getattr(member, "last_name", ""),
+                        event_age,
+                        getattr(member, "id_number", ""),
+                        getattr(member, "gender", ""),
+                    ])
             
         else:
 
@@ -211,7 +226,6 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             for discipline in disciplines:
 
                 for member in discipline.individuals.select_related("club").all():
-                    season = event.season.split("/")[0]
                     event_age = get_comp_age(member.birth_date) if age_method == "true" else calc_age(age_method, member.birth_date, season)
                     category_to_assign = None
 

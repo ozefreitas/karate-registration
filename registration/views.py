@@ -41,9 +41,18 @@ class PersonsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
     serializer_classes = {
         "create": registration_serializers.ClubsCreatePersonSerializer,
+        "retrieve": registration_serializers.NotAdminLikeTypePersonsSerializer,
         "update": registration_serializers.UpdatePersonSerializer,
         "partial_update": registration_serializers.UpdatePersonSerializer
     }
+
+    @extend_schema(responses=registration_serializers.NotAdminLikeTypePersonsSerializer)
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
+    @extend_schema(responses=registration_serializers.UpdatePersonSerializer)
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
 
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
@@ -163,6 +172,7 @@ class PersonsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             defaults={"amount": final_amount}
         )
 
+    @extend_schema(responses=registration_serializers.UpdatePersonSerializer)
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()

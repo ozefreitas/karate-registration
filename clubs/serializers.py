@@ -7,6 +7,12 @@ class RatingSerializer(serializers.Serializer):
     rating_signal = serializers.IntegerField()
 
 
+class CheckEventRateSerializer(serializers.Serializer):
+    status = serializers.ChoiceField(choices=["error", "warning", "success"])
+    code = serializers.ChoiceField(choices=["event_not_ended", "already_rated", "can_rate"])
+    message = serializers.CharField()
+
+
 class ClubsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Club
