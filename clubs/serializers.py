@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Club, ClubSubscription, ClubSubscriptionConfig
+from .models import Club, ClubSubscription, ClubSubscriptionConfig, ClubSettings
 from core.serializers.users import UsersSerializer
 
 
@@ -11,6 +11,10 @@ class CheckEventRateSerializer(serializers.Serializer):
     status = serializers.ChoiceField(choices=["error", "warning", "success"])
     code = serializers.ChoiceField(choices=["event_not_ended", "already_rated", "can_rate"])
     message = serializers.CharField()
+
+
+class AvailableQuoteYearsSerializer(serializers.Serializer):
+    years = serializers.ListField(child=serializers.IntegerField())
 
 
 class ClubsSerializer(serializers.ModelSerializer):
@@ -88,3 +92,21 @@ class ClubMemberStatsSerializer(serializers.Serializer):
     student_count = serializers.IntegerField()
     coach_count = serializers.IntegerField()
     athlete_count = serializers.IntegerField()
+
+
+class ClubSettingsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ClubSettings
+        exclude = ["club"]
+
+
+class CreateClubSettigsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ClubSettings
+        exclude = ["club"]
+
+
+class PatchClubSettigsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ClubSettings
+        exclude = ["club"]

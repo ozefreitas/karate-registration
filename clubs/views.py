@@ -1,17 +1,17 @@
-from django.db.models import Q, Count, Case, When, IntegerField
+from django.db.models import Q, Count
 from django.contrib.auth import get_user_model
 from datetime import datetime
 from django.utils import timezone
 
-from .models import Club, ClubSubscription, ClubSubscriptionConfig
+from .models import Club, ClubSubscription, ClubSubscriptionConfig, ClubSettings
 from core.models import Notification
 import clubs.serializers as ClubSerializers
-from core.permissions import IsGETforClubs, IsAdminRoleorHigher
+from core.permissions import IsGETforClubs, IsAdminRoleorHigher, IsSubedClubForAll
 from core.views import MultipleSerializersMixIn
 
 from rest_framework import viewsets, filters, status
-from rest_framework.decorators import authentication_classes, permission_classes
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, action
 from drf_spectacular.utils import extend_schema
@@ -91,6 +91,8 @@ class ClubSubscriptionsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         "partial_update": ClubSerializers.PatchClubSubscriptionSerializer
     }
 
+
+    @extend_schema(responses=ClubSerializers.AvailableQuoteYearsSerializer)
     @action(detail=False, methods=['get'], url_path="get_available_quote_years")
     def get_available_quote_years(self, request):
         user = request.user
@@ -249,3 +251,19 @@ class ClubSubscriptionsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             {"message": "Criadas Notificações de pagamento para todos os Clubes."},
             status=status.HTTP_200_OK
         )
+    
+
+class ClubSettingsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
+    queryset=ClubSettings.objects.all().order_by("club")
+    serializer_class=ClubSerializers.ClubSettingsSerializer
+    permission_classes = [IsSubedClubForAll]
+    pagination_class = None
+    
+    serializer_classes = {
+        "create": ClubSerializers.CreateClubSettigsSerializer,
+        "partial_update": ClubSerializers.PatchClubSettigsSerializer
+    }
+
+    def get_queryset(self):
+        user = self.request.user
+        return self.queryset.filter(club=user)

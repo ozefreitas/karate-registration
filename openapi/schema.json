@@ -1179,6 +1179,281 @@
                 }
             }
         },
+        "/club_settings/": {
+            "get": {
+                "operationId": "club_settings_list",
+                "tags": [
+                    "club_settings"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ClubSettings"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "operationId": "club_settings_create",
+                "tags": [
+                    "club_settings"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateClubSettigs"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateClubSettigs"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateClubSettigs"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CreateClubSettigs"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/club_settings/{id}/": {
+            "get": {
+                "operationId": "club_settings_retrieve",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this club settings.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "club_settings"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClubSettings"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "put": {
+                "operationId": "club_settings_update",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this club settings.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "club_settings"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ClubSettings"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ClubSettings"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ClubSettings"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClubSettings"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "patch": {
+                "operationId": "club_settings_partial_update",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this club settings.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "club_settings"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedPatchClubSettigs"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedPatchClubSettigs"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedPatchClubSettigs"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PatchClubSettigs"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "club_settings_destroy",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this club settings.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "club_settings"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
         "/club_subscription/": {
             "get": {
                 "operationId": "club_subscription_list",
@@ -1541,7 +1816,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ClubSubscriptions"
+                                    "$ref": "#/components/schemas/AvailableQuoteYears"
                                 }
                             }
                         },
@@ -7898,6 +8173,20 @@
                     "username"
                 ]
             },
+            "AvailableQuoteYears": {
+                "type": "object",
+                "properties": {
+                    "years": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "required": [
+                    "years"
+                ]
+            },
             "Bracket": {
                 "type": "object",
                 "properties": {
@@ -8094,6 +8383,23 @@
                     "member_count",
                     "student_count",
                     "username"
+                ]
+            },
+            "ClubSettings": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "billing_day": {
+                        "type": "integer",
+                        "maximum": 28,
+                        "minimum": 1
+                    }
+                },
+                "required": [
+                    "id"
                 ]
             },
             "ClubSubscriptions": {
@@ -8612,6 +8918,23 @@
                 "required": [
                     "id",
                     "name"
+                ]
+            },
+            "CreateClubSettigs": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "billing_day": {
+                        "type": "integer",
+                        "maximum": 28,
+                        "minimum": 1
+                    }
+                },
+                "required": [
+                    "id"
                 ]
             },
             "CreateClubSubscription": {
@@ -10269,6 +10592,23 @@
                     "password"
                 ]
             },
+            "PatchClubSettigs": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "billing_day": {
+                        "type": "integer",
+                        "maximum": 28,
+                        "minimum": 1
+                    }
+                },
+                "required": [
+                    "id"
+                ]
+            },
             "PatchClubSubscription": {
                 "type": "object",
                 "properties": {
@@ -10837,6 +11177,20 @@
                     },
                     "club_user": {
                         "type": "integer"
+                    }
+                }
+            },
+            "PatchedPatchClubSettigs": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "billing_day": {
+                        "type": "integer",
+                        "maximum": 28,
+                        "minimum": 1
                     }
                 }
             },

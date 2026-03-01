@@ -79,6 +79,13 @@ class IsAdminRoleorHigherForGET(BasePermission):
                                                                             or request.user.role == 'superuser' 
                                                                             or request.user.role == 'single_admin'))
 
+  
+class IsSubedClubForAll(BasePermission):
+    """Allows access to a GET request if the user has an admin like role or higher"""
+    def has_permission(self, request, view):
+        return bool(request.user and request.user.is_authenticated and (request.user.role == 'subed_club' 
+                                                                        or request.user.role == 'superuser'))
+
 
 class IsGETforClubs(BasePermission):
     """Allows access to GET request for clubs viewset, everything else is restricted to admin like roles"""

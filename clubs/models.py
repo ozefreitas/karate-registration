@@ -92,6 +92,7 @@ class ClubSubscriptionConfig(models.Model):
     """
     Stores subscription amount for each Admin.
     Each Admin should have exactly one config row.
+    The amount will be used to crate ClubSubscriptions for all the children acounts
     """
     admin = models.OneToOneField(
         settings.AUTH_USER_MODEL,
