@@ -369,7 +369,7 @@ class ClubsCreatePersonSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Person
-        exclude = ["created_by", "updated_by", "profile_image"]
+        exclude = ["id", "created_by", "updated_by", "profile_image", "creation_date", "modified_date"]
         read_only_fields = ("club", ) 
 
     def validate(self, data):

@@ -6522,17 +6522,17 @@
                     "content": {
                         "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/Persons"
+                                "$ref": "#/components/schemas/ClubsCreatePerson"
                             }
                         },
                         "application/x-www-form-urlencoded": {
                             "schema": {
-                                "$ref": "#/components/schemas/Persons"
+                                "$ref": "#/components/schemas/ClubsCreatePerson"
                             }
                         },
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/Persons"
+                                "$ref": "#/components/schemas/ClubsCreatePerson"
                             }
                         }
                     },
@@ -8469,6 +8469,126 @@
                 "required": [
                     "id",
                     "name"
+                ]
+            },
+            "ClubsCreatePerson": {
+                "type": "object",
+                "properties": {
+                    "member_type": {
+                        "type": "string",
+                        "writeOnly": true
+                    },
+                    "first_name": {
+                        "type": "string",
+                        "title": "Primeiro Nome",
+                        "maxLength": 200
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "title": "Último Nome",
+                        "maxLength": 200
+                    },
+                    "graduation": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/GraduationEnum"
+                            }
+                        ],
+                        "title": "Graduação"
+                    },
+                    "birth_date": {
+                        "type": "string",
+                        "format": "date",
+                        "title": "Data de Nascimento"
+                    },
+                    "address": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Morada",
+                        "maxLength": 200
+                    },
+                    "post_code": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "Código Postal"
+                    },
+                    "id_number": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "Nº SKI-P"
+                    },
+                    "favorite": {
+                        "type": "boolean",
+                        "title": "Favorito"
+                    },
+                    "registration_date": {
+                        "type": "string",
+                        "format": "date",
+                        "title": "Data de Inscrição"
+                    },
+                    "national_card_number": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "Nº CC/BI"
+                    },
+                    "taxpayer_number": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "NIF"
+                    },
+                    "gender": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/GenderEnum"
+                            }
+                        ],
+                        "title": "Género"
+                    },
+                    "weight": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "Peso"
+                    },
+                    "quotes_legible": {
+                        "type": "boolean",
+                        "title": "Paga Quotas"
+                    },
+                    "conditions": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Condições Médicas"
+                    },
+                    "observations": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Observações"
+                    },
+                    "is_validated": {
+                        "type": "boolean"
+                    },
+                    "club": {
+                        "type": "integer",
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "birth_date",
+                    "club",
+                    "first_name",
+                    "gender",
+                    "graduation",
+                    "last_name",
+                    "member_type"
                 ]
             },
             "CodeEnum": {

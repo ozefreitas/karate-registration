@@ -28,6 +28,9 @@ class MultipleSerializersMixIn:
 
     def get_serializer_class(self):
         return self.serializer_classes.get(self.action, self.serializer_class)
+    
+    def get_serializer(self, *args, **kwargs):
+        return super().get_serializer(*args, **kwargs)
 
 
 class PersonsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
@@ -49,6 +52,10 @@ class PersonsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     @extend_schema(responses=registration_serializers.NotAdminLikeTypePersonsSerializer)
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
+
+    @extend_schema(request=registration_serializers.ClubsCreatePersonSerializer)
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
 
     @extend_schema(responses=registration_serializers.UpdatePersonSerializer)
     def partial_update(self, request, *args, **kwargs):
@@ -112,7 +119,7 @@ class PersonsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
         return super().get_serializer_class()
 
-    
+    @extend_schema(request=registration_serializers.ClubsCreatePersonSerializer)
     def perform_create(self, serializer):
         request_user = self.request.user
         id_number = serializer.validated_data.get("id_number")
