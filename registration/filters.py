@@ -34,7 +34,7 @@ class PersonsFilters(filters.FilterSet):
                     discipline_count__lt=1
                     )
 
-        # if event is not an encounter (competition) only competitior are retrieved
+        # if event is a competition only athletes are retrieved
         athlete_filter = Q(member_types__member_type="athlete")
 
         return (

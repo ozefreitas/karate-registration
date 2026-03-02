@@ -2,7 +2,7 @@ from django.db import models
 
 from core.models import Category, Event
 from events.models import Discipline
-from registration.models import Member
+from registration.models import Person
 from core.constants import GENDERS
 
 # Create your models here.
@@ -28,11 +28,11 @@ class Bracket(models.Model):
 
 class Match(models.Model):
     bracket = models.ForeignKey(Bracket, on_delete=models.CASCADE, related_name="matches")
-    contender_1 = models.ForeignKey(Member, on_delete=models.CASCADE, related_name="matches_as_1", null=True)
-    contender_2 = models.ForeignKey(Member, on_delete=models.CASCADE, related_name="matches_as_2", null=True)
+    contender_1 = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="matches_as_1", null=True)
+    contender_2 = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="matches_as_2", null=True)
     round_number = models.IntegerField()
     match_number = models.IntegerField()
-    winner = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, blank=True, related_name="won_matches")
+    winner = models.ForeignKey(Person, on_delete=models.SET_NULL, null=True, blank=True, related_name="won_matches")
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -110,3 +110,42 @@ class Match(models.Model):
 
     def __str__(self):
         return f'{self.bracket.discipline.name} {self.bracket.category.name} {self.bracket.category.gender} | {self.contender_1.first_name if self.contender_1 is not None else "bye"} {self.contender_1.last_name if self.contender_1 is not None else ""} vs {self.contender_2.first_name if self.contender_2 is not None else "bye"} {self.contender_2.last_name if self.contender_2 is not None else ""} | (Round {self.round_number})'
+
+    
+class MatchResult(models.Model):
+    match = models.OneToOneField(
+        Match, 
+        on_delete=models.CASCADE, 
+        related_name='%(class)s'  # becomes 'kataresult' and 'kumiteresult'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        abstract = True
+
+
+class KataResult(MatchResult):
+    flags_contender_1 = models.PositiveSmallIntegerField()
+    flags_contender_2 = models.PositiveSmallIntegerField()
+
+
+class KumiteResult(MatchResult):
+    points_contender_1 = models.PositiveSmallIntegerField(default=0)
+    points_contender_2 = models.PositiveSmallIntegerField(default=0)
+    points_conceded_contender_1 = models.PositiveSmallIntegerField(default=0)
+    points_conceded_contender_2 = models.PositiveSmallIntegerField(default=0)
+
+
+class FoulType(models.Model):
+    name = models.CharField(max_length=50)
+    penalty_points = models.PositiveSmallIntegerField(default=0)
+
+    def __str__(self):
+        return self.name
+
+
+class KumiteFoul(models.Model):
+    result = models.ForeignKey(KumiteResult, on_delete=models.CASCADE, related_name='fouls')
+    contender = models.ForeignKey(Person, on_delete=models.CASCADE, related_name='fouls')
+    foul_type = models.ForeignKey(FoulType, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)

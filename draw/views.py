@@ -4,7 +4,7 @@ from .models import Bracket, Match
 import draw.serializers as serializers
 from core.views import MultipleSerializersMixIn
 from core.permissions import IsAuthenticatedOrReadOnly, IsNationalForPostDelete
-from .filters import BracketsFilters
+from .filters import BracketsFilters, MatchesFilters
 
 from rest_framework import viewsets
 from rest_framework.decorators import api_view, action
@@ -25,9 +25,18 @@ class BracketViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
 
 class MatchViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
-    queryset=Match.objects.all()
+    queryset = Match.objects.select_related(
+        'bracket__event',
+        'contender_1',
+        'contender_2',
+        'winner',
+        'kataresult',
+        'kumiteresult',
+    )
     serializer_class=serializers.MatchSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    filterset_class = MatchesFilters
+    pagination_class = None
 
     serializer_classes = {
         "create": serializers.CreateMatchSerializer,

@@ -1,5 +1,5 @@
 from django_filters import rest_framework as filters
-from .models import Bracket
+from .models import Bracket, Match
 
 
 class BracketsFilters(filters.FilterSet):
@@ -12,4 +12,20 @@ class BracketsFilters(filters.FilterSet):
 
     class Meta:
         model = Bracket
+        fields = []
+
+
+class MatchesFilters(filters.FilterSet):
+    """Filter Brackets based on different fields"""
+    event = filters.CharFilter(field_name='bracket__event', method='filter_event')
+    bracket = filters.CharFilter(field_name='bracket', method="filter_bracket")
+
+    def filter_event(self, queryset, name, value):
+        return queryset.filter(bracket__event=value)
+    
+    def filter_bracket(self, queryset, name, value):
+        return queryset.filter(bracket=value)
+
+    class Meta:
+        model = Match
         fields = []

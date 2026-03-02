@@ -285,6 +285,7 @@ class PersonsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
     
+    @extend_schema(responses=event_serializers.DisciplinesCompactSerializer(many=True))
     @action(detail=True, methods=['get'], url_path='unregistered_modalities/(?P<event_id>[^/.]+)')
     def unregistered_modalities(self, request, pk=None, event_id=None):
         try:

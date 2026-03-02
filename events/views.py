@@ -321,6 +321,12 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     )
     def generate_draw(self, request, pk=None):
         event = self.get_object()
+        if event.encounter_type != "comp" or not event.has_registrations:
+            return Response(
+                    {"message": f"Este Evento não se qualifica para a criação de um Sorteio ({event.encounter_type})."},
+                    status=status.HTTP_400_BAD_REQUEST
+                 )
+        
         disciplines = event.disciplines.exclude(is_coach=True)
 
         serializer = serializers.GenerateDrawRequestSerializer(data=request.data)
@@ -376,11 +382,11 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
                 for match in first_round_matches:
                     if reg_index < total_players:
-                        match.contender_1 = registrations[reg_index].member
+                        match.contender_1 = registrations[reg_index].person
                         reg_index += 1
 
                     if reg_index < total_players:
-                        match.contender_2 = registrations[reg_index].member
+                        match.contender_2 = registrations[reg_index].person
                         reg_index += 1
 
                     match.save()
