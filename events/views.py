@@ -364,18 +364,19 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 total_rounds = int(math.log2(bracket_size))
 
                 for round_number in range(total_rounds):
+                    round_label = total_rounds - 1 - round_number  # flip: first round = highest number
                     matches_in_round = bracket_size // (2 ** (round_number + 1))
 
                     for match_number in range(1, matches_in_round + 1):
                         Match.objects.create(
                             bracket=new_bracket,
-                            round_number=round_number,
+                            round_number=round_label,
                             match_number=match_number
                         )
 
                 first_round_matches = Match.objects.filter(
                     bracket=new_bracket,
-                    round_number=0
+                    round_number=total_rounds - 1  # first round is now the highest number
                 ).order_by("match_number")
 
                 reg_index = 0

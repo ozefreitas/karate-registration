@@ -3,7 +3,7 @@ from django.db import models
 from core.models import Category, Event
 from events.models import Discipline
 from registration.models import Person
-from core.constants import GENDERS
+from core.constants import KATAS
 
 # Create your models here.
 
@@ -33,14 +33,15 @@ class Match(models.Model):
     round_number = models.IntegerField()
     match_number = models.IntegerField()
     winner = models.ForeignKey(Person, on_delete=models.SET_NULL, null=True, blank=True, related_name="won_matches")
+    ongoing = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ['bracket', 'contender_1', 'contender_2']
 
     def set_winner(self, winner):
-        if self.winner:
-            raise ValueError("Winner already set.")
+        # if self.winner:
+        #     raise ValueError("Winner already set.")
 
         if winner not in [1, 2]:
             raise ValueError("Winner must be either 1 or 2.")
@@ -84,7 +85,7 @@ class Match(models.Model):
             return
 
         # next round info
-        next_round = current_round + 1
+        next_round = current_round - 1
         next_match_number = (min(current_match_number, pair_number) + 1) // 2
 
         # Gets the match
@@ -107,6 +108,11 @@ class Match(models.Model):
             next_match.contender_2 = self.winner
 
         next_match.save()
+    
+    def set_ongoing(self):
+        Match.objects.filter(bracket=self.bracket, ongoing=True).update(ongoing=False)
+        self.ongoing = True
+        self.save(update_fields=["ongoing"])
 
     def __str__(self):
         return f'{self.bracket.discipline.name} {self.bracket.category.name} {self.bracket.category.gender} | {self.contender_1.first_name if self.contender_1 is not None else "bye"} {self.contender_1.last_name if self.contender_1 is not None else ""} vs {self.contender_2.first_name if self.contender_2 is not None else "bye"} {self.contender_2.last_name if self.contender_2 is not None else ""} | (Round {self.round_number})'
@@ -125,8 +131,10 @@ class MatchResult(models.Model):
 
 
 class KataResult(MatchResult):
-    flags_contender_1 = models.PositiveSmallIntegerField()
-    flags_contender_2 = models.PositiveSmallIntegerField()
+    flags_contender_1 = models.PositiveSmallIntegerField("Bandeiras Atleta 1")
+    flags_contender_2 = models.PositiveSmallIntegerField("Bandeiras Atleta 2")
+    kata_contender_1 = models.CharField("Kata Atleta 1", max_length=24, choices=KATAS, default="none", blank=True)
+    kata_contender_2 = models.CharField("Kata Atleta 2", max_length=24, choices=KATAS, default="none", blank=True)
 
 
 class KumiteResult(MatchResult):

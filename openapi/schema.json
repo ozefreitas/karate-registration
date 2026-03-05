@@ -408,6 +408,58 @@
                 }
             }
         },
+        "/bracket/{id}/persons/": {
+            "get": {
+                "operationId": "bracket_persons_list",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "event",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this bracket.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "bracket"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/CompactPerson"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/categories/": {
             "get": {
                 "operationId": "categories_list",
@@ -3983,21 +4035,17 @@
                 "operationId": "match_list",
                 "parameters": [
                     {
-                        "name": "page",
-                        "required": false,
                         "in": "query",
-                        "description": "A page number within the paginated result set.",
+                        "name": "bracket",
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     },
                     {
-                        "name": "page_size",
-                        "required": false,
                         "in": "query",
-                        "description": "Number of results to return per page.",
+                        "name": "event",
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     }
                 ],
@@ -4020,7 +4068,10 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/PaginatedMatchList"
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Match"
+                                    }
                                 }
                             }
                         },
@@ -4139,21 +4190,20 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/Match"
+                                "$ref": "#/components/schemas/UpdateMatch"
                             }
                         },
                         "application/x-www-form-urlencoded": {
                             "schema": {
-                                "$ref": "#/components/schemas/Match"
+                                "$ref": "#/components/schemas/UpdateMatch"
                             }
                         },
                         "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/Match"
+                                "$ref": "#/components/schemas/UpdateMatch"
                             }
                         }
-                    },
-                    "required": true
+                    }
                 },
                 "security": [
                     {
@@ -4171,7 +4221,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Match"
+                                    "$ref": "#/components/schemas/UpdateMatch"
                                 }
                             }
                         },
@@ -6759,8 +6809,22 @@
         },
         "/persons/{id}/unregistered_modalities/{event_id}/": {
             "get": {
-                "operationId": "persons_unregistered_modalities_retrieve",
+                "operationId": "persons_unregistered_modalities_list",
                 "parameters": [
+                    {
+                        "in": "query",
+                        "name": "coach_not_in_event",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "discipline_id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     {
                         "in": "path",
                         "name": "event_id",
@@ -6777,6 +6841,89 @@
                         },
                         "description": "A unique value identifying this person.",
                         "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "in_category",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "in_gender",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "in_member_type",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "in_user",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "is_quotes_legible",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "is_validated",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "monthly_payment_status",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "not_in_event",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ordering",
+                        "required": false,
+                        "in": "query",
+                        "description": "Which field to use when ordering the results.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "required": false,
+                        "in": "query",
+                        "description": "A page number within the paginated result set.",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page_size",
+                        "required": false,
+                        "in": "query",
+                        "description": "Number of results to return per page.",
+                        "schema": {
+                            "type": "integer"
+                        }
                     }
                 ],
                 "tags": [
@@ -6798,7 +6945,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Persons"
+                                    "$ref": "#/components/schemas/PaginatedDisciplinesCompactList"
                                 }
                             }
                         },
@@ -9242,6 +9389,9 @@
                         "maximum": 2147483647,
                         "minimum": -2147483648
                     },
+                    "ongoing": {
+                        "type": "boolean"
+                    },
                     "created_at": {
                         "type": "string",
                         "format": "date-time",
@@ -9536,6 +9686,24 @@
                     "teams"
                 ]
             },
+            "DisciplinesCompact": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "name": {
+                        "type": "string",
+                        "title": "Nome",
+                        "maxLength": 100
+                    }
+                },
+                "required": [
+                    "id",
+                    "name"
+                ]
+            },
             "DrawTypeEnum": {
                 "enum": [
                     "Liga",
@@ -9803,12 +9971,179 @@
                 "type": "string",
                 "description": "* `15` - 9º Kyu\n* `14.5` - 8º Kyu Kari\n* `14` - 8º Kyu\n* `13.5` - 7º Kyu Kari\n* `13` - 7º Kyu\n* `12.5` - 6º Kyu Kari\n* `12` - 6º Kyu\n* `11.5` - 5º Kyu Kari\n* `11` - 5º Kyu\n* `10.5` - 4º Kyu Kari\n* `10` - 4º Kyu\n* `9.5` - 3º Kyu Kari\n* `9` - 3º Kyu\n* `8` - 2º Kyu\n* `7` - 1º Kyu\n* `6` - 1º Dan\n* `5` - 2º Dan\n* `4` - 3º Dan\n* `3` - 4º Dan\n* `2` - 5º Dan\n* `1` - 6º Dan"
             },
+            "KataContender1Enum": {
+                "enum": [
+                    "none",
+                    "heianshodan",
+                    "heiannidan",
+                    "heiansandan",
+                    "heianyondan",
+                    "heiangodan",
+                    "tikishodan",
+                    "tikinidan",
+                    "tikisandan",
+                    "bassaidai",
+                    "bassaisho",
+                    "kankudai",
+                    "kankusho",
+                    "enpi",
+                    "jion",
+                    "gankaku",
+                    "hangetsu",
+                    "jitte",
+                    "chinte",
+                    "sochin",
+                    "meikyo",
+                    "jiin",
+                    "gojushihodai",
+                    "gojushihosho",
+                    "ninjushiho",
+                    "wankan",
+                    "unsi"
+                ],
+                "type": "string",
+                "description": "* `none` - N/A\n* `heianshodan` - Heian Shodan\n* `heiannidan` - Heian Nidan\n* `heiansandan` - Heian Sandan\n* `heianyondan` - Heian Yondan\n* `heiangodan` - Heian Godan\n* `tikishodan` - Tiki Shodan\n* `tikinidan` - Tiki Nidan\n* `tikisandan` - Tiki Sandan\n* `bassaidai` - Bassai Dai\n* `bassaisho` - Bassai Sho\n* `kankudai` - Kanku Dai\n* `kankusho` - Kanku Sho\n* `enpi` - Enpi\n* `jion` - Jion\n* `gankaku` - Gankaku\n* `hangetsu` - Hangetsu\n* `jitte` - Jitte\n* `chinte` - Chinte\n* `sochin` - Sochin\n* `meikyo` - Meikyo\n* `jiin` - Jiin\n* `gojushihodai` - Gojushiho Dai\n* `gojushihosho` - Gojushiho Sho\n* `ninjushiho` - Ninjushiho\n* `wankan` - Wankan\n* `unsi` - Unsu"
+            },
+            "KataContender2Enum": {
+                "enum": [
+                    "none",
+                    "heianshodan",
+                    "heiannidan",
+                    "heiansandan",
+                    "heianyondan",
+                    "heiangodan",
+                    "tikishodan",
+                    "tikinidan",
+                    "tikisandan",
+                    "bassaidai",
+                    "bassaisho",
+                    "kankudai",
+                    "kankusho",
+                    "enpi",
+                    "jion",
+                    "gankaku",
+                    "hangetsu",
+                    "jitte",
+                    "chinte",
+                    "sochin",
+                    "meikyo",
+                    "jiin",
+                    "gojushihodai",
+                    "gojushihosho",
+                    "ninjushiho",
+                    "wankan",
+                    "unsi"
+                ],
+                "type": "string",
+                "description": "* `none` - N/A\n* `heianshodan` - Heian Shodan\n* `heiannidan` - Heian Nidan\n* `heiansandan` - Heian Sandan\n* `heianyondan` - Heian Yondan\n* `heiangodan` - Heian Godan\n* `tikishodan` - Tiki Shodan\n* `tikinidan` - Tiki Nidan\n* `tikisandan` - Tiki Sandan\n* `bassaidai` - Bassai Dai\n* `bassaisho` - Bassai Sho\n* `kankudai` - Kanku Dai\n* `kankusho` - Kanku Sho\n* `enpi` - Enpi\n* `jion` - Jion\n* `gankaku` - Gankaku\n* `hangetsu` - Hangetsu\n* `jitte` - Jitte\n* `chinte` - Chinte\n* `sochin` - Sochin\n* `meikyo` - Meikyo\n* `jiin` - Jiin\n* `gojushihodai` - Gojushiho Dai\n* `gojushihosho` - Gojushiho Sho\n* `ninjushiho` - Ninjushiho\n* `wankan` - Wankan\n* `unsi` - Unsu"
+            },
+            "KataResult": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "flags_contender_1": {
+                        "type": "integer",
+                        "maximum": 32767,
+                        "minimum": 0,
+                        "title": "Bandeiras Atleta 1"
+                    },
+                    "flags_contender_2": {
+                        "type": "integer",
+                        "maximum": 32767,
+                        "minimum": 0,
+                        "title": "Bandeiras Atleta 2"
+                    },
+                    "kata_contender_1": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/KataContender1Enum"
+                            }
+                        ],
+                        "title": "Kata Atleta 1"
+                    },
+                    "kata_contender_2": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/KataContender2Enum"
+                            }
+                        ],
+                        "title": "Kata Atleta 2"
+                    }
+                },
+                "required": [
+                    "flags_contender_1",
+                    "flags_contender_2",
+                    "id"
+                ]
+            },
+            "KumiteResult": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "points_contender_1": {
+                        "type": "integer",
+                        "maximum": 32767,
+                        "minimum": 0
+                    },
+                    "points_contender_2": {
+                        "type": "integer",
+                        "maximum": 32767,
+                        "minimum": 0
+                    },
+                    "points_conceded_contender_1": {
+                        "type": "integer",
+                        "maximum": 32767,
+                        "minimum": 0
+                    },
+                    "points_conceded_contender_2": {
+                        "type": "integer",
+                        "maximum": 32767,
+                        "minimum": 0
+                    }
+                },
+                "required": [
+                    "id"
+                ]
+            },
             "Match": {
                 "type": "object",
                 "properties": {
                     "id": {
                         "type": "integer",
                         "readOnly": true
+                    },
+                    "contender_1": {
+                        "$ref": "#/components/schemas/CompactPerson"
+                    },
+                    "contender_2": {
+                        "$ref": "#/components/schemas/CompactPerson"
+                    },
+                    "winner": {
+                        "$ref": "#/components/schemas/CompactPerson"
+                    },
+                    "kataresult": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/KataResult"
+                            }
+                        ],
+                        "readOnly": true,
+                        "nullable": true
+                    },
+                    "kumiteresult": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/KumiteResult"
+                            }
+                        ],
+                        "readOnly": true,
+                        "nullable": true
                     },
                     "round_number": {
                         "type": "integer",
@@ -9820,6 +10155,9 @@
                         "maximum": 2147483647,
                         "minimum": -2147483648
                     },
+                    "ongoing": {
+                        "type": "boolean"
+                    },
                     "created_at": {
                         "type": "string",
                         "format": "date-time",
@@ -9827,26 +10165,19 @@
                     },
                     "bracket": {
                         "type": "integer"
-                    },
-                    "contender_1": {
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "contender_2": {
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "winner": {
-                        "type": "string",
-                        "nullable": true
                     }
                 },
                 "required": [
                     "bracket",
+                    "contender_1",
+                    "contender_2",
                     "created_at",
                     "id",
+                    "kataresult",
+                    "kumiteresult",
                     "match_number",
-                    "round_number"
+                    "round_number",
+                    "winner"
                 ]
             },
             "MemberShips": {
@@ -10421,6 +10752,37 @@
                     }
                 }
             },
+            "PaginatedDisciplinesCompactList": {
+                "type": "object",
+                "required": [
+                    "count",
+                    "results"
+                ],
+                "properties": {
+                    "count": {
+                        "type": "integer",
+                        "example": 123
+                    },
+                    "next": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://api.example.org/accounts/?page=4"
+                    },
+                    "previous": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://api.example.org/accounts/?page=2"
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DisciplinesCompact"
+                        }
+                    }
+                }
+            },
             "PaginatedDisciplinesList": {
                 "type": "object",
                 "required": [
@@ -10448,37 +10810,6 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Disciplines"
-                        }
-                    }
-                }
-            },
-            "PaginatedMatchList": {
-                "type": "object",
-                "required": [
-                    "count",
-                    "results"
-                ],
-                "properties": {
-                    "count": {
-                        "type": "integer",
-                        "example": 123
-                    },
-                    "next": {
-                        "type": "string",
-                        "nullable": true,
-                        "format": "uri",
-                        "example": "http://api.example.org/accounts/?page=4"
-                    },
-                    "previous": {
-                        "type": "string",
-                        "nullable": true,
-                        "format": "uri",
-                        "example": "http://api.example.org/accounts/?page=2"
-                    },
-                    "results": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Match"
                         }
                     }
                 }
@@ -11147,6 +11478,33 @@
                         "type": "integer",
                         "readOnly": true
                     },
+                    "contender_1": {
+                        "$ref": "#/components/schemas/CompactPerson"
+                    },
+                    "contender_2": {
+                        "$ref": "#/components/schemas/CompactPerson"
+                    },
+                    "winner": {
+                        "$ref": "#/components/schemas/CompactPerson"
+                    },
+                    "kataresult": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/KataResult"
+                            }
+                        ],
+                        "readOnly": true,
+                        "nullable": true
+                    },
+                    "kumiteresult": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/KumiteResult"
+                            }
+                        ],
+                        "readOnly": true,
+                        "nullable": true
+                    },
                     "round_number": {
                         "type": "integer",
                         "maximum": 2147483647,
@@ -11157,6 +11515,9 @@
                         "maximum": 2147483647,
                         "minimum": -2147483648
                     },
+                    "ongoing": {
+                        "type": "boolean"
+                    },
                     "created_at": {
                         "type": "string",
                         "format": "date-time",
@@ -11164,18 +11525,6 @@
                     },
                     "bracket": {
                         "type": "integer"
-                    },
-                    "contender_1": {
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "contender_2": {
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "winner": {
-                        "type": "string",
-                        "nullable": true
                     }
                 }
             },
@@ -12121,6 +12470,42 @@
                     "location",
                     "name",
                     "season"
+                ]
+            },
+            "UpdateMatch": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "kataresult": {
+                        "$ref": "#/components/schemas/KataResult"
+                    },
+                    "ongoing": {
+                        "type": "boolean"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "contender_1": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "contender_2": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "winner": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "required": [
+                    "created_at",
+                    "id"
                 ]
             },
             "UpdatePerson": {

@@ -18,13 +18,13 @@ class CreateBracketSerializer(serializers.ModelSerializer):
 class KataResultSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.KataResult
-        exclude = ["match"]
+        exclude = ["match", "created_at"]
 
         
 class KumiteResultSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.KumiteResult
-        exclude = ["match"]
+        exclude = ["match", "created_at"]
 
 
 class MatchSerializer(serializers.ModelSerializer):
@@ -43,6 +43,29 @@ class CreateMatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Match
         fields = "__all__"
+
+
+class UpdateMatchSerializer(serializers.ModelSerializer):
+    kataresult = KataResultSerializer(required=False)
+
+    class Meta:
+        model = models.Match
+        exclude = ["round_number", "match_number", "bracket"]
+
+    def update(self, instance, validated_data):
+        kata_data = validated_data.pop("kataresult", None)
+
+        # Update Match fields
+        instance = super().update(instance, validated_data)
+
+        # Update or create KataResult if data was provided
+        if kata_data is not None:
+            models.KataResult.objects.update_or_create(
+                match=instance,
+                defaults=kata_data,
+            )
+
+        return instance
 
 
 class PatchMatchWinnerSerializer(serializers.Serializer):

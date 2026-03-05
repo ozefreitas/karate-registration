@@ -52,6 +52,37 @@ SEASONS = {
         "2039/2040": "2039/2040",
     }
 
+KATAS = {
+    "none": "N/A",
+    "heianshodan": "Heian Shodan",
+    "heiannidan": "Heian Nidan",
+    "heiansandan": "Heian Sandan",
+    "heianyondan": "Heian Yondan",
+    "heiangodan": "Heian Godan",
+    "tikishodan": "Tiki Shodan",
+    "tikinidan": "Tiki Nidan",
+    "tikisandan": "Tiki Sandan",
+    "bassaidai": "Bassai Dai",
+    "bassaisho": "Bassai Sho",
+    "kankudai": "Kanku Dai",
+    "kankusho": "Kanku Sho",
+    "enpi": "Enpi",
+    "jion": "Jion",
+    "gankaku": "Gankaku",
+    "hangetsu": "Hangetsu",
+    "jitte": "Jitte",
+    "chinte": "Chinte",
+    "sochin": "Sochin",
+    "meikyo": "Meikyo",
+    "jiin": "Jiin",
+    "gojushihodai": "Gojushiho Dai",
+    "gojushihosho": "Gojushiho Sho",
+    "ninjushiho": "Ninjushiho",
+    "wankan": "Wankan",
+    "unsi": "Unsu"
+    }
+
+
 EVENT_TYPES = {
         "comp": "Competição/Torneio",
         "regional": "Regional",
@@ -65,8 +96,9 @@ EVENT_TYPES = {
     }
 
 ROUNDS = {
-    "final": "Final",
-    "semi": "Semi-Final",
-    "quartos": "Quartos-Final",
-    "oitavos": "Oitavos-Final"
+    "0": "Final",
+    "1": "Semi-Final",
+    "2": "Quartos-Final",
+    "3": "Oitavos-Final",
+    "4": "16-Avos-Final"
 }

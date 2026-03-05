@@ -1,14 +1,18 @@
-from django.shortcuts import render
+from django.db.models import Q, Count
 
 from .models import Bracket, Match
 import draw.serializers as serializers
 from core.views import MultipleSerializersMixIn
 from core.permissions import IsAuthenticatedOrReadOnly, IsNationalForPostDelete
+from registration.serializers import CompactPersonSerializer
+from registration.models import Person
 from .filters import BracketsFilters, MatchesFilters
 
 from rest_framework import viewsets
 from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
+
+from drf_spectacular.utils import extend_schema
 
 # Create your views here.
 
@@ -22,6 +26,18 @@ class BracketViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     serializer_classes = {
         "create": serializers.CreateBracketSerializer,
     }
+
+    @extend_schema(responses=CompactPersonSerializer(many=True))
+    @action(detail=True, methods=["get"], url_path="persons")
+    def persons(self, request, pk=None):
+        bracket = self.get_object()
+        
+        persons = Person.objects.filter(
+            Q(matches_as_1__bracket=bracket) | Q(matches_as_2__bracket=bracket)
+        ).distinct()
+
+        serializer = CompactPersonSerializer(persons, many=True)
+        return Response(serializer.data)
 
 
 class MatchViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
@@ -40,6 +56,7 @@ class MatchViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
     serializer_classes = {
         "create": serializers.CreateMatchSerializer,
+        "update": serializers.UpdateMatchSerializer,
     }
 
     @action(
@@ -65,5 +82,8 @@ class MatchViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         return Response({
             "success": True,
             "match_id": match.id,
-            "winner": match.winner.id if match.winner else None
+            "winner": match.winner.id if match.winner else None,
+            "is_final": match.round_number == 0,
+            "discipline": match.bracket.discipline.name,
+            "category": f"{match.bracket.category.name} {match.bracket.category.gender}"
         })
