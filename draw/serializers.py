@@ -70,3 +70,7 @@ class UpdateMatchSerializer(serializers.ModelSerializer):
 
 class PatchMatchWinnerSerializer(serializers.Serializer):
     winner = serializers.ChoiceField(choices=[1, 2])
+
+
+class AdvanceMatchSerializer(serializers.Serializer):
+    next_match_id = serializers.CharField()

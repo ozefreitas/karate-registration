@@ -4322,6 +4322,67 @@
                 }
             }
         },
+        "/match/{id}/advance_match/": {
+            "patch": {
+                "operationId": "match_advance_match_partial_update",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this match.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "match"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedAdvanceMatch"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedAdvanceMatch"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedAdvanceMatch"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AdvanceMatch"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/match/{id}/set_winner/": {
             "patch": {
                 "operationId": "match_set_winner_partial_update",
@@ -8202,6 +8263,17 @@
                     "member_id"
                 ]
             },
+            "AdvanceMatch": {
+                "type": "object",
+                "properties": {
+                    "next_match_id": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "next_match_id"
+                ]
+            },
             "AllClassifications": {
                 "type": "object",
                 "properties": {
@@ -11118,6 +11190,14 @@
                             "type": "integer"
                         },
                         "description": "Lista de IDs dos Escalões a adicionar à modalidade"
+                    }
+                }
+            },
+            "PatchedAdvanceMatch": {
+                "type": "object",
+                "properties": {
+                    "next_match_id": {
+                        "type": "string"
                     }
                 }
             },

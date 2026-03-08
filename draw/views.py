@@ -3,7 +3,7 @@ from django.db.models import Q, Count
 from .models import Bracket, Match
 import draw.serializers as serializers
 from core.views import MultipleSerializersMixIn
-from core.permissions import IsAuthenticatedOrReadOnly, IsNationalForPostDelete
+from core.permissions import IsAuthenticatedOrReadOnly, IsNationalForPostDelete, IsTechnicianOrAdmin
 from registration.serializers import CompactPersonSerializer
 from registration.models import Person
 from .filters import BracketsFilters, MatchesFilters
@@ -48,7 +48,7 @@ class MatchViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         'winner',
         'kataresult',
         'kumiteresult',
-    )
+    ).order_by("created_at")
     serializer_class=serializers.MatchSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     filterset_class = MatchesFilters
@@ -86,4 +86,33 @@ class MatchViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             "is_final": match.round_number == 0,
             "discipline": match.bracket.discipline.name,
             "category": f"{match.bracket.category.name} {match.bracket.category.gender}"
+        })
+
+    @action(
+        detail=True,
+        methods=["patch"],
+        url_path="advance_match",
+        permission_classes=[IsTechnicianOrAdmin],
+        serializer_class=serializers.AdvanceMatchSerializer
+    )
+    def advance_match(self, request, pk=None):
+        current_match = self.get_object()
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        next_match_id = serializer.validated_data["next_match_id"]
+
+        try:
+            next_match = Match.objects.get(id=next_match_id, bracket=current_match.bracket)
+        except Match.DoesNotExist:
+            return Response({"error": "Match not found in this bracket."}, status=404)
+
+        current_match.ongoing = False
+        current_match.save(update_fields=["ongoing"])
+        next_match.set_ongoing()
+
+        return Response({
+            "success": True,
+            "next_match_id": next_match.id,
         })
