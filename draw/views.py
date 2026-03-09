@@ -58,6 +58,12 @@ class MatchViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         "create": serializers.CreateMatchSerializer,
         "update": serializers.UpdateMatchSerializer,
     }
+    
+
+    def perform_update(self, serializer):
+        instance = serializer.save()
+        if instance.ongoing:
+            instance.set_ongoing()
 
     @action(
         detail=True,
@@ -108,6 +114,11 @@ class MatchViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         except Match.DoesNotExist:
             return Response({"error": "Match not found in this bracket."}, status=404)
 
+        if next_match.contender_1 == None and next_match.contender_2 == None:
+            return Response({
+            "error": "Partida seguinte não tem pelo menos um dos competidores definidos. Conclua as partidas das rondas anteriores!"
+        }, status=404)
+
         current_match.ongoing = False
         current_match.save(update_fields=["ongoing"])
         next_match.set_ongoing()
@@ -115,4 +126,38 @@ class MatchViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         return Response({
             "success": True,
             "next_match_id": next_match.id,
+        })
+
+    @action(
+        detail=True,
+        methods=["patch"],
+        url_path="track_back_match",
+        permission_classes=[IsTechnicianOrAdmin],
+        serializer_class=serializers.PreviousMatchSerializer
+    )
+    def track_back_match(self, request, pk=None):
+        current_match = self.get_object()
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        prev_match_id = serializer.validated_data["prev_match_id"]
+
+        try:
+            prev_match = Match.objects.get(id=prev_match_id, bracket=current_match.bracket)
+        except Match.DoesNotExist:
+            return Response({"error": "Match not found in this bracket."}, status=404)
+
+        if prev_match.contender_1 == None and prev_match.contender_2 == None:
+            return Response({
+            "error": "Partida anterior não tem pelo menos um dos competidores definidos. Conclua as partidas das rondas anteriores!"
+        }, status=404)
+
+        current_match.ongoing = False
+        current_match.save(update_fields=["ongoing"])
+        prev_match.set_ongoing()
+
+        return Response({
+            "success": True,
+            "prev_match_id": prev_match.id,
         })

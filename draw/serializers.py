@@ -74,3 +74,7 @@ class PatchMatchWinnerSerializer(serializers.Serializer):
 
 class AdvanceMatchSerializer(serializers.Serializer):
     next_match_id = serializers.CharField()
+
+
+class PreviousMatchSerializer(serializers.Serializer):
+    prev_match_id = serializers.CharField()
