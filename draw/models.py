@@ -12,11 +12,11 @@ class Bracket(models.Model):
     DRAW_TYPES = {
         "Liga": "Liga",
         "Torneio/Finais": "Torneio/Finais",
-        "Misto": "Torneio",
+        "Misto": "Torneio + Final de 8",
     }
 
     name = models.CharField("Prova", max_length=100)
-    event=models.ForeignKey(Event, on_delete=models.CASCADE, verbose_name="Evento", related_name="brackets")
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, verbose_name="Evento", related_name="brackets")
     discipline = models.ForeignKey(Discipline, on_delete=models.CASCADE, verbose_name="Modalidade")
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name="Escalão")
     draw_type = models.CharField("Tipo", choices=DRAW_TYPES, max_length=16, blank=True, null=True)
@@ -31,6 +31,10 @@ class Match(models.Model):
     contender_1 = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="matches_as_1", null=True)
     contender_2 = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="matches_as_2", null=True)
     round_number = models.IntegerField()
+    is_third_place = models.BooleanField(default=False)
+    loser_goes_to = models.ForeignKey(
+        'self', null=True, blank=True, on_delete=models.SET_NULL, related_name='loser_feeders'
+    )
     match_number = models.IntegerField()
     winner = models.ForeignKey(Person, on_delete=models.SET_NULL, null=True, blank=True, related_name="won_matches")
     ongoing = models.BooleanField(default=False)
@@ -40,9 +44,6 @@ class Match(models.Model):
         unique_together = ['bracket', 'contender_1', 'contender_2']
 
     def set_winner(self, winner):
-        # if self.winner:
-        #     raise ValueError("Winner already set.")
-
         if winner not in [1, 2]:
             raise ValueError("Winner must be either 1 or 2.")
 
@@ -50,6 +51,7 @@ class Match(models.Model):
         self.save()
 
         self.advance_winner()
+        self.advance_loser()
     
     def advance_winner(self):
         """
@@ -108,6 +110,36 @@ class Match(models.Model):
             next_match.contender_2 = self.winner
 
         next_match.save()
+
+    def advance_loser(self):
+        """
+        When this match gets a winner (and thus a loser),
+        advance the loser to the 3rd place match if one is linked.
+        """
+        if not self.winner:
+            return
+
+        # Determine the loser
+        if self.contender_1 == self.winner:
+            loser = self.contender_2
+        else:
+            loser = self.contender_1
+
+        if not loser:
+            return
+
+        if not self.loser_goes_to:
+            return
+
+        third_place_match = self.loser_goes_to
+
+        # Check if the other semi-final has already placed its loser
+        if not third_place_match.contender_1:
+            third_place_match.contender_1 = loser
+        else:
+            third_place_match.contender_2 = loser
+
+        third_place_match.save()
     
     def set_ongoing(self):
         Match.objects.filter(bracket=self.bracket, ongoing=True).update(ongoing=False)

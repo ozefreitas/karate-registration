@@ -51,6 +51,18 @@ class UpdateMatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Match
         exclude = ["round_number", "match_number", "bracket"]
+    
+    def validate(self, data):
+        instance = self.instance
+        contender_1 = data.get("contender_1", instance.contender_1)
+        contender_2 = data.get("contender_2", instance.contender_2)
+
+        if data.get("ongoing") and contender_1 is None and contender_2 is None:
+            raise serializers.ValidationError(
+                "Partida não tem pelo menos um dos competidores definidos. Conclua as partidas das rondas anteriores!"
+            )
+
+        return data
 
     def update(self, instance, validated_data):
         kata_data = validated_data.pop("kataresult", None)

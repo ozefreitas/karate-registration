@@ -19,6 +19,8 @@ class EventsFilters(filters.FilterSet):
                                               method='filter_in_month')
     in_day = filters.CharFilter(field_name='in_day',
                                               method='filter_in_day')
+    is_ongoing = filters.BooleanFilter(field_name='is_ongoing',
+                                              method='filter_is_ongoing')
 
     def filter_season(self, queryset, name, value):
         return queryset.filter(season=value)
@@ -64,6 +66,11 @@ class EventsFilters(filters.FilterSet):
         )
             return events
 
+    def filter_is_ongoing(self, queryset, name, value):
+        if not value:
+            return queryset.all()
+        else:
+            return queryset.filter(event_date=datetime.today())
 
     class Meta:
         model = Event

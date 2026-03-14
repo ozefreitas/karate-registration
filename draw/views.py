@@ -1,5 +1,3 @@
-from django.db.models import Q, Count
-
 from .models import Bracket, Match
 import draw.serializers as serializers
 from core.views import MultipleSerializersMixIn
@@ -33,8 +31,9 @@ class BracketViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         bracket = self.get_object()
         
         persons = Person.objects.filter(
-            Q(matches_as_1__bracket=bracket) | Q(matches_as_2__bracket=bracket)
-        ).distinct()
+            disciplinemember__category=bracket.category,
+            disciplinemember__discipline=bracket.discipline,
+        )
 
         serializer = CompactPersonSerializer(persons, many=True)
         return Response(serializer.data)
@@ -57,6 +56,7 @@ class MatchViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     serializer_classes = {
         "create": serializers.CreateMatchSerializer,
         "update": serializers.UpdateMatchSerializer,
+        "partial_update": serializers.UpdateMatchSerializer
     }
     
 
@@ -69,7 +69,7 @@ class MatchViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         detail=True,
         methods=["patch"],
         url_path="set_winner",
-        permission_classes=[IsNationalForPostDelete],
+        permission_classes=[IsTechnicianOrAdmin],
         serializer_class=serializers.PatchMatchWinnerSerializer
     )
     def set_winner(self, request, pk=None):

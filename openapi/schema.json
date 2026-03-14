@@ -3159,6 +3159,13 @@
                         }
                     },
                     {
+                        "in": "query",
+                        "name": "is_ongoing",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
                         "name": "ordering",
                         "required": false,
                         "in": "query",
@@ -4249,17 +4256,17 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/PatchedMatch"
+                                "$ref": "#/components/schemas/PatchedUpdateMatch"
                             }
                         },
                         "application/x-www-form-urlencoded": {
                             "schema": {
-                                "$ref": "#/components/schemas/PatchedMatch"
+                                "$ref": "#/components/schemas/PatchedUpdateMatch"
                             }
                         },
                         "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/PatchedMatch"
+                                "$ref": "#/components/schemas/PatchedUpdateMatch"
                             }
                         }
                     }
@@ -4280,7 +4287,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Match"
+                                    "$ref": "#/components/schemas/UpdateMatch"
                                 }
                             }
                         },
@@ -4436,6 +4443,67 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/PatchMatchWinner"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/match/{id}/track_back_match/": {
+            "patch": {
+                "operationId": "match_track_back_match_partial_update",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this match.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "match"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedPreviousMatch"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedPreviousMatch"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedPreviousMatch"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PreviousMatch"
                                 }
                             }
                         },
@@ -9456,6 +9524,9 @@
                         "maximum": 2147483647,
                         "minimum": -2147483648
                     },
+                    "is_third_place": {
+                        "type": "boolean"
+                    },
                     "match_number": {
                         "type": "integer",
                         "maximum": 2147483647,
@@ -9478,6 +9549,10 @@
                     },
                     "contender_2": {
                         "type": "string",
+                        "nullable": true
+                    },
+                    "loser_goes_to": {
+                        "type": "integer",
                         "nullable": true
                     },
                     "winner": {
@@ -9713,6 +9788,35 @@
                     "team_id"
                 ]
             },
+            "DisciplineDraw": {
+                "type": "object",
+                "properties": {
+                    "disciplineId": {
+                        "type": "integer"
+                    },
+                    "splitClubs": {
+                        "type": "boolean"
+                    },
+                    "splitFavourites": {
+                        "type": "boolean"
+                    },
+                    "format": {
+                        "type": "string"
+                    },
+                    "maxMembersPerGroup": {
+                        "type": "string"
+                    },
+                    "minMembersPerGroup": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "disciplineId",
+                    "format",
+                    "splitClubs",
+                    "splitFavourites"
+                ]
+            },
             "Disciplines": {
                 "type": "object",
                 "properties": {
@@ -9783,7 +9887,7 @@
                     "Misto"
                 ],
                 "type": "string",
-                "description": "* `Liga` - Liga\n* `Torneio/Finais` - Torneio/Finais\n* `Misto` - Torneio"
+                "description": "* `Liga` - Liga\n* `Torneio/Finais` - Torneio/Finais\n* `Misto` - Torneio + Final de 8"
             },
             "EncounterTypeEnum": {
                 "enum": [
@@ -9962,30 +10066,19 @@
             "GenerateDrawRequest": {
                 "type": "object",
                 "properties": {
-                    "splitClubs": {
-                        "type": "boolean"
-                    },
-                    "splitFavourites": {
-                        "type": "boolean"
-                    },
-                    "format": {
-                        "type": "string"
-                    },
-                    "maxMembersPerGroup": {
-                        "type": "string"
-                    },
-                    "minMembersPerGroup": {
-                        "type": "string"
+                    "disciplines": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DisciplineDraw"
+                        }
                     },
                     "notificate": {
                         "type": "boolean"
                     }
                 },
                 "required": [
-                    "format",
-                    "notificate",
-                    "splitClubs",
-                    "splitFavourites"
+                    "disciplines",
+                    "notificate"
                 ]
             },
             "GenerateDrawResponse": {
@@ -10222,6 +10315,9 @@
                         "maximum": 2147483647,
                         "minimum": -2147483648
                     },
+                    "is_third_place": {
+                        "type": "boolean"
+                    },
                     "match_number": {
                         "type": "integer",
                         "maximum": 2147483647,
@@ -10237,6 +10333,10 @@
                     },
                     "bracket": {
                         "type": "integer"
+                    },
+                    "loser_goes_to": {
+                        "type": "integer",
+                        "nullable": true
                     }
                 },
                 "required": [
@@ -11551,63 +11651,6 @@
                     }
                 }
             },
-            "PatchedMatch": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "readOnly": true
-                    },
-                    "contender_1": {
-                        "$ref": "#/components/schemas/CompactPerson"
-                    },
-                    "contender_2": {
-                        "$ref": "#/components/schemas/CompactPerson"
-                    },
-                    "winner": {
-                        "$ref": "#/components/schemas/CompactPerson"
-                    },
-                    "kataresult": {
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/KataResult"
-                            }
-                        ],
-                        "readOnly": true,
-                        "nullable": true
-                    },
-                    "kumiteresult": {
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/KumiteResult"
-                            }
-                        ],
-                        "readOnly": true,
-                        "nullable": true
-                    },
-                    "round_number": {
-                        "type": "integer",
-                        "maximum": 2147483647,
-                        "minimum": -2147483648
-                    },
-                    "match_number": {
-                        "type": "integer",
-                        "maximum": 2147483647,
-                        "minimum": -2147483648
-                    },
-                    "ongoing": {
-                        "type": "boolean"
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "readOnly": true
-                    },
-                    "bracket": {
-                        "type": "integer"
-                    }
-                }
-            },
             "PatchedMemberShips": {
                 "type": "object",
                 "properties": {
@@ -11840,6 +11883,14 @@
                     }
                 }
             },
+            "PatchedPreviousMatch": {
+                "type": "object",
+                "properties": {
+                    "prev_match_id": {
+                        "type": "string"
+                    }
+                }
+            },
             "PatchedRequestedAcount": {
                 "type": "object",
                 "properties": {
@@ -11962,6 +12013,45 @@
                     }
                 }
             },
+            "PatchedUpdateMatch": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "kataresult": {
+                        "$ref": "#/components/schemas/KataResult"
+                    },
+                    "is_third_place": {
+                        "type": "boolean"
+                    },
+                    "ongoing": {
+                        "type": "boolean"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "contender_1": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "contender_2": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "loser_goes_to": {
+                        "type": "integer",
+                        "nullable": true
+                    },
+                    "winner": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                }
+            },
             "PaymentObjectEnum": {
                 "enum": [
                     "none",
@@ -12051,6 +12141,17 @@
                 "required": [
                     "number",
                     "unpaid_members"
+                ]
+            },
+            "PreviousMatch": {
+                "type": "object",
+                "properties": {
+                    "prev_match_id": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "prev_match_id"
                 ]
             },
             "Rating": {
@@ -12562,6 +12663,9 @@
                     "kataresult": {
                         "$ref": "#/components/schemas/KataResult"
                     },
+                    "is_third_place": {
+                        "type": "boolean"
+                    },
                     "ongoing": {
                         "type": "boolean"
                     },
@@ -12576,6 +12680,10 @@
                     },
                     "contender_2": {
                         "type": "string",
+                        "nullable": true
+                    },
+                    "loser_goes_to": {
+                        "type": "integer",
                         "nullable": true
                     },
                     "winner": {

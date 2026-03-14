@@ -357,14 +357,15 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                                                     name=f'{discipline.name} {category.name} {category.gender}',
                                                     category=category,
                                                     discipline=discipline,
-                                                    event=event
+                                                    event=event,
+                                                    draw_type="misto"
                                                     )
 
                 bracket_size = next_power_of_2(total_players)
                 total_rounds = int(math.log2(bracket_size))
 
                 for round_number in range(total_rounds):
-                    round_label = total_rounds - 1 - round_number  # flip: first round = highest number
+                    round_label = total_rounds - 1 - round_number  # first round = highest number
                     matches_in_round = bracket_size // (2 ** (round_number + 1))
 
                     for match_number in range(1, matches_in_round + 1):
@@ -374,9 +375,29 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                             match_number=match_number
                         )
 
+                # Create 3rd place match only if there are semi-finals (4+ players)
+                third_place_match = None
+                if total_players >= 4:
+                    third_place_match = Match.objects.create(
+                        bracket=new_bracket,
+                        round_number=0,
+                        match_number=2,
+                        is_third_place=True
+                    )
+
+                    # Link semi-final matches to the 3rd place match so losers are advanced there
+                    semi_final_round = 1 
+                    semi_final_matches = Match.objects.filter(
+                        bracket=new_bracket,
+                        round_number=semi_final_round
+                    )
+                    for semi in semi_final_matches:
+                        semi.loser_goes_to = third_place_match
+                        semi.save()
+
                 first_round_matches = Match.objects.filter(
                     bracket=new_bracket,
-                    round_number=total_rounds - 1  # first round is now the highest number
+                    round_number=total_rounds - 1  # first round is the highest number
                 ).order_by("match_number")
 
                 reg_index = 0
@@ -397,11 +418,13 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                         match.winner = match.contender_1
                         match.save()
                         match.advance_winner()
+                        match.advance_loser()
 
                     elif match.contender_2 and not match.contender_1:
                         match.winner = match.contender_2
                         match.save()
                         match.advance_winner()
+                        match.advance_loser()
 
         # remove previous notification for available draw for this event
         previous_notifications = Notification.objects.filter(type__in=["draw_available", "draw_patched"], target_event=event)

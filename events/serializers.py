@@ -184,18 +184,17 @@ class GenerateDrawResponseSerializer(serializers.Serializer):
     message = serializers.CharField()
 
 
-class GenerateDrawRequestSerializer(serializers.Serializer): 
+class DisciplineDrawSerializer(serializers.Serializer):
+    disciplineId = serializers.IntegerField()
     splitClubs = serializers.BooleanField()
     splitFavourites = serializers.BooleanField()
     format = serializers.CharField()
-    maxMembersPerGroup = serializers.CharField(
-        required=False,
-        allow_blank=True
-        )
-    minMembersPerGroup = serializers.CharField(
-        required=False,
-        allow_blank=True
-        )
+    maxMembersPerGroup = serializers.CharField(required=False, allow_blank=True)
+    minMembersPerGroup = serializers.CharField(required=False, allow_blank=True)
+
+
+class GenerateDrawRequestSerializer(serializers.Serializer):
+    disciplines = DisciplineDrawSerializer(many=True)
     notificate = serializers.BooleanField()
 
 
