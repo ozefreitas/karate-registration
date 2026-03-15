@@ -43,6 +43,10 @@ class Match(models.Model):
     class Meta:
         unique_together = ['bracket', 'contender_1', 'contender_2']
 
+    @property
+    def is_final(self):
+        return self.round_number == 0 and self.match_number == 1 and not self.is_third_place
+
     def set_winner(self, winner):
         if winner not in [1, 2]:
             raise ValueError("Winner must be either 1 or 2.")
@@ -50,22 +54,24 @@ class Match(models.Model):
         self.winner = self.contender_1 if winner == 1 else self.contender_2
         self.save()
 
-        self.advance_winner()
-        self.advance_loser()
-    
+        if not self.is_third_place:
+            self.advance_winner()
+            self.advance_loser()
+
     def advance_winner(self):
-        """
-        When this match gets a winner,
-        try to create/update next round match.
-        """
         if not self.winner:
+            return
+
+        # Finals: just close the match, no one to advance
+        if self.is_final:
+            self.ongoing = False
+            self.save()
             return
 
         bracket = self.bracket
         current_round = self.round_number
         current_match_number = self.match_number
 
-        # find paired match
         if current_match_number % 2 == 1:
             pair_number = current_match_number + 1
             is_first_in_pair = True
@@ -80,28 +86,21 @@ class Match(models.Model):
                 match_number=pair_number
             )
         except Match.DoesNotExist:
-            return  # no pair yet
+            return
 
-        # only continue if both matches have winners
         if not pair_match.winner:
             return
 
-        # next round info
         next_round = current_round - 1
         next_match_number = (min(current_match_number, pair_number) + 1) // 2
 
-        # Gets the match
         next_match, _ = Match.objects.get_or_create(
             bracket=bracket,
             round_number=next_round,
             match_number=next_match_number,
-            defaults={
-                "contender_1": None,
-                "contender_2": None,
-            }
+            defaults={"contender_1": None, "contender_2": None}
         )
 
-        # assign contenders
         if is_first_in_pair:
             next_match.contender_1 = self.winner
             next_match.contender_2 = pair_match.winner

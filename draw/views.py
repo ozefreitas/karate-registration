@@ -58,10 +58,12 @@ class MatchViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         "update": serializers.UpdateMatchSerializer,
         "partial_update": serializers.UpdateMatchSerializer
     }
-    
 
     def perform_update(self, serializer):
         instance = serializer.save()
+        if instance.ongoing and instance.is_final and instance.winner != None:
+            instance.ongoing = False
+            instance.save()
         if instance.ongoing:
             instance.set_ongoing()
 
@@ -84,12 +86,17 @@ class MatchViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             match.set_winner(winner_number)
         except ValueError as e:
             return Response({"error": str(e)}, status=400)
+        
+        if match.round_number == 0 and match.match_number == 1:
+            match.ongoing = False
+            match.save()
 
         return Response({
             "success": True,
             "match_id": match.id,
             "winner": match.winner.id if match.winner else None,
-            "is_final": match.round_number == 0,
+            "is_final": match.round_number == 0 and match.match_number == 1,
+            "is_third_place": match.is_third_place,
             "discipline": match.bracket.discipline.name,
             "category": f"{match.bracket.category.name} {match.bracket.category.gender}"
         })
