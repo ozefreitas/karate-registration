@@ -15,4 +15,9 @@ class Migration(migrations.Migration):
             name='ongoing',
             field=models.BooleanField(default=False),
         ),
+        migrations.AddField(
+            model_name='bracket',
+            name='officialized_at',
+            field=models.DateTimeField(blank=True, null=True),
+        ),
     ]

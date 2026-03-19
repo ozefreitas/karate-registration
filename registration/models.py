@@ -9,7 +9,6 @@ import calendar
 from nanoid import generate
 from datetime import date
 from core.constants import GENDERS, GRADUATIONS
-from events.models import Event
 
 # Create your models here.
 
@@ -411,31 +410,24 @@ class Team(models.Model):
 ### Classification models ###
 
 class Classification(models.Model):
-    competition = models.ForeignKey(Event, on_delete=models.CASCADE)
-    first_place = models.ForeignKey(Person, verbose_name="Primeiro Classificado", related_name="first_place", on_delete=models.CASCADE)
-    second_place = models.ForeignKey(Person, verbose_name="Segundo Classificado", related_name="second_place", on_delete=models.CASCADE, null=True, blank=True)
-    third_place = models.ForeignKey(Person, verbose_name="Terceiro Classificado", related_name="third_place", on_delete=models.CASCADE, null=True, blank=True)
+    PLACE_CHOICES = {
+        1: "1st Place",
+        2: "2nd Place",
+        3: "3rd Place",
+    }
 
-    def clean(self):
-        super().clean()
+    bracket = models.ForeignKey("draw.Bracket", on_delete=models.CASCADE, related_name="classifications")
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="classifications")
+    place = models.PositiveSmallIntegerField(choices=PLACE_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True)
 
-        athletes = [self.first_place, self.second_place, self.third_place]
-        athletes = [a for a in athletes if a is not None]
+    class Meta:
+        unique_together = ["bracket", "place"] 
 
-        if len(set(athletes)) != len(athletes):
-            raise ValidationError("Each place must be assigned to a different athlete.")
-
-        categories = {a.category for a in athletes}
-        if len(categories) > 1:
-            raise ValidationError("All athletes must belong to the same category.")
-        
-        genders = {a.gender for a in athletes}
-        if len(genders) > 1:
-            raise ValidationError("All athletes must belong to the same gender.")
         
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return "{} {} {} Classification".format(self.competition.name, self.first_place.category, self.first_place.gender.capitalize())
+        return "{} {} - {} - {}º Lugar - {} {}".format(self.bracket.event.name, self.bracket.event.season, self.bracket.name, self.place, self.person.first_name, self.person.last_name)

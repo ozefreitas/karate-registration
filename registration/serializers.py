@@ -730,47 +730,15 @@ class UpdateTeamsSerializer(serializers.ModelSerializer):
 ### Classifications Serializer Classes
 
 class AllClassificationsSerializer(serializers.ModelSerializer):
-    competition = serializers.SerializerMethodField()
-    full_category = serializers.SerializerMethodField()
-    first_place = CompactPersonSerializer()
-    second_place = CompactPersonSerializer()
-    third_place = CompactPersonSerializer()
-
-    def format_member_name(self, name: str) -> str:
-        return name.lower().capitalize()
-
     class Meta:
         model = models.Classification
         fields = "__all__"
-
-    def get_full_category(self, obj):
-        return f"{obj.first_place.match_type.capitalize()} {obj.first_place.category} {obj.first_place.gender.capitalize()}"
-    
-    def get_competition(self, obj):
-        return f"{obj.competition.name} {obj.competition.season}"
-    
-    def get_first_place(self, obj):
-        return f"{self.format_member_name(obj.first_place.first_name)} {self.format_member_name(obj.first_place.last_name)}"
-    
-    def get_second_place(self, obj):
-        return f"{self.format_member_name(obj.second_place.first_name)} {self.format_member_name(obj.second_place.last_name)}"
-    
-    def get_third_place(self, obj):
-        return f"{self.format_member_name(obj.third_place.first_name)} {self.format_member_name(obj.third_place.last_name)}"
     
 
 class ClassificationsSerializer(serializers.ModelSerializer):
-    full_category = serializers.SerializerMethodField()
-    first_place = CompactPersonSerializer()
-    second_place = CompactPersonSerializer()
-    third_place = CompactPersonSerializer()
-
     class Meta:
         model = models.Classification
-        exclude = ("competition", )
-
-    def get_full_category(self, obj):
-        return f"{obj.first_place.match_type.capitalize()} {obj.first_place.category} {obj.first_place.gender.capitalize()}"
+        fields = "__all__"
 
 
 class CreateClassificationsSerializer(serializers.ModelSerializer):

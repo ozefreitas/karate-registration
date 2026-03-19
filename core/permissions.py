@@ -21,6 +21,15 @@ class IsTechnicianOrAdmin(BasePermission):
                                                                         or request.user.role == "technician")
     
 
+class IsTechnicianOrAdminforPOST(BasePermission):
+    def has_permission(self, request, view):
+        if request.method in ["POST"]:
+            return request.user and request.user.is_authenticated and (request.user.role == 'main_admin' 
+                                                                        or request.user.role == 'superuser' 
+                                                                        or request.user.role == 'single_admin' 
+                                                                        or request.user.role == "technician")
+        
+
 class IsNationalForPostDelete(BasePermission):
     """
     - Only main_admin/superuser can POST.

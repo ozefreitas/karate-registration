@@ -408,6 +408,68 @@
                 }
             }
         },
+        "/bracket/{id}/officialize/": {
+            "post": {
+                "operationId": "bracket_officialize_create",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this bracket.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "bracket"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Bracket"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Bracket"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Bracket"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Bracket"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/bracket/{id}/persons/": {
             "get": {
                 "operationId": "bracket_persons_list",
@@ -8349,31 +8411,33 @@
                         "type": "integer",
                         "readOnly": true
                     },
-                    "competition": {
+                    "place": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/PlaceEnum"
+                            }
+                        ],
+                        "minimum": 0,
+                        "maximum": 32767
+                    },
+                    "created_at": {
                         "type": "string",
+                        "format": "date-time",
                         "readOnly": true
                     },
-                    "full_category": {
-                        "type": "string",
-                        "readOnly": true
+                    "bracket": {
+                        "type": "integer"
                     },
-                    "first_place": {
-                        "$ref": "#/components/schemas/CompactPerson"
-                    },
-                    "second_place": {
-                        "$ref": "#/components/schemas/CompactPerson"
-                    },
-                    "third_place": {
-                        "$ref": "#/components/schemas/CompactPerson"
+                    "person": {
+                        "type": "string"
                     }
                 },
                 "required": [
-                    "competition",
-                    "first_place",
-                    "full_category",
+                    "bracket",
+                    "created_at",
                     "id",
-                    "second_place",
-                    "third_place"
+                    "person",
+                    "place"
                 ]
             },
             "AllUsersNotifications": {
@@ -8499,6 +8563,11 @@
                         "type": "string",
                         "format": "date-time",
                         "readOnly": true
+                    },
+                    "officialized_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
                     },
                     "event": {
                         "type": "string",
@@ -9167,6 +9236,11 @@
                         "format": "date-time",
                         "readOnly": true
                     },
+                    "officialized_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
                     "event": {
                         "type": "string",
                         "title": "Evento"
@@ -9282,28 +9356,33 @@
                         "type": "integer",
                         "readOnly": true
                     },
-                    "competition": {
+                    "place": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/PlaceEnum"
+                            }
+                        ],
+                        "minimum": 0,
+                        "maximum": 32767
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "bracket": {
+                        "type": "integer"
+                    },
+                    "person": {
                         "type": "string"
-                    },
-                    "first_place": {
-                        "type": "string",
-                        "title": "Primeiro Classificado"
-                    },
-                    "second_place": {
-                        "type": "string",
-                        "nullable": true,
-                        "title": "Segundo Classificado"
-                    },
-                    "third_place": {
-                        "type": "string",
-                        "nullable": true,
-                        "title": "Terceiro Classificado"
                     }
                 },
                 "required": [
-                    "competition",
-                    "first_place",
-                    "id"
+                    "bracket",
+                    "created_at",
+                    "id",
+                    "person",
+                    "place"
                 ]
             },
             "CreateClub": {
@@ -11308,22 +11387,25 @@
                         "type": "integer",
                         "readOnly": true
                     },
-                    "competition": {
+                    "place": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/PlaceEnum"
+                            }
+                        ],
+                        "minimum": 0,
+                        "maximum": 32767
+                    },
+                    "created_at": {
                         "type": "string",
+                        "format": "date-time",
                         "readOnly": true
                     },
-                    "full_category": {
-                        "type": "string",
-                        "readOnly": true
+                    "bracket": {
+                        "type": "integer"
                     },
-                    "first_place": {
-                        "$ref": "#/components/schemas/CompactPerson"
-                    },
-                    "second_place": {
-                        "$ref": "#/components/schemas/CompactPerson"
-                    },
-                    "third_place": {
-                        "$ref": "#/components/schemas/CompactPerson"
+                    "person": {
+                        "type": "string"
                     }
                 }
             },
@@ -11352,6 +11434,11 @@
                         "type": "string",
                         "format": "date-time",
                         "readOnly": true
+                    },
+                    "officialized_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
                     },
                     "event": {
                         "type": "string",
@@ -12142,6 +12229,15 @@
                     "number",
                     "unpaid_members"
                 ]
+            },
+            "PlaceEnum": {
+                "enum": [
+                    1,
+                    2,
+                    3
+                ],
+                "type": "integer",
+                "description": "* `1` - 1st Place\n* `2` - 2nd Place\n* `3` - 3rd Place"
             },
             "PreviousMatch": {
                 "type": "object",

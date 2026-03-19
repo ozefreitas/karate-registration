@@ -1,9 +1,9 @@
 from .models import Bracket, Match
 import draw.serializers as serializers
 from core.views import MultipleSerializersMixIn
-from core.permissions import IsAuthenticatedOrReadOnly, IsNationalForPostDelete, IsTechnicianOrAdmin
-from registration.serializers import CompactPersonSerializer
-from registration.models import Person
+from core.permissions import IsAuthenticatedOrReadOnly, IsTechnicianOrAdmin, IsTechnicianOrAdminforPOST
+from registration.serializers import CompactPersonSerializer, ClassificationsSerializer
+from registration.models import Person, Classification
 from .filters import BracketsFilters, MatchesFilters
 
 from rest_framework import viewsets
@@ -11,6 +11,8 @@ from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
 
 from drf_spectacular.utils import extend_schema
+
+from django.utils import timezone
 
 # Create your views here.
 
@@ -36,6 +38,47 @@ class BracketViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         )
 
         serializer = CompactPersonSerializer(persons, many=True)
+        return Response(serializer.data)
+    
+    @action(
+        detail=True,
+        methods=["post"],
+        url_path="officialize",
+        permission_classes=[IsTechnicianOrAdminforPOST],
+    )
+    def officialize(self, request, pk=None):
+        bracket = self.get_object()
+
+        matches = Match.objects.filter(bracket=bracket).select_related("winner", "contender_1", "contender_2")
+
+        final = matches.filter(round_number=0, match_number=1).first()
+        if not final or not final.winner:
+            return Response({"error": "Ainda não existe um vencedor para este Escalão! Termine todas as partidas."}, status=400)
+
+        third_place_match = matches.filter(round_number=0, is_third_place=True).first()
+        if not third_place_match or not third_place_match.winner:
+            return Response({"error": "Ainda não existe um terceiro classificado para este Escalão!"}, status=400)
+
+        # Derive podium
+        first = final.winner
+        second = final.contender_1 if final.contender_2 == first else final.contender_2
+        third = third_place_match.winner
+
+        # reset if mistake
+        Classification.objects.filter(bracket=bracket).delete()
+
+        Classification.objects.create(bracket=bracket, person=first, place=1)
+        Classification.objects.create(bracket=bracket, person=second, place=2)
+        Classification.objects.create(bracket=bracket, person=third, place=3)
+
+        serializer = ClassificationsSerializer(
+            Classification.objects.filter(bracket=bracket).order_by("place"),
+            many=True
+        )
+
+        bracket.officialized_at = timezone.now()
+        bracket.save(update_fields=["officialized_at"])
+
         return Response(serializer.data)
 
 

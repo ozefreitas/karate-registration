@@ -21,6 +21,7 @@ class Bracket(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name="Escalão")
     draw_type = models.CharField("Tipo", choices=DRAW_TYPES, max_length=16, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    officialized_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f'{self.name} - {self.event.name} {self.event.season}'
