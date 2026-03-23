@@ -1,5 +1,5 @@
 from rest_framework import serializers
-import registration.serializers
+import registration.serializers.serializers
 import core.serializers.categories
 from django.utils.text import slugify
 from .models import Event, Discipline, Announcement, DisciplineMember, DisciplineTeam
@@ -31,7 +31,7 @@ class EventsSerializer(serializers.ModelSerializer):
             qs = obj.individuals.all()
         else:
             return []
-        return registration.serializers.CompactPersonSerializer(qs, many=True).data
+        return registration.serializers.serializers.CompactPersonSerializer(qs, many=True).data
     
     def get_is_open(self, obj):
         if obj.has_registrations:
@@ -265,7 +265,7 @@ class DisciplinesSerializer(serializers.ModelSerializer):
 
 
 class DisciplineMemberSerializer(serializers.ModelSerializer):
-    person = registration.serializers.CompactCategorizedPersonsSerializer()
+    person = registration.serializers.serializers.CompactCategorizedPersonsSerializer()
     category = core.serializers.categories.NameCategorySerializer()
 
     class Meta:
@@ -274,7 +274,7 @@ class DisciplineMemberSerializer(serializers.ModelSerializer):
 
 
 class DisciplineTeamSerializer(serializers.ModelSerializer):
-    team = registration.serializers.TeamsSerializer()
+    team = registration.serializers.serializers.TeamsSerializer()
 
     class Meta:
         model = DisciplineTeam

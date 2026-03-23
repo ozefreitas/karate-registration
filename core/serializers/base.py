@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from core.models import User, SignupToken, RequestedAcount, RequestPasswordReset, Notification, MonthlyPaymentPlan, MemberValidationRequest
 from events.serializers import CompactEventsSerializer
-from registration.serializers import CompactPersonSerializer
+from registration.serializers.base import CompactPersonSerializer
 
 class CompactUserSerializer(serializers.ModelSerializer):
     class Meta:

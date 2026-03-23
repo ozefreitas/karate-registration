@@ -1,5 +1,5 @@
 from django_filters import rest_framework as filters
-from registration.models import MonthlyPersonPayment, Person
+from registration.models import MonthlyPersonPayment, Person, Classification
 from events.models import Event
 from django.db.models import Q, Count
 from registration.utils.utils import get_real_member
@@ -112,4 +112,21 @@ class MonthlyPersonPaymentFilters(filters.FilterSet):
 
     class Meta:
         model = MonthlyPersonPayment
+        fields = []
+
+
+class ClassificationsFilters(filters.FilterSet):
+    """Filter Monthly Subscription objects"""
+
+    bracket = filters.CharFilter(method='filter_bracket')
+    event = filters.CharFilter(method='filter_event')
+    
+    def filter_bracket(self, queryset, name, value):
+        return queryset.filter(bracket = value)
+    
+    def filter_event(self, queryset, name, value):
+        return queryset.filter(bracket__event = value)
+
+    class Meta:
+        model = Classification
         fields = []

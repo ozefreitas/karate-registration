@@ -910,6 +910,20 @@
                 "operationId": "classifications_list",
                 "parameters": [
                     {
+                        "in": "query",
+                        "name": "bracket",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "event",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "page",
                         "required": false,
                         "in": "query",
@@ -948,7 +962,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/PaginatedAllClassificationsList"
+                                    "$ref": "#/components/schemas/PaginatedClassificationsList"
                                 }
                             }
                         },
@@ -1041,7 +1055,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/AllClassifications"
+                                    "$ref": "#/components/schemas/Classifications"
                                 }
                             }
                         },
@@ -1069,17 +1083,17 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/AllClassifications"
+                                "$ref": "#/components/schemas/Classifications"
                             }
                         },
                         "application/x-www-form-urlencoded": {
                             "schema": {
-                                "$ref": "#/components/schemas/AllClassifications"
+                                "$ref": "#/components/schemas/Classifications"
                             }
                         },
                         "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/AllClassifications"
+                                "$ref": "#/components/schemas/Classifications"
                             }
                         }
                     },
@@ -1102,7 +1116,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/AllClassifications"
+                                    "$ref": "#/components/schemas/Classifications"
                                 }
                             }
                         },
@@ -1130,17 +1144,17 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/PatchedAllClassifications"
+                                "$ref": "#/components/schemas/PatchedClassifications"
                             }
                         },
                         "application/x-www-form-urlencoded": {
                             "schema": {
-                                "$ref": "#/components/schemas/PatchedAllClassifications"
+                                "$ref": "#/components/schemas/PatchedClassifications"
                             }
                         },
                         "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/PatchedAllClassifications"
+                                "$ref": "#/components/schemas/PatchedClassifications"
                             }
                         }
                     }
@@ -1162,7 +1176,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/AllClassifications"
+                                    "$ref": "#/components/schemas/Classifications"
                                 }
                             }
                         },
@@ -1228,39 +1242,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/AllClassifications"
-                                }
-                            }
-                        },
-                        "description": ""
-                    }
-                }
-            }
-        },
-        "/classifications/per_comp/": {
-            "get": {
-                "operationId": "classifications_per_comp_retrieve",
-                "tags": [
-                    "classifications"
-                ],
-                "security": [
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    },
-                    {}
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/AllClassifications"
+                                    "$ref": "#/components/schemas/Classifications"
                                 }
                             }
                         },
@@ -8404,42 +8386,6 @@
                     "next_match_id"
                 ]
             },
-            "AllClassifications": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "readOnly": true
-                    },
-                    "place": {
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/PlaceEnum"
-                            }
-                        ],
-                        "minimum": 0,
-                        "maximum": 32767
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "readOnly": true
-                    },
-                    "bracket": {
-                        "type": "integer"
-                    },
-                    "person": {
-                        "type": "string"
-                    }
-                },
-                "required": [
-                    "bracket",
-                    "created_at",
-                    "id",
-                    "person",
-                    "place"
-                ]
-            },
             "AllUsersNotifications": {
                 "type": "object",
                 "properties": {
@@ -8713,6 +8659,42 @@
                 ],
                 "type": "string",
                 "description": "* `error` - error\n* `warning` - warning\n* `success` - success"
+            },
+            "Classifications": {
+                "type": "object",
+                "properties": {
+                    "bracket": {
+                        "$ref": "#/components/schemas/Bracket"
+                    },
+                    "event": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "person": {
+                        "$ref": "#/components/schemas/CompactPerson"
+                    },
+                    "place": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/PlaceEnum"
+                            }
+                        ],
+                        "minimum": 0,
+                        "maximum": 32767
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "bracket",
+                    "created_at",
+                    "event",
+                    "person",
+                    "place"
+                ]
             },
             "ClubMemberStats": {
                 "type": "object",
@@ -10879,37 +10861,6 @@
                     "target_event"
                 ]
             },
-            "PaginatedAllClassificationsList": {
-                "type": "object",
-                "required": [
-                    "count",
-                    "results"
-                ],
-                "properties": {
-                    "count": {
-                        "type": "integer",
-                        "example": 123
-                    },
-                    "next": {
-                        "type": "string",
-                        "nullable": true,
-                        "format": "uri",
-                        "example": "http://api.example.org/accounts/?page=4"
-                    },
-                    "previous": {
-                        "type": "string",
-                        "nullable": true,
-                        "format": "uri",
-                        "example": "http://api.example.org/accounts/?page=2"
-                    },
-                    "results": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/AllClassifications"
-                        }
-                    }
-                }
-            },
             "PaginatedCategoryList": {
                 "type": "object",
                 "required": [
@@ -10937,6 +10888,37 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Category"
+                        }
+                    }
+                }
+            },
+            "PaginatedClassificationsList": {
+                "type": "object",
+                "required": [
+                    "count",
+                    "results"
+                ],
+                "properties": {
+                    "count": {
+                        "type": "integer",
+                        "example": 123
+                    },
+                    "next": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://api.example.org/accounts/?page=4"
+                    },
+                    "previous": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://api.example.org/accounts/?page=2"
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Classifications"
                         }
                     }
                 }
@@ -11380,35 +11362,6 @@
                     }
                 }
             },
-            "PatchedAllClassifications": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "readOnly": true
-                    },
-                    "place": {
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/PlaceEnum"
-                            }
-                        ],
-                        "minimum": 0,
-                        "maximum": 32767
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "readOnly": true
-                    },
-                    "bracket": {
-                        "type": "integer"
-                    },
-                    "person": {
-                        "type": "string"
-                    }
-                }
-            },
             "PatchedBracket": {
                 "type": "object",
                 "properties": {
@@ -11538,6 +11491,35 @@
                         "minimum": 0,
                         "nullable": true,
                         "title": "Número Máximo de Atletas (Equipas)"
+                    }
+                }
+            },
+            "PatchedClassifications": {
+                "type": "object",
+                "properties": {
+                    "bracket": {
+                        "$ref": "#/components/schemas/Bracket"
+                    },
+                    "event": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "person": {
+                        "$ref": "#/components/schemas/CompactPerson"
+                    },
+                    "place": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/PlaceEnum"
+                            }
+                        ],
+                        "minimum": 0,
+                        "maximum": 32767
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
                     }
                 }
             },

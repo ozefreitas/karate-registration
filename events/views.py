@@ -16,7 +16,7 @@ from registration.models import Person, Team
 from core.permissions import IsAuthenticatedOrReadOnly, EventIndividualsPermission, EventPermission, IsAdminRoleorHigherForGET, IsAdminRoleorHigher
 from core.models import Category, Notification
 from events import serializers
-from registration import serializers as registrationSerializers
+from registration.serializers import serializers as registrationSerializers
 from clubs.serializers import RatingSerializer, CheckEventRateSerializer
 from core.utils.utils import calc_age
 from registration.utils.utils import get_comp_age, athlete_age

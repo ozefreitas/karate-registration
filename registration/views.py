@@ -1,13 +1,14 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db import transaction, IntegrityError
 from django.utils import timezone
+from django.db.models import Case, When
 
 from .models import Team, Classification, MonthlyPersonPayment, MonthlyPersonPaymentConfig, Person, Membership
-from .filters import PersonsFilters, MonthlyPersonPaymentFilters
+from .filters import PersonsFilters, MonthlyPersonPaymentFilters, ClassificationsFilters
 from events.models import Event
 from core.models import User, Notification, MonthlyPaymentPlan
 from core.permissions import PersonPermission
-import registration.serializers as registration_serializers
+import registration.serializers.serializers as registration_serializers
 import events.serializers as event_serializers
 
 from datetime import datetime
@@ -433,39 +434,19 @@ class TeamsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
 
 class ClassificationsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
-    queryset=Classification.objects.all()
-    serializer_class = registration_serializers.AllClassificationsSerializer
+    queryset = Classification.objects.annotate(
+        place_order=Case(
+            When(place=2, then=0),
+            When(place=1, then=1),
+            When(place=3, then=2),
+        )
+    ).order_by("place_order")
+    serializer_class = registration_serializers.ClassificationsSerializer
+    filterset_class = ClassificationsFilters
 
     serializer_classes = {
         "create": registration_serializers.CreateClassificationsSerializer,
     }
-
-    @action(detail=False, methods=["get"], url_path="per_comp")
-    def per_comp(self, request):
-        queryset = Classification.objects.all()
-        serialized_data = registration_serializers.AllClassificationsSerializer(queryset, many=True)
-        final_classification = {}
-        competition = ""
-        for classification in serialized_data.data:
-            comp_dict = {}
-            if competition == "" and classification["competition"] == competition:
-                comp_dict[classification['full_category']] = {"first_place": classification["first_place"], 
-                                                           "second_place": classification["second_place"],
-                                                           "third_place": classification["third_place"]}
-            else:
-                competition = classification["competition"]
-                comp_dict[classification['full_category']] = {"first_place": classification["first_place"], 
-                                                           "second_place": classification["second_place"],
-                                                           "third_place": classification["third_place"]}
-            if competition not in final_classification.keys():
-                final_classification[competition] = [comp_dict]
-            else:
-                final_classification[competition].append(comp_dict)
-
-        if final_classification == {}:
-            return Response([])
-        
-        return Response([final_classification])
     
     @action(detail=False, methods=["get"], url_path="last_comp_quali")
     def last_comp_quali(self, request):

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 import draw.models as models
-from registration.serializers import CompactPersonSerializer
+from registration.serializers.base import CompactPersonSerializer
 
 
 class BracketSerializer(serializers.ModelSerializer):

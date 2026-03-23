@@ -14,10 +14,10 @@ from core.models import MemberValidationRequest, MonthlyPaymentPlan
 from core.utils.utils import calc_age
 from events.models import Event, Discipline
 from registration.utils.utils import get_comp_age
+from registration.serializers.base import CompactPersonSerializer
+from draw.serializers import BracketSerializer
 
 from drf_spectacular.utils import extend_schema_field
-from drf_spectacular.utils import extend_schema_field
-from drf_spectacular.types import OpenApiTypes
 
 
 ### Members Serializer Classes
@@ -114,25 +114,6 @@ class MemberShipsSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Membership
         fields = "__all__"
-
-
-class CompactPersonSerializer(serializers.ModelSerializer):
-    full_name = serializers.SerializerMethodField()
-    club = serializers.SerializerMethodField()
-    age = serializers.SerializerMethodField()
-
-    class Meta:
-        model = models.Person
-        fields = ["id", "gender", "club", "full_name", "age", "weight", "graduation"]
-
-    def get_club(self, obj):
-        return obj.club.username
-    
-    def get_full_name(self, obj):
-        return f"{obj.first_name} {obj.last_name}"
-    
-    def get_age(self, obj):
-        return get_comp_age(obj.birth_date)
 
 
 class CompactCategorizedPersonsSerializer(serializers.ModelSerializer):
@@ -736,10 +717,16 @@ class AllClassificationsSerializer(serializers.ModelSerializer):
     
 
 class ClassificationsSerializer(serializers.ModelSerializer):
+    bracket = BracketSerializer()
+    event = serializers.SerializerMethodField()
+    person = CompactPersonSerializer()
+
     class Meta:
         model = models.Classification
-        fields = "__all__"
+        exclude = ["id"]
 
+    def get_event(self, obj):
+        return obj.bracket.event.name
 
 class CreateClassificationsSerializer(serializers.ModelSerializer):
     class Meta:

@@ -2,7 +2,8 @@ from .models import Bracket, Match
 import draw.serializers as serializers
 from core.views import MultipleSerializersMixIn
 from core.permissions import IsAuthenticatedOrReadOnly, IsTechnicianOrAdmin, IsTechnicianOrAdminforPOST
-from registration.serializers import CompactPersonSerializer, ClassificationsSerializer
+from registration.serializers.base import CompactPersonSerializer
+from registration.serializers.serializers import ClassificationsSerializer
 from registration.models import Person, Classification
 from .filters import BracketsFilters, MatchesFilters
 
