@@ -147,6 +147,7 @@ class NotAdminLikeTypePersonsSerializer(serializers.ModelSerializer):
     next_prev = serializers.SerializerMethodField()
     member_types = serializers.SerializerMethodField()
     exam_request_status = serializers.SerializerMethodField()
+    classifications = serializers.SerializerMethodField()
     
     class Meta:
         model = models.Person
@@ -223,6 +224,10 @@ class NotAdminLikeTypePersonsSerializer(serializers.ModelSerializer):
                     return "rejected"
         except MemberValidationRequest.DoesNotExist:
             return None
+    
+    def get_classifications(self, obj):
+        qs = obj.classifications.select_related("bracket__event", "bracket__discipline", "bracket__category").order_by("-bracket__officialized_at")
+        return CompactClassificationSerializer(qs, many=True).data
 
 
 class AdminPersonRetrieveSerializer(serializers.ModelSerializer):
@@ -728,7 +733,18 @@ class ClassificationsSerializer(serializers.ModelSerializer):
     def get_event(self, obj):
         return obj.bracket.event.name
 
+
 class CreateClassificationsSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Classification
         fields = "__all__"
+
+
+class CompactClassificationSerializer(serializers.ModelSerializer):
+    event_name = serializers.CharField(source="bracket.event.name")
+    bracket_name = serializers.CharField(source="bracket.name")
+    officialized_at = serializers.DateTimeField(source="bracket.officialized_at")
+
+    class Meta:
+        model = models.Classification
+        fields = ["place", "event_name", "bracket_name", "officialized_at"]

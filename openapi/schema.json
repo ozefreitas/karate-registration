@@ -8491,6 +8491,9 @@
                         "type": "integer",
                         "readOnly": true
                     },
+                    "category": {
+                        "$ref": "#/components/schemas/CompactCategory"
+                    },
                     "name": {
                         "type": "string",
                         "title": "Prova",
@@ -8522,10 +8525,6 @@
                     "discipline": {
                         "type": "integer",
                         "title": "Modalidade"
-                    },
-                    "category": {
-                        "type": "integer",
-                        "title": "Escalão"
                     }
                 },
                 "required": [
@@ -10697,6 +10696,10 @@
                         "type": "string",
                         "readOnly": true
                     },
+                    "classifications": {
+                        "type": "string",
+                        "readOnly": true
+                    },
                     "profile_image": {
                         "type": "string",
                         "format": "uri",
@@ -10800,6 +10803,7 @@
                 "required": [
                     "age",
                     "birth_date",
+                    "classifications",
                     "exam_request_status",
                     "first_name",
                     "full_name",
@@ -11369,6 +11373,9 @@
                         "type": "integer",
                         "readOnly": true
                     },
+                    "category": {
+                        "$ref": "#/components/schemas/CompactCategory"
+                    },
                     "name": {
                         "type": "string",
                         "title": "Prova",
@@ -11400,10 +11407,6 @@
                     "discipline": {
                         "type": "integer",
                         "title": "Modalidade"
-                    },
-                    "category": {
-                        "type": "integer",
-                        "title": "Escalão"
                     }
                 }
             },

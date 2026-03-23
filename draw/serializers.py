@@ -1,9 +1,11 @@
 from rest_framework import serializers
 import draw.models as models
 from registration.serializers.base import CompactPersonSerializer
+from core.serializers.categories import CompactCategorySerializer
 
 
 class BracketSerializer(serializers.ModelSerializer):
+    category = CompactCategorySerializer()
     class Meta:
         model = models.Bracket
         fields = "__all__"
