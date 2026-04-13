@@ -10097,6 +10097,10 @@
                         "type": "string",
                         "format": "uri",
                         "nullable": true
+                    },
+                    "created_by": {
+                        "type": "integer",
+                        "nullable": true
                     }
                 },
                 "required": [
@@ -11720,6 +11724,10 @@
                         "type": "string",
                         "format": "uri",
                         "nullable": true
+                    },
+                    "created_by": {
+                        "type": "integer",
+                        "nullable": true
                     }
                 }
             },
@@ -12718,6 +12726,10 @@
                     "file": {
                         "type": "string",
                         "format": "uri",
+                        "nullable": true
+                    },
+                    "created_by": {
+                        "type": "integer",
                         "nullable": true
                     },
                     "individuals": {

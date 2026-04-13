@@ -7,8 +7,8 @@ class EventsFilters(filters.FilterSet):
     """Filter Events based on different fields"""
     season = filters.CharFilter(field_name='season',
                                               method='filter_season')
-    has_ended = filters.BooleanFilter(field_name='has_ended',
-                                              method='filter_has_ended')
+    # has_ended = filters.BooleanFilter(field_name='has_ended',
+    #                                           method='filter_has_ended')
     has_teams = filters.BooleanFilter(field_name='has_teams',
                                               method='filter_has_teams')
     has_categories = filters.BooleanFilter(field_name='has_categories',
@@ -25,8 +25,8 @@ class EventsFilters(filters.FilterSet):
     def filter_season(self, queryset, name, value):
         return queryset.filter(season=value)
     
-    def filter_has_ended(self, queryset, name, value):
-        return queryset.filter(has_ended=value)
+    # def filter_has_ended(self, queryset, name, value):
+    #     return queryset.filter(has_ended=value)
     
     def filter_has_teams(self, queryset, name, value):
         if not value:
@@ -51,17 +51,17 @@ class EventsFilters(filters.FilterSet):
             return queryset.none()
         else:
             date_obj = datetime.strptime(value, "%Y-%m")
-            events = Event.objects.filter(
-            event_date__year=date_obj.year,
-            event_date__month=date_obj.month
-        )
+            events = queryset.filter(
+                event_date__year=date_obj.year,
+                event_date__month=date_obj.month
+            )
             return events
     
     def filter_in_day(self, queryset, name, value):
         if not value:
             return queryset.none()
         else:
-            events = Event.objects.filter(
+            events = queryset.filter(
             event_date__day=value,
         )
             return events

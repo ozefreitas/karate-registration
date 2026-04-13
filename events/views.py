@@ -22,7 +22,7 @@ from core.utils.utils import calc_age
 from registration.utils.utils import get_comp_age, athlete_age
 from core.views import MultipleSerializersMixIn
 from draw.models import Match, Bracket
-from registration.utils.utils import next_power_of_2
+from draw.utils import draw_utils as DrawUtils
 
 from rest_framework import viewsets, filters, status
 from rest_framework.permissions import IsAuthenticated
@@ -30,8 +30,6 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from drf_spectacular.utils import extend_schema, OpenApiResponse
-from drf_spectacular.openapi import AutoSchema
-from drf_spectacular.utils import OpenApiTypes
 
 # Create your views here.
 
@@ -52,26 +50,38 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     def get_queryset(self):
         qs = super().get_queryset()
         user = self.request.user
+        role = getattr(user, "role", None)
 
-        if getattr(user, "role", None) == "free_club":
+        if role in ['main_admin', 'single_admin', 'superuser']:
+            return qs.filter(
+                Q(created_by__isnull=True) | Q(created_by__role__in=['main_admin', 'single_admin', 'superuser'])
+            ).order_by("event_date")
+
+        if role == 'subed_club':
+            return qs.filter(
+                Q(created_by__isnull=True) | Q(created_by=user) | Q(created_by__role__in=['main_admin', 'single_admin', 'superuser'])
+            ).order_by("event_date")
+
+        if role == 'free_club':
             now = timezone.now()
             future_7 = now + timedelta(days=7)
-
-            qs = qs.filter(
-                Q(start_registration__isnull=False, start_registration__lte=now, event_date__gte=now)
+            return qs.filter(
+                Q(start_registration__isnull=False, start_registration__lte=now, event_date__gte=now, created_by__isnull=True)
                 |
-                Q(start_registration__isnull=True, event_date__gte=now, event_date__lte=future_7)
-            )
+                Q(start_registration__isnull=True, event_date__gte=now, event_date__lte=future_7, created_by__isnull=True)
+            ).order_by("event_date")
 
-        return qs.order_by("event_date")
-        # return self.queryset.order_by("event_date")
+        # Everyone else sees only admin-created events
+        return qs.filter(created_by__isnull=True).order_by("event_date")
 
     def perform_create(self, serializer):
-        return super().perform_create(serializer)
+        user = self.request.user
+        serializer.save(created_by=user)
 
     @action(detail=False, methods=["get"], url_path="next_event")
     def next_event(self, request):
-        next_event = Event.objects.filter(has_ended=False).order_by('event_date').first()
+        now = timezone.now()
+        next_event = self.get_queryset().filter(event_date__gte=now).order_by('event_date').first()
         if next_event is None:
             return Response([])
         serializer = serializers.CompactEventsSerializer(next_event, context={'request': request})
@@ -79,7 +89,8 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     
     @action(detail=False, methods=["get"], url_path="last_event")
     def last_event(self, request):
-        last_event = Event.objects.filter(has_ended=True).order_by('event_date').last()
+        now = timezone.now()
+        last_event = self.get_queryset().filter(event_date__gte=now).order_by('event_date').last()
         if last_event is None:
             return Response([])
         serializer = serializers.CompactEventsSerializer(last_event, context={'request': request})
@@ -332,99 +343,28 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         serializer = serializers.GenerateDrawRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
+        # remove previous brackets
         to_deletion = Bracket.objects.filter(event=event)
         for to_delete in to_deletion:
             to_delete.delete()
 
-        for discipline in disciplines:
+        formats = serializer.validated_data["disciplines"]
+
+        for discipline_format in formats:
+
+            if discipline_format["format"] == "torneio":
+                success = DrawUtils.generate_torneio_draw(event, disciplines, discipline_format)
             
-            for category in discipline.categories.all():
-                
-                # Retrieves all registrations for the current category
-                category_registrations = DisciplineMember.objects.filter(
-                    category=category,
-                    discipline=discipline
-                ).order_by("id")
-
-                registrations = list(category_registrations)
-                total_players = len(registrations)
-
-                # Categories with less than 2 registration will not take place, so proceed to the next category
-                if len(registrations) < 2:
-                    continue
-
-                new_bracket = Bracket.objects.create(
-                                                    name=f'{discipline.name} {category.name} {category.gender}',
-                                                    category=category,
-                                                    discipline=discipline,
-                                                    event=event,
-                                                    draw_type="misto"
-                                                    )
-
-                bracket_size = next_power_of_2(total_players)
-                total_rounds = int(math.log2(bracket_size))
-
-                for round_number in range(total_rounds):
-                    round_label = total_rounds - 1 - round_number  # first round = highest number
-                    matches_in_round = bracket_size // (2 ** (round_number + 1))
-
-                    for match_number in range(1, matches_in_round + 1):
-                        Match.objects.create(
-                            bracket=new_bracket,
-                            round_number=round_label,
-                            match_number=match_number
-                        )
-
-                # Create 3rd place match only if there are semi-finals (4+ players)
-                third_place_match = None
-                if total_players >= 4:
-                    third_place_match = Match.objects.create(
-                        bracket=new_bracket,
-                        round_number=0,
-                        match_number=2,
-                        is_third_place=True
+            elif discipline_format["format"] == "grupos":
+                DrawUtils.generate_liga_draw(
+                    disciplines,
+                    discipline_format,
+                    int(discipline_format["minMembersPerGroup"]), 
+                    int(discipline_format["maxMembersPerGroup"])
                     )
 
-                    # Link semi-final matches to the 3rd place match so losers are advanced there
-                    semi_final_round = 1 
-                    semi_final_matches = Match.objects.filter(
-                        bracket=new_bracket,
-                        round_number=semi_final_round
-                    )
-                    for semi in semi_final_matches:
-                        semi.loser_goes_to = third_place_match
-                        semi.save()
-
-                first_round_matches = Match.objects.filter(
-                    bracket=new_bracket,
-                    round_number=total_rounds - 1  # first round is the highest number
-                ).order_by("match_number")
-
-                reg_index = 0
-
-                for match in first_round_matches:
-                    if reg_index < total_players:
-                        match.contender_1 = registrations[reg_index].person
-                        reg_index += 1
-
-                    if reg_index < total_players:
-                        match.contender_2 = registrations[reg_index].person
-                        reg_index += 1
-
-                    match.save()
-
-                for match in first_round_matches:
-                    if match.contender_1 and not match.contender_2:
-                        match.winner = match.contender_1
-                        match.save()
-                        match.advance_winner()
-                        match.advance_loser()
-
-                    elif match.contender_2 and not match.contender_1:
-                        match.winner = match.contender_2
-                        match.save()
-                        match.advance_winner()
-                        match.advance_loser()
+            elif discipline_format["format"] == "misto":
+                DrawUtils.generate_misto(disciplines, discipline_format)
 
         # remove previous notification for available draw for this event
         previous_notifications = Notification.objects.filter(type__in=["draw_available", "draw_patched"], target_event=event)
@@ -673,7 +613,7 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 discipline=discipline,
                 member__club=request.user
             ).delete()
-        except Member.DoesNotExist:
+        except DisciplineMember.DoesNotExist:
             return Response({"error": "Ocorreu um erro ao remover todos os Atletas desta Modalidade."}, status=status.HTTP_404_NOT_FOUND)
         
         if individuals_count <= 1:
@@ -830,7 +770,7 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             discipline.add_team(created_team)
 
             return Response({"message": "Equipa adicionada a esta Modalidade!"}, status=status.HTTP_200_OK)
-        except Member.DoesNotExist:
+        except DisciplineTeam.DoesNotExist:
             return Response({"error": "Ocorreu um erro ao adicionar esta Equipa!"}, status=status.HTTP_404_NOT_FOUND)
 
 

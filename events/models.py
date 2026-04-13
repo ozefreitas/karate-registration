@@ -2,6 +2,8 @@ from django.db import models
 from django.utils.text import slugify
 from django.core.exceptions import ValidationError
 from django.utils import timezone
+from django.conf import settings
+
 from core.constants import EVENT_TYPES, SEASONS
 
 # Create your models here.
@@ -21,12 +23,18 @@ class Event(models.Model):
     email_contact = models.EmailField("Email", null=True, blank=True)
     contact = models.PositiveIntegerField("Contacto", null=True, blank=True)
     individuals = models.ManyToManyField("registration.Person", related_name='general_events', blank=True)
-    has_ended = models.BooleanField(default=False)
     has_registrations = models.BooleanField(default=False)
     has_categories = models.BooleanField(default=False)
     encounter_type = models.CharField("Estágio", choices=EVENT_TYPES, max_length=24, blank=True, default=EVENT_TYPES["comp"])
     rating = models.IntegerField("Avaliação", default=0)
     file = models.FileField(upload_to="events/info/", null=True, blank=True)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='created_events'
+    )
 
     # def clean(self):
     #     super().clean()

@@ -450,9 +450,10 @@ class ClassificationsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     
     @action(detail=False, methods=["get"], url_path="last_comp_quali")
     def last_comp_quali(self, request):
-        last_competition = Event.objects.filter(has_ended=True).order_by('event_date').last()
+        now = timezone.now()
+        last_competition = Event.objects.filter(event_date__gte=now).order_by('event_date').last()
         if last_competition is None:
             return Response([])
-        last_comp_quali = Classification.objects.filter(competition=last_competition.id)
+        last_comp_quali = Classification.objects.filter(bracket__event=last_competition.id)
         serialized_data = registration_serializers.ClassificationsSerializer(last_comp_quali, many=True)
         return Response(serialized_data.data)

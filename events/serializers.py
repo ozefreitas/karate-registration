@@ -96,7 +96,6 @@ class CompactEventsSerializer(serializers.ModelSerializer):
                   "season",
                   "location",
                   "has_registrations",
-                  "has_ended",
                   "is_open", 
                   "is_closed", 
                   "is_retification", 
@@ -145,7 +144,7 @@ class CompactEventsSerializer(serializers.ModelSerializer):
 class CreateEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
-        exclude = ("has_ended", "individuals", "rating", )
+        exclude = ("individuals", "rating", "created_by")
     
     def validate(self, data):
         name = data.get("name")
@@ -177,7 +176,7 @@ class CreateEventSerializer(serializers.ModelSerializer):
 class UpdateEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
-        exclude = ("id", "has_ended")
+        exclude = ("id",)
 
 
 class GenerateDrawResponseSerializer(serializers.Serializer):
