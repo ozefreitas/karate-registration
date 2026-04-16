@@ -69,7 +69,7 @@ class ClubSubscription(models.Model):
         limit_choices_to={"role__in": ["free_club", "subed_club"]}
     )
 
-    year = models.PositiveIntegerField()  # e.g., 2025
+    year = models.PositiveIntegerField()
     amount = models.DecimalField(max_digits=7, decimal_places=2) 
     due_date = models.DateTimeField()
     paid = models.BooleanField(default=False)
@@ -92,7 +92,7 @@ class ClubSubscriptionConfig(models.Model):
     """
     Stores subscription amount for each Admin.
     Each Admin should have exactly one config row.
-    The amount will be used to crate ClubSubscriptions for all the children acounts
+    The amount will be used to create ClubSubscriptions for all the children acounts
     """
     admin = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -127,12 +127,3 @@ class ClubSettings(models.Model):
 
     def __str__(self):
         return f"{self.club} – billing day {self.billing_day}"
-
-class Profile(models.Model):
-    club = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    image = models.ImageField("Imagem de perfil", default='skip-logo.png', upload_to='profile_pictures')
-    club_contact = models.IntegerField("Contacto do Clube", default=123456789)
-    cellphone_number = models.IntegerField("Número de telemóvel pessoal", default=123456789)
-
-    def __str__(self):
-        return f'{self.club.username} profile'

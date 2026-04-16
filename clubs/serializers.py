@@ -42,6 +42,12 @@ class CreateClubSubscriptionSerializer(serializers.ModelSerializer):
         exclude = ["paid", "paid_at"]
 
 
+class ClubSubscriptionConfigSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ClubSubscriptionConfig
+        exclude = ["admin"]
+
+
 class UpdateClubSubscriptionConfigAmountSerializer(serializers.ModelSerializer):
     class Meta:
         model = ClubSubscriptionConfig

@@ -105,7 +105,6 @@ class ClubSubscriptionsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         years = ClubSubscription.objects.values_list("year", flat=True).distinct().order_by("year")
         return Response({"years": years})
     
-
     @action(
         detail=False,
         methods=['patch'],
@@ -176,7 +175,7 @@ class ClubSubscriptionsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
     
-    @extend_schema(description="An endpoint that targets all children accounts of an admin, in order to, update all subscription object if the given year," \
+    @extend_schema(description="An endpoint that targets all children accounts of an admin, in order to update all subscription object if the given year," \
     "with a new amount")
     @action(detail=False, 
             methods=['patch'], 
@@ -252,6 +251,26 @@ class ClubSubscriptionsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
     
+
+class ClubSubscriptionConfigViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
+    serializer_class = ClubSerializers.ClubSubscriptionConfigSerializer
+    permission_classes = [IsAdminRoleorHigher]
+    pagination_class = None
+
+    def get_queryset(self):
+        return ClubSubscriptionConfig.objects.filter(admin=self.request.user)
+
+    @action(detail=False, methods=["get"])
+    def me(self, request):
+        obj = request.user.subscription_config
+        serializer = self.get_serializer(obj)
+        return Response(serializer.data)
+    
+    # serializer_classes = {
+    #     "create": ClubSerializers.CreateClubSettigsSerializer,
+    #     "partial_update": ClubSerializers.PatchClubSettigsSerializer
+    # }
+
 
 class ClubSettingsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=ClubSettings.objects.all().order_by("club")

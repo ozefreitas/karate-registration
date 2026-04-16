@@ -192,7 +192,7 @@ class EventPermission(BasePermission):
             return True
 
         if role == 'subed_club':
-            return obj.created_by == request.user
+            return obj.created_by is None or obj.created_by == request.user or obj.created_by.role in ['main_admin', 'single_admin', 'superuser']
 
         if request.method in SAFE_METHODS:
             return obj.created_by is None

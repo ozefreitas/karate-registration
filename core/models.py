@@ -32,6 +32,7 @@ class User(AbstractUser):
         SINGLEADMIN = "single_admin", "Single Admin"
         FREECLUB = "free_club", "Club Free"
         SUBEDCLUB = "subed_club", "Club Subscription"
+        PERSON = "person", "Person"
 
     class Tier(models.TextChoices):
         BASE = "base", "Base"
@@ -84,11 +85,18 @@ class User(AbstractUser):
                 raise ValidationError("Technician accounts must have a assigned parent.")
             if self.parent is not None and self.parent.role != self.Role.MAINADMIN:
                 raise ValidationError("Technician Child accounts must have a Main Admin as parent.")
+        
+        # PERSON restrictions
+        if self.role == self.Role.PERSON and self.tier != self.Tier.BASE:
+            raise ValidationError("Normal random Person are only available with the Base tier plan.")
 
         # Child rules
-        if self.parent and self.parent.role != self.Role.MAINADMIN:
-            raise ValidationError("Child accounts must have a Main Admin as parent.")
-
+        if self.parent:
+            if self.role == self.Role.SUBEDCLUB and self.parent.role != self.Role.MAINADMIN:
+                raise ValidationError("Subed Club child accounts must have a Main Admin as parent.")
+            if self.role == self.Role.PERSON and self.parent.role != self.Role.SUBEDCLUB:
+                raise ValidationError("Random Person child accounts must have a Subed Club as parent.")
+        
         super().clean()
 
     # --------------------------
@@ -108,6 +116,18 @@ class User(AbstractUser):
         self.full_clean()
         super().save(*args, **kwargs)
 
+
+class Profile(models.Model):
+    club = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    image = models.ImageField("Imagem de perfil", default='skip-logo.png', upload_to='users/profile_pictures/')
+    contact = models.IntegerField("Contacto do Clube", default=123456789)
+    bio = models.TextField(blank=True)
+    email_contact = models.EmailField("Email", null=True, blank=True)
+    cellphone_number = models.IntegerField("Número de telemóvel pessoal", default=123456789)
+    address = models.CharField("Morada", max_length=200, blank=True, null=True)
+
+    def __str__(self):
+        return f'{self.club.username} profile'
 
 
 class RequestedAcount(models.Model):
