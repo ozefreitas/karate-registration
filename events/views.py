@@ -356,15 +356,11 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 success = DrawUtils.generate_torneio_draw(event, disciplines, discipline_format)
             
             elif discipline_format["format"] == "grupos":
-                DrawUtils.generate_liga_draw(
-                    disciplines,
-                    discipline_format,
-                    int(discipline_format["minMembersPerGroup"]), 
-                    int(discipline_format["maxMembersPerGroup"])
-                    )
+                success = DrawUtils.generate_liga_draw(disciplines, discipline_format)
 
             elif discipline_format["format"] == "misto":
-                DrawUtils.generate_misto(disciplines, discipline_format)
+                success = DrawUtils.generate_torneio_draw(event, disciplines, discipline_format, True)
+                return Response({"message": success})
 
         # remove previous notification for available draw for this event
         previous_notifications = Notification.objects.filter(type__in=["draw_available", "draw_patched"], target_event=event)

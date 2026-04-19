@@ -190,6 +190,7 @@ class DisciplineDrawSerializer(serializers.Serializer):
     format = serializers.CharField()
     maxMembersPerGroup = serializers.CharField(required=False, allow_blank=True)
     minMembersPerGroup = serializers.CharField(required=False, allow_blank=True)
+    finalsSize = serializers.CharField(required=False, allow_blank=True)
 
 
 class GenerateDrawRequestSerializer(serializers.Serializer):

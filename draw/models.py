@@ -36,6 +36,9 @@ class Match(models.Model):
     loser_goes_to = models.ForeignKey(
         'self', null=True, blank=True, on_delete=models.SET_NULL, related_name='loser_feeders'
     )
+    feeds_into_scoring = models.ForeignKey(
+        'ScoringRound', null=True, blank=True, on_delete=models.SET_NULL
+    )
     match_number = models.IntegerField()
     winner = models.ForeignKey(Person, on_delete=models.SET_NULL, null=True, blank=True, related_name="won_matches")
     ongoing = models.BooleanField(default=False)
@@ -148,6 +151,30 @@ class Match(models.Model):
 
     def __str__(self):
         return f'{self.bracket.discipline.name} {self.bracket.category.name} {self.bracket.category.gender} | {self.contender_1.first_name if self.contender_1 is not None else "bye"} {self.contender_1.last_name if self.contender_1 is not None else ""} vs {self.contender_2.first_name if self.contender_2 is not None else "bye"} {self.contender_2.last_name if self.contender_2 is not None else ""} | (Round {self.round_number})'
+
+
+class ScoringRound(models.Model):
+    bracket = models.ForeignKey(Bracket, on_delete=models.CASCADE, related_name="scoring_rounds")
+    round_number = models.IntegerField(default=0)
+    is_final = models.BooleanField(default=False)
+    completed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.bracket.discipline.name} {self.bracket.category.name} {self.bracket.category.gender} Finals'
+
+
+class ScoringEntry(models.Model):
+    scoring_round = models.ForeignKey(ScoringRound, on_delete=models.CASCADE, related_name="entries")
+    person = models.ForeignKey(Person, on_delete=models.CASCADE)
+    score = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+    rank = models.IntegerField(null=True, blank=True)
+    entry_number = models.PositiveIntegerField()
+    ongoing = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    
+    def __str__(self):
+        return f'{self.scoring_round.bracket.discipline.name} {self.scoring_round.bracket.category.name} {self.scoring_round.bracket.category.gender} Finals - {self.person.first_name} {self.person.last_name} ({self.person.club.username})'
 
     
 class MatchResult(models.Model):

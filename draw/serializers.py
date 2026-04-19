@@ -92,3 +92,11 @@ class AdvanceMatchSerializer(serializers.Serializer):
 
 class PreviousMatchSerializer(serializers.Serializer):
     prev_match_id = serializers.CharField()
+
+
+class ScoringEntrySerializer(serializers.ModelSerializer):
+    person = CompactPersonSerializer()
+
+    class Meta:
+        model = models.ScoringEntry
+        fields = "__all__"

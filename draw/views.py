@@ -1,11 +1,11 @@
-from .models import Bracket, Match
+from .models import Bracket, Match, ScoringRound, ScoringEntry
 import draw.serializers as serializers
 from core.views import MultipleSerializersMixIn
 from core.permissions import IsAuthenticatedOrReadOnly, IsTechnicianOrAdmin, IsTechnicianOrAdminforPOST
 from registration.serializers.base import CompactPersonSerializer
 from registration.serializers.serializers import ClassificationsSerializer
 from registration.models import Person, Classification
-from .filters import BracketsFilters, MatchesFilters
+from .filters import BracketsFilters, MatchesFilters, ScoringEntriesFilters
 
 from rest_framework import viewsets
 from rest_framework.decorators import api_view, action
@@ -212,3 +212,21 @@ class MatchViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             "success": True,
             "prev_match_id": prev_match.id,
         })
+
+
+class ScoringEntryViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
+    queryset = ScoringEntry.objects.select_related(
+        'scoring_round__bracket__event',
+        'scoring_round__bracket',
+        "person",
+    ).order_by("created_at")
+    serializer_class=serializers.ScoringEntrySerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    filterset_class = ScoringEntriesFilters
+    pagination_class = None
+
+    # serializer_classes = {
+    #     "create": serializers.CreateMatchSerializer,
+    #     "update": serializers.UpdateMatchSerializer,
+    #     "partial_update": serializers.UpdateMatchSerializer
+    # }

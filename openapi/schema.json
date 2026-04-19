@@ -3169,13 +3169,6 @@
                     },
                     {
                         "in": "query",
-                        "name": "has_ended",
-                        "schema": {
-                            "type": "boolean"
-                        }
-                    },
-                    {
-                        "in": "query",
                         "name": "has_registrations",
                         "schema": {
                             "type": "boolean"
@@ -7764,6 +7757,299 @@
                 }
             }
         },
+        "/scoring_entry/": {
+            "get": {
+                "operationId": "scoring_entry_list",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "bracket",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "event",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "tags": [
+                    "scoring_entry"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ScoringEntry"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "operationId": "scoring_entry_create",
+                "tags": [
+                    "scoring_entry"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ScoringEntry"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ScoringEntry"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ScoringEntry"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ScoringEntry"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/scoring_entry/{id}/": {
+            "get": {
+                "operationId": "scoring_entry_retrieve",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this scoring entry.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "scoring_entry"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ScoringEntry"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "put": {
+                "operationId": "scoring_entry_update",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this scoring entry.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "scoring_entry"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ScoringEntry"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ScoringEntry"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ScoringEntry"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ScoringEntry"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "patch": {
+                "operationId": "scoring_entry_partial_update",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this scoring entry.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "scoring_entry"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedScoringEntry"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedScoringEntry"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedScoringEntry"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ScoringEntry"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "scoring_entry_destroy",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this scoring entry.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "scoring_entry"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
         "/sign_up/generate_token/": {
             "post": {
                 "operationId": "sign_up_generate_token_create",
@@ -9051,9 +9337,6 @@
                     "has_registrations": {
                         "type": "boolean"
                     },
-                    "has_ended": {
-                        "type": "boolean"
-                    },
                     "is_open": {
                         "type": "string",
                         "readOnly": true
@@ -9615,6 +9898,10 @@
                         "type": "integer",
                         "nullable": true
                     },
+                    "feeds_into_scoring": {
+                        "type": "integer",
+                        "nullable": true
+                    },
                     "winner": {
                         "type": "string",
                         "nullable": true
@@ -9868,6 +10155,9 @@
                     },
                     "minMembersPerGroup": {
                         "type": "string"
+                    },
+                    "finalsSize": {
+                        "type": "string"
                     }
                 },
                 "required": [
@@ -10069,9 +10359,6 @@
                         "minimum": 0,
                         "nullable": true,
                         "title": "Contacto"
-                    },
-                    "has_ended": {
-                        "type": "boolean"
                     },
                     "has_registrations": {
                         "type": "boolean"
@@ -10399,6 +10686,10 @@
                         "type": "integer"
                     },
                     "loser_goes_to": {
+                        "type": "integer",
+                        "nullable": true
+                    },
+                    "feeds_into_scoring": {
                         "type": "integer",
                         "nullable": true
                     }
@@ -11697,9 +11988,6 @@
                         "nullable": true,
                         "title": "Contacto"
                     },
-                    "has_ended": {
-                        "type": "boolean"
-                    },
                     "has_registrations": {
                         "type": "boolean"
                     },
@@ -12001,6 +12289,46 @@
                     }
                 }
             },
+            "PatchedScoringEntry": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "person": {
+                        "$ref": "#/components/schemas/CompactPerson"
+                    },
+                    "score": {
+                        "type": "string",
+                        "format": "decimal",
+                        "pattern": "^-?\\d{0,4}(?:\\.\\d{0,2})?$",
+                        "nullable": true
+                    },
+                    "rank": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": -2147483648,
+                        "nullable": true
+                    },
+                    "entry_number": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0
+                    },
+                    "ongoing": {
+                        "type": "boolean"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "scoring_round": {
+                        "type": "integer"
+                    }
+                }
+            },
             "PatchedTeams": {
                 "type": "object",
                 "properties": {
@@ -12123,6 +12451,10 @@
                         "nullable": true
                     },
                     "loser_goes_to": {
+                        "type": "integer",
+                        "nullable": true
+                    },
+                    "feeds_into_scoring": {
                         "type": "integer",
                         "nullable": true
                     },
@@ -12366,6 +12698,53 @@
                 ],
                 "type": "string",
                 "description": "* `superuser` - Superuser\n* `main_admin` - Main Admin\n* `technician` - Technician\n* `single_admin` - Single Admin\n* `free_club` - Club Free\n* `subed_club` - Club Subscription"
+            },
+            "ScoringEntry": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "person": {
+                        "$ref": "#/components/schemas/CompactPerson"
+                    },
+                    "score": {
+                        "type": "string",
+                        "format": "decimal",
+                        "pattern": "^-?\\d{0,4}(?:\\.\\d{0,2})?$",
+                        "nullable": true
+                    },
+                    "rank": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": -2147483648,
+                        "nullable": true
+                    },
+                    "entry_number": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0
+                    },
+                    "ongoing": {
+                        "type": "boolean"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "scoring_round": {
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "created_at",
+                    "entry_number",
+                    "id",
+                    "person",
+                    "scoring_round"
+                ]
             },
             "SeasonEnum": {
                 "enum": [
@@ -12776,6 +13155,10 @@
                         "nullable": true
                     },
                     "loser_goes_to": {
+                        "type": "integer",
+                        "nullable": true
+                    },
+                    "feeds_into_scoring": {
                         "type": "integer",
                         "nullable": true
                     },
