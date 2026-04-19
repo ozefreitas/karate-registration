@@ -116,6 +116,12 @@ class MemberShipsSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class CreateMemberShipsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Membership
+        exclude = ["id", "creation_date", "modified_date"]
+
+
 class CompactCategorizedPersonsSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     club = serializers.SerializerMethodField()
@@ -565,20 +571,16 @@ class MonthlyPersonPaymentSerializer(serializers.ModelSerializer):
 
 
 class CreateMonthlyPersonPaymentSerializer(serializers.ModelSerializer):
-    amount = serializers.CharField(read_only=True)
-
     customAmount = serializers.CharField(
         required=False,
         allow_blank=True,
         write_only=True
     )
-
     plan = serializers.CharField(
         required=False,
         allow_blank=True,
         write_only=True
     )
-
     is_default = serializers.BooleanField(
         required=False,
         write_only=True
@@ -586,7 +588,7 @@ class CreateMonthlyPersonPaymentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.MonthlyPersonPayment
-        exclude = ["due_date", "paid", "paid_at"]
+        exclude = ["due_date", "paid", "paid_at", "id", "amount"]
 
     def validate(self, attrs):
         if attrs.get("customAmount") and attrs.get("is_default"):

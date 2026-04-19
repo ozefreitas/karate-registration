@@ -195,7 +195,7 @@ class PersonsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
-        updated_person = serializer.save(updated_by=request.user)
+        updated_person = serializer.save(updated_by=request.user, is_validated=instance.is_validated)
 
         if request.user != instance.club:
             Notification.objects.create(type="member_updated",
@@ -217,7 +217,6 @@ class PersonsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             {
                 "data": self.get_serializer(updated_person).data,
                 "message": "Membro atualizado com sucesso!",
-                "merda": "Eu"
             },
             status=status.HTTP_200_OK
         )
@@ -314,13 +313,11 @@ class MemberShipsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     serializer_class = registration_serializers.MemberShipsSerializer
     permission_classes = [PersonPermission]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
-    # ordering_fields = ["first_name", "last_name", "gender", "birth_date"]
-    # filterset_class = PersonsFilters
 
-    # serializer_classes = {
-    #     "create": registration_serializers.ClubsCreateMemberSerializer,
-    #     "update": registration_serializers.UpdateMemberSerializer
-    # }
+    serializer_classes = {
+        "create": registration_serializers.CreateMemberShipsSerializer,
+        # "update": registration_serializers.UpdateMemberSerializer
+    }
 
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
