@@ -80,11 +80,19 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
     @action(detail=False, methods=["get"], url_path="next_event")
     def next_event(self, request):
-        now = timezone.now()
-        next_event = self.get_queryset().filter(event_date__gte=now).order_by('event_date').first()
-        if next_event is None:
-            return Response([])
-        serializer = serializers.CompactEventsSerializer(next_event, context={'request': request})
+        now = timezone.localtime()
+        next_event = (
+            self.get_queryset()
+            .filter(event_date__gte=now)
+            .order_by("event_date")
+            .first()
+        )
+
+        if not next_event:
+            return Response(None)
+        serializer = serializers.CompactEventsSerializer(
+            next_event, context={"request": request}
+        )
         return Response(serializer.data)
     
     @action(detail=False, methods=["get"], url_path="last_event")
@@ -143,7 +151,8 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     @action(detail=True, methods=["get"], url_path="check_event_rate", permission_classes=[IsAuthenticated])
     def check_event_rate(self, request, pk=None):
         event = self.get_object()
-        if not event.has_ended:
+        now = timezone.now().date()
+        if now < event.event_date:
             return Response({
                 "status": "error",
                 "code": "event_not_ended",
