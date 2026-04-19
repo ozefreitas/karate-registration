@@ -43,6 +43,7 @@ python-decouple==3.8
 PyYAML==6.0.2
 referencing==0.36.2
 requests==2.32.4
+resend==2.26.0
 rpds-py==0.25.1
 service-identity==24.2.0
 setuptools==80.9.0
@@ -55,5 +56,3 @@ urllib3==2.5.0
 uvicorn==0.37.0
 whitenoise==6.11.0
 zope.interface==7.2
-wsproto==1.2.0
-websockets==15.0.1
