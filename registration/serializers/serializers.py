@@ -95,17 +95,26 @@ class AdminPersonsSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     club = UsersSerializer()
     updated_by = UsersSerializer()
+    age = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Person
-        fields = ("id", 
-                  "full_name", 
-                  "gender", 
-                  "club", 
-                  "updated_by")
+        fields = (
+                "id", 
+                "full_name", 
+                "gender", 
+                "club", 
+                "updated_by",
+                "weight",
+                "graduation",
+                "age"
+                )
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
+    
+    def get_age(self, obj):
+        return get_comp_age(obj.birth_date)
     
 
 class MemberShipsSerializer(serializers.ModelSerializer):
@@ -442,13 +451,18 @@ ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"]
 
 class UpdatePersonSerializer(serializers.ModelSerializer):
     age = serializers.SerializerMethodField()
+    member_type = serializers.ChoiceField(
+        choices=["athlete", "student"],
+        write_only=True,  # So it doesn't appear in the response
+        required=False    # Optional field
+    )
 
     def get_age(self, obj):
         return get_comp_age(obj.birth_date)
     
     class Meta:
         model = models.Person
-        exclude = ("club", "created_by", "creation_date")
+        exclude = ("club", "created_by", "creation_date", "modified_date")
     
     # def get_fields(self):
     #     fields = super().get_fields()
@@ -490,8 +504,8 @@ class UpdatePersonSerializer(serializers.ModelSerializer):
         if request.user.role in ["main_admin", "superuser"]:
             return attrs
 
-        if (person.created_by.role != "main_admin" and person.created_by != person.club) or (person.created_by.role != "main_admin" and person.created_by == person.club and person.is_validated):
-            for field in ["id_number", "first_name", "last_name", "birth_date", "gender", "graduation"]:
+        if (person.created_by.role != "main_admin" and person.created_by == person.club and person.is_validated):
+            for field in [ "first_name", "id_number", "last_name", "birth_date", "gender", "graduation"]:
                 if field in attrs:
                     raise serializers.ValidationError(
                         {"not_allowed": "Não pode alterar campos sensíveis de um membro criado/verificado pelo seu administrador.", "field": field}
@@ -516,7 +530,28 @@ class UpdatePersonSerializer(serializers.ModelSerializer):
             if os.path.isfile(instance.profile_image.path):
                 os.remove(instance.profile_image.path)
 
-        return super().update(instance, validated_data)
+        member_type = validated_data.pop("member_type", None)
+
+        instance = super().update(instance, validated_data)
+
+        # If member_type was provided, create a new Membership object, and remove the oposite one
+        if member_type is not None:
+            if member_type == "athlete" and models.Membership.objects.filter(person=instance, member_type="student").exists():
+                old_membership = models.Membership.objects.get(person=instance, member_type="student")
+                old_membership.delete()
+                models.Membership.objects.create(
+                    person=instance,
+                    member_type=member_type,
+                )
+            elif member_type == "student" and models.Membership.objects.filter(person=instance, member_type="athlete").exists():
+                old_membership = models.Membership.objects.get(person=instance, member_type="athlete")
+                old_membership.delete()
+                models.Membership.objects.create(
+                    person=instance,
+                    member_type=member_type,
+                )
+
+        return instance
 
 
 ### Monthly Payments Serializer Classes

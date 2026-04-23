@@ -226,7 +226,7 @@ class PersonsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     )
     @action(detail=False, methods=["get"], url_path="last_five", pagination_class=None)
     def last_five(self, request):
-        last_five = Person.objects.filter(club=request.user).order_by('-creation_date')[:5]
+        last_five = Person.objects.filter(club=request.user).order_by('-modified_date')[:5]
         serializer = registration_serializers.PersonsSerializer(last_five, many=True)
         return Response(serializer.data)
 
