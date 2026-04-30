@@ -317,6 +317,12 @@ class DeleteMemberSerializer(serializers.Serializer):
     member_id = serializers.CharField()
 
 
+class AddDisciplineBulkMembersSerializer(serializers.Serializer):
+    member_ids = serializers.ListField(child=serializers.IntegerField(), min_length=1)
+    event_id = serializers.IntegerField()
+    chosen_category = serializers.IntegerField(required=False, allow_null=True)
+
+
 class AddCategorySerializer(serializers.Serializer):
     category_ids = serializers.ListField(
         child=serializers.IntegerField(),

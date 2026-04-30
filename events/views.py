@@ -478,7 +478,13 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     #     context = super().get_serializer_context()
     #     return context
 
-    @action(detail=True, methods=["post"], url_path="add_member", serializer_class=serializers.AddDisciplineMemberSerializer, permission_classes=[IsAuthenticated])
+    @action(
+            detail=True, 
+            methods=["post"], 
+            url_path="add_member", 
+            serializer_class=serializers.AddDisciplineMemberSerializer, 
+            permission_classes=[IsAuthenticated]
+            )
     def add_member(self, request, pk=None):
         age_method = config('AGE_CALC_REF')
         discipline = self.get_object()
@@ -584,8 +590,14 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 discipline.add_member(member, base_category)
 
         return Response({"message": "Membro adicionado a esta(s) Modalidade(s)."}, status=status.HTTP_200_OK)
+    
 
-    @action(detail=True, methods=["post"], url_path="delete_member", serializer_class=serializers.DeleteMemberSerializer)
+    @action(
+            detail=True, 
+            methods=["post"], 
+            url_path="delete_member", 
+            serializer_class=serializers.DeleteMemberSerializer
+            )
     def delete_member(self, request, pk=None):
         discipline = self.get_object()
         serializer = serializers.DeleteMemberSerializer(data=request.data)
@@ -603,6 +615,7 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         except Person.DoesNotExist:
             return Response({"error": "Ocorreu um erro ao remover este Atleta."}, status=status.HTTP_404_NOT_FOUND)
     
+
     @action(detail=True, methods=['delete'], url_path="delete_all_individuals")
     def delete_all_individuals(self, request, pk=None):
         try:
@@ -633,6 +646,69 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 {"message": message},
                 status=status.HTTP_200_OK
             )
+    
+
+    @action(detail=True, methods=["post"], url_path="add_bulk_members", serializer_class=serializers.AddDisciplineBulkMembersSerializer, permission_classes=[IsAuthenticated])
+    def add_members(self, request, pk=None):
+        age_method = config('AGE_CALC_REF')
+        discipline = self.get_object()
+        serializer = serializers.AddDisciplineMembersSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        member_ids = serializer.validated_data["member_ids"]
+        event_id = serializer.validated_data["event_id"]
+
+        # --- Validate event once ---
+        try:
+            event = Event.objects.get(id=event_id)
+        except Event.DoesNotExist:
+            return Response({"error": "Um erro ocurreu ao adicionar este(s) Membro(s)"}, status=status.HTTP_404_NOT_FOUND)
+
+        if not event.has_registrations:
+            return Response({"error": "Este Evento não aceita inscrições de Membros!"}, status=status.HTTP_403_FORBIDDEN)
+
+        if date.today() > event.retifications_deadline:
+            return Response({"error": "As inscrições para este Evento estão fechadas!"}, status=status.HTTP_403_FORBIDDEN)
+
+        season = event.season.split("/")[0]
+
+        # --- Fetch all members in one query ---
+        members = Person.objects.filter(id__in=member_ids)
+        if members.count() != len(member_ids):
+            return Response({"error": "Um ou mais membros não foram encontrados."}, status=status.HTTP_404_NOT_FOUND)
+
+        # --- Per-member logic ---
+        errors = []
+        added = []
+
+        for member in members:
+            event_age = get_comp_age(member.birth_date) if age_method == "true" else calc_age(age_method, member.birth_date, season)
+
+            if not event.has_categories:
+                discipline.add_member(member, None)
+                added.append(member.id)
+                continue
+
+            if discipline.categories.count() == 0:
+                if float(member.graduation) > 6:
+                    errors.append({"member_id": member.id, "error": "Treinadores têm de ter graduação superior a 1º Dan!"})
+                else:
+                    discipline.add_member(member, None)
+                    added.append(member.id)
+                continue
+
+            # ... rest of your per-member category logic
+
+        if errors:
+            return Response({
+                "status": "info",
+                "message": "Alguns membros não foram adicionados.",
+                "added": added,
+                "errors": errors,
+            }, status=status.HTTP_207_MULTI_STATUS)
+
+        return Response({"message": "Membro(s) adicionado(s) a esta Modalidade"}, status=status.HTTP_200_OK)
+
     
     @action(detail=True, methods=["post"], url_path="add_team", serializer_class=registrationSerializers.CreateTeamSerializer)
     def add_team(self, request, pk=None):
@@ -793,6 +869,7 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         except Team.DoesNotExist:
             return Response({"error": "Ocorreu um erro ao remover esta Equipa."}, status=status.HTTP_404_NOT_FOUND)
     
+
     @action(detail=True, methods=['delete'], url_path="delete_all_teams")
     def delete_all_teams(self, request, pk=None):
         try:
@@ -856,6 +933,7 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             },
             status=status.HTTP_200_OK,
         )
+
 
     @action(detail=True, methods=["post"], url_path="delete_category", serializer_class=serializers.AddCategorySerializer, permission_classes=[IsAuthenticated])
     def delete_category(self, request, pk=None):
