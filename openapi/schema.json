@@ -542,6 +542,13 @@
                     },
                     {
                         "in": "query",
+                        "name": "has_max_athletes",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "in": "query",
                         "name": "has_max_grad",
                         "schema": {
                             "type": "boolean"
@@ -1924,7 +1931,7 @@
         "/club_subscription/update_all_users_amount/": {
             "patch": {
                 "operationId": "club_subscription_update_all_users_amount_partial_update",
-                "description": "An endpoint that targets all children accounts of an admin, in order to, update all subscription object if the given year,with a new amount",
+                "description": "An endpoint that targets all children accounts of an admin, in order to update all subscription object if the given year,with a new amount",
                 "tags": [
                     "club_subscription"
                 ],
@@ -2065,6 +2072,308 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/UpdateClubSubscriptionConfigAmount"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/club_subscription_config/": {
+            "get": {
+                "operationId": "club_subscription_config_list",
+                "tags": [
+                    "club_subscription_config"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ClubSubscriptionConfig"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "operationId": "club_subscription_config_create",
+                "tags": [
+                    "club_subscription_config"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ClubSubscriptionConfig"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ClubSubscriptionConfig"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ClubSubscriptionConfig"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClubSubscriptionConfig"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/club_subscription_config/{id}/": {
+            "get": {
+                "operationId": "club_subscription_config_retrieve",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "club_subscription_config"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClubSubscriptionConfig"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "put": {
+                "operationId": "club_subscription_config_update",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "club_subscription_config"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ClubSubscriptionConfig"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ClubSubscriptionConfig"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ClubSubscriptionConfig"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClubSubscriptionConfig"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "patch": {
+                "operationId": "club_subscription_config_partial_update",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "club_subscription_config"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedClubSubscriptionConfig"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedClubSubscriptionConfig"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedClubSubscriptionConfig"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClubSubscriptionConfig"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "club_subscription_config_destroy",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "club_subscription_config"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/club_subscription_config/me/": {
+            "get": {
+                "operationId": "club_subscription_config_me_retrieve",
+                "tags": [
+                    "club_subscription_config"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClubSubscriptionConfig"
                                 }
                             }
                         },
@@ -2714,6 +3023,68 @@
                 }
             }
         },
+        "/disciplines/{id}/add_bulk_members/": {
+            "post": {
+                "operationId": "disciplines_add_bulk_members_create",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this discipline.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "disciplines"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AddDisciplineBulkMembers"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AddDisciplineBulkMembers"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AddDisciplineBulkMembers"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AddDisciplineBulkMembers"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/disciplines/{id}/add_categories/": {
             "patch": {
                 "operationId": "disciplines_add_categories_partial_update",
@@ -3163,6 +3534,13 @@
                     {
                         "in": "query",
                         "name": "has_categories",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "has_ended",
                         "schema": {
                             "type": "boolean"
                         }
@@ -4935,17 +5313,17 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/MemberShips"
+                                "$ref": "#/components/schemas/CreateMemberShips"
                             }
                         },
                         "application/x-www-form-urlencoded": {
                             "schema": {
-                                "$ref": "#/components/schemas/MemberShips"
+                                "$ref": "#/components/schemas/CreateMemberShips"
                             }
                         },
                         "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/MemberShips"
+                                "$ref": "#/components/schemas/CreateMemberShips"
                             }
                         }
                     },
@@ -4967,7 +5345,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/MemberShips"
+                                    "$ref": "#/components/schemas/CreateMemberShips"
                                 }
                             }
                         },
@@ -8631,6 +9009,29 @@
                     "category_ids"
                 ]
             },
+            "AddDisciplineBulkMembers": {
+                "type": "object",
+                "properties": {
+                    "member_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "minItems": 1
+                    },
+                    "event_id": {
+                        "type": "integer"
+                    },
+                    "chosen_category": {
+                        "type": "integer",
+                        "nullable": true
+                    }
+                },
+                "required": [
+                    "event_id",
+                    "member_ids"
+                ]
+            },
             "AddDisciplineMember": {
                 "type": "object",
                 "properties": {
@@ -9019,6 +9420,23 @@
                         "type": "integer",
                         "maximum": 28,
                         "minimum": 1
+                    }
+                },
+                "required": [
+                    "id"
+                ]
+            },
+            "ClubSubscriptionConfig": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "amount": {
+                        "type": "string",
+                        "format": "decimal",
+                        "pattern": "^-?\\d{0,5}(?:\\.\\d{0,2})?$"
                     }
                 },
                 "required": [
@@ -9915,6 +10333,25 @@
                     "round_number"
                 ]
             },
+            "CreateMemberShips": {
+                "type": "object",
+                "properties": {
+                    "member_type": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MemberTypeEe9Enum"
+                            }
+                        ],
+                        "default": "athlete"
+                    },
+                    "person": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "person"
+                ]
+            },
             "CreateMemberValidationRequest": {
                 "type": "object",
                 "properties": {
@@ -9966,14 +10403,6 @@
             "CreateMonthlyPersonPayment": {
                 "type": "object",
                 "properties": {
-                    "id": {
-                        "type": "integer",
-                        "readOnly": true
-                    },
-                    "amount": {
-                        "type": "string",
-                        "readOnly": true
-                    },
                     "customAmount": {
                         "type": "string",
                         "writeOnly": true
@@ -10001,8 +10430,6 @@
                     }
                 },
                 "required": [
-                    "amount",
-                    "id",
                     "month",
                     "person",
                     "year"
@@ -10720,7 +11147,7 @@
                     "member_type": {
                         "allOf": [
                             {
-                                "$ref": "#/components/schemas/MemberTypeEnum"
+                                "$ref": "#/components/schemas/MemberTypeEe9Enum"
                             }
                         ],
                         "default": "athlete"
@@ -10743,7 +11170,7 @@
                     "person"
                 ]
             },
-            "MemberTypeEnum": {
+            "MemberTypeEe9Enum": {
                 "enum": [
                     "student",
                     "athlete",
@@ -11821,6 +12248,20 @@
                     }
                 }
             },
+            "PatchedClubSubscriptionConfig": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "amount": {
+                        "type": "string",
+                        "format": "decimal",
+                        "pattern": "^-?\\d{0,5}(?:\\.\\d{0,2})?$"
+                    }
+                }
+            },
             "PatchedClubs": {
                 "type": "object",
                 "properties": {
@@ -12032,7 +12473,7 @@
                     "member_type": {
                         "allOf": [
                             {
-                                "$ref": "#/components/schemas/MemberTypeEnum"
+                                "$ref": "#/components/schemas/MemberTypeEe9Enum"
                             }
                         ],
                         "default": "athlete"
@@ -12694,10 +13135,11 @@
                     "technician",
                     "single_admin",
                     "free_club",
-                    "subed_club"
+                    "subed_club",
+                    "person"
                 ],
                 "type": "string",
-                "description": "* `superuser` - Superuser\n* `main_admin` - Main Admin\n* `technician` - Technician\n* `single_admin` - Single Admin\n* `free_club` - Club Free\n* `subed_club` - Club Subscription"
+                "description": "* `superuser` - Superuser\n* `main_admin` - Main Admin\n* `technician` - Technician\n* `single_admin` - Single Admin\n* `free_club` - Club Free\n* `subed_club` - Club Subscription\n* `person` - Person"
             },
             "ScoringEntry": {
                 "type": "object",
@@ -13183,6 +13625,14 @@
                         "type": "string",
                         "readOnly": true
                     },
+                    "member_type": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/UpdatePersonMemberTypeEnum"
+                            }
+                        ],
+                        "writeOnly": true
+                    },
                     "profile_image": {
                         "type": "string",
                         "format": "uri",
@@ -13283,11 +13733,6 @@
                         "nullable": true,
                         "title": "Observações"
                     },
-                    "modified_date": {
-                        "type": "string",
-                        "format": "date-time",
-                        "readOnly": true
-                    },
                     "is_validated": {
                         "type": "boolean"
                     },
@@ -13303,9 +13748,16 @@
                     "gender",
                     "graduation",
                     "id",
-                    "last_name",
-                    "modified_date"
+                    "last_name"
                 ]
+            },
+            "UpdatePersonMemberTypeEnum": {
+                "enum": [
+                    "athlete",
+                    "student"
+                ],
+                "type": "string",
+                "description": "* `athlete` - athlete\n* `student` - student"
             },
             "UpdateTeams": {
                 "type": "object",

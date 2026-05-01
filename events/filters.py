@@ -1,14 +1,15 @@
 from django_filters import rest_framework as filters
 from .models import Discipline, Event
 from datetime import datetime
+from django.utils import timezone
 
 
 class EventsFilters(filters.FilterSet):
     """Filter Events based on different fields"""
     season = filters.CharFilter(field_name='season',
                                               method='filter_season')
-    # has_ended = filters.BooleanFilter(field_name='has_ended',
-    #                                           method='filter_has_ended')
+    has_ended = filters.BooleanFilter(field_name='has_ended',
+                                              method='filter_has_ended')
     has_teams = filters.BooleanFilter(field_name='has_teams',
                                               method='filter_has_teams')
     has_categories = filters.BooleanFilter(field_name='has_categories',
@@ -25,14 +26,24 @@ class EventsFilters(filters.FilterSet):
     def filter_season(self, queryset, name, value):
         return queryset.filter(season=value)
     
-    # def filter_has_ended(self, queryset, name, value):
-    #     return queryset.filter(has_ended=value)
+    def filter_has_ended(self, queryset, name, value):
+        if value is True:
+            # Show only events that have ended (event_date is in the past)
+            return queryset.filter(event_date__lt=datetime.now().date())
+        elif value is False:
+            # Show only events that haven't ended yet (event_date is today or future)
+            return queryset.filter(event_date__gte=datetime.now().date())
+        return queryset
     
     def filter_has_teams(self, queryset, name, value):
-        if not value:
-            return queryset.all()
-        else:
-            return queryset.filter(has_teams=value)
+        if value is True:
+            # Get events that have at least one discipline with is_team=True
+            return queryset.filter(disciplines__is_team=True).distinct()
+        elif value is False:
+            # Get events that have NO disciplines with is_team=True
+            # (all disciplines have is_team=False, or no disciplines at all)
+            return queryset.exclude(disciplines__is_team=True).distinct()
+        return queryset
                 
     def filter_has_categories(self, queryset, name, value):
         if not value:
@@ -95,7 +106,10 @@ class DisciplinesFilters(filters.FilterSet):
         return queryset.filter(is_coach=value)
     
     def filter_is_team(self, queryset, name, value):
-        return queryset.filter(is_team=value)
+        if value == None:
+            return queryset
+        else:
+            return queryset.filter(is_team=value)
 
     def filter_restricted(self, queryset, name, value):
         return queryset

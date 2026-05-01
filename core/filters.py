@@ -52,6 +52,8 @@ class CategoriesFilters(filters.FilterSet):
                                             method='filter_gender')
     not_in_discipline = filters.CharFilter(field_name='not_in_discipline',
                                             method='filter_not_in_discipline')
+    has_max_athletes = filters.BooleanFilter(field_name='has_max_athletes',
+                                            method='filter_has_max_athletes')
 
     def filter_has_min_age(self, queryset, name, value):
         return queryset.filter(min_age__isnull=not value)
@@ -76,6 +78,12 @@ class CategoriesFilters(filters.FilterSet):
     
     def filter_not_in_discipline(self, queryset, name, value):
         return queryset.exclude(event_categories__id=value)
+
+    def filter_has_max_athletes(self, queryset, name, value):
+        if value == None:
+            return queryset
+        else:
+            return queryset.filter(max_athletes__isnull=not value)
     
     class Meta:
         model = Category

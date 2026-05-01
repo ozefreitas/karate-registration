@@ -233,7 +233,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 event_age = get_comp_age(member.birth_date) if age_method == "true" else calc_age(age_method, member.birth_date, season)
                 ws.append([
                         getattr(member.club, "username", ""),
-                        getattr(member, "first_name", "") + getattr(member, "last_name", ""),
+                        getattr(member, "first_name", "") + " " + getattr(member, "last_name", ""),
                         event_age,
                         getattr(member, "id_number", ""),
                         getattr(member, "gender", ""),
@@ -253,7 +253,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                     
                         ws.append([
                         getattr(member.club, "username", ""),
-                        getattr(member, "first_name", "") + getattr(member, "last_name", ""),
+                        getattr(member, "first_name", "") + " " + getattr(member, "last_name", ""),
                         event_age,
                         getattr(member, "id_number", ""),
                         getattr(member, "gender", ""),
@@ -299,17 +299,17 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
             for discipline, member, event_age, category_to_assign in all_members_sorted: 
 
-                if name == getattr(member, "first_name", "") + getattr(member, "last_name", "") and club == getattr(member.club, "username", ""):
+                if name == getattr(member, "first_name", "") + " " + getattr(member, "last_name", "") and club == getattr(member.club, "username", ""):
                     member_event_number = str(i).zfill(3)
                 else:
                     i += 1
                     member_event_number = str(i).zfill(3)
-                    name = getattr(member, "first_name", "") + getattr(member, "last_name", ""),
+                    name = getattr(member, "first_name", "") + " " + getattr(member, "last_name", ""),
                     club = getattr(member.club, "username", ""),
 
                 ws.append([
                     getattr(member.club, "username", ""),
-                    getattr(member, "first_name", "") + getattr(member, "last_name", ""),
+                    getattr(member, "first_name", "") + " " + getattr(member, "last_name", ""),
                     event_age,
                     getattr(member, "id_number", ""),
                     getattr(member, "gender", ""),
@@ -731,7 +731,7 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 serializer.validated_data["athlete3"]
                 ]
             
-            members = [a for a in members if a != ""]
+            members = [a for a in members if a != "" and a is not None]
 
             member_ages = {
                 member.id: athlete_age(member, age_method, season) for member in members
