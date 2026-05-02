@@ -58,8 +58,9 @@ class CreateMemberValidationRequestSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         person = attrs.get("person")
+        request_type = attrs.get("request_type")
 
-        if person and person.is_validated:
+        if person and person.is_validated and request_type == "verify":
             raise serializers.ValidationError(
                 {"person": "Este Membro já está validado!"}
             )
