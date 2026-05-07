@@ -1,15 +1,16 @@
 from django.contrib import admin
-
-# Register your models here.
-
-from django.contrib import admin
-from .models import Profile, ClubRatingAudit, Club
+from .models import ClubRatingAudit, Club, ClubSubscription, ClubSubscriptionConfig, ClubSettings
 
 # Register your models here.
 
 class ClubsRatingAuditAdmin(admin.ModelAdmin):
     readonly_fields = ("club", "event", "rating")
 
+class ClubSubscriptionAdmin(admin.ModelAdmin):
+    list_display = ("club", "amount", "year")
+
 admin.site.register(Club)
-admin.site.register(Profile)
 admin.site.register(ClubRatingAudit, ClubsRatingAuditAdmin)
+admin.site.register(ClubSubscription, ClubSubscriptionAdmin)
+admin.site.register(ClubSubscriptionConfig)
+admin.site.register(ClubSettings)

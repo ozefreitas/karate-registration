@@ -39,7 +39,8 @@ DEFAULT_FROM_EMAIL = 'jpsfreitas12@gmail.com'
 
 
 ALLOWED_HOSTS = ['karatescorappregistration.pythonanywhere.com', 
-                 "127.0.0.1", 
+                 "127.0.0.1",
+                 "web",
                  "localhost", 
                  "karate-registration.onrender.com",
                  "fight-tech.com"]
@@ -62,6 +63,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'core',
+    'diagnostics',
     'registration',
     'events',
     'clubs',
@@ -90,7 +92,8 @@ ASGI_APPLICATION = 'karate_registration.asgi.application'
 CORS_ALLOWED_ORIGINS = [
     "https://fight-tech.com",
     "https://martialartsregistration.netlify.app",
-    "http://localhost:5173",  
+    "http://localhost:5173",
+    "http://127.0.0.1:5173"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -102,6 +105,23 @@ CORS_ALLOW_METHODS = [
     "PATCH",
     "DELETE",
     "OPTIONS",
+]
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
 ]
 
 CHANNEL_LAYERS = {
@@ -123,11 +143,18 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10
 }
 
+SPECTACULAR_SETTINGS = {
+    "TITLE": "FightTec API",
+    "DESCRIPTION": "Production API",
+    "VERSION": "1.0.0",
+    "ENUM_ADD_EXPLICIT_BLANK_NULL_CHOICE": False
+}
+
 from datetime import timedelta
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
-    "ROTATE_REFRESH_TOKENS": True,  # issue new refresh token each time
+    "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
 }
 
@@ -149,17 +176,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'karate_registration.wsgi.application'
 
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "handlers": {
-        "console": {"class": "logging.StreamHandler"},
-    },
-    "root": {
-        "handlers": ["console"],
-        "level": "ERROR",
-    },
-}
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -168,7 +184,7 @@ DATABASES = {
     "default": dj_database_url.config(
         default=config("DATABASE_URL"),
         conn_max_age=600,
-        ssl_require=True,
+        ssl_require=config("DB_SSL_REQUIRE", default=False, cast=bool),
     )
 }
 
@@ -220,9 +236,6 @@ if not DEBUG:
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
@@ -234,3 +247,5 @@ USE_L10N = True
 AUTH_USER_MODEL = 'core.User'
 
 PASSWORD_RESET_TIMEOUT = 60 * 60 * 24 * 3
+
+DEFAULT_FROM_EMAIL = ""

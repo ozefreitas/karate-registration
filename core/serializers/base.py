@@ -1,18 +1,77 @@
 from rest_framework import serializers
-from core.models import User, SignupToken, RequestedAcount, RequestPasswordReset, Notification
+from core.models import User, SignupToken, RequestedAcount, RequestPasswordReset, Notification, MonthlyPaymentPlan, MemberValidationRequest
 from events.serializers import CompactEventsSerializer
-
+from registration.serializers.base import CompactPersonSerializer
 
 class CompactUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "username", "email"]
 
+class MonthlyPaymentPlanSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MonthlyPaymentPlan
+        fields = "__all__"
+        read_only_fields = ("club_user",)
+
+    def validate(self, attrs):
+        instance = self.instance
+
+        if instance and instance.is_default:
+            if "is_default" in attrs and attrs["is_default"] is False:
+                raise serializers.ValidationError({
+                    "is_default": "Tem de haver um Plano como padrão."
+                })
+
+        return attrs
+
+
+class CreateMonthlyPaymentPlanSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MonthlyPaymentPlan
+        exclude = ["club_user"]
+
 
 class RequestedAcountSerializer(serializers.ModelSerializer):
     class Meta:
         model = RequestedAcount
         fields = "__all__"
+
+
+class MemberValidationRequestSerializer(serializers.ModelSerializer):
+    person = CompactPersonSerializer()
+    requested_by = CompactUserSerializer()
+    member_birth_date = serializers.SerializerMethodField()
+
+    class Meta:
+        model = MemberValidationRequest
+        exclude = ["reviewed_by"]
+    
+    def get_member_birth_date(self, obj):
+        return obj.person.birth_date
+
+
+class CreateMemberValidationRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MemberValidationRequest
+        fields = ["message", "person", "request_type", "file"]
+
+    def validate(self, attrs):
+        person = attrs.get("person")
+        request_type = attrs.get("request_type")
+
+        if person and person.is_validated and request_type == "verify":
+            raise serializers.ValidationError(
+                {"person": "Este Membro já está validado!"}
+            )
+
+        return attrs
+
+
+class PatchMemberValidationRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MemberValidationRequest
+        fields = ["status", "admin_comment", "request_type"]
 
 
 class GenerateTokenSerializer(serializers.ModelSerializer):
@@ -23,6 +82,11 @@ class GenerateTokenSerializer(serializers.ModelSerializer):
 
 class TokenSerializer(serializers.Serializer):
     token = serializers.UUIDField()
+
+
+class AuthLoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
 
 
 class UsernameSerializer(serializers.Serializer):

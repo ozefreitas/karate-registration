@@ -34,7 +34,6 @@ def transform(old_data):
                 "favorite": False,
                 "gender": GENDER_MAP[fields["gender"]],
                 "weight": abs(int(fields["weight"])) if fields["weight"] is not None and fields["weight"] != "open" and fields["weight"] != "" else None,
-                "quotes": True,
                 "club": fields["dojo"],  # must exist as User pk
                 "creation_date": fields["creation_date"],
             },

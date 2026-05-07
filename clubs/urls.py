@@ -5,9 +5,12 @@ from rest_framework import routers
 
 router = routers.DefaultRouter()
 router.register(r'clubs', views.ClubsViewSet, basename='clubs')
+router.register(r'club_subscription', views.ClubSubscriptionsViewSet, basename='club-subscriptions')
+router.register(r'club_subscription_config', views.ClubSubscriptionConfigViewSet, basename='club-subscription-config')
+router.register(r'club_settings', views.ClubSettingsViewSet, basename='club-settings')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('users/athletes/', views.club_athletes, name="clubs-athletes"),
+    path('users/members/', views.club_members, name="clubs-members"),
     # path('feedback/', views.feedback, name="dojos-feedback"),
 ]

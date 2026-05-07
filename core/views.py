@@ -3,20 +3,22 @@ from django.db import transaction
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
-from django.urls import reverse
 from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
+from registration.utils.utils import get_identity_members, get_real_member
 
-from .filters import NotificationsFilters
-from core.permissions import IsAuthenticatedOrReadOnly, IsUnauthenticatedForPost, IsNationalForPostDelete, IsAdminRoleorHigher, IsPayingUserorAdminForGet
-from .models import Category, SignupToken, RequestedAcount, User, RequestPasswordReset
+from .filters import NotificationsFilters, CategoriesFilters
+from core.permissions import IsAuthenticatedOrReadOnly, IsUnauthenticatedForPost, IsNationalForPostDelete, IsAdminRoleorHigher, IsPayingUserorAdminForGet, CanFilterByUserPermission, MemberValidationRequestPermissions
+from .models import Category, SignupToken, RequestedAcount, User, RequestPasswordReset, MemberValidationRequest, Notification
 from clubs.models import Club
-from .models import Notification
+from .models import Notification, MonthlyPaymentPlan, MemberValidationRequest
 from core.serializers import base as BaseSerializers
 from core.serializers.categories import CategorySerializer, CreateCategorySerializer, CompactCategorySerializer
 from core.serializers.users import UsersSerializer
 
 from rest_framework.authtoken.models import Token
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from rest_framework.exceptions import ValidationError
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import action, permission_classes, api_view
 from drf_spectacular.utils import extend_schema
@@ -24,6 +26,7 @@ from rest_framework.response import Response
 from rest_framework import viewsets, filters, status, views, serializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.exceptions import PermissionDenied
 
 # Create your views here.
 
@@ -37,8 +40,9 @@ class MultipleSerializersMixIn:
 class NotificationViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     queryset=Notification.objects.all()
     serializer_class=BaseSerializers.NotificationsSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, IsNationalForPostDelete]
-    filter_backends = [DjangoFilterBackend]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsNationalForPostDelete, CanFilterByUserPermission]
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    ordering_fields = ["notification", "type", "created_at"]
     filterset_class = NotificationsFilters
 
     serializer_classes = {
@@ -47,9 +51,16 @@ class NotificationViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        if user.role in ["main_admin", "superuser"]:
-            return self.queryset
-        return Notification.objects.filter(club_user=user) .order_by("created_at")
+
+        if not user.is_authenticated:
+            return Notification.objects.none()
+
+        # if admin can see everything
+        if user.role in ["main_admin", "single_admin", "superuser"]:
+            return Notification.objects.all().order_by("-created_at")
+
+        # normal users -> only their own
+        return Notification.objects.filter(club_user=user).order_by("-created_at")
     
     @action(detail=False, methods=['post'], url_path="create_all_users", serializer_class=BaseSerializers.AllUsersNotificationsSerializer)
     def create_all_user(self, request):
@@ -80,15 +91,18 @@ class NotificationViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 # @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated, IsPayingUserorAdminForGet])
 def notifications(request):
-    notifications = Notification.objects.filter(club_user=request.user)[:5]
-    serializer = BaseSerializers.NotificationsSerializer(notifications, many=True)
-    return Response(serializer.data)
+    notifications = Notification.objects.filter(club_user=request.user).order_by("-created_at")
+    serializer = BaseSerializers.NotificationsSerializer(notifications[:5], many=True)
+    return Response({"response": serializer.data, "total": len(notifications)})
     
 
 class CategoriesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
-    queryset=Category.objects.all().order_by("min_age")
+    queryset=Category.objects.all().order_by("min_age", "min_weight")
     serializer_class=CategorySerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    ordering_fields = ["min_age", "max_age", "min_grad", "max_grad", "min_weight", "max_weight", "name"]
+    filterset_class = CategoriesFilters
 
     serializer_classes = {
         "create": CreateCategorySerializer,
@@ -155,6 +169,159 @@ class RequestedAcountViewSet(viewsets.ModelViewSet):
             ).delete()
 
             instance.delete()
+
+
+class MemberValidationRequestViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
+    queryset=MemberValidationRequest.objects.all().order_by("-created_at")
+    serializer_class=BaseSerializers.MemberValidationRequestSerializer
+    permission_classes = [MemberValidationRequestPermissions]
+    filter_backends = [DjangoFilterBackend]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
+
+    serializer_classes = {
+        "create": BaseSerializers.CreateMemberValidationRequestSerializer,
+        "partial_update": BaseSerializers.PatchMemberValidationRequestSerializer
+    }
+
+    def perform_create(self, serializer):
+        user = self.request.user
+
+        person = serializer.validated_data["person"]
+        
+        request_type = serializer.validated_data["request_type"]
+        serializer.save(requested_by=user, person=person)
+
+        if request_type == "verify":
+            Notification.objects.create(
+                type="member_request",
+                notification=(
+                    f'O Membro {person.first_name} {person.last_name} do Clube {person.club.username} '
+                    f'está à espera de Validação.'
+                ),
+                target_person=person,
+                club_user=person.club.parent,
+                can_remove=True
+            )
+
+            try:
+                Notification.objects.get(type="member_updated", target_person=person, club_user=user).delete()
+            except Exception:
+                pass
+
+        elif request_type == "exams":
+            Notification.objects.create(
+                type="exam_prop",
+                notification=(
+                    f'O Clube {person.club.username} enviou uma Proposta de Exame para o Membro {person.first_name} {person.last_name}.'
+                ),
+                target_person=person,
+                club_user=person.club.parent,
+                can_remove=True
+            )
+
+            try:
+                Notification.objects.get(type="member_updated", target_person=person, club_user=user).delete()
+            except Exception:
+                pass
+
+
+    def perform_update(self, serializer):
+        instance = self.get_object()
+        person = instance.person
+        person_club = person.club
+        status = serializer.validated_data["status"]
+        request_type = serializer.validated_data["request_type"]
+        admin_comment = serializer.validated_data["admin_comment"]
+        if status == "approved" and request_type == "verify":
+            person.is_validated = True
+            person.updated_by = self.request.user
+            person.save()
+
+            if admin_comment != "" or admin_comment != None:
+                notification = (f'A Validação do Membro {person.first_name} {person.last_name} foi aceite pelo seu administrador com a seguinte mensagem: {serializer.validated_data["admin_comment"]}. '
+                'Este Membro está agora "Verificado" e pode ser inscrito em Eventos e ser proposto a exames de graduação.')
+            else:
+                notification = (f'A Validação do Membro {person.first_name} {person.last_name} foi aceite pelo seu administrador. '
+                'Este Membro está agora "Verificado" e pode ser inscrito em Eventos e ser proposto a exames de graduação.')
+            Notification.objects.create(type="member_updated",
+                                        notification=notification,
+                                        target_person=person,
+                                        can_remove=True,
+                                        club_user=person_club,
+                                        )
+
+        elif status != "approved" and request_type == "verify":
+            if admin_comment != "" or admin_comment != None:
+                notification = f'A Validação do Membro {person.first_name} {person.last_name} foi rejeitada pelo seu administrador com a seguinte mensagem: {serializer.validated_data["admin_comment"]}. '
+            else:
+                notification = f'A Validação do Membro {person.first_name} {person.last_name} foi rejeitada pelo seu administrador.'
+            Notification.objects.create(type="member_updated",
+                                        notification=notification,
+                                        target_person=person,
+                                        can_remove=True,
+                                        club_user=person_club,
+                                        )
+        
+        elif status == "approved" and request_type == "exams":
+            if admin_comment != "" or admin_comment != None:
+                notification = (f'A Proposta de Exame do {person.first_name} {person.last_name} foi aceite pelo seu administrador com a seguinte mensagem: {serializer.validated_data["admin_comment"]}. '
+                'Este Membro transitou agora para a graduação proposta.')
+            else:
+                notification = (f'A Proposta de Exame {person.first_name} {person.last_name} foi aceite pelo seu administrador. '
+                'Este Membro transitou agora para a graduação proposta.')
+            Notification.objects.create(type="member_updated",
+                                        notification=notification,
+                                        target_person=person,
+                                        can_remove=True,
+                                        club_user=person_club,
+                                        )
+        
+        elif status != "approved" and request_type == "exams":
+            if admin_comment != "" or admin_comment != None:
+                notification = f'A Proposta de Exame do Membro {person.first_name} {person.last_name} foi rejeitada pelo seu administrador com a seguinte mensagem: {serializer.validated_data["admin_comment"]}.'
+            else:
+                notification = f'A Proposta de Exame do Membro {person.first_name} {person.last_name} foi rejeitada pelo seu administrador.'
+            Notification.objects.create(type="member_updated",
+                                        notification=notification,
+                                        target_person=person,
+                                        can_remove=True,
+                                        club_user=person_club,
+                                        )
+
+        serializer.save(reviewed_by=self.request.user, reviewed_at=timezone.now())
+
+        try:
+            Notification.objects.get(type="member_request", target_person=person, club_user=person_club).delete()
+        except Exception:
+            pass
+
+
+class MonthlyPaymentPlanViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
+    queryset=MonthlyPaymentPlan.objects.all().order_by("name")
+    serializer_class=BaseSerializers.MonthlyPaymentPlanSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = None
+
+    serializer_classes = {
+        "create": BaseSerializers.CreateMonthlyPaymentPlanSerializer,
+    }
+
+    def get_queryset(self):
+        user = self.request.user
+        return self.queryset.filter(club_user=user)
+    
+    def perform_create(self, serializer):
+        user = self.request.user
+        if user.role != "subed_club":
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        serializer.save(club_user=user)
+
+    def perform_destroy(self, instance):
+        if instance.is_default:
+            raise ValidationError({
+                "detail": "Não pode apagar um Plano padrão. Altere primeiro outro plano para padrão e tente novamente."
+            })
+        instance.delete()
 
         
 @extend_schema(
@@ -224,19 +391,21 @@ class UserDetailView(views.APIView):
             "username": user.username,
             "email": user.email,
             "role": user.role,
+            "tier": user.tier
         }, status=status.HTTP_200_OK)
     
 
 class CustomAuthToken(ObtainAuthToken):
+    serializer_class = BaseSerializers.AuthLoginSerializer
+
     def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data,
-                                           context={'request': request})
+        serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        # Delete old token (if exists) and create new one
+        username = serializer.validated_data['username']
+        user = User.objects.get(username=username)
         Token.objects.filter(user=user).delete()
         token = Token.objects.create(user=user)
-        return Response({'token': token.key})
+        return Response(BaseSerializers.TokenSerializer({'token': token.key}).data)
     
 
 class LogoutView(views.APIView):
@@ -258,8 +427,8 @@ class RegisterView(views.APIView):
         if serializer.is_valid(raise_exception=True):
             club_obj = Club.objects.get(name=serializer.validated_data.get('username'))
             if club_obj.is_admin:
-                serializer.save()
                 RequestedAcount.objects.filter(username=serializer.validated_data.get('username')).delete()
+                serializer.save()
                 return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
             else:
                 RequestedAcount.objects.filter(username=serializer.validated_data.get('username')).delete()
