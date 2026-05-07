@@ -210,19 +210,22 @@ class DisciplinesSerializer(serializers.ModelSerializer):
     def get_individuals(self, obj):
         user = self.context['request'].user
         event = self.context['request'].query_params.get("event_disciplines")
+        all_registry = self.context['request'].query_params.get("all_registry", "false").lower() == "true"
 
         if not user.is_authenticated:
             return []
 
-        # Start with through model queryset
         qs = DisciplineMember.objects.filter(discipline=obj)
 
-        if user.role in ['free_club', 'subed_club']:
+        if user.role in ['free_club', 'subed_club'] and not all_registry:
             qs = qs.filter(person__club=user)
-        elif user.role not in ['main_admin', 'superuser']:
+        elif user.role in ['free_club', 'subed_club'] and all_registry:
+            qs = qs.order_by('person__club__username', 'person__first_name', 'person__last_name')
+
+        elif user.role not in ['main_admin', 'superuser', 'single_admin']:
             return []
 
-        qs = qs.order_by('person__club__username')
+        qs = qs.order_by('person__club__username', 'person__first_name', 'person__last_name')
 
         return DisciplineMemberSerializer(
             qs,

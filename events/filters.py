@@ -98,6 +98,8 @@ class DisciplinesFilters(filters.FilterSet):
                                               method='filter_is_team')
     restricted = filters.BooleanFilter(field_name='restricted',
                                               method='filter_restricted')
+    all_registry = filters.BooleanFilter(field_name='all_registry',
+                                              method='filter_all_registry')
 
     def filter_event_disciplines(self, queryset, name, value):
         return queryset.filter(event=value)
@@ -112,6 +114,9 @@ class DisciplinesFilters(filters.FilterSet):
             return queryset.filter(is_team=value)
 
     def filter_restricted(self, queryset, name, value):
+        return queryset
+
+    def filter_all_registry(self, queryset, name, value):
         return queryset
 
     class Meta:

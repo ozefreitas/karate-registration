@@ -2707,6 +2707,13 @@
                 "parameters": [
                     {
                         "in": "query",
+                        "name": "all_registry",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "in": "query",
                         "name": "event_disciplines",
                         "schema": {
                             "type": "string"

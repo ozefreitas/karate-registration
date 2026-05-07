@@ -118,7 +118,7 @@ class DisciplineMember(models.Model):
         unique_together = ('discipline', 'person')
 
     def __str__(self):
-        return '{} {} {}'.format(self.discipline.name, self.person.first_name, self.person.last_name)
+        return '{} - {} -> {} {}'.format(self.discipline.event.name, self.discipline.name, self.person.first_name, self.person.last_name)
 
 
 class DisciplineTeam(models.Model):
