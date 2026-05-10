@@ -2,7 +2,7 @@ from django.conf import settings
 from django_filters.rest_framework import DjangoFilterBackend
 from django.utils import timezone
 from django.http import HttpResponse
-from django.db.models import Q
+from django.db.models import Q, Prefetch
 from decouple import config
 import statistics
 from datetime import timedelta, datetime, date
@@ -459,6 +459,16 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 {"message": "Sorteio eliminado."},
                 status=status.HTTP_200_OK
             )
+
+    @extend_schema(responses=serializers.EventRegistrationCountSerializer(many=True))
+    @action(detail=False, methods=["get"], url_path="registration-counts")
+    def registration_counts(self, request):
+        queryset = Event.objects.prefetch_related(
+            "individuals",
+            Prefetch("disciplines", queryset=Discipline.objects.filter(is_coach=False, event__created_by=request.user).prefetch_related("individuals"))
+        )
+        serializer = serializers.EventRegistrationCountSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):

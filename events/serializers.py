@@ -141,6 +141,26 @@ class CompactEventsSerializer(serializers.ModelSerializer):
         return False
 
 
+class EventRegistrationCountSerializer(serializers.ModelSerializer):
+    number_registrations = serializers.SerializerMethodField()
+    name = serializers.SerializerMethodField()
+
+    def get_number_registrations(self, obj):
+        number = obj.individuals.count()
+        disciplines = Discipline.objects.filter(event=obj)
+        for discipline in disciplines:
+            if not discipline.is_coach:
+                number += discipline.individuals.count()
+        return number
+
+    def get_name(self, obj):
+        return f'{obj.name} - {obj.season}'
+
+    class Meta:
+        model = Event
+        fields = ("id", "name", "number_registrations")
+
+
 class CreateEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event

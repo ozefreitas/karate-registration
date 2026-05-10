@@ -4384,6 +4384,122 @@
                 }
             }
         },
+        "/events/registration-counts/": {
+            "get": {
+                "operationId": "events_registration_counts_list",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "has_categories",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "has_ended",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "has_registrations",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "has_teams",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "in_day",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "in_month",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "is_ongoing",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "ordering",
+                        "required": false,
+                        "in": "query",
+                        "description": "Which field to use when ordering the results.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "required": false,
+                        "in": "query",
+                        "description": "A page number within the paginated result set.",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page_size",
+                        "required": false,
+                        "in": "query",
+                        "description": "Number of results to return per page.",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "season",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "tags": [
+                    "events"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedEventRegistrationCountList"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/login/": {
             "post": {
                 "operationId": "login_create",
@@ -8909,7 +9025,7 @@
         },
         "/teams/last_five/": {
             "get": {
-                "operationId": "teams_last_five_retrieve",
+                "operationId": "teams_last_five_list",
                 "tags": [
                     "teams"
                 ],
@@ -8929,7 +9045,10 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Teams"
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Teams"
+                                    }
                                 }
                             }
                         },
@@ -9523,7 +9642,10 @@
                 "type": "object",
                 "properties": {
                     "member_type": {
-                        "type": "string",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ClubsCreatePersonMemberTypeEnum"
+                        },
                         "writeOnly": true
                     },
                     "first_name": {
@@ -9638,6 +9760,15 @@
                     "last_name",
                     "member_type"
                 ]
+            },
+            "ClubsCreatePersonMemberTypeEnum": {
+                "enum": [
+                    "athlete",
+                    "coach",
+                    "student"
+                ],
+                "type": "string",
+                "description": "* `athlete` - athlete\n* `coach` - coach\n* `student` - student"
             },
             "CodeEnum": {
                 "enum": [
@@ -10687,6 +10818,28 @@
                 ],
                 "type": "string",
                 "description": "* `comp` - Competição/Torneio\n* `regional` - Regional\n* `nacional` - Nacional\n* `internacional` - Internacional\n* `intrutores` - Instrutores\n* `formacao` - Formação\n* `exames` - Sessão de Exames\n* `seminario` - Seminário\n* `workshop` - Workshop"
+            },
+            "EventRegistrationCount": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "pattern": "^[-a-zA-Z0-9_]+$"
+                    },
+                    "name": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "number_registrations": {
+                        "type": "string",
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "name",
+                    "number_registrations"
+                ]
             },
             "Events": {
                 "type": "object",
@@ -11776,6 +11929,37 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Disciplines"
+                        }
+                    }
+                }
+            },
+            "PaginatedEventRegistrationCountList": {
+                "type": "object",
+                "required": [
+                    "count",
+                    "results"
+                ],
+                "properties": {
+                    "count": {
+                        "type": "integer",
+                        "example": 123
+                    },
+                    "next": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://api.example.org/accounts/?page=4"
+                    },
+                    "previous": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://api.example.org/accounts/?page=2"
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EventRegistrationCount"
                         }
                     }
                 }

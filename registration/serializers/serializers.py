@@ -366,7 +366,11 @@ class NotInEventPersonsSerializer(serializers.ModelSerializer):
 
 
 class ClubsCreatePersonSerializer(serializers.ModelSerializer):
-    member_type = serializers.CharField(required=True, write_only=True)
+    member_type = serializers.ListField(
+        child=serializers.ChoiceField(choices=["athlete", "coach", "student"]),
+        required=True,
+        write_only=True
+    )
 
     class Meta:
         model = models.Person

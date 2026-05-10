@@ -126,7 +126,7 @@ class PersonsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         id_number = serializer.validated_data.get("id_number")
         first_name = serializer.validated_data.get("first_name")
         last_name = serializer.validated_data.get("last_name")
-        member_type = serializer.validated_data.pop("member_type", None) 
+        member_types = serializer.validated_data.pop("member_type", None) 
 
         if id_number == 0:
             # # Auto-generate id_number if it wasn't provided
@@ -146,7 +146,8 @@ class PersonsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         elif request_user.role == "subed_club":
             user = request_user
             person = serializer.save(id_number=id_number, club=user, created_by=request_user)
-            Membership.objects.create(member_type=member_type, person=person)
+            for member_type in member_types:
+                Membership.objects.create(member_type=member_type, person=person)
 
         try:
             with transaction.atomic():
@@ -409,7 +410,10 @@ class TeamsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         team_number = (last_team.team_number if last_team else 0) + 1
         serializer.save(club=self.request.user, team_number=team_number)
 
-    @action(detail=False, methods=["get"], url_path="last_five")
+    @extend_schema(
+        responses=registration_serializers.TeamsSerializer(many=True),
+    )
+    @action(detail=False, methods=["get"], url_path="last_five", pagination_class=None)
     def last_five(self, request):
         last_five = Team.objects.filter(club=request.user).order_by('creation_date')[:5]
         serializer = registration_serializers.TeamsSerializer(last_five, many=True)
