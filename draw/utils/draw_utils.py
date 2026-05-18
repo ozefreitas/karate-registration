@@ -36,6 +36,11 @@ def generate_torneio_draw(event, disciplines: list, config: dict = None, misto: 
     split_favourites = config["splitFavourites"]
     finals_size = config.get("finalsSize", None)
 
+    # if coming from misto draw generate, checks if finals_size is set
+    will_go_to_scoring = False
+    if misto and finals_size:
+        will_go_to_scoring = True
+
     for discipline in disciplines:
             
         for category in discipline.categories.all():
@@ -49,11 +54,6 @@ def generate_torneio_draw(event, disciplines: list, config: dict = None, misto: 
             registrations = list(category_registrations)
             total_players = len(registrations)
 
-            # if coming from misto draw generate, checks if finals_size is set
-            will_go_to_scoring = False
-            if misto and finals_size:
-                will_go_to_scoring = True
-
             # Categories with less than 2 registration will not take place, so proceed to the next category
             if len(registrations) < 2:
                 continue
@@ -63,7 +63,7 @@ def generate_torneio_draw(event, disciplines: list, config: dict = None, misto: 
                                                 category=category,
                                                 discipline=discipline,
                                                 event=event,
-                                                draw_type="misto"
+                                                draw_type="Misto" if misto else "Torneio/Finais"
                                                 )
 
             bracket_size = next_power_of_2(total_players)
@@ -103,6 +103,9 @@ def generate_torneio_draw(event, disciplines: list, config: dict = None, misto: 
                         match.feeds_into_scoring = scoring_round
                         match.save()
 
+                    for i in range(int(finals_size)):
+                        ScoringEntry.objects.create(scoring_round=scoring_round, entry_number=i)
+
                 else:
                     for reg in registrations:
                         ScoringEntry.objects.create(scoring_round=scoring_round, person=reg.person)
@@ -128,35 +131,35 @@ def generate_torneio_draw(event, disciplines: list, config: dict = None, misto: 
                         semi.loser_goes_to = third_place_match
                         semi.save()
 
-                first_round_matches = Match.objects.filter(
-                    bracket=new_bracket,
-                    round_number=total_rounds - 1  # first round is the highest number
-                ).order_by("match_number")
+            first_round_matches = Match.objects.filter(
+                bracket=new_bracket,
+                round_number=total_rounds - 1  # first round is the highest number
+            ).order_by("match_number")
 
-                reg_index = 0
+            reg_index = 0
 
-                for match in first_round_matches:
-                    if reg_index < total_players:
-                        match.contender_1 = registrations[reg_index].person
-                        reg_index += 1
+            for match in first_round_matches:
+                if reg_index < total_players:
+                    match.contender_1 = registrations[reg_index].person
+                    reg_index += 1
 
-                    if reg_index < total_players:
-                        match.contender_2 = registrations[reg_index].person
-                        reg_index += 1
+                if reg_index < total_players:
+                    match.contender_2 = registrations[reg_index].person
+                    reg_index += 1
 
+                match.save()
+
+            for match in first_round_matches:
+                if match.contender_1 and not match.contender_2:
+                    match.winner = match.contender_1
                     match.save()
+                    match.advance_winner()
+                    match.advance_loser()
 
-                for match in first_round_matches:
-                    if match.contender_1 and not match.contender_2:
-                        match.winner = match.contender_1
-                        match.save()
-                        match.advance_winner()
-                        match.advance_loser()
-
-                    elif match.contender_2 and not match.contender_1:
-                        match.winner = match.contender_2
-                        match.save()
-                        match.advance_winner()
-                        match.advance_loser()
+                elif match.contender_2 and not match.contender_1:
+                    match.winner = match.contender_2
+                    match.save()
+                    match.advance_winner()
+                    match.advance_loser()
         
     return True

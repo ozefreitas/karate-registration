@@ -8316,17 +8316,17 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/ScoringEntry"
+                                "$ref": "#/components/schemas/CreateMatch"
                             }
                         },
                         "application/x-www-form-urlencoded": {
                             "schema": {
-                                "$ref": "#/components/schemas/ScoringEntry"
+                                "$ref": "#/components/schemas/CreateMatch"
                             }
                         },
                         "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/ScoringEntry"
+                                "$ref": "#/components/schemas/CreateMatch"
                             }
                         }
                     },
@@ -8348,7 +8348,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ScoringEntry"
+                                    "$ref": "#/components/schemas/CreateMatch"
                                 }
                             }
                         },
@@ -8418,21 +8418,20 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/ScoringEntry"
+                                "$ref": "#/components/schemas/UpdateScoringEntry"
                             }
                         },
                         "application/x-www-form-urlencoded": {
                             "schema": {
-                                "$ref": "#/components/schemas/ScoringEntry"
+                                "$ref": "#/components/schemas/UpdateScoringEntry"
                             }
                         },
                         "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/ScoringEntry"
+                                "$ref": "#/components/schemas/UpdateScoringEntry"
                             }
                         }
-                    },
-                    "required": true
+                    }
                 },
                 "security": [
                     {
@@ -8450,7 +8449,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ScoringEntry"
+                                    "$ref": "#/components/schemas/UpdateScoringEntry"
                                 }
                             }
                         },
@@ -8478,17 +8477,17 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/PatchedScoringEntry"
+                                "$ref": "#/components/schemas/PatchedUpdateScoringEntry"
                             }
                         },
                         "application/x-www-form-urlencoded": {
                             "schema": {
-                                "$ref": "#/components/schemas/PatchedScoringEntry"
+                                "$ref": "#/components/schemas/PatchedUpdateScoringEntry"
                             }
                         },
                         "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/PatchedScoringEntry"
+                                "$ref": "#/components/schemas/PatchedUpdateScoringEntry"
                             }
                         }
                     }
@@ -8509,7 +8508,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ScoringEntry"
+                                    "$ref": "#/components/schemas/UpdateScoringEntry"
                                 }
                             }
                         },
@@ -11074,40 +11073,7 @@
                 "type": "string",
                 "description": "* `15` - 9º Kyu\n* `14.5` - 8º Kyu Kari\n* `14` - 8º Kyu\n* `13.5` - 7º Kyu Kari\n* `13` - 7º Kyu\n* `12.5` - 6º Kyu Kari\n* `12` - 6º Kyu\n* `11.5` - 5º Kyu Kari\n* `11` - 5º Kyu\n* `10.5` - 4º Kyu Kari\n* `10` - 4º Kyu\n* `9.5` - 3º Kyu Kari\n* `9` - 3º Kyu\n* `8` - 2º Kyu\n* `7` - 1º Kyu\n* `6` - 1º Dan\n* `5` - 2º Dan\n* `4` - 3º Dan\n* `3` - 4º Dan\n* `2` - 5º Dan\n* `1` - 6º Dan"
             },
-            "KataContender1Enum": {
-                "enum": [
-                    "none",
-                    "heianshodan",
-                    "heiannidan",
-                    "heiansandan",
-                    "heianyondan",
-                    "heiangodan",
-                    "tikishodan",
-                    "tikinidan",
-                    "tikisandan",
-                    "bassaidai",
-                    "bassaisho",
-                    "kankudai",
-                    "kankusho",
-                    "enpi",
-                    "jion",
-                    "gankaku",
-                    "hangetsu",
-                    "jitte",
-                    "chinte",
-                    "sochin",
-                    "meikyo",
-                    "jiin",
-                    "gojushihodai",
-                    "gojushihosho",
-                    "ninjushiho",
-                    "wankan",
-                    "unsi"
-                ],
-                "type": "string",
-                "description": "* `none` - N/A\n* `heianshodan` - Heian Shodan\n* `heiannidan` - Heian Nidan\n* `heiansandan` - Heian Sandan\n* `heianyondan` - Heian Yondan\n* `heiangodan` - Heian Godan\n* `tikishodan` - Tiki Shodan\n* `tikinidan` - Tiki Nidan\n* `tikisandan` - Tiki Sandan\n* `bassaidai` - Bassai Dai\n* `bassaisho` - Bassai Sho\n* `kankudai` - Kanku Dai\n* `kankusho` - Kanku Sho\n* `enpi` - Enpi\n* `jion` - Jion\n* `gankaku` - Gankaku\n* `hangetsu` - Hangetsu\n* `jitte` - Jitte\n* `chinte` - Chinte\n* `sochin` - Sochin\n* `meikyo` - Meikyo\n* `jiin` - Jiin\n* `gojushihodai` - Gojushiho Dai\n* `gojushihosho` - Gojushiho Sho\n* `ninjushiho` - Ninjushiho\n* `wankan` - Wankan\n* `unsi` - Unsu"
-            },
-            "KataContender2Enum": {
+            "KataEnum": {
                 "enum": [
                     "none",
                     "heianshodan",
@@ -11162,7 +11128,7 @@
                     "kata_contender_1": {
                         "allOf": [
                             {
-                                "$ref": "#/components/schemas/KataContender1Enum"
+                                "$ref": "#/components/schemas/KataEnum"
                             }
                         ],
                         "title": "Kata Atleta 1"
@@ -11170,7 +11136,7 @@
                     "kata_contender_2": {
                         "allOf": [
                             {
-                                "$ref": "#/components/schemas/KataContender2Enum"
+                                "$ref": "#/components/schemas/KataEnum"
                             }
                         ],
                         "title": "Kata Atleta 2"
@@ -12921,46 +12887,6 @@
                     }
                 }
             },
-            "PatchedScoringEntry": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "readOnly": true
-                    },
-                    "person": {
-                        "$ref": "#/components/schemas/CompactPerson"
-                    },
-                    "score": {
-                        "type": "string",
-                        "format": "decimal",
-                        "pattern": "^-?\\d{0,4}(?:\\.\\d{0,2})?$",
-                        "nullable": true
-                    },
-                    "rank": {
-                        "type": "integer",
-                        "maximum": 2147483647,
-                        "minimum": -2147483648,
-                        "nullable": true
-                    },
-                    "entry_number": {
-                        "type": "integer",
-                        "maximum": 2147483647,
-                        "minimum": 0
-                    },
-                    "ongoing": {
-                        "type": "boolean"
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "readOnly": true
-                    },
-                    "scoring_round": {
-                        "type": "integer"
-                    }
-                }
-            },
             "PatchedTeams": {
                 "type": "object",
                 "properties": {
@@ -13091,6 +13017,38 @@
                         "nullable": true
                     },
                     "winner": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                }
+            },
+            "PatchedUpdateScoringEntry": {
+                "type": "object",
+                "properties": {
+                    "scoring_result": {
+                        "$ref": "#/components/schemas/ScoringResult"
+                    },
+                    "score": {
+                        "type": "string",
+                        "format": "decimal",
+                        "pattern": "^-?\\d{0,4}(?:\\.\\d{0,2})?$",
+                        "nullable": true
+                    },
+                    "rank": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": -2147483648,
+                        "nullable": true
+                    },
+                    "ongoing": {
+                        "type": "boolean"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "person": {
                         "type": "string",
                         "nullable": true
                     }
@@ -13342,6 +13300,15 @@
                     "person": {
                         "$ref": "#/components/schemas/CompactPerson"
                     },
+                    "scoring_result": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ScoringResult"
+                            }
+                        ],
+                        "readOnly": true,
+                        "nullable": true
+                    },
                     "score": {
                         "type": "string",
                         "format": "decimal",
@@ -13376,7 +13343,48 @@
                     "entry_number",
                     "id",
                     "person",
+                    "scoring_result",
                     "scoring_round"
+                ]
+            },
+            "ScoringResult": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "kata": {
+                        "$ref": "#/components/schemas/KataEnum"
+                    },
+                    "score_1": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "score_2": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "score_3": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "score_4": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "score_5": {
+                        "type": "number",
+                        "format": "double"
+                    }
+                },
+                "required": [
+                    "id",
+                    "score_1",
+                    "score_2",
+                    "score_3",
+                    "score_4",
+                    "score_5"
                 ]
             },
             "SeasonEnum": {
@@ -13949,6 +13957,41 @@
                 ],
                 "type": "string",
                 "description": "* `athlete` - athlete\n* `student` - student"
+            },
+            "UpdateScoringEntry": {
+                "type": "object",
+                "properties": {
+                    "scoring_result": {
+                        "$ref": "#/components/schemas/ScoringResult"
+                    },
+                    "score": {
+                        "type": "string",
+                        "format": "decimal",
+                        "pattern": "^-?\\d{0,4}(?:\\.\\d{0,2})?$",
+                        "nullable": true
+                    },
+                    "rank": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": -2147483648,
+                        "nullable": true
+                    },
+                    "ongoing": {
+                        "type": "boolean"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "person": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "required": [
+                    "created_at"
+                ]
             },
             "UpdateTeams": {
                 "type": "object",

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Bracket, Match, FoulType, KataResult, KumiteResult, KumiteFoul, ScoringEntry, ScoringRound
+from .models import Bracket, Match, FoulType, KataResult, KumiteResult, KumiteFoul, ScoringEntry, ScoringRound, ScoringResult
 
 # Register your models here.
 
@@ -11,3 +11,4 @@ admin.site.register(KumiteResult)
 admin.site.register(KumiteFoul)
 admin.site.register(ScoringRound)
 admin.site.register(ScoringEntry)
+admin.site.register(ScoringResult)

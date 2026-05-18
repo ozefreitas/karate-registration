@@ -50,20 +50,28 @@ class BracketViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     def officialize(self, request, pk=None):
         bracket = self.get_object()
 
-        matches = Match.objects.filter(bracket=bracket).select_related("winner", "contender_1", "contender_2")
+        if bracket.draw_type == "Torneio/Finais":
+            matches = Match.objects.filter(bracket=bracket).select_related("winner", "contender_1", "contender_2")
 
-        final = matches.filter(round_number=0, match_number=1).first()
-        if not final or not final.winner:
-            return Response({"error": "Ainda não existe um vencedor para este Escalão! Termine todas as partidas."}, status=400)
+            final = matches.filter(round_number=0, match_number=1).first()
+            if not final or not final.winner:
+                return Response({"error": "Ainda não existe um vencedor para este Escalão! Termine todas as partidas."}, status=400)
 
-        third_place_match = matches.filter(round_number=0, is_third_place=True).first()
-        if not third_place_match or not third_place_match.winner:
-            return Response({"error": "Ainda não existe um terceiro classificado para este Escalão!"}, status=400)
+            third_place_match = matches.filter(round_number=0, is_third_place=True).first()
+            if not third_place_match or not third_place_match.winner:
+                return Response({"error": "Ainda não existe um terceiro classificado para este Escalão!"}, status=400)
 
-        # Derive podium
-        first = final.winner
-        second = final.contender_1 if final.contender_2 == first else final.contender_2
-        third = third_place_match.winner
+            # Derive podium
+            first = final.winner
+            second = final.contender_1 if final.contender_2 == first else final.contender_2
+            third = third_place_match.winner
+
+        elif bracket.draw_type == "Misto":
+            scoring_entries = ScoringEntry.objects.filter(scoring_round__bracket=bracket).select_related("person")
+
+            first = scoring_entries.filter(rank=1).first().person
+            second = scoring_entries.filter(rank=2).first().person
+            third = scoring_entries.filter(rank=3).first().person
 
         # reset if mistake
         Classification.objects.filter(bracket=bracket).delete()
@@ -81,6 +89,7 @@ class BracketViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         bracket.save(update_fields=["officialized_at"])
 
         return Response(serializer.data)
+
 
 
 class MatchViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
@@ -131,6 +140,7 @@ class MatchViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         except ValueError as e:
             return Response({"error": str(e)}, status=400)
         
+        # if final, auto goes to not ongoing
         if match.round_number == 0 and match.match_number == 1:
             match.ongoing = False
             match.save()
@@ -219,14 +229,20 @@ class ScoringEntryViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         'scoring_round__bracket__event',
         'scoring_round__bracket',
         "person",
+        "scoring_result",
     ).order_by("created_at")
     serializer_class=serializers.ScoringEntrySerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     filterset_class = ScoringEntriesFilters
     pagination_class = None
 
-    # serializer_classes = {
-    #     "create": serializers.CreateMatchSerializer,
-    #     "update": serializers.UpdateMatchSerializer,
-    #     "partial_update": serializers.UpdateMatchSerializer
-    # }
+    serializer_classes = {
+        "create": serializers.CreateMatchSerializer,
+        "update": serializers.UpdateScoringEntrySerializer,
+        "partial_update": serializers.UpdateScoringEntrySerializer
+    }
+
+    def perform_update(self, serializer):
+        instance = serializer.save()
+        if instance.ongoing:
+            instance.set_ongoing()

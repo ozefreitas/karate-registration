@@ -51,6 +51,7 @@ class Match(models.Model):
     def is_final(self):
         return self.round_number == 0 and self.match_number == 1 and not self.is_third_place
 
+
     def set_winner(self, winner):
         if winner not in [1, 2]:
             raise ValueError("Winner must be either 1 or 2.")
@@ -61,6 +62,7 @@ class Match(models.Model):
         if not self.is_third_place:
             self.advance_winner()
             self.advance_loser()
+
 
     def advance_winner(self):
         if not self.winner:
@@ -76,43 +78,56 @@ class Match(models.Model):
         current_round = self.round_number
         current_match_number = self.match_number
 
-        if current_match_number % 2 == 1:
-            pair_number = current_match_number + 1
-            is_first_in_pair = True
-        else:
-            pair_number = current_match_number - 1
-            is_first_in_pair = False
+        if self.feeds_into_scoring is not None:
+            entry = ScoringEntry.objects.filter(
+                scoring_round=self.feeds_into_scoring,
+                person__isnull=True
+            ).first()
+            
+            if entry:
+                entry.person = self.winner
+                entry.save()
 
-        try:
-            pair_match = Match.objects.get(
+        else:
+
+            if current_match_number % 2 == 1:
+                pair_number = current_match_number + 1
+                is_first_in_pair = True
+            else:
+                pair_number = current_match_number - 1
+                is_first_in_pair = False
+
+            try:
+                pair_match = Match.objects.get(
+                    bracket=bracket,
+                    round_number=current_round,
+                    match_number=pair_number
+                )
+            except Match.DoesNotExist:
+                return
+
+            if not pair_match.winner:
+                return
+
+            next_round = current_round - 1
+            next_match_number = (min(current_match_number, pair_number) + 1) // 2
+
+            next_match, _ = Match.objects.get_or_create(
                 bracket=bracket,
-                round_number=current_round,
-                match_number=pair_number
+                round_number=next_round,
+                match_number=next_match_number,
+                defaults={"contender_1": None, "contender_2": None}
             )
-        except Match.DoesNotExist:
-            return
 
-        if not pair_match.winner:
-            return
+            if is_first_in_pair:
+                next_match.contender_1 = self.winner
+                next_match.contender_2 = pair_match.winner
+            else:
+                next_match.contender_1 = pair_match.winner
+                next_match.contender_2 = self.winner
 
-        next_round = current_round - 1
-        next_match_number = (min(current_match_number, pair_number) + 1) // 2
+            next_match.save()
 
-        next_match, _ = Match.objects.get_or_create(
-            bracket=bracket,
-            round_number=next_round,
-            match_number=next_match_number,
-            defaults={"contender_1": None, "contender_2": None}
-        )
-
-        if is_first_in_pair:
-            next_match.contender_1 = self.winner
-            next_match.contender_2 = pair_match.winner
-        else:
-            next_match.contender_1 = pair_match.winner
-            next_match.contender_2 = self.winner
-
-        next_match.save()
 
     def advance_loser(self):
         """
@@ -144,10 +159,12 @@ class Match(models.Model):
 
         third_place_match.save()
     
+
     def set_ongoing(self):
         Match.objects.filter(bracket=self.bracket, ongoing=True).update(ongoing=False)
         self.ongoing = True
         self.save(update_fields=["ongoing"])
+
 
     def __str__(self):
         return f'{self.bracket.discipline.name} {self.bracket.category.name} {self.bracket.category.gender} | {self.contender_1.first_name if self.contender_1 is not None else "bye"} {self.contender_1.last_name if self.contender_1 is not None else ""} vs {self.contender_2.first_name if self.contender_2 is not None else "bye"} {self.contender_2.last_name if self.contender_2 is not None else ""} | (Round {self.round_number})'
@@ -165,18 +182,38 @@ class ScoringRound(models.Model):
 
 class ScoringEntry(models.Model):
     scoring_round = models.ForeignKey(ScoringRound, on_delete=models.CASCADE, related_name="entries")
-    person = models.ForeignKey(Person, on_delete=models.CASCADE)
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, null=True, blank=True)
     score = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
     rank = models.IntegerField(null=True, blank=True)
     entry_number = models.PositiveIntegerField()
     ongoing = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    
-    def __str__(self):
-        return f'{self.scoring_round.bracket.discipline.name} {self.scoring_round.bracket.category.name} {self.scoring_round.bracket.category.gender} Finals - {self.person.first_name} {self.person.last_name} ({self.person.club.username})'
+    def recalculate_ranks(self):
+        """Recalculate ranks for all entries in the same scoring round."""
+        entries = ScoringEntry.objects.filter(
+            scoring_round=self.scoring_round,
+            score__isnull=False  # only rank entries that have a score
+        ).order_by("-score")
 
+        for rank, entry in enumerate(entries, start=1):
+            entry.rank = rank
+            entry.save()
+            
+
+    def set_ongoing(self):
+        ScoringEntry.objects.filter(scoring_round=self.scoring_round, ongoing=True).update(ongoing=False)
+        self.ongoing = True
+        self.save(update_fields=["ongoing"])
+
+
+    def __str__(self):
+        if self.person != None:
+            return f'{self.scoring_round.bracket.discipline.name} {self.scoring_round.bracket.category.name} {self.scoring_round.bracket.category.gender} Finals - {self.person.first_name} {self.person.last_name} ({self.person.club.username})'
+        else:
+            return f'{self.scoring_round.bracket.discipline.name} {self.scoring_round.bracket.category.name} {self.scoring_round.bracket.category.gender} Finals - TBD'
     
+
 class MatchResult(models.Model):
     match = models.OneToOneField(
         Match, 
@@ -215,4 +252,19 @@ class KumiteFoul(models.Model):
     result = models.ForeignKey(KumiteResult, on_delete=models.CASCADE, related_name='fouls')
     contender = models.ForeignKey(Person, on_delete=models.CASCADE, related_name='fouls')
     foul_type = models.ForeignKey(FoulType, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class ScoringResult(models.Model):
+    scoring_entry = models.OneToOneField(
+        ScoringEntry, 
+        on_delete=models.CASCADE, 
+        related_name='scoring_result'
+    )
+    kata = models.CharField("Kata", max_length=24, choices=KATAS, default="none", blank=True)
+    score_1 = models.FloatField()
+    score_2 = models.FloatField()
+    score_3 = models.FloatField()
+    score_4 = models.FloatField()
+    score_5 = models.FloatField()
     created_at = models.DateTimeField(auto_now_add=True)

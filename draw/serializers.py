@@ -6,6 +6,7 @@ from core.serializers.categories import CompactCategorySerializer
 
 class BracketSerializer(serializers.ModelSerializer):
     category = CompactCategorySerializer()
+
     class Meta:
         model = models.Bracket
         fields = "__all__"
@@ -94,9 +95,70 @@ class PreviousMatchSerializer(serializers.Serializer):
     prev_match_id = serializers.CharField()
 
 
+class ScoringResultSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.ScoringResult
+        exclude = ["scoring_entry", "created_at"]
+
+
 class ScoringEntrySerializer(serializers.ModelSerializer):
     person = CompactPersonSerializer()
+    scoring_result = ScoringResultSerializer(read_only=True, allow_null=True)
 
     class Meta:
         model = models.ScoringEntry
         fields = "__all__"
+
+
+class CreateScoringEntrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.ScoringEntry
+        fields = "__all__"
+
+
+class UpdateScoringEntrySerializer(serializers.ModelSerializer):
+    scoring_result = ScoringResultSerializer(required=False)
+
+    class Meta:
+        model = models.ScoringEntry
+        exclude = ["scoring_round", "entry_number", "id"]
+    
+    def validate(self, data):
+        instance = self.instance
+        person = data.get("person", instance.person)
+
+        if data.get("ongoing") and person is None:
+            raise serializers.ValidationError(
+                "Partida não tem um Atleta associado! Conclua a partida anterior."
+            )
+
+        return data
+
+    def update(self, instance, validated_data):
+        scoring_result_data = validated_data.pop("scoring_result", None)
+
+        if scoring_result_data is not None:
+            scores = [
+                scoring_result_data.get("score_1", 0),
+                scoring_result_data.get("score_2", 0),
+                scoring_result_data.get("score_3", 0),
+                scoring_result_data.get("score_4", 0),
+                scoring_result_data.get("score_5", 0),
+            ]
+
+            scores.remove(min(scores))
+            scores.remove(max(scores))
+            total = sum(scores)
+
+            validated_data["score"] = total
+
+        instance = super().update(instance, validated_data)
+
+        if scoring_result_data is not None:
+            models.ScoringResult.objects.update_or_create(
+                scoring_entry=instance,
+                defaults=scoring_result_data,
+            )
+            instance.recalculate_ranks()  # recalculate after score is saved
+
+        return instance
