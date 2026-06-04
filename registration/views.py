@@ -455,6 +455,23 @@ class ClassificationsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         last_competition = Event.objects.filter(event_date__gte=now).order_by('event_date').last()
         if last_competition is None:
             return Response([])
+
         last_comp_quali = Classification.objects.filter(bracket__event=last_competition.id)
         serialized_data = registration_serializers.ClassificationsSerializer(last_comp_quali, many=True)
-        return Response(serialized_data.data)
+
+        # Group by bracket id
+        grouped = {}
+        for item in serialized_data.data:
+            bracket_id = item["bracket"]["id"]
+            if bracket_id not in grouped:
+                grouped[bracket_id] = {
+                    "bracket": item["bracket"],
+                    "classifications": []
+                }
+            grouped[bracket_id]["classifications"].append({
+                "person": item["person"],
+                "place": item["place"],
+                "created_at": item["created_at"]
+            })
+
+        return Response(list(grouped.values()))

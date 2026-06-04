@@ -1,4 +1,4 @@
-from events.models import DisciplineMember
+from events.models import DisciplineMember, DisciplineTeam
 from draw.models import Match, Bracket, ScoringEntry, ScoringRound
 import math
 from registration.utils.utils import next_power_of_2
@@ -21,13 +21,14 @@ def generate_liga_draw(disciplines: list, config: dict) -> None:
     return "OLA"
 
 
-def generate_torneio_draw(event, disciplines: list, config: dict = None, misto: bool = False) -> bool:
+def generate_torneio_draw(event: str, disciplines: list, config: dict = None, misto: bool = False) -> bool:
     """_summary_
 
     Args:
         event (_type_): _description_
         disciplines (list): _description_
-        config (dict, optional): _description_. Defaults to None.
+        config (dict, optional): _description_. Defaults to None
+        misto (bool, optional): If misto, starts by checking the finals size, only to create round robins until there. Defaults to False
 
     Returns:
         bool: _description_
@@ -45,11 +46,19 @@ def generate_torneio_draw(event, disciplines: list, config: dict = None, misto: 
             
         for category in discipline.categories.all():
             
-            # Retrieves all registrations for the current category
-            category_registrations = DisciplineMember.objects.filter(
-                category=category,
-                discipline=discipline
-            ).order_by("id")
+            if discipline.is_team:
+                # Retrieves all teams for the current category
+                category_registrations = DisciplineTeam.objects.filter(
+                    team__category=category,
+                    discipline=discipline,
+                ).order_by("id")
+
+            else:
+                # Retrieves all registrations for the current category
+                category_registrations = DisciplineMember.objects.filter(
+                    category=category,
+                    discipline=discipline
+                ).order_by("id")
 
             registrations = list(category_registrations)
             total_players = len(registrations)
