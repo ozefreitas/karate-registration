@@ -1,8 +1,12 @@
 from rest_framework import serializers
 import draw.models as models
+from registration.serializers.base import CompactPersonSerializer
+from core.serializers.categories import CompactCategorySerializer
 
 
 class BracketSerializer(serializers.ModelSerializer):
+    category = CompactCategorySerializer()
+
     class Meta:
         model = models.Bracket
         fields = "__all__"
@@ -14,7 +18,25 @@ class CreateBracketSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class KataResultSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.KataResult
+        exclude = ["match", "created_at"]
+
+        
+class KumiteResultSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.KumiteResult
+        exclude = ["match", "created_at"]
+
+
 class MatchSerializer(serializers.ModelSerializer):
+    contender_1 = CompactPersonSerializer()
+    contender_2 = CompactPersonSerializer()
+    winner = CompactPersonSerializer()
+    kataresult = KataResultSerializer(read_only=True, allow_null=True)
+    kumiteresult = KumiteResultSerializer(read_only=True, allow_null=True)
+
     class Meta:
         model = models.Match
         fields = "__all__"
@@ -24,3 +46,119 @@ class CreateMatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Match
         fields = "__all__"
+
+
+class UpdateMatchSerializer(serializers.ModelSerializer):
+    kataresult = KataResultSerializer(required=False)
+
+    class Meta:
+        model = models.Match
+        exclude = ["round_number", "match_number", "bracket"]
+    
+    def validate(self, data):
+        instance = self.instance
+        contender_1 = data.get("contender_1", instance.contender_1)
+        contender_2 = data.get("contender_2", instance.contender_2)
+
+        if data.get("ongoing") and contender_1 is None and contender_2 is None:
+            raise serializers.ValidationError(
+                "Partida não tem pelo menos um dos competidores definidos. Conclua as partidas das rondas anteriores!"
+            )
+
+        return data
+
+    def update(self, instance, validated_data):
+        kata_data = validated_data.pop("kataresult", None)
+
+        # Update Match fields
+        instance = super().update(instance, validated_data)
+
+        # Update or create KataResult if data was provided
+        if kata_data is not None:
+            models.KataResult.objects.update_or_create(
+                match=instance,
+                defaults=kata_data,
+            )
+
+        return instance
+
+
+class PatchMatchWinnerSerializer(serializers.Serializer):
+    winner = serializers.ChoiceField(choices=[1, 2])
+
+
+class AdvanceMatchSerializer(serializers.Serializer):
+    next_match_id = serializers.CharField()
+
+
+class PreviousMatchSerializer(serializers.Serializer):
+    prev_match_id = serializers.CharField()
+
+
+class ScoringResultSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.ScoringResult
+        exclude = ["scoring_entry", "created_at"]
+
+
+class ScoringEntrySerializer(serializers.ModelSerializer):
+    person = CompactPersonSerializer()
+    scoring_result = ScoringResultSerializer(read_only=True, allow_null=True)
+
+    class Meta:
+        model = models.ScoringEntry
+        fields = "__all__"
+
+
+class CreateScoringEntrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.ScoringEntry
+        fields = "__all__"
+
+
+class UpdateScoringEntrySerializer(serializers.ModelSerializer):
+    scoring_result = ScoringResultSerializer(required=False)
+
+    class Meta:
+        model = models.ScoringEntry
+        exclude = ["scoring_round", "entry_number", "id"]
+    
+    def validate(self, data):
+        instance = self.instance
+        person = data.get("person", instance.person)
+
+        if data.get("ongoing") and person is None:
+            raise serializers.ValidationError(
+                "Partida não tem um Atleta associado! Conclua a partida anterior."
+            )
+
+        return data
+
+    def update(self, instance, validated_data):
+        scoring_result_data = validated_data.pop("scoring_result", None)
+
+        if scoring_result_data is not None:
+            scores = [
+                scoring_result_data.get("score_1", 0),
+                scoring_result_data.get("score_2", 0),
+                scoring_result_data.get("score_3", 0),
+                scoring_result_data.get("score_4", 0),
+                scoring_result_data.get("score_5", 0),
+            ]
+
+            scores.remove(min(scores))
+            scores.remove(max(scores))
+            total = sum(scores)
+
+            validated_data["score"] = total
+
+        instance = super().update(instance, validated_data)
+
+        if scoring_result_data is not None:
+            models.ScoringResult.objects.update_or_create(
+                scoring_entry=instance,
+                defaults=scoring_result_data,
+            )
+            instance.recalculate_ranks()  # recalculate after score is saved
+
+        return instance

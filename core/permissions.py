@@ -10,7 +10,25 @@ class IsAuthenticatedOrReadOnly(BasePermission):
         if request.method in SAFE_METHODS:
             return True
         return request.user and request.user.is_authenticated
+
+
+class IsTechnicianOrAdmin(BasePermission):
+    def has_permission(self, request, view):
+        if request.method in ["PATCH"]:
+            return request.user and request.user.is_authenticated and (request.user.role == 'main_admin' 
+                                                                        or request.user.role == 'superuser' 
+                                                                        or request.user.role == 'single_admin' 
+                                                                        or request.user.role == "technician")
     
+
+class IsTechnicianOrAdminforPOST(BasePermission):
+    def has_permission(self, request, view):
+        if request.method in ["POST"]:
+            return request.user and request.user.is_authenticated and (request.user.role == 'main_admin' 
+                                                                        or request.user.role == 'superuser' 
+                                                                        or request.user.role == 'single_admin' 
+                                                                        or request.user.role == "technician")
+        
 
 class IsNationalForPostDelete(BasePermission):
     """
@@ -79,6 +97,13 @@ class IsAdminRoleorHigherForGET(BasePermission):
                                                                             or request.user.role == 'superuser' 
                                                                             or request.user.role == 'single_admin'))
 
+  
+class IsSubedClubForAll(BasePermission):
+    """Allows access to a GET request if the user has an admin like role or higher"""
+    def has_permission(self, request, view):
+        return bool(request.user and request.user.is_authenticated and (request.user.role == 'subed_club' 
+                                                                        or request.user.role == 'superuser'))
+
 
 class IsGETforClubs(BasePermission):
     """Allows access to GET request for clubs viewset, everything else is restricted to admin like roles"""
@@ -91,9 +116,9 @@ class IsGETforClubs(BasePermission):
                                                                             or request.user.role == 'single_admin'))
 
 
-class AthletePermission(BasePermission):
+class PersonPermission(BasePermission):
     """
-    Permission used for Athletes and Teams.
+    Permission used for Members and Teams.
     - Admin-like users (main_admin, single_admin, superuser) have access to everything.
     - Paying users (subed_club) have access to SAFE_METHODS, PUT, PATCH.
     - Free users (free_club) only can GET.
@@ -123,9 +148,9 @@ class AthletePermission(BasePermission):
 
         # Admins can access all
         if role in ['main_admin', 'single_admin', 'superuser']:
-            return True
+            return obj.is_validated
 
-        # Clubs only access their own athletes
+        # Clubs only access their own members
         if role == 'subed_club':
             return obj.club == request.user
 
@@ -136,9 +161,9 @@ class AthletePermission(BasePermission):
 class EventPermission(BasePermission):
     """
     Permission used for Events.
-    - Admin-like users (main_admin, single_admin, superuser) have access to everything.
-    - Other users have access to SAFE_METHODS, PUT, PATCH.
-    - All others are denied.
+    - Admin-like users (main_admin, single_admin, superuser): full access.
+    - subed_club: can create (POST) and access their own events only (enforced in ViewSet).
+    - Others: read-only, but only events not owned by a subed_club (enforced in ViewSet).
     """
     def has_permission(self, request, view):
         if request.method == "GET":
@@ -148,18 +173,36 @@ class EventPermission(BasePermission):
             return False
 
         role = getattr(request.user, "role", None)
+
         if role in ['main_admin', 'single_admin', 'superuser']:
             return True
 
-        else:
-            if request.method in SAFE_METHODS or request.method in ["PUT", "PATCH"]:
-                return True
-            return False
+        if role == 'subed_club':
+            return request.method in ['GET', 'POST', 'PUT', 'PATCH']
+
+        return request.method in SAFE_METHODS
+
+    def has_object_permission(self, request, view, obj):
+        if not request.user or not request.user.is_authenticated:
+            return request.method == "GET"
+
+        role = getattr(request.user, "role", None)
+
+        if role in ['main_admin', 'single_admin', 'superuser']:
+            return True
+
+        if role == 'subed_club':
+            return obj.created_by is None or obj.created_by == request.user or obj.created_by.role in ['main_admin', 'single_admin', 'superuser']
+
+        if request.method in SAFE_METHODS:
+            return obj.created_by is None
+
+        return False
         
 
 class EventIndividualsPermission(BasePermission):
     """
-    Permissions for adding/removing individuals from an Event.
+    Permissions for adding/removing individuals (members) from an Event.
     """
     def has_permission(self, request, view):
         if not request.user or not request.user.is_authenticated:
@@ -176,3 +219,53 @@ class EventIndividualsPermission(BasePermission):
             return request.method in ["POST", "DELETE"]
 
         return False
+    
+
+class MemberValidationRequestPermissions(BasePermission):
+    def has_permission(self, request, view):
+        if not request.user or not request.user.is_authenticated:
+            return False
+
+        role = getattr(request.user, "role", None)
+        if role in ['main_admin', 'single_admin', 'superuser'] and request.method in SAFE_METHODS:
+            return True
+
+        if role in ['main_admin', 'single_admin', 'superuser'] and request.method in ["DELETE", "PATCH"]:
+            return True
+        
+        if role in ['subed_club', "superuser"] and request.method in ["POST"]:
+            return True
+        
+        return False
+
+
+class IsObjectOwner(BasePermission):
+    """
+    - Only
+    """
+    def has_permission(self, request, view):
+        return True
+
+    def has_object_permission(self, request, view, obj):
+        if request.method == "DELETE":
+            return (
+                getattr(request.user, "role", None) in ["main_admin", "superuser"]
+                or obj.club_user == request.user  # owner check
+            )
+        return True
+    
+
+class CanFilterByUserPermission(BasePermission):
+    """
+    Only admin users can filter notifications by user_id.
+    """
+
+    def has_permission(self, request, view):
+        user_id = request.query_params.get("user_id")
+
+        # if no filtering by user_id, allow
+        if not user_id:
+            return True
+
+        # if filtering, only admin allowed
+        return request.user.is_authenticated and request.user.role in ['main_admin', 'single_admin', 'superuser']

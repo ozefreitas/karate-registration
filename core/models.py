@@ -3,11 +3,9 @@ from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.conf import settings
-from django.db import models
-from events.models import Event
-from django.contrib.auth.models import AbstractUser
 from django.db.models import Q, UniqueConstraint
 
+from events.models import Event
 
 from datetime import timedelta
 from .constants import GRADUATIONS, GENDERS
@@ -34,6 +32,7 @@ class User(AbstractUser):
         SINGLEADMIN = "single_admin", "Single Admin"
         FREECLUB = "free_club", "Club Free"
         SUBEDCLUB = "subed_club", "Club Subscription"
+        PERSON = "person", "Person"
 
     class Tier(models.TextChoices):
         BASE = "base", "Base"
@@ -86,11 +85,18 @@ class User(AbstractUser):
                 raise ValidationError("Technician accounts must have a assigned parent.")
             if self.parent is not None and self.parent.role != self.Role.MAINADMIN:
                 raise ValidationError("Technician Child accounts must have a Main Admin as parent.")
+        
+        # PERSON restrictions
+        if self.role == self.Role.PERSON and self.tier != self.Tier.BASE:
+            raise ValidationError("Normal random Person are only available with the Base tier plan.")
 
         # Child rules
-        if self.parent and self.parent.role != self.Role.MAINADMIN:
-            raise ValidationError("Child accounts must have a Main Admin as parent.")
-
+        if self.parent:
+            if self.role == self.Role.SUBEDCLUB and self.parent.role != self.Role.MAINADMIN:
+                raise ValidationError("Subed Club child accounts must have a Main Admin as parent.")
+            if self.role == self.Role.PERSON and self.parent.role != self.Role.SUBEDCLUB:
+                raise ValidationError("Random Person child accounts must have a Subed Club as parent.")
+        
         super().clean()
 
     # --------------------------
@@ -110,6 +116,18 @@ class User(AbstractUser):
         self.full_clean()
         super().save(*args, **kwargs)
 
+
+class Profile(models.Model):
+    club = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    image = models.ImageField("Imagem de perfil", default='skip-logo.png', upload_to='users/profile_pictures/')
+    contact = models.IntegerField("Contacto do Clube", default=123456789)
+    bio = models.TextField(blank=True)
+    email_contact = models.EmailField("Email", null=True, blank=True)
+    cellphone_number = models.IntegerField("Número de telemóvel pessoal", default=123456789)
+    address = models.CharField("Morada", max_length=200, blank=True, null=True)
+
+    def __str__(self):
+        return f'{self.club.username} profile'
 
 
 class RequestedAcount(models.Model):
@@ -149,11 +167,12 @@ class Category(models.Model):
     name = models.CharField("Escalão", max_length=100)
     min_age = models.PositiveSmallIntegerField("Idade Mínima (inclusivé)", null=True, blank=True)
     max_age = models.PositiveSmallIntegerField("Idade Máxima (inclusivé)", null=True, blank=True)
-    min_grad = models.CharField("Graduação Mínima (inclusivé)", max_length=4, choices=GRADUATIONS, null=True, blank=True)
-    max_grad = models.CharField("Graduação Máxima (inclusivé)", max_length=4, choices=GRADUATIONS, null=True, blank=True)
+    min_grad = models.CharField("Graduação Mínima (inclusivé)", max_length=4, choices=GRADUATIONS, null=True)
+    max_grad = models.CharField("Graduação Máxima (inclusivé)", max_length=4, choices=GRADUATIONS, null=True)
     min_weight = models.PositiveSmallIntegerField("Peso Mínimo (inclusivé)", null=True, blank=True)
     max_weight = models.PositiveSmallIntegerField("Peso Máximo (inclusivé)", null=True, blank=True)
     gender = models.CharField("Género", choices=GENDERS, max_length=10)
+    max_athletes = models.PositiveSmallIntegerField("Número Máximo de Atletas (Equipas)", null=True, blank=True)
     creation_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -175,11 +194,16 @@ class Notification(models.Model):
         REQ = "request", "Request"
         RES = "reset", "Reset"
         CREATE_MEMBER = "create_member", "Create Member"
+        MEMBER_UPDATED = "member_updated", "Member Updated"
+        MEMBER_REQUEST = "member_request", "Member Request"
+        EXAM_PROP = "exam_prop", "Exam Prop"
         RATE_EVENT = "rate_event", "Rate Event"
         REGISTRATIONS_CLOSING = "registrations_closing", "Registrations Closing"
         REGISTRATIONS_CLOSE = "registrations_close", "Registrations Close"
         CLASSIFICATIONS_AVAILABLE = "classifications_available", "Classifications Available"
         OPEN_REGISTRATIONS = "open_registrations", "Open Registrations"
+        DRAW_AVAILABLE = "draw_available", "Draw Available"
+        DRAW_PATCHED = "draw_patched", "Draw Patched"
         PAYMENT_AVAILABLE = "payment_available", "Payment Available"
         PAYMENT_OVERDUE = "payment_overdue", "Payment Overdue"
         ADMINISTRATIVE = "administrative", "Administrative"
@@ -197,6 +221,7 @@ class Notification(models.Model):
 
     payment_object = models.CharField(max_length=32, choices=PAYMENT_TYPE.choices, default=PAYMENT_TYPE.NONE)
     target_event = models.ForeignKey(Event, on_delete=models.CASCADE, null=True, blank=True)
+    target_person = models.ForeignKey("registration.Person", on_delete=models.CASCADE, null=True, blank=True)
     club_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     can_remove = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -206,3 +231,97 @@ class Notification(models.Model):
     
     def __str__(self):
         return '{} {} notification'.format(self.club_user, self.type)
+    
+
+class MonthlyPaymentPlan(models.Model):
+    club_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, limit_choices_to={"role": "subed_club"},)
+    name = models.CharField(max_length=50)
+    amount = models.DecimalField(max_digits=7, decimal_places=2)
+    is_default = models.BooleanField(default=False)
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["club_user"],
+                condition=Q(is_default=True),
+                name="unique_default_plan_per_club",
+            )
+        ]
+
+    def save(self, *args, **kwargs):
+        if self.is_default:
+            MonthlyPaymentPlan.objects.filter(
+                club_user=self.club_user
+            ).exclude(
+                id=self.id
+            ).update(is_default=False)
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.name} ({self.amount}€)"
+    
+
+class MemberValidationRequest(models.Model):
+
+    class REQUEST_TYPE(models.TextChoices):
+        GENERAL = 'general', 'General'
+        VERIFY = 'verify', 'Verify'
+        EXAMS = 'exams', 'Exams'
+
+    class STATUS(models.TextChoices):
+        PENDING = 'pending', 'Pending'
+        APPROVED = 'approved', "Approved"
+        REJECTED = 'rejected', 'Rejected'
+
+    person = models.ForeignKey(
+        "registration.Person",
+        on_delete=models.CASCADE,
+        related_name='validation_requests'
+    )
+
+    requested_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='person_validation_requests',
+        limit_choices_to={'role': 'subed_club'}
+    )
+
+    reviewed_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='reviewed_person_requests',
+        limit_choices_to={'role': 'main_admin'}
+    )
+
+    request_type = models.CharField(
+        max_length=10,
+        choices=REQUEST_TYPE,
+        default=REQUEST_TYPE.GENERAL
+    )
+
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS,
+        default=STATUS.PENDING
+    )
+
+    message = models.TextField(blank=True)
+    admin_comment = models.TextField(blank=True)
+    file = models.FileField(upload_to="person_requests/request_files/", null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['person'],
+                condition=Q(status='pending'),
+                name='unique_pending_validation_request_per_person'
+            )
+        ]
+
+    def __str__(self):
+        return f"Validation request for {self.person} ({self.status})"

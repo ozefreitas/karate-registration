@@ -3,7 +3,6 @@ from django.urls import path
 from . import views
 
 from rest_framework import routers
-from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework_simplejwt.views import TokenRefreshView
 
 
@@ -11,6 +10,8 @@ router = routers.DefaultRouter()
 router.register(r'categories', views.CategoriesViewSet, basename='categories')
 router.register(r'request_acount', views.RequestedAcountViewSet, basename='request-acount')
 router.register(r'notifications', views.NotificationViewSet, basename='notifications')
+router.register(r'monthly_payment_plans', views.MonthlyPaymentPlanViewSet, basename='monthly-payment-plans')
+router.register(r'member_validation', views.MemberValidationRequestViewSet, basename='member-validation-requests')
 
 urlpatterns = [
     path('', include(router.urls)),
