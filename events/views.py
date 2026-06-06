@@ -460,7 +460,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 status=status.HTTP_200_OK
             )
 
-    @extend_schema(responses=serializers.EventRegistrationCountSerializer(many=True))
+    @extend_schema(responses={200: serializers.EventRegistrationCountSerializer(many=True)})
     @action(detail=False, methods=["get"], url_path="registration-counts")
     def registration_counts(self, request):
         queryset = Event.objects.prefetch_related(

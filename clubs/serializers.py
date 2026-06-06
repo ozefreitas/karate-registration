@@ -26,7 +26,7 @@ class ClubsSerializer(serializers.ModelSerializer):
 class CreateClubSerializer(serializers.ModelSerializer):
     class Meta:
         model = Club
-        exclude = ["is_registered", "mother_acount"]
+        exclude = ["id", "is_registered", "mother_acount"]
 
 
 class ClubSubscriptionsSerializer(serializers.ModelSerializer):

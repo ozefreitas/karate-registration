@@ -9778,6 +9778,49 @@
                 "type": "string",
                 "description": "* `event_not_ended` - event_not_ended\n* `already_rated` - already_rated\n* `can_rate` - can_rate"
             },
+            "CompactCategorizedPersons": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "first_name": {
+                        "type": "string",
+                        "title": "Primeiro Nome",
+                        "maxLength": 200
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "title": "Último Nome",
+                        "maxLength": 200
+                    },
+                    "gender": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/GenderEnum"
+                            }
+                        ],
+                        "title": "Género"
+                    },
+                    "club": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "full_name": {
+                        "type": "string",
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "club",
+                    "first_name",
+                    "full_name",
+                    "gender",
+                    "id",
+                    "last_name"
+                ]
+            },
             "CompactCategory": {
                 "type": "object",
                 "properties": {
@@ -10207,10 +10250,6 @@
             "CreateClub": {
                 "type": "object",
                 "properties": {
-                    "id": {
-                        "type": "integer",
-                        "readOnly": true
-                    },
                     "name": {
                         "type": "string",
                         "title": "Clube",
@@ -10221,7 +10260,6 @@
                     }
                 },
                 "required": [
-                    "id",
                     "name"
                 ]
             },
@@ -10731,6 +10769,25 @@
                     "splitFavourites"
                 ]
             },
+            "DisciplineMember": {
+                "type": "object",
+                "properties": {
+                    "person": {
+                        "$ref": "#/components/schemas/CompactCategorizedPersons"
+                    },
+                    "added_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "category": {
+                        "$ref": "#/components/schemas/NameCategory"
+                    }
+                },
+                "required": [
+                    "category",
+                    "person"
+                ]
+            },
             "Disciplines": {
                 "type": "object",
                 "properties": {
@@ -10739,7 +10796,10 @@
                         "readOnly": true
                     },
                     "individuals": {
-                        "type": "string",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DisciplineMember"
+                        },
                         "readOnly": true
                     },
                     "teams": {
@@ -12451,7 +12511,10 @@
                         "readOnly": true
                     },
                     "individuals": {
-                        "type": "string",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DisciplineMember"
+                        },
                         "readOnly": true
                     },
                     "teams": {

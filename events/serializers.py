@@ -4,6 +4,7 @@ import core.serializers.categories
 from django.utils.text import slugify
 from .models import Event, Discipline, Announcement, DisciplineMember, DisciplineTeam
 from datetime import date
+from drf_spectacular.utils import extend_schema_field
 
 
 class EventsSerializer(serializers.ModelSerializer):
@@ -218,6 +219,15 @@ class GenerateDrawRequestSerializer(serializers.Serializer):
     notificate = serializers.BooleanField()
 
 
+class DisciplineMemberSerializer(serializers.ModelSerializer):
+    person = registration.serializers.serializers.CompactCategorizedPersonsSerializer()
+    category = core.serializers.categories.NameCategorySerializer()
+
+    class Meta:
+        model = DisciplineMember
+        fields = ["person", "added_at", "category"]
+
+
 class DisciplinesSerializer(serializers.ModelSerializer):
     individuals = serializers.SerializerMethodField()
     teams = serializers.SerializerMethodField()
@@ -227,6 +237,7 @@ class DisciplinesSerializer(serializers.ModelSerializer):
         model = Discipline
         fields = "__all__"
 
+    @extend_schema_field(DisciplineMemberSerializer(many=True))
     def get_individuals(self, obj):
         user = self.context['request'].user
         event = self.context['request'].query_params.get("event_disciplines")
@@ -285,15 +296,6 @@ class DisciplinesSerializer(serializers.ModelSerializer):
                 'restricted': self.context['request'].query_params.get("restricted")
             }
         ).data
-
-
-class DisciplineMemberSerializer(serializers.ModelSerializer):
-    person = registration.serializers.serializers.CompactCategorizedPersonsSerializer()
-    category = core.serializers.categories.NameCategorySerializer()
-
-    class Meta:
-        model = DisciplineMember
-        fields = ["person", "added_at", "category"]
 
 
 class DisciplineTeamSerializer(serializers.ModelSerializer):
