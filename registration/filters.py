@@ -1,8 +1,7 @@
 from django_filters import rest_framework as filters
 from registration.models import MonthlyPersonPayment, Person, Classification
-from events.models import Event
+from events.models import Event, Discipline
 from django.db.models import Q, Count
-from registration.utils.utils import get_real_member
 
 
 class PersonsFilters(filters.FilterSet):
@@ -20,29 +19,31 @@ class PersonsFilters(filters.FilterSet):
 
     def filter_persons_not_in_event(self, queryset, name, value):
         event = Event.objects.filter(id=value).first()
-        number_disciplines = event.disciplines.filter(is_coach=False).count()
+        discipline_id = self.data.get("discipline_id")
 
-        # no disciplines just returns the ones still not in that event
-        if number_disciplines == 0:
-            return queryset.exclude(general_events__id=value)
-        
-        # if the event is not a competition, all students are retrieved
-        if event.encounter_type != "comp":
-            return queryset.annotate(
-                discipline_count=Count('disciplines_indiv', filter=Q(disciplines_indiv__event=event), distinct=True)
-                ).filter(
-                    discipline_count__lt=1
-                    )
+        discipline = Discipline.objects.filter(id=discipline_id).first()
 
-        # if event is a competition only athletes are retrieved
+        if discipline is None:
+            return queryset.none()
+
+        number_disciplines = event.disciplines.filter(
+            is_coach=False,
+            is_team=discipline.is_team,
+        ).count()
+
         athlete_filter = Q(member_types__member_type="athlete")
+
+        discipline_filter = Q(
+            disciplines_indiv__event=event,
+            disciplines_indiv__is_team=discipline.is_team,
+        )
 
         return (
             queryset
             .annotate(
                 discipline_count=Count(
                     "disciplines_indiv",
-                    filter=Q(disciplines_indiv__event=event),
+                    filter=discipline_filter,
                     distinct=True,
                 )
             )
@@ -66,16 +67,14 @@ class PersonsFilters(filters.FilterSet):
         return queryset.filter(is_validated=value)
     
     def filter_coach_not_in_event(self, queryset, name, value):
-        event = Event.objects.filter(id=value).first()
-        number_disciplines = event.disciplines.filter(is_coach=True).count()
+        discipline_id = self.data.get("discipline_id")
 
-        return queryset.annotate(
-            discipline_count=Count('disciplines_indiv', filter=Q(disciplines_indiv__event=event), distinct=True)
-            ).filter(
-                member_types__member_type__in=["coach"],
-                graduation__lt="8",
-                discipline_count__lt=number_disciplines
-                )
+        return queryset.filter(
+            member_types__member_type="coach",
+            graduation__lt="8",
+        ).exclude(
+            disciplines_indiv__id=discipline_id
+        )
 
     def filter_payment(self, queryset, name, value):
         matching_ids = [

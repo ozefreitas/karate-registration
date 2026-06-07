@@ -5,7 +5,6 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
-from registration.utils.utils import get_identity_members, get_real_member
 
 from .filters import NotificationsFilters, CategoriesFilters
 from core.permissions import IsAuthenticatedOrReadOnly, IsUnauthenticatedForPost, IsNationalForPostDelete, IsAdminRoleorHigher, IsPayingUserorAdminForGet, CanFilterByUserPermission, MemberValidationRequestPermissions

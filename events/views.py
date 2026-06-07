@@ -550,11 +550,30 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             return Response({"error": "Não existem Escalões que satisfaçam este(s) Membro(s)."}, status=status.HTTP_400_BAD_REQUEST)
 
         if len(list(categories)) > 1:
-            return Response({
-                "status": "info", 
-                "message": "Existe mais que um Escalão possível para inscrever esta Membro. Selecione apenas um.",
-                "category_ids": categories.values_list("id", flat=True)}, 
-                status=status.HTTP_200_OK)
+            # Try to narrow down by weight before asking the user to pick
+            if len(list(categories)) == 2 and member.weight is not None:
+                weight_filtered = categories.filter(
+                    Q(min_weight__lt=member.weight) | Q(min_weight__isnull=True),
+                    Q(max_weight__gte=member.weight) | Q(max_weight__isnull=True),
+                )
+                if weight_filtered.count() == 1:
+                    categories = weight_filtered
+                elif weight_filtered.count() == 0:
+                    return Response({"error": "Não existem Escalões que satisfaçam o peso deste Membro."}, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    # Still ambiguous even after weight filter — ask user
+                    return Response({
+                        "status": "info",
+                        "message": "Existe mais que um Escalão possível para inscrever esta Membro. Selecione apenas um.",
+                        "category_ids": weight_filtered.values_list("id", flat=True)
+                    }, status=status.HTTP_200_OK)
+            else:
+                # No weight to filter on — ask user to pick
+                return Response({
+                    "status": "info",
+                    "message": "Existe mais que um Escalão possível para inscrever esta Membro. Selecione apenas um.",
+                    "category_ids": categories.values_list("id", flat=True)
+                }, status=status.HTTP_200_OK)
 
         base_category = categories.get()
 
@@ -578,26 +597,33 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 return Response({"error": "Graduação mínima para este Escalão não respeitada."}, status=status.HTTP_400_BAD_REQUEST)
             
         # Weights
-        if base_category.min_weight is None and base_category.max_weight is None:  # category does not have any weight limit
+        if base_category.min_weight is None and base_category.max_weight is None:
             discipline.add_member(member, base_category)
         else:
             if member.weight is None:
-                return Response({"status": "info", 
-                                    "message": "O escalão disponível para este Atleta pede que adicione um peso."}, 
-                                    status=status.HTTP_200_OK)
-            
+                return Response({
+                    "status": "info",
+                    "message": "O escalão disponível para este Atleta pede que adicione um peso."
+                }, status=status.HTTP_200_OK)
 
-        if base_category.min_weight is not None and base_category.max_weight is not None:
-            if base_category.min_weight <= member.weight <= base_category.max_weight:
+            min_w = base_category.min_weight
+            max_w = base_category.max_weight
+
+            if min_w is not None and max_w is not None:
+                if min_w <= member.weight <= max_w:
                     discipline.add_member(member, base_category)
-            else:
-                pass
-        if base_category.max_weight is not None:
-            if member.weight < base_category.max_weight:
-                discipline.add_member(member, base_category)
-        if base_category.min_weight is not None:
-            if member.weight >= base_category.min_weight:
-                discipline.add_member(member, base_category)
+                else:
+                    return Response({"error": "Peso não está dentro dos limites estipulados para o Escalão."}, status=status.HTTP_400_BAD_REQUEST)
+            elif max_w is not None:  # only upper bound (e.g. max 75kg)
+                if member.weight <= max_w:
+                    discipline.add_member(member, base_category)
+                else:
+                    return Response({"error": "Peso acima do máximo para este Escalão."}, status=status.HTTP_400_BAD_REQUEST)
+            elif min_w is not None:  # only lower bound (e.g. min 75kg)
+                if member.weight >= min_w:
+                    discipline.add_member(member, base_category)
+                else:
+                    return Response({"error": "Peso abaixo do mínimo para este Escalão."}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({"message": "Membro adicionado a esta(s) Modalidade(s)."}, status=status.HTTP_200_OK)
     

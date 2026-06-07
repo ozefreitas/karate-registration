@@ -2,7 +2,7 @@ from django.db import models
 
 from core.models import Category, Event
 from events.models import Discipline
-from registration.models import Person
+from registration.models import Person, Team
 from core.constants import KATAS
 
 # Create your models here.
@@ -29,8 +29,10 @@ class Bracket(models.Model):
 
 class Match(models.Model):
     bracket = models.ForeignKey(Bracket, on_delete=models.CASCADE, related_name="matches")
-    contender_1 = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="matches_as_1", null=True)
-    contender_2 = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="matches_as_2", null=True)
+    # Individuals
+    contender_1 = models.ForeignKey(Person, null=True, blank=True, on_delete=models.SET_NULL, related_name="matches_as_contender_1")
+    contender_2 = models.ForeignKey(Person, null=True, blank=True, on_delete=models.SET_NULL, related_name="matches_as_contender_2")
+    winner = models.ForeignKey(Person, null=True, blank=True, on_delete=models.SET_NULL, related_name="matches_won")
     round_number = models.IntegerField()
     is_third_place = models.BooleanField(default=False)
     loser_goes_to = models.ForeignKey(
@@ -40,7 +42,10 @@ class Match(models.Model):
         'ScoringRound', null=True, blank=True, on_delete=models.SET_NULL
     )
     match_number = models.IntegerField()
-    winner = models.ForeignKey(Person, on_delete=models.SET_NULL, null=True, blank=True, related_name="won_matches")
+    # Teams
+    team_contender_1 = models.ForeignKey(Team, null=True, blank=True, on_delete=models.SET_NULL, related_name="matches_as_contender_1")
+    team_contender_2 = models.ForeignKey(Team, null=True, blank=True, on_delete=models.SET_NULL, related_name="matches_as_contender_2")
+    team_winner = models.ForeignKey(Team, null=True, blank=True, on_delete=models.SET_NULL, related_name="matches_won")
     ongoing = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -52,11 +57,31 @@ class Match(models.Model):
         return self.round_number == 0 and self.match_number == 1 and not self.is_third_place
 
 
+    def _get_winner(self):
+        return self.team_winner if self.bracket.discipline.is_team else self.winner
+
+
+    def _get_contender(self, number):
+        if self.bracket.discipline.is_team:
+            return self.team_contender_1 if number == 1 else self.team_contender_2
+        return self.contender_1 if number == 1 else self.contender_2
+
+
+    def _get_loser(self):
+        winner = self._get_winner()
+        c1 = self._get_contender(1)
+        c2 = self._get_contender(2)
+        return c2 if winner == c1 else c1
+
+
     def set_winner(self, winner):
         if winner not in [1, 2]:
             raise ValueError("Winner must be either 1 or 2.")
 
-        self.winner = self.contender_1 if winner == 1 else self.contender_2
+        if self.bracket.discipline.is_team:
+            self.team_winner = self.team_contender_1 if winner == 1 else self.team_contender_2
+        else:
+            self.winner = self.contender_1 if winner == 1 else self.contender_2
         self.save()
 
         if not self.is_third_place:
@@ -65,7 +90,8 @@ class Match(models.Model):
 
 
     def advance_winner(self):
-        if not self.winner:
+        winner = self._get_winner()
+        if not winner:
             return
 
         # Finals: just close the match, no one to advance
@@ -89,7 +115,6 @@ class Match(models.Model):
                 entry.save()
 
         else:
-
             if current_match_number % 2 == 1:
                 pair_number = current_match_number + 1
                 is_first_in_pair = True
@@ -106,8 +131,12 @@ class Match(models.Model):
             except Match.DoesNotExist:
                 return
 
-            if not pair_match.winner:
-                return
+            if self.bracket.discipline.is_team:
+                if not pair_match.team_winner:
+                    return
+            else:
+                if not pair_match.winner:
+                    return
 
             next_round = current_round - 1
             next_match_number = (min(current_match_number, pair_number) + 1) // 2
@@ -116,15 +145,28 @@ class Match(models.Model):
                 bracket=bracket,
                 round_number=next_round,
                 match_number=next_match_number,
-                defaults={"contender_1": None, "contender_2": None}
+                defaults={
+                    "contender_1": None, 
+                    "contender_2": None,
+                    "team_contender_1": None,
+                    "team_contender_2": None
+                }
             )
 
             if is_first_in_pair:
-                next_match.contender_1 = self.winner
-                next_match.contender_2 = pair_match.winner
+                if self.bracket.discipline.is_team:
+                    next_match.team_contender_1 = self.team_winner
+                    next_match.team_contender_2 = pair_match.team_winner
+                else:
+                    next_match.contender_1 = self.winner
+                    next_match.contender_2 = pair_match.winner
             else:
-                next_match.contender_1 = pair_match.winner
-                next_match.contender_2 = self.winner
+                if self.bracket.discipline.is_team:
+                    next_match.team_contender_1 = pair_match.team_winner
+                    next_match.team_contender_2 = self.team_winner
+                else:
+                    next_match.contender_1 = pair_match.winner
+                    next_match.contender_2 = self.winner
 
             next_match.save()
 
@@ -134,15 +176,16 @@ class Match(models.Model):
         When this match gets a winner (and thus a loser),
         advance the loser to the 3rd place match if one is linked.
         """
-        if not self.winner:
+        winner = self._get_winner()
+        if not winner:
             return
 
-        # Determine the loser
-        if self.contender_1 == self.winner:
-            loser = self.contender_2
-        else:
-            loser = self.contender_1
-
+        # Determine the loser (or for indiv or team)
+        loser = self._get_loser()
+        # if self.contender_1 == self.winner:
+        #     loser = self.contender_2
+        # else:
+        #     loser = self.contender_1
         if not loser:
             return
 
@@ -152,10 +195,16 @@ class Match(models.Model):
         third_place_match = self.loser_goes_to
 
         # Check if the other semi-final has already placed its loser
-        if not third_place_match.contender_1:
-            third_place_match.contender_1 = loser
+        if self.bracket.discipline.is_team:
+            if not third_place_match.team_contender_1:
+                third_place_match.team_contender_1 = loser
+            else:
+                third_place_match.team_contender_2 = loser
         else:
-            third_place_match.contender_2 = loser
+            if not third_place_match.contender_1:
+                third_place_match.contender_1 = loser
+            else:
+                third_place_match.contender_2 = loser
 
         third_place_match.save()
     
@@ -182,7 +231,8 @@ class ScoringRound(models.Model):
 
 class ScoringEntry(models.Model):
     scoring_round = models.ForeignKey(ScoringRound, on_delete=models.CASCADE, related_name="entries")
-    person = models.ForeignKey(Person, on_delete=models.CASCADE, null=True, blank=True)
+    person = models.ForeignKey(Person, null=True, blank=True, on_delete=models.CASCADE)
+    team = models.ForeignKey(Team, null=True, blank=True, on_delete=models.CASCADE)
     score = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
     rank = models.IntegerField(null=True, blank=True)
     entry_number = models.PositiveIntegerField()
