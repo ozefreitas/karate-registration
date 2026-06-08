@@ -346,8 +346,6 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                     {"message": f"Este Evento não se qualifica para a criação de um Sorteio ({event.encounter_type})."},
                     status=status.HTTP_400_BAD_REQUEST
                  )
-        
-        disciplines = event.disciplines.exclude(is_coach=True)
 
         serializer = serializers.GenerateDrawRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -362,14 +360,13 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         for discipline_format in formats:
 
             if discipline_format["format"] == "torneio":
-                success = DrawUtils.generate_torneio_draw(event, disciplines, discipline_format)
+                success = DrawUtils.generate_torneio_draw(event, discipline_format)
             
             elif discipline_format["format"] == "grupos":
-                success = DrawUtils.generate_liga_draw(disciplines, discipline_format)
+                success = DrawUtils.generate_liga_draw(discipline_format)
 
             elif discipline_format["format"] == "misto":
-                success = DrawUtils.generate_torneio_draw(event, disciplines, discipline_format, True)
-                return Response({"message": success})
+                success = DrawUtils.generate_torneio_draw(event, discipline_format, True)
 
         # remove previous notification for available draw for this event
         previous_notifications = Notification.objects.filter(type__in=["draw_available", "draw_patched"], target_event=event)

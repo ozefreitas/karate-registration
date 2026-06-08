@@ -1,15 +1,19 @@
 from rest_framework import serializers
 import draw.models as models
-from registration.serializers.base import CompactPersonSerializer
+from registration.serializers.base import CompactPersonSerializer, CompactTeamSerializer
 from core.serializers.categories import CompactCategorySerializer
 
 
 class BracketSerializer(serializers.ModelSerializer):
     category = CompactCategorySerializer()
+    is_team = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Bracket
         fields = "__all__"
+    
+    def get_is_team(self, obj):
+        return obj.discipline.is_team
 
 
 class CreateBracketSerializer(serializers.ModelSerializer):
@@ -103,6 +107,7 @@ class ScoringResultSerializer(serializers.ModelSerializer):
 
 class ScoringEntrySerializer(serializers.ModelSerializer):
     person = CompactPersonSerializer()
+    team = CompactTeamSerializer()
     scoring_result = ScoringResultSerializer(read_only=True, allow_null=True)
 
     class Meta:

@@ -23,7 +23,7 @@ class PersonsFilters(filters.FilterSet):
 
         discipline = Discipline.objects.filter(id=discipline_id).first()
 
-        if discipline is None:
+        if not discipline:
             return queryset.none()
 
         number_disciplines = event.disciplines.filter(
@@ -31,28 +31,32 @@ class PersonsFilters(filters.FilterSet):
             is_team=discipline.is_team,
         ).count()
 
-        athlete_filter = Q(member_types__member_type="athlete")
-
-        discipline_filter = Q(
-            disciplines_indiv__event=event,
-            disciplines_indiv__is_team=discipline.is_team,
-        )
-
-        return (
+        qs = (
             queryset
             .annotate(
                 discipline_count=Count(
                     "disciplines_indiv",
-                    filter=discipline_filter,
+                    filter=Q(
+                        disciplines_indiv__event=event,
+                        disciplines_indiv__is_team=discipline.is_team,
+                    ),
                     distinct=True,
                 )
             )
             .filter(
-                athlete_filter,
+                member_types__member_type="athlete",
                 discipline_count__lt=number_disciplines,
             )
-            .distinct()
         )
+
+        if discipline.is_team:
+            qs = qs.exclude(
+                Q(first_element__disciplines_team=discipline) |
+                Q(second_element__disciplines_team=discipline) |
+                Q(third_element__disciplines_team=discipline)
+            )
+        
+        return qs.distinct()
     
     def filter_persons_in_category(self, queryset, name, value):
         return queryset.filter(category=value)
