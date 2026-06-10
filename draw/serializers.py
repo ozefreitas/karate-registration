@@ -7,6 +7,7 @@ from core.serializers.categories import CompactCategorySerializer
 class BracketSerializer(serializers.ModelSerializer):
     category = CompactCategorySerializer()
     is_team = serializers.SerializerMethodField()
+    has_only_scoring_rounds = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Bracket
@@ -14,6 +15,9 @@ class BracketSerializer(serializers.ModelSerializer):
     
     def get_is_team(self, obj):
         return obj.discipline.is_team
+    
+    def get_has_only_scoring_rounds(self, obj):
+        return obj.scoring_rounds.exists() and not obj.matches.exists()
 
 
 class CreateBracketSerializer(serializers.ModelSerializer):
@@ -131,10 +135,11 @@ class UpdateScoringEntrySerializer(serializers.ModelSerializer):
     def validate(self, data):
         instance = self.instance
         person = data.get("person", instance.person)
+        team = data.get("team", instance.team)
 
-        if data.get("ongoing") and person is None:
+        if data.get("ongoing") and person is None and team is None:
             raise serializers.ValidationError(
-                "Partida não tem um Atleta associado! Conclua a partida anterior."
+                "Partida não tem um Atleta/Equipa associado(a)! Conclua a partida anterior."
             )
 
         return data

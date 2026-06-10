@@ -61,6 +61,7 @@ class EventsSerializer(serializers.ModelSerializer):
         for discipline in disciplines:
             if not discipline.is_coach:
                 number += discipline.individuals.count()
+                number += discipline.teams.count()
         return number
     
     def get_has_any_team(self, obj):

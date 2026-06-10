@@ -522,6 +522,58 @@
                 }
             }
         },
+        "/bracket/{id}/teams/": {
+            "get": {
+                "operationId": "bracket_teams_list",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "event",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this bracket.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "bracket"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/CompactTeam"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/categories/": {
             "get": {
                 "operationId": "categories_list",
@@ -9310,6 +9362,10 @@
                         "type": "string",
                         "readOnly": true
                     },
+                    "has_only_scoring_rounds": {
+                        "type": "string",
+                        "readOnly": true
+                    },
                     "name": {
                         "type": "string",
                         "title": "Prova",
@@ -9348,6 +9404,7 @@
                     "created_at",
                     "discipline",
                     "event",
+                    "has_only_scoring_rounds",
                     "id",
                     "is_team",
                     "name"
@@ -12398,6 +12455,10 @@
                         "$ref": "#/components/schemas/CompactCategory"
                     },
                     "is_team": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "has_only_scoring_rounds": {
                         "type": "string",
                         "readOnly": true
                     },

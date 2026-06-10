@@ -1,10 +1,10 @@
-from .models import Bracket, Match, ScoringRound, ScoringEntry
+from .models import Bracket, Match, ScoringEntry
 import draw.serializers as serializers
 from core.views import MultipleSerializersMixIn
 from core.permissions import IsAuthenticatedOrReadOnly, IsTechnicianOrAdmin, IsTechnicianOrAdminforPOST
-from registration.serializers.base import CompactPersonSerializer
+from registration.serializers.base import CompactPersonSerializer, CompactTeamSerializer
 from registration.serializers.serializers import ClassificationsSerializer
-from registration.models import Person, Classification
+from registration.models import Person, Classification, Team
 from .filters import BracketsFilters, MatchesFilters, ScoringEntriesFilters
 
 from rest_framework import viewsets
@@ -39,6 +39,19 @@ class BracketViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         )
 
         serializer = CompactPersonSerializer(persons, many=True)
+        return Response(serializer.data)
+    
+    @extend_schema(responses=CompactTeamSerializer(many=True))
+    @action(detail=True, methods=["get"], url_path="teams")
+    def teams(self, request, pk=None):
+        bracket = self.get_object()
+        
+        teams = Team.objects.filter(
+            category=bracket.category,
+            disciplineteam__discipline=bracket.discipline,
+        )
+
+        serializer = CompactTeamSerializer(teams, many=True)
         return Response(serializer.data)
     
     @action(
