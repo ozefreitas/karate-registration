@@ -130,6 +130,18 @@ class DisciplineTeam(models.Model):
         unique_together = ('discipline', 'team') 
 
 
+class EventDorsal(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="dorsals")
+    person = models.ForeignKey("registration.Person", on_delete=models.CASCADE, related_name="dorsals")
+    dorsal = dorsal = models.IntegerField(null=True, blank=True)
+
+    class Meta:
+        unique_together = [("event", "person"), ("event", "dorsal")]
+    
+    def __str__(self):
+        return 'Dorsal of {} {} for the {} Event'.format(self.person.first_name, self.person.last_name, self.event.name)
+
+
 class FeedbackData(models.Model):
     first_name = models.CharField("Primeiro Nome", max_length=100)
     last_name = models.CharField("Último Nome", max_length=100)

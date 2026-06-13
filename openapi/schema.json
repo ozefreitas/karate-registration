@@ -10084,6 +10084,13 @@
                             }
                         ],
                         "title": "Graduação"
+                    },
+                    "id_number": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "Nº SKI-P"
                     }
                 },
                 "required": [
@@ -11401,6 +11408,14 @@
                         "readOnly": true,
                         "nullable": true
                     },
+                    "contender_1_dorsal": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "contender_2_dorsal": {
+                        "type": "string",
+                        "readOnly": true
+                    },
                     "round_number": {
                         "type": "integer",
                         "maximum": 2147483647,
@@ -11449,7 +11464,9 @@
                 "required": [
                     "bracket",
                     "contender_1",
+                    "contender_1_dorsal",
                     "contender_2",
+                    "contender_2_dorsal",
                     "created_at",
                     "id",
                     "kataresult",
@@ -13134,6 +13151,10 @@
                         "type": "string",
                         "readOnly": true
                     },
+                    "club": {
+                        "type": "string",
+                        "readOnly": true
+                    },
                     "gender": {
                         "allOf": [
                             {
@@ -13538,6 +13559,10 @@
                         "readOnly": true,
                         "nullable": true
                     },
+                    "person_dorsal": {
+                        "type": "string",
+                        "readOnly": true
+                    },
                     "score": {
                         "type": "string",
                         "format": "decimal",
@@ -13572,6 +13597,7 @@
                     "entry_number",
                     "id",
                     "person",
+                    "person_dorsal",
                     "scoring_result",
                     "scoring_round",
                     "team"
@@ -13685,6 +13711,10 @@
                         "type": "string",
                         "readOnly": true
                     },
+                    "club": {
+                        "type": "string",
+                        "readOnly": true
+                    },
                     "gender": {
                         "allOf": [
                             {
@@ -13707,6 +13737,7 @@
                     "athlete4",
                     "athlete5",
                     "category",
+                    "club",
                     "disciplines",
                     "events",
                     "gender",

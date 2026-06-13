@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Event, FeedbackData, Announcement, Discipline, DisciplineMember, DisciplineTeam
+from .models import Event, FeedbackData, Announcement, Discipline, DisciplineMember, DisciplineTeam, EventDorsal
 
 # Register your models here.
 
@@ -16,3 +16,4 @@ admin.site.register(DisciplineMember)
 admin.site.register(DisciplineTeam)
 admin.site.register(FeedbackData)
 admin.site.register(Announcement)
+admin.site.register(EventDorsal)

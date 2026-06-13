@@ -2,7 +2,7 @@ from django.conf import settings
 from django_filters.rest_framework import DjangoFilterBackend
 from django.utils import timezone
 from django.http import HttpResponse
-from django.db.models import Q, Prefetch
+from django.db.models import Q, Prefetch, Max
 from decouple import config
 import statistics
 from datetime import timedelta, datetime, date
@@ -11,7 +11,7 @@ import math
 
 from .filters import DisciplinesFilters, EventsFilters
 from clubs.models import ClubRatingAudit
-from .models import Event, Discipline, Announcement, DisciplineMember, DisciplineTeam
+from .models import Event, Discipline, Announcement, DisciplineMember, DisciplineTeam, EventDorsal
 from registration.models import Person, Team
 from core.permissions import IsAuthenticatedOrReadOnly, EventIndividualsPermission, EventPermission, IsAdminRoleorHigherForGET, IsAdminRoleorHigher
 from core.models import Category, Notification
@@ -51,6 +51,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         qs = super().get_queryset()
         user = self.request.user
         role = getattr(user, "role", None)
+        now = timezone.now()
 
         if role in ['main_admin', 'single_admin', 'superuser']:
             return qs.filter(
@@ -63,7 +64,6 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             ).order_by("event_date")
 
         if role == 'free_club':
-            now = timezone.now()
             future_7 = now + timedelta(days=7)
             return qs.filter(
                 Q(start_registration__isnull=False, start_registration__lte=now, event_date__gte=now, created_by__isnull=True)
@@ -71,8 +71,11 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 Q(start_registration__isnull=True, event_date__gte=now, event_date__lte=future_7, created_by__isnull=True)
             ).order_by("event_date")
 
+        if role == "technician":
+            return qs.filter(Q(created_by__isnull=True) | Q(created_by__role__in=['main_admin']), event_date=now).order_by("event_date")
+
         # Everyone else sees only admin-created events
-        return qs.filter(created_by__isnull=True).order_by("event_date")
+        return qs.filter(Q(created_by__isnull=True) | Q(created_by__role__in=['main_admin'])).order_by("event_date")
 
     def perform_create(self, serializer):
         user = self.request.user
@@ -210,11 +213,16 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         disciplines = event.disciplines.all()
         age_method = config('AGE_CALC_REF')
 
+        # Preload all dorsals for this event
+        dorsals = {
+            ed.person_id: ed.dorsal
+            for ed in EventDorsal.objects.filter(event=event)
+        }
+
         wb = openpyxl.Workbook()
         ws = wb.active
         ws.title = "Members"
 
-        # Headers
         headers = ["Dojo", "Nome", "Idade", f"Nº {config('MAIN_ADMIN')}", "Género"]
 
         if list(disciplines) != []:
@@ -231,46 +239,49 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         if list(disciplines) == []:
             for member in event.individuals.select_related("club").all():
                 event_age = get_comp_age(member.birth_date) if age_method == "true" else calc_age(age_method, member.birth_date, season)
-                ws.append([
-                        getattr(member.club, "username", ""),
-                        getattr(member, "first_name", "") + " " + getattr(member, "last_name", ""),
-                        event_age,
-                        getattr(member, "id_number", ""),
-                        getattr(member, "gender", ""),
-                    ])
-            
+                row = [
+                    getattr(member.club, "username", ""),
+                    getattr(member, "first_name", "") + " " + getattr(member, "last_name", ""),
+                    event_age,
+                    getattr(member, "id_number", ""),
+                    getattr(member, "gender", ""),
+                ]
+                if event.encounter_type == "comp":
+                    dorsal = dorsals.get(member.id)
+                    row.append(str(dorsal).zfill(3) if dorsal else "")
+                ws.append(row)
+
         else:
-
             all_members = []
-            # Loop disciplines -> individuals
-            for discipline in disciplines:
 
+            for discipline in disciplines:
                 for member in discipline.individuals.select_related("club").all():
                     event_age = get_comp_age(member.birth_date) if age_method == "true" else calc_age(age_method, member.birth_date, season)
                     category_to_assign = None
 
                     if not event.has_categories:
-                    
-                        ws.append([
-                        getattr(member.club, "username", ""),
-                        getattr(member, "first_name", "") + " " + getattr(member, "last_name", ""),
-                        event_age,
-                        getattr(member, "id_number", ""),
-                        getattr(member, "gender", ""),
-                        discipline.name,
-                    ])
-                    
+                        row = [
+                            getattr(member.club, "username", ""),
+                            getattr(member, "first_name", "") + " " + getattr(member, "last_name", ""),
+                            event_age,
+                            getattr(member, "id_number", ""),
+                            getattr(member, "gender", ""),
+                            discipline.name,
+                        ]
+                        if event.encounter_type == "comp":
+                            dorsal = dorsals.get(member.id)
+                            row.append(str(dorsal).zfill(3) if dorsal else "")
+                        ws.append(row)
+
                     else:
-                        categories = discipline.categories.filter(gender=member.gender, 
-                                                            min_age__lte=event_age, 
-                                                            max_age__gte=event_age
-                                                            )
+                        categories = discipline.categories.filter(
+                            gender=member.gender,
+                            min_age__lte=event_age,
+                            max_age__gte=event_age
+                        )
                         for category in categories:
-                                
-                            # Weights
-                            if category.min_weight is None and category.max_weight is None:  # category does not have any weight limit
+                            if category.min_weight is None and category.max_weight is None:
                                 category_to_assign = category
-                                
                             if category.min_weight is not None and category.max_weight is not None:
                                 if category.min_weight <= member.weight <= category.max_weight:
                                     category_to_assign = category
@@ -293,20 +304,8 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 ),
             )
 
-            name = ""
-            club = ""
-            i = 0
-
-            for discipline, member, event_age, category_to_assign in all_members_sorted: 
-
-                if name == getattr(member, "first_name", "") + " " + getattr(member, "last_name", "") and club == getattr(member.club, "username", ""):
-                    member_event_number = str(i).zfill(3)
-                else:
-                    i += 1
-                    member_event_number = str(i).zfill(3)
-                    name = getattr(member, "first_name", "") + " " + getattr(member, "last_name", ""),
-                    club = getattr(member.club, "username", ""),
-
+            for discipline, member, event_age, category_to_assign in all_members_sorted:
+                dorsal = dorsals.get(member.id)
                 ws.append([
                     getattr(member.club, "username", ""),
                     getattr(member, "first_name", "") + " " + getattr(member, "last_name", ""),
@@ -314,17 +313,14 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                     getattr(member, "id_number", ""),
                     getattr(member, "gender", ""),
                     discipline.name,
-                    category_to_assign.name,
-                    member_event_number
+                    category_to_assign.name if category_to_assign else "",
+                    str(dorsal).zfill(3) if dorsal else "",
                 ])
 
-        # Prepare response
         response = HttpResponse(
             content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
-        response["Content-Disposition"] = (
-            f'attachment; filename="event_{event.id}_members.xlsx"'
-        )
+        response["Content-Disposition"] = f'attachment; filename="event_{event.id}_members.xlsx"'
         wb.save(response)
         return response
 
@@ -350,7 +346,40 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         serializer = serializers.GenerateDrawRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        # remove previous brackets
+        # remove previous dorsals for event
+        to_deletion = EventDorsal.objects.filter(event=event)
+        for to_delete in to_deletion:
+            to_delete.delete()
+
+        # collect all unique persons across all disciplines first
+        all_persons = set()
+        for discipline in event.disciplines.all():
+            for category in discipline.categories.all():
+                registrations = DisciplineMember.objects.filter(
+                    category=category,
+                    discipline=discipline
+                )
+                for reg in registrations:
+                    all_persons.add(reg.person)
+
+        # assign dorsals to persons that don't have one yet for this event
+        next_dorsal = (EventDorsal.objects.filter(event=event)
+                    .aggregate(Max("dorsal"))["dorsal__max"] or 0) + 1
+
+        # sort by club name, and name of the person
+        all_persons = sorted(
+            all_persons,
+            key=lambda p: (p.club.username if p.club else "", p.first_name, p.last_name)
+        )
+        for person in all_persons:
+            EventDorsal.objects.get_or_create(
+                event=event,
+                person=person,
+                defaults={"dorsal": next_dorsal}
+            )
+            next_dorsal += 1
+
+        # remove previous brackets for event
         to_deletion = Bracket.objects.filter(event=event)
         for to_delete in to_deletion:
             to_delete.delete()

@@ -10,7 +10,16 @@ class CompactPersonSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Person
-        fields = ["id", "gender", "club", "full_name", "age", "weight", "graduation"]
+        fields = [
+            "id", 
+            "gender", 
+            "club", 
+            "full_name", 
+            "age", 
+            "weight", 
+            "graduation", 
+            "id_number"
+        ]
 
     def get_club(self, obj):
         return obj.club.username

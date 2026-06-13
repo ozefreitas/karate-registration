@@ -1,5 +1,6 @@
 from rest_framework import serializers
 import draw.models as models
+from events.models import EventDorsal
 from registration.serializers.base import CompactPersonSerializer, CompactTeamSerializer
 from core.serializers.categories import CompactCategorySerializer
 
@@ -44,10 +45,24 @@ class MatchSerializer(serializers.ModelSerializer):
     winner = CompactPersonSerializer()
     kataresult = KataResultSerializer(read_only=True, allow_null=True)
     kumiteresult = KumiteResultSerializer(read_only=True, allow_null=True)
-
+    contender_1_dorsal = serializers.SerializerMethodField()
+    contender_2_dorsal = serializers.SerializerMethodField()
+    
     class Meta:
         model = models.Match
         fields = "__all__"
+
+    def _get_dorsal(self, person):
+        if not person:
+            return None
+        dorsals = self.context.get("dorsals", {})
+        return str(dorsals.get(person.id)).zfill(3)
+
+    def get_contender_1_dorsal(self, obj):
+        return self._get_dorsal(obj.contender_1)
+
+    def get_contender_2_dorsal(self, obj):
+        return self._get_dorsal(obj.contender_2)
 
 
 class CreateMatchSerializer(serializers.ModelSerializer):
@@ -113,11 +128,20 @@ class ScoringEntrySerializer(serializers.ModelSerializer):
     person = CompactPersonSerializer()
     team = CompactTeamSerializer()
     scoring_result = ScoringResultSerializer(read_only=True, allow_null=True)
+    person_dorsal = serializers.SerializerMethodField()
 
     class Meta:
         model = models.ScoringEntry
         fields = "__all__"
+    
+    def _get_dorsal(self, person):
+        if not person:
+            return None
+        dorsals = self.context.get("dorsals", {})
+        return str(dorsals.get(person.id)).zfill(3)
 
+    def get_person_dorsal(self, obj):
+        return self._get_dorsal(obj.person)
 
 class CreateScoringEntrySerializer(serializers.ModelSerializer):
     class Meta:
