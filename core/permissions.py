@@ -163,6 +163,7 @@ class EventPermission(BasePermission):
     Permission used for Events.
     - Admin-like users (main_admin, single_admin, superuser): full access.
     - subed_club: can create (POST) and access their own events only (enforced in ViewSet).
+    - Technicians can only GET
     - Others: read-only, but only events not owned by a subed_club (enforced in ViewSet).
     """
     def has_permission(self, request, view):
@@ -195,7 +196,7 @@ class EventPermission(BasePermission):
             return obj.created_by is None or obj.created_by == request.user or obj.created_by.role in ['main_admin', 'single_admin', 'superuser']
 
         if request.method in SAFE_METHODS:
-            return obj.created_by is None
+            return obj.created_by is None or obj.created_by.role == "main_admin"
 
         return False
         

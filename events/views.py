@@ -2,7 +2,7 @@ from django.conf import settings
 from django_filters.rest_framework import DjangoFilterBackend
 from django.utils import timezone
 from django.http import HttpResponse
-from django.db.models import Q, Prefetch
+from django.db.models import Q, Prefetch, Max
 from decouple import config
 import statistics
 from datetime import timedelta, datetime, date
@@ -11,7 +11,7 @@ import math
 
 from .filters import DisciplinesFilters, EventsFilters
 from clubs.models import ClubRatingAudit
-from .models import Event, Discipline, Announcement, DisciplineMember, DisciplineTeam
+from .models import Event, Discipline, Announcement, DisciplineMember, DisciplineTeam, EventDorsal
 from registration.models import Person, Team
 from core.permissions import IsAuthenticatedOrReadOnly, EventIndividualsPermission, EventPermission, IsAdminRoleorHigherForGET, IsAdminRoleorHigher
 from core.models import Category, Notification
@@ -51,6 +51,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         qs = super().get_queryset()
         user = self.request.user
         role = getattr(user, "role", None)
+        now = timezone.now()
 
         if role in ['main_admin', 'single_admin', 'superuser']:
             return qs.filter(
@@ -63,7 +64,6 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             ).order_by("event_date")
 
         if role == 'free_club':
-            now = timezone.now()
             future_7 = now + timedelta(days=7)
             return qs.filter(
                 Q(start_registration__isnull=False, start_registration__lte=now, event_date__gte=now, created_by__isnull=True)
@@ -71,8 +71,11 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 Q(start_registration__isnull=True, event_date__gte=now, event_date__lte=future_7, created_by__isnull=True)
             ).order_by("event_date")
 
+        if role == "technician":
+            return qs.filter(Q(created_by__isnull=True) | Q(created_by__role__in=['main_admin']), event_date=now).order_by("event_date")
+
         # Everyone else sees only admin-created events
-        return qs.filter(created_by__isnull=True).order_by("event_date")
+        return qs.filter(Q(created_by__isnull=True) | Q(created_by__role__in=['main_admin'])).order_by("event_date")
 
     def perform_create(self, serializer):
         user = self.request.user
@@ -210,11 +213,16 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         disciplines = event.disciplines.all()
         age_method = config('AGE_CALC_REF')
 
+        # Preload all dorsals for this event
+        dorsals = {
+            ed.person_id: ed.dorsal
+            for ed in EventDorsal.objects.filter(event=event)
+        }
+
         wb = openpyxl.Workbook()
         ws = wb.active
         ws.title = "Members"
 
-        # Headers
         headers = ["Dojo", "Nome", "Idade", f"Nº {config('MAIN_ADMIN')}", "Género"]
 
         if list(disciplines) != []:
@@ -231,46 +239,49 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         if list(disciplines) == []:
             for member in event.individuals.select_related("club").all():
                 event_age = get_comp_age(member.birth_date) if age_method == "true" else calc_age(age_method, member.birth_date, season)
-                ws.append([
-                        getattr(member.club, "username", ""),
-                        getattr(member, "first_name", "") + " " + getattr(member, "last_name", ""),
-                        event_age,
-                        getattr(member, "id_number", ""),
-                        getattr(member, "gender", ""),
-                    ])
-            
+                row = [
+                    getattr(member.club, "username", ""),
+                    getattr(member, "first_name", "") + " " + getattr(member, "last_name", ""),
+                    event_age,
+                    getattr(member, "id_number", ""),
+                    getattr(member, "gender", ""),
+                ]
+                if event.encounter_type == "comp":
+                    dorsal = dorsals.get(member.id)
+                    row.append(str(dorsal).zfill(3) if dorsal else "")
+                ws.append(row)
+
         else:
-
             all_members = []
-            # Loop disciplines -> individuals
-            for discipline in disciplines:
 
+            for discipline in disciplines:
                 for member in discipline.individuals.select_related("club").all():
                     event_age = get_comp_age(member.birth_date) if age_method == "true" else calc_age(age_method, member.birth_date, season)
                     category_to_assign = None
 
                     if not event.has_categories:
-                    
-                        ws.append([
-                        getattr(member.club, "username", ""),
-                        getattr(member, "first_name", "") + " " + getattr(member, "last_name", ""),
-                        event_age,
-                        getattr(member, "id_number", ""),
-                        getattr(member, "gender", ""),
-                        discipline.name,
-                    ])
-                    
+                        row = [
+                            getattr(member.club, "username", ""),
+                            getattr(member, "first_name", "") + " " + getattr(member, "last_name", ""),
+                            event_age,
+                            getattr(member, "id_number", ""),
+                            getattr(member, "gender", ""),
+                            discipline.name,
+                        ]
+                        if event.encounter_type == "comp":
+                            dorsal = dorsals.get(member.id)
+                            row.append(str(dorsal).zfill(3) if dorsal else "")
+                        ws.append(row)
+
                     else:
-                        categories = discipline.categories.filter(gender=member.gender, 
-                                                            min_age__lte=event_age, 
-                                                            max_age__gte=event_age
-                                                            )
+                        categories = discipline.categories.filter(
+                            gender=member.gender,
+                            min_age__lte=event_age,
+                            max_age__gte=event_age
+                        )
                         for category in categories:
-                                
-                            # Weights
-                            if category.min_weight is None and category.max_weight is None:  # category does not have any weight limit
+                            if category.min_weight is None and category.max_weight is None:
                                 category_to_assign = category
-                                
                             if category.min_weight is not None and category.max_weight is not None:
                                 if category.min_weight <= member.weight <= category.max_weight:
                                     category_to_assign = category
@@ -293,20 +304,8 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 ),
             )
 
-            name = ""
-            club = ""
-            i = 0
-
-            for discipline, member, event_age, category_to_assign in all_members_sorted: 
-
-                if name == getattr(member, "first_name", "") + " " + getattr(member, "last_name", "") and club == getattr(member.club, "username", ""):
-                    member_event_number = str(i).zfill(3)
-                else:
-                    i += 1
-                    member_event_number = str(i).zfill(3)
-                    name = getattr(member, "first_name", "") + " " + getattr(member, "last_name", ""),
-                    club = getattr(member.club, "username", ""),
-
+            for discipline, member, event_age, category_to_assign in all_members_sorted:
+                dorsal = dorsals.get(member.id)
                 ws.append([
                     getattr(member.club, "username", ""),
                     getattr(member, "first_name", "") + " " + getattr(member, "last_name", ""),
@@ -314,18 +313,65 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                     getattr(member, "id_number", ""),
                     getattr(member, "gender", ""),
                     discipline.name,
-                    category_to_assign.name,
-                    member_event_number
+                    category_to_assign.name if category_to_assign else "",
+                    str(dorsal).zfill(3) if dorsal else "",
                 ])
 
-        # Prepare response
         response = HttpResponse(
             content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
-        response["Content-Disposition"] = (
-            f'attachment; filename="event_{event.id}_members.xlsx"'
-        )
+        response["Content-Disposition"] = f'attachment; filename="event_{event.id}_members.xlsx"'
         wb.save(response)
+
+        # Teams sheet
+        teams = Team.objects.filter(event=event).select_related(
+            "person_1__club",
+            "person_2__club", 
+            "person_3__club"
+        )
+
+        if teams.exists():
+            ws_teams = wb.create_sheet(title="Teams")
+            
+            team_headers = [
+                "Equipa",
+                "Dojo",
+                "Atleta 1", f"Dorsal 1",
+                "Atleta 2", f"Dorsal 2",
+                "Atleta 3", f"Dorsal 3",
+            ]
+            ws_teams.append(team_headers)
+
+            for team in teams.order_by("name"):
+                def get_person_info(person):
+                    if not person:
+                        return "", ""
+                    full_name = f"{person.first_name} {person.last_name}"
+                    dorsal = dorsals.get(person.id)
+                    return full_name, str(dorsal).zfill(3) if dorsal else ""
+
+                p1_name, p1_dorsal = get_person_info(team.person_1)
+                p2_name, p2_dorsal = get_person_info(team.person_2)
+                p3_name, p3_dorsal = get_person_info(team.person_3)
+
+                # Use the club of the first available person
+                club = next(
+                    (
+                        getattr(p.club, "username", "")
+                        for p in [team.person_1, team.person_2, team.person_3]
+                        if p and p.club
+                    ),
+                    "",
+                )
+
+                ws_teams.append([
+                    getattr(team, "name", ""),
+                    club,
+                    p1_name, p1_dorsal,
+                    p2_name, p2_dorsal,
+                    p3_name, p3_dorsal,
+                ])
+
         return response
 
 
@@ -346,13 +392,44 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                     {"message": f"Este Evento não se qualifica para a criação de um Sorteio ({event.encounter_type})."},
                     status=status.HTTP_400_BAD_REQUEST
                  )
-        
-        disciplines = event.disciplines.exclude(is_coach=True)
 
         serializer = serializers.GenerateDrawRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        # remove previous brackets
+        # remove previous dorsals for event
+        to_deletion = EventDorsal.objects.filter(event=event)
+        for to_delete in to_deletion:
+            to_delete.delete()
+
+        # collect all unique persons across all disciplines first
+        all_persons = set()
+        for discipline in event.disciplines.all():
+            for category in discipline.categories.all():
+                registrations = DisciplineMember.objects.filter(
+                    category=category,
+                    discipline=discipline
+                )
+                for reg in registrations:
+                    all_persons.add(reg.person)
+
+        # assign dorsals to persons that don't have one yet for this event
+        next_dorsal = (EventDorsal.objects.filter(event=event)
+                    .aggregate(Max("dorsal"))["dorsal__max"] or 0) + 1
+
+        # sort by club name, and name of the person
+        all_persons = sorted(
+            all_persons,
+            key=lambda p: (p.club.username if p.club else "", p.first_name, p.last_name)
+        )
+        for person in all_persons:
+            EventDorsal.objects.get_or_create(
+                event=event,
+                person=person,
+                defaults={"dorsal": next_dorsal}
+            )
+            next_dorsal += 1
+
+        # remove previous brackets for event
         to_deletion = Bracket.objects.filter(event=event)
         for to_delete in to_deletion:
             to_delete.delete()
@@ -362,14 +439,13 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         for discipline_format in formats:
 
             if discipline_format["format"] == "torneio":
-                success = DrawUtils.generate_torneio_draw(event, disciplines, discipline_format)
+                success = DrawUtils.generate_torneio_draw(event, discipline_format)
             
             elif discipline_format["format"] == "grupos":
-                success = DrawUtils.generate_liga_draw(disciplines, discipline_format)
+                success = DrawUtils.generate_liga_draw(discipline_format)
 
             elif discipline_format["format"] == "misto":
-                success = DrawUtils.generate_torneio_draw(event, disciplines, discipline_format, True)
-                return Response({"message": success})
+                success = DrawUtils.generate_torneio_draw(event, discipline_format, True)
 
         # remove previous notification for available draw for this event
         previous_notifications = Notification.objects.filter(type__in=["draw_available", "draw_patched"], target_event=event)
@@ -550,11 +626,30 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             return Response({"error": "Não existem Escalões que satisfaçam este(s) Membro(s)."}, status=status.HTTP_400_BAD_REQUEST)
 
         if len(list(categories)) > 1:
-            return Response({
-                "status": "info", 
-                "message": "Existe mais que um Escalão possível para inscrever esta Membro. Selecione apenas um.",
-                "category_ids": categories.values_list("id", flat=True)}, 
-                status=status.HTTP_200_OK)
+            # Try to narrow down by weight before asking the user to pick
+            if len(list(categories)) == 2 and member.weight is not None:
+                weight_filtered = categories.filter(
+                    Q(min_weight__lt=member.weight) | Q(min_weight__isnull=True),
+                    Q(max_weight__gte=member.weight) | Q(max_weight__isnull=True),
+                )
+                if weight_filtered.count() == 1:
+                    categories = weight_filtered
+                elif weight_filtered.count() == 0:
+                    return Response({"error": "Não existem Escalões que satisfaçam o peso deste Membro."}, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    # Still ambiguous even after weight filter — ask user
+                    return Response({
+                        "status": "info",
+                        "message": "Existe mais que um Escalão possível para inscrever esta Membro. Selecione apenas um.",
+                        "category_ids": weight_filtered.values_list("id", flat=True)
+                    }, status=status.HTTP_200_OK)
+            else:
+                # No weight to filter on — ask user to pick
+                return Response({
+                    "status": "info",
+                    "message": "Existe mais que um Escalão possível para inscrever esta Membro. Selecione apenas um.",
+                    "category_ids": categories.values_list("id", flat=True)
+                }, status=status.HTTP_200_OK)
 
         base_category = categories.get()
 
@@ -578,26 +673,33 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 return Response({"error": "Graduação mínima para este Escalão não respeitada."}, status=status.HTTP_400_BAD_REQUEST)
             
         # Weights
-        if base_category.min_weight is None and base_category.max_weight is None:  # category does not have any weight limit
+        if base_category.min_weight is None and base_category.max_weight is None:
             discipline.add_member(member, base_category)
         else:
             if member.weight is None:
-                return Response({"status": "info", 
-                                    "message": "O escalão disponível para este Atleta pede que adicione um peso."}, 
-                                    status=status.HTTP_200_OK)
-            
+                return Response({
+                    "status": "info",
+                    "message": "O escalão disponível para este Atleta pede que adicione um peso."
+                }, status=status.HTTP_200_OK)
 
-        if base_category.min_weight is not None and base_category.max_weight is not None:
-            if base_category.min_weight <= member.weight <= base_category.max_weight:
+            min_w = base_category.min_weight
+            max_w = base_category.max_weight
+
+            if min_w is not None and max_w is not None:
+                if min_w <= member.weight <= max_w:
                     discipline.add_member(member, base_category)
-            else:
-                pass
-        if base_category.max_weight is not None:
-            if member.weight < base_category.max_weight:
-                discipline.add_member(member, base_category)
-        if base_category.min_weight is not None:
-            if member.weight >= base_category.min_weight:
-                discipline.add_member(member, base_category)
+                else:
+                    return Response({"error": "Peso não está dentro dos limites estipulados para o Escalão."}, status=status.HTTP_400_BAD_REQUEST)
+            elif max_w is not None:  # only upper bound (e.g. max 75kg)
+                if member.weight <= max_w:
+                    discipline.add_member(member, base_category)
+                else:
+                    return Response({"error": "Peso acima do máximo para este Escalão."}, status=status.HTTP_400_BAD_REQUEST)
+            elif min_w is not None:  # only lower bound (e.g. min 75kg)
+                if member.weight >= min_w:
+                    discipline.add_member(member, base_category)
+                else:
+                    return Response({"error": "Peso abaixo do mínimo para este Escalão."}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({"message": "Membro adicionado a esta(s) Modalidade(s)."}, status=status.HTTP_200_OK)
     

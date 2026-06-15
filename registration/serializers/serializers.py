@@ -701,10 +701,11 @@ class TeamsSerializer(serializers.ModelSerializer):
     category = NameCategorySerializer()
     disciplines = serializers.SerializerMethodField()
     events = serializers.SerializerMethodField()
+    club = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Team
-        exclude = ["creation_date", "modified_date", "club"]
+        exclude = ["creation_date", "modified_date"]
     
     def get_team_size(self, obj):
         members = [obj.athlete1, obj.athlete2, obj.athlete3, obj.athlete4, obj.athlete5]
@@ -715,6 +716,9 @@ class TeamsSerializer(serializers.ModelSerializer):
     
     def get_events(self, obj):
         return obj.disciplines_team.values_list("event__name", flat=True).distinct()
+
+    def get_club(self, obj):
+        return obj.club.username
 
 
 class CreateTeamSerializer(serializers.ModelSerializer):

@@ -1,15 +1,24 @@
 from rest_framework import serializers
 import draw.models as models
-from registration.serializers.base import CompactPersonSerializer
+from events.models import EventDorsal
+from registration.serializers.base import CompactPersonSerializer, CompactTeamSerializer
 from core.serializers.categories import CompactCategorySerializer
 
 
 class BracketSerializer(serializers.ModelSerializer):
     category = CompactCategorySerializer()
+    is_team = serializers.SerializerMethodField()
+    has_only_scoring_rounds = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Bracket
         fields = "__all__"
+    
+    def get_is_team(self, obj):
+        return obj.discipline.is_team
+    
+    def get_has_only_scoring_rounds(self, obj):
+        return obj.scoring_rounds.exists() and not obj.matches.exists()
 
 
 class CreateBracketSerializer(serializers.ModelSerializer):
@@ -36,10 +45,24 @@ class MatchSerializer(serializers.ModelSerializer):
     winner = CompactPersonSerializer()
     kataresult = KataResultSerializer(read_only=True, allow_null=True)
     kumiteresult = KumiteResultSerializer(read_only=True, allow_null=True)
-
+    contender_1_dorsal = serializers.SerializerMethodField()
+    contender_2_dorsal = serializers.SerializerMethodField()
+    
     class Meta:
         model = models.Match
         fields = "__all__"
+
+    def _get_dorsal(self, person):
+        if not person:
+            return None
+        dorsals = self.context.get("dorsals", {})
+        return str(dorsals.get(person.id)).zfill(3)
+
+    def get_contender_1_dorsal(self, obj):
+        return self._get_dorsal(obj.contender_1)
+
+    def get_contender_2_dorsal(self, obj):
+        return self._get_dorsal(obj.contender_2)
 
 
 class CreateMatchSerializer(serializers.ModelSerializer):
@@ -103,12 +126,22 @@ class ScoringResultSerializer(serializers.ModelSerializer):
 
 class ScoringEntrySerializer(serializers.ModelSerializer):
     person = CompactPersonSerializer()
+    team = CompactTeamSerializer()
     scoring_result = ScoringResultSerializer(read_only=True, allow_null=True)
+    person_dorsal = serializers.SerializerMethodField()
 
     class Meta:
         model = models.ScoringEntry
         fields = "__all__"
+    
+    def _get_dorsal(self, person):
+        if not person:
+            return None
+        dorsals = self.context.get("dorsals", {})
+        return str(dorsals.get(person.id)).zfill(3)
 
+    def get_person_dorsal(self, obj):
+        return self._get_dorsal(obj.person)
 
 class CreateScoringEntrySerializer(serializers.ModelSerializer):
     class Meta:
@@ -126,10 +159,11 @@ class UpdateScoringEntrySerializer(serializers.ModelSerializer):
     def validate(self, data):
         instance = self.instance
         person = data.get("person", instance.person)
+        team = data.get("team", instance.team)
 
-        if data.get("ongoing") and person is None:
+        if data.get("ongoing") and person is None and team is None:
             raise serializers.ValidationError(
-                "Partida não tem um Atleta associado! Conclua a partida anterior."
+                "Partida não tem um Atleta/Equipa associado(a)! Conclua a partida anterior."
             )
 
         return data

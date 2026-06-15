@@ -1,11 +1,12 @@
-from .models import Bracket, Match, ScoringRound, ScoringEntry
+from .models import Bracket, Match, ScoringEntry
 import draw.serializers as serializers
 from core.views import MultipleSerializersMixIn
 from core.permissions import IsAuthenticatedOrReadOnly, IsTechnicianOrAdmin, IsTechnicianOrAdminforPOST
-from registration.serializers.base import CompactPersonSerializer
+from registration.serializers.base import CompactPersonSerializer, CompactTeamSerializer
 from registration.serializers.serializers import ClassificationsSerializer
-from registration.models import Person, Classification
+from registration.models import Person, Classification, Team
 from .filters import BracketsFilters, MatchesFilters, ScoringEntriesFilters
+from events.models import EventDorsal
 
 from rest_framework import viewsets
 from rest_framework.decorators import api_view, action
@@ -39,6 +40,19 @@ class BracketViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         )
 
         serializer = CompactPersonSerializer(persons, many=True)
+        return Response(serializer.data)
+    
+    @extend_schema(responses=CompactTeamSerializer(many=True))
+    @action(detail=True, methods=["get"], url_path="teams")
+    def teams(self, request, pk=None):
+        bracket = self.get_object()
+        
+        teams = Team.objects.filter(
+            category=bracket.category,
+            disciplineteam__discipline=bracket.discipline,
+        )
+
+        serializer = CompactTeamSerializer(teams, many=True)
         return Response(serializer.data)
     
     @action(
@@ -112,6 +126,21 @@ class MatchViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         "partial_update": serializers.UpdateMatchSerializer
     }
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        bracket_id = self.request.query_params.get("bracket")
+        if bracket_id:
+            from .models import Bracket
+            bracket = Bracket.objects.select_related("event").filter(id=bracket_id).first()
+            if bracket:
+                event = bracket.event
+                context["dorsals"] = {
+                    ed.person_id: ed.dorsal
+                    for ed in EventDorsal.objects.filter(event=event)
+                }
+        
+        return context
+
     def perform_update(self, serializer):
         instance = serializer.save()
         if instance.ongoing and instance.is_final and instance.winner != None:
@@ -175,10 +204,23 @@ class MatchViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         except Match.DoesNotExist:
             return Response({"error": "Match not found in this bracket."}, status=404)
 
-        if next_match.contender_1 == None and next_match.contender_2 == None:
-            return Response({
-            "error": "Partida seguinte não tem pelo menos um dos competidores definidos. Conclua as partidas das rondas anteriores!"
-        }, status=404)
+        # if the provided match is a BYE, walk forward until we find one with both contenders
+        ordered_matches = list(
+            Match.objects.filter(bracket=current_match.bracket)
+            .order_by("-round_number", "match_number")  # mirrors frontend ordering
+        )
+
+        if not next_match.contender_1 or not next_match.contender_2:
+            start_index = next((i for i, m in enumerate(ordered_matches) if m.id == next_match.id), None)
+            next_match = None
+            if start_index is not None:
+                for m in ordered_matches[start_index + 1:]:
+                    if m.contender_1 and m.contender_2:
+                        next_match = m
+                        break
+
+        if not next_match:
+            return Response({"error": "No valid next match found."}, status=404)
 
         current_match.ongoing = False
         current_match.save(update_fields=["ongoing"])

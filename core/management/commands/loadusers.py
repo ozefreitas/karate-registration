@@ -8,7 +8,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         User = get_user_model()
-        fixture_path = os.path.join('core', 'fixtures', 'users.json')
+        fixture_path = os.path.join('core', 'fixtures', 'users_2.json')
 
         existing_usernames = set(User.objects.values_list('username', flat=True))
 

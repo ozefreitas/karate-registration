@@ -522,6 +522,58 @@
                 }
             }
         },
+        "/bracket/{id}/teams/": {
+            "get": {
+                "operationId": "bracket_teams_list",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "event",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this bracket.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "bracket"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/CompactTeam"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/categories/": {
             "get": {
                 "operationId": "categories_list",
@@ -9306,6 +9358,14 @@
                     "category": {
                         "$ref": "#/components/schemas/CompactCategory"
                     },
+                    "is_team": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "has_only_scoring_rounds": {
+                        "type": "string",
+                        "readOnly": true
+                    },
                     "name": {
                         "type": "string",
                         "title": "Prova",
@@ -9344,7 +9404,9 @@
                     "created_at",
                     "discipline",
                     "event",
+                    "has_only_scoring_rounds",
                     "id",
+                    "is_team",
                     "name"
                 ]
             },
@@ -10022,6 +10084,13 @@
                             }
                         ],
                         "title": "Graduação"
+                    },
+                    "id_number": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "Nº SKI-P"
                     }
                 },
                 "required": [
@@ -10031,6 +10100,59 @@
                     "gender",
                     "graduation",
                     "id"
+                ]
+            },
+            "CompactTeam": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "athlete1": {
+                        "$ref": "#/components/schemas/CompactPerson"
+                    },
+                    "athlete2": {
+                        "$ref": "#/components/schemas/CompactPerson"
+                    },
+                    "athlete3": {
+                        "$ref": "#/components/schemas/CompactPerson"
+                    },
+                    "athlete4": {
+                        "$ref": "#/components/schemas/CompactPerson"
+                    },
+                    "athlete5": {
+                        "$ref": "#/components/schemas/CompactPerson"
+                    },
+                    "club": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "gender": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/GenderEnum"
+                            }
+                        ],
+                        "title": "Género"
+                    },
+                    "team_number": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": -2147483648,
+                        "title": "Nº Equipa"
+                    }
+                },
+                "required": [
+                    "athlete1",
+                    "athlete2",
+                    "athlete3",
+                    "athlete4",
+                    "athlete5",
+                    "club",
+                    "gender",
+                    "id",
+                    "team_number"
                 ]
             },
             "CompactUser": {
@@ -10487,6 +10609,10 @@
                         "type": "string",
                         "nullable": true
                     },
+                    "winner": {
+                        "type": "string",
+                        "nullable": true
+                    },
                     "loser_goes_to": {
                         "type": "integer",
                         "nullable": true
@@ -10495,7 +10621,15 @@
                         "type": "integer",
                         "nullable": true
                     },
-                    "winner": {
+                    "team_contender_1": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "team_contender_2": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "team_winner": {
                         "type": "string",
                         "nullable": true
                     }
@@ -11274,6 +11408,14 @@
                         "readOnly": true,
                         "nullable": true
                     },
+                    "contender_1_dorsal": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "contender_2_dorsal": {
+                        "type": "string",
+                        "readOnly": true
+                    },
                     "round_number": {
                         "type": "integer",
                         "maximum": 2147483647,
@@ -11305,12 +11447,26 @@
                     "feeds_into_scoring": {
                         "type": "integer",
                         "nullable": true
+                    },
+                    "team_contender_1": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "team_contender_2": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "team_winner": {
+                        "type": "string",
+                        "nullable": true
                     }
                 },
                 "required": [
                     "bracket",
                     "contender_1",
+                    "contender_1_dorsal",
                     "contender_2",
+                    "contender_2_dorsal",
                     "created_at",
                     "id",
                     "kataresult",
@@ -12315,6 +12471,14 @@
                     "category": {
                         "$ref": "#/components/schemas/CompactCategory"
                     },
+                    "is_team": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "has_only_scoring_rounds": {
+                        "type": "string",
+                        "readOnly": true
+                    },
                     "name": {
                         "type": "string",
                         "title": "Prova",
@@ -12987,6 +13151,10 @@
                         "type": "string",
                         "readOnly": true
                     },
+                    "club": {
+                        "type": "string",
+                        "readOnly": true
+                    },
                     "gender": {
                         "allOf": [
                             {
@@ -13071,6 +13239,10 @@
                         "type": "string",
                         "nullable": true
                     },
+                    "winner": {
+                        "type": "string",
+                        "nullable": true
+                    },
                     "loser_goes_to": {
                         "type": "integer",
                         "nullable": true
@@ -13079,7 +13251,15 @@
                         "type": "integer",
                         "nullable": true
                     },
-                    "winner": {
+                    "team_contender_1": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "team_contender_2": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "team_winner": {
                         "type": "string",
                         "nullable": true
                     }
@@ -13112,6 +13292,10 @@
                         "readOnly": true
                     },
                     "person": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "team": {
                         "type": "string",
                         "nullable": true
                     }
@@ -13363,6 +13547,9 @@
                     "person": {
                         "$ref": "#/components/schemas/CompactPerson"
                     },
+                    "team": {
+                        "$ref": "#/components/schemas/CompactTeam"
+                    },
                     "scoring_result": {
                         "allOf": [
                             {
@@ -13371,6 +13558,10 @@
                         ],
                         "readOnly": true,
                         "nullable": true
+                    },
+                    "person_dorsal": {
+                        "type": "string",
+                        "readOnly": true
                     },
                     "score": {
                         "type": "string",
@@ -13406,8 +13597,10 @@
                     "entry_number",
                     "id",
                     "person",
+                    "person_dorsal",
                     "scoring_result",
-                    "scoring_round"
+                    "scoring_round",
+                    "team"
                 ]
             },
             "ScoringResult": {
@@ -13518,6 +13711,10 @@
                         "type": "string",
                         "readOnly": true
                     },
+                    "club": {
+                        "type": "string",
+                        "readOnly": true
+                    },
                     "gender": {
                         "allOf": [
                             {
@@ -13540,6 +13737,7 @@
                     "athlete4",
                     "athlete5",
                     "category",
+                    "club",
                     "disciplines",
                     "events",
                     "gender",
@@ -13858,6 +14056,10 @@
                         "type": "string",
                         "nullable": true
                     },
+                    "winner": {
+                        "type": "string",
+                        "nullable": true
+                    },
                     "loser_goes_to": {
                         "type": "integer",
                         "nullable": true
@@ -13866,7 +14068,15 @@
                         "type": "integer",
                         "nullable": true
                     },
-                    "winner": {
+                    "team_contender_1": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "team_contender_2": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "team_winner": {
                         "type": "string",
                         "nullable": true
                     }
@@ -14048,6 +14258,10 @@
                         "readOnly": true
                     },
                     "person": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "team": {
                         "type": "string",
                         "nullable": true
                     }
