@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Profile, SignupToken, RequestedAcount, RequestPasswordReset, Category, Notification, MonthlyPaymentPlan, MemberValidationRequest
+from .models import User, Profile, SignupToken, RequestedAcount, RequestPasswordReset, Category, Notification, MonthlyPaymentPlan, MemberValidationRequest, FeedbackData
 
 # Register your models here.
 
@@ -15,3 +15,4 @@ admin.site.register(Category)
 admin.site.register(Notification)
 admin.site.register(MonthlyPaymentPlan)
 admin.site.register(MemberValidationRequest)
+admin.site.register(FeedbackData)

@@ -325,3 +325,12 @@ class MemberValidationRequest(models.Model):
 
     def __str__(self):
         return f"Validation request for {self.person} ({self.status})"
+
+class FeedbackData(models.Model):
+    first_name = models.CharField("Primeiro Nome", max_length=100)
+    last_name = models.CharField("Último Nome", max_length=100)
+    email = models.EmailField()
+    feedback = models.TextField()
+
+    def __str__(self):
+        return '{} {}'.format(self.first_name, self.last_name)
