@@ -8,7 +8,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from .filters import NotificationsFilters, CategoriesFilters
 from core.permissions import IsAuthenticatedOrReadOnly, IsUnauthenticatedForPost, IsNationalForPostDelete, IsAdminRoleorHigher, IsPayingUserorAdminForGet, CanFilterByUserPermission, MemberValidationRequestPermissions
-from .models import Category, SignupToken, RequestedAcount, User, RequestPasswordReset, MemberValidationRequest, Notification
+from .models import Category, SignupToken, RequestedAcount, User, RequestPasswordReset, MemberValidationRequest, Notification, FeedbackData
 from clubs.models import Club
 from .models import Notification, MonthlyPaymentPlan, MemberValidationRequest
 from core.serializers import base as BaseSerializers
@@ -549,6 +549,30 @@ class PasswordResetConfirmAPI(views.APIView):
         Notification.objects.filter(type="reset", request_acount=user.username).delete()
         RequestPasswordReset.objects.filter(club_user=user).delete()
         return Response({"success": True})
+
+
+###############
+# Request passorwd reset
+###############
+
+
+class FeedbackViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
+    queryset=FeedbackData.objects.all().order_by("created_at")
+    serializer_class=BaseSerializers.FeedbackSerializer
+    # permission_classes = [IsAuthenticated]
+    pagination_class = None
+
+    serializer_classes = {
+        "create": BaseSerializers.CreateFeedbackSerializer,
+    }
+
+    # def get_queryset(self):
+    #     user = self.request.user
+    #     return self.queryset.filter(club_user=user)
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        serializer.save(club_user=user)
 
 
 #############

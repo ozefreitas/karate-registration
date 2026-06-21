@@ -4,7 +4,7 @@ from .models import User, Profile, SignupToken, RequestedAcount, RequestPassword
 # Register your models here.
 
 class RequestPasswordResetAdmin(admin.ModelAdmin):
-    readonly_fields = ('club_user',)
+    readonly_fields = ('club_user', "requested_at")
 
 admin.site.register(User)
 admin.site.register(Profile)

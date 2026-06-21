@@ -4552,6 +4552,289 @@
                 }
             }
         },
+        "/feedback/": {
+            "get": {
+                "operationId": "feedback_list",
+                "tags": [
+                    "feedback"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    },
+                    {}
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Feedback"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "operationId": "feedback_create",
+                "tags": [
+                    "feedback"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateFeedback"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateFeedback"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateFeedback"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    },
+                    {}
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CreateFeedback"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/feedback/{id}/": {
+            "get": {
+                "operationId": "feedback_retrieve",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this feedback data.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "feedback"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    },
+                    {}
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Feedback"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "put": {
+                "operationId": "feedback_update",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this feedback data.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "feedback"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Feedback"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Feedback"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Feedback"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    },
+                    {}
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Feedback"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "patch": {
+                "operationId": "feedback_partial_update",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this feedback data.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "feedback"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedFeedback"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedFeedback"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedFeedback"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    },
+                    {}
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Feedback"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "feedback_destroy",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this feedback data.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "feedback"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    },
+                    {}
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
         "/login/": {
             "post": {
                 "operationId": "login_create",
@@ -10570,6 +10853,38 @@
                     "season"
                 ]
             },
+            "CreateFeedback": {
+                "type": "object",
+                "properties": {
+                    "first_name": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Primeiro Nome",
+                        "maxLength": 100
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Último Nome",
+                        "maxLength": 100
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "nullable": true,
+                        "maxLength": 254
+                    },
+                    "feedback_type": {
+                        "$ref": "#/components/schemas/FeedbackTypeEnum"
+                    },
+                    "feedback": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "feedback"
+                ]
+            },
             "CreateMatch": {
                 "type": "object",
                 "properties": {
@@ -11185,6 +11500,60 @@
                     "season"
                 ]
             },
+            "Feedback": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "first_name": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Primeiro Nome",
+                        "maxLength": 100
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Último Nome",
+                        "maxLength": 100
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "nullable": true,
+                        "maxLength": 254
+                    },
+                    "feedback_type": {
+                        "$ref": "#/components/schemas/FeedbackTypeEnum"
+                    },
+                    "feedback": {
+                        "type": "string"
+                    },
+                    "club_user": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "nullable": true
+                    }
+                },
+                "required": [
+                    "club_user",
+                    "feedback",
+                    "id"
+                ]
+            },
+            "FeedbackTypeEnum": {
+                "enum": [
+                    "general",
+                    "problem",
+                    "draw",
+                    "event",
+                    "member"
+                ],
+                "type": "string",
+                "description": "* `general` - General\n* `problem` - Problem\n* `draw` - Draw\n* `event` - Event\n* `member` - Member"
+            },
             "GenderEnum": {
                 "enum": [
                     "Masculino",
@@ -11349,6 +11718,14 @@
                         "type": "integer",
                         "readOnly": true
                     },
+                    "fouls_contender_1": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "fouls_contender_2": {
+                        "type": "string",
+                        "readOnly": true
+                    },
                     "points_contender_1": {
                         "type": "integer",
                         "maximum": 32767,
@@ -11371,6 +11748,8 @@
                     }
                 },
                 "required": [
+                    "fouls_contender_1",
+                    "fouls_contender_2",
                     "id"
                 ]
             },
@@ -12840,6 +13219,44 @@
                     },
                     "created_by": {
                         "type": "integer",
+                        "nullable": true
+                    }
+                }
+            },
+            "PatchedFeedback": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "first_name": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Primeiro Nome",
+                        "maxLength": 100
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Último Nome",
+                        "maxLength": 100
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "nullable": true,
+                        "maxLength": 254
+                    },
+                    "feedback_type": {
+                        "$ref": "#/components/schemas/FeedbackTypeEnum"
+                    },
+                    "feedback": {
+                        "type": "string"
+                    },
+                    "club_user": {
+                        "type": "integer",
+                        "readOnly": true,
                         "nullable": true
                     }
                 }

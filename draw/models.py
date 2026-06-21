@@ -304,6 +304,9 @@ class KumiteFoul(models.Model):
     foul_type = models.ForeignKey(FoulType, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f'{self.contender.first_name} {self.contender.last_name} {self.foul_type.name}'
+
 
 class ScoringResult(models.Model):
     scoring_entry = models.OneToOneField(

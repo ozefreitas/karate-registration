@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from core.models import User, SignupToken, RequestedAcount, RequestPasswordReset, Notification, MonthlyPaymentPlan, MemberValidationRequest
+from core.models import User, SignupToken, RequestedAcount, RequestPasswordReset, Notification, MonthlyPaymentPlan, MemberValidationRequest, FeedbackData
 from events.serializers import CompactEventsSerializer
 from registration.serializers.base import CompactPersonSerializer
 
@@ -171,3 +171,15 @@ class AllUsersNotificationsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
         exclude = ["club_user"]
+
+
+class FeedbackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FeedbackData
+        exclude = ["created_at"]
+
+        
+class CreateFeedbackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FeedbackData
+        exclude = ["id", "created_at", "club_user"]
