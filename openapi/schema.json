@@ -13637,6 +13637,9 @@
                     "kataresult": {
                         "$ref": "#/components/schemas/KataResult"
                     },
+                    "kumiteresult": {
+                        "$ref": "#/components/schemas/KumiteResult"
+                    },
                     "is_third_place": {
                         "type": "boolean"
                     },
@@ -14453,6 +14456,9 @@
                     },
                     "kataresult": {
                         "$ref": "#/components/schemas/KataResult"
+                    },
+                    "kumiteresult": {
+                        "$ref": "#/components/schemas/KumiteResult"
                     },
                     "is_third_place": {
                         "type": "boolean"

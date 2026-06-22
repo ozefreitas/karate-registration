@@ -98,6 +98,7 @@ class CreateMatchSerializer(serializers.ModelSerializer):
 
 class UpdateMatchSerializer(serializers.ModelSerializer):
     kataresult = KataResultSerializer(required=False)
+    kumiteresult = KumiteResultSerializer(required=False)
 
     class Meta:
         model = models.Match
@@ -117,6 +118,7 @@ class UpdateMatchSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         kata_data = validated_data.pop("kataresult", None)
+        kumite_data = validated_data.pop("kumiteresult", None)
 
         # Update Match fields
         instance = super().update(instance, validated_data)
@@ -126,6 +128,13 @@ class UpdateMatchSerializer(serializers.ModelSerializer):
             models.KataResult.objects.update_or_create(
                 match=instance,
                 defaults=kata_data,
+            )
+        
+        # Update or create KumiteResult if data was provided
+        if kumite_data is not None:
+            models.KumiteResult.objects.update_or_create(
+                match=instance,
+                defaults=kumite_data,
             )
 
         return instance
