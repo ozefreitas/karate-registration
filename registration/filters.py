@@ -38,6 +38,7 @@ class PersonsFilters(filters.FilterSet):
                     "disciplines_indiv",
                     filter=Q(
                         disciplines_indiv__event=event,
+                        disciplines_indiv__is_coach=False,
                         disciplines_indiv__is_team=discipline.is_team,
                     ),
                     distinct=True,

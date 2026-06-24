@@ -71,14 +71,13 @@ class Migration(migrations.Migration):
                 to='registration.person'
             ),
         ),
-        # # 4. Remove old member FK
-        # migrations.RemoveField(
-        #     model_name='disciplinemember',
-        #     name='member',
-        # ),
         migrations.AlterUniqueTogether(
             name='disciplinemember',
             unique_together={('discipline', 'person')},
+        ),
+        migrations.RemoveField(
+            model_name='disciplinemember',
+            name='member',
         ),
         migrations.AlterField(
             model_name='discipline',

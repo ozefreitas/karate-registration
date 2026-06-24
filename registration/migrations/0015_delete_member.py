@@ -7,6 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('registration', '0014_alter_classification_unique_together_and_more'),
+        ('events', '0012_alter_disciplinemember_unique_together_and_more')
     ]
 
     operations = [

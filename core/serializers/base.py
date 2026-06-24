@@ -84,6 +84,10 @@ class TokenSerializer(serializers.Serializer):
     token = serializers.UUIDField()
 
 
+class LogoutResponseSerializer(serializers.Serializer):
+    detail = serializers.CharField()
+
+
 class AuthLoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField()
@@ -140,6 +144,10 @@ class RequestPasswordResetSerializer(serializers.Serializer):
      username_or_email = serializers.CharField(write_only=True)
 
 
+class RequestPasswordResetResponseSerializer(serializers.Serializer):
+    message = serializers.CharField()
+
+
 class PasswordSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)
 
@@ -156,10 +164,18 @@ class NotificationsSerializer(serializers.ModelSerializer):
         model = Notification
         fields = "__all__"
 
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            self.fields["club_user"].queryset = User.objects.filter(role__in=["free_club", "subed_club"])
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["club_user"].queryset = User.objects.filter(role__in=["free_club", "subed_club"])
 
+
+class NotificationsResponseSerializer(serializers.Serializer):
+    response = NotificationsSerializer(many=True)
+    total = serializers.IntegerField()
+
+
+class CurrentSeasonSerializer(serializers.Serializer):
+    season = serializers.CharField()
 
 class CreateNotificationsSerializer(serializers.ModelSerializer):
     class Meta:

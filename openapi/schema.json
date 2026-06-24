@@ -1329,7 +1329,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "No response body"
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotificationsResponse"
+                                }
+                            }
+                        },
+                        "description": ""
                     }
                 }
             }
@@ -2731,6 +2738,7 @@
         "/current_season/": {
             "get": {
                 "operationId": "current_season_retrieve",
+                "description": "Typical sportif season change in August. This endpoint checks the current month and returns the respective season.",
                 "tags": [
                     "current_season"
                 ],
@@ -2748,7 +2756,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "No response body"
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CurrentSeason"
+                                }
+                            }
+                        },
+                        "description": ""
                     }
                 }
             }
@@ -4889,6 +4904,7 @@
         "/logout/": {
             "post": {
                 "operationId": "logout_create",
+                "description": "Logs out the authenticated user by deleting their auth token.",
                 "tags": [
                     "logout"
                 ],
@@ -4905,7 +4921,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "No response body"
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LogoutResponse"
+                                }
+                            }
+                        },
+                        "description": ""
                     }
                 }
             }
@@ -5404,7 +5427,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "No response body"
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserDetail"
+                                }
+                            }
+                        },
+                        "description": ""
                     }
                 }
             }
@@ -7430,8 +7460,25 @@
                     {}
                 ],
                 "responses": {
-                    "200": {
-                        "description": "No response body"
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RequestPasswordResetResponse"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RequestPasswordResetResponse"
+                                }
+                            }
+                        },
+                        "description": ""
                     }
                 }
             }
@@ -9393,8 +9440,28 @@
         },
         "/users/": {
             "get": {
-                "operationId": "users_retrieve",
-                "description": "Lists the current users available users.",
+                "operationId": "users_list",
+                "description": "Lists users or fetches a specific user by username.",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "required": false,
+                        "in": "query",
+                        "description": "A page number within the paginated result set.",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page_size",
+                        "required": false,
+                        "in": "query",
+                        "description": "Number of results to return per page.",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "tags": [
                     "users"
                 ],
@@ -9411,7 +9478,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "No response body"
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedUsersList"
+                                }
+                            }
+                        },
+                        "description": ""
                     }
                 }
             }
@@ -11164,6 +11238,17 @@
                     "modified_date"
                 ]
             },
+            "CurrentSeason": {
+                "type": "object",
+                "properties": {
+                    "season": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "season"
+                ]
+            },
             "DeleteMember": {
                 "type": "object",
                 "properties": {
@@ -11753,6 +11838,17 @@
                     "id"
                 ]
             },
+            "LogoutResponse": {
+                "type": "object",
+                "properties": {
+                    "detail": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "detail"
+                ]
+            },
             "Match": {
                 "type": "object",
                 "properties": {
@@ -12308,6 +12404,24 @@
                     "target_event"
                 ]
             },
+            "NotificationsResponse": {
+                "type": "object",
+                "properties": {
+                    "response": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Notifications"
+                        }
+                    },
+                    "total": {
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "response",
+                    "total"
+                ]
+            },
             "PaginatedCategoryList": {
                 "type": "object",
                 "required": [
@@ -12738,6 +12852,37 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Teams"
+                        }
+                    }
+                }
+            },
+            "PaginatedUsersList": {
+                "type": "object",
+                "required": [
+                    "count",
+                    "results"
+                ],
+                "properties": {
+                    "count": {
+                        "type": "integer",
+                        "example": 123
+                    },
+                    "next": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://api.example.org/accounts/?page=4"
+                    },
+                    "previous": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://api.example.org/accounts/?page=2"
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Users"
                         }
                     }
                 }
@@ -13897,6 +14042,17 @@
                     "username_or_email"
                 ]
             },
+            "RequestPasswordResetResponse": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "message"
+                ]
+            },
             "RequestTypeEnum": {
                 "enum": [
                     "general",
@@ -14745,6 +14901,34 @@
                     "creation_date",
                     "id",
                     "modified_date"
+                ]
+            },
+            "UserDetail": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "username": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "role": {
+                        "type": "string"
+                    },
+                    "tier": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "email",
+                    "id",
+                    "role",
+                    "tier",
+                    "username"
                 ]
             },
             "Username": {
