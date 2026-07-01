@@ -12179,6 +12179,20 @@
                         "type": "string",
                         "title": "Escalão",
                         "maxLength": 100
+                    },
+                    "min_weight": {
+                        "type": "integer",
+                        "maximum": 32767,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "Peso Mínimo (inclusivé)"
+                    },
+                    "max_weight": {
+                        "type": "integer",
+                        "maximum": 32767,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "Peso Máximo (inclusivé)"
                     }
                 },
                 "required": [
