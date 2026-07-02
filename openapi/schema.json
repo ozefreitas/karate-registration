@@ -14801,6 +14801,10 @@
                     "is_validated": {
                         "type": "boolean"
                     },
+                    "created_by": {
+                        "type": "integer",
+                        "nullable": true
+                    },
                     "updated_by": {
                         "type": "integer",
                         "nullable": true

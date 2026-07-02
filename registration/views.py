@@ -196,7 +196,10 @@ class PersonsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
-        updated_person = serializer.save(updated_by=request.user, is_validated=instance.is_validated)
+        if instance.created_by == None:
+            updated_person = serializer.save(created_by=request.user, updated_by=request.user, is_validated=instance.is_validated)
+        else:
+            updated_person = serializer.save(updated_by=request.user, is_validated=instance.is_validated)
 
         if request.user != instance.club:
             Notification.objects.create(type="member_updated",
