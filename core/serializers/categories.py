@@ -37,7 +37,7 @@ class NameCategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ("name",)
+        fields = ("name", "min_weight", "max_weight")
 
 
 class CreateCategorySerializer(serializers.ModelSerializer):

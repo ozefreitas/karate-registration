@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from core.models import User, SignupToken, RequestedAcount, RequestPasswordReset, Notification, MonthlyPaymentPlan, MemberValidationRequest
+from core.models import User, SignupToken, RequestedAcount, RequestPasswordReset, Notification, MonthlyPaymentPlan, MemberValidationRequest, FeedbackData
 from events.serializers import CompactEventsSerializer
 from registration.serializers.base import CompactPersonSerializer
 
@@ -84,6 +84,10 @@ class TokenSerializer(serializers.Serializer):
     token = serializers.UUIDField()
 
 
+class LogoutResponseSerializer(serializers.Serializer):
+    detail = serializers.CharField()
+
+
 class AuthLoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField()
@@ -140,6 +144,10 @@ class RequestPasswordResetSerializer(serializers.Serializer):
      username_or_email = serializers.CharField(write_only=True)
 
 
+class RequestPasswordResetResponseSerializer(serializers.Serializer):
+    message = serializers.CharField()
+
+
 class PasswordSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)
 
@@ -156,10 +164,18 @@ class NotificationsSerializer(serializers.ModelSerializer):
         model = Notification
         fields = "__all__"
 
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            self.fields["club_user"].queryset = User.objects.filter(role__in=["free_club", "subed_club"])
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["club_user"].queryset = User.objects.filter(role__in=["free_club", "subed_club"])
 
+
+class NotificationsResponseSerializer(serializers.Serializer):
+    response = NotificationsSerializer(many=True)
+    total = serializers.IntegerField()
+
+
+class CurrentSeasonSerializer(serializers.Serializer):
+    season = serializers.CharField()
 
 class CreateNotificationsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -171,3 +187,15 @@ class AllUsersNotificationsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
         exclude = ["club_user"]
+
+
+class FeedbackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FeedbackData
+        exclude = ["created_at"]
+
+        
+class CreateFeedbackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FeedbackData
+        exclude = ["id", "created_at", "club_user"]

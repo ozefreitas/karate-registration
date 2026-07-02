@@ -5,25 +5,27 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
+from django.shortcuts import get_object_or_404
 
 from .filters import NotificationsFilters, CategoriesFilters
 from core.permissions import IsAuthenticatedOrReadOnly, IsUnauthenticatedForPost, IsNationalForPostDelete, IsAdminRoleorHigher, IsPayingUserorAdminForGet, CanFilterByUserPermission, MemberValidationRequestPermissions
-from .models import Category, SignupToken, RequestedAcount, User, RequestPasswordReset, MemberValidationRequest, Notification
+from .models import Category, SignupToken, RequestedAcount, User, RequestPasswordReset, MemberValidationRequest, Notification, FeedbackData
 from clubs.models import Club
 from .models import Notification, MonthlyPaymentPlan, MemberValidationRequest
 from core.serializers import base as BaseSerializers
 from core.serializers.categories import CategorySerializer, CreateCategorySerializer, CompactCategorySerializer
-from core.serializers.users import UsersSerializer
+from core.serializers.users import UsersSerializer, UserDetailSerializer, UsersResponseSerializer
 
 from rest_framework.authtoken.models import Token
+from rest_framework.generics import GenericAPIView
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.exceptions import ValidationError
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import action, permission_classes, api_view
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework.response import Response
 from rest_framework import viewsets, filters, status, views, serializers
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.exceptions import PermissionDenied
 
@@ -86,13 +88,40 @@ class NotificationViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         )
 
 
-@api_view(['GET'])
-# @authentication_classes([SessionAuthentication, BasicAuthentication])
-@permission_classes([IsAuthenticated, IsPayingUserorAdminForGet])
-def notifications(request):
-    notifications = Notification.objects.filter(club_user=request.user).order_by("-created_at")
-    serializer = BaseSerializers.NotificationsSerializer(notifications[:5], many=True)
-    return Response({"response": serializer.data, "total": len(notifications)})
+class NotificationsView(GenericAPIView):
+    serializer_class = BaseSerializers.NotificationsSerializer
+    permission_classes = [
+        IsAuthenticated,
+        IsPayingUserorAdminForGet
+    ]
+
+    def get_queryset(self):
+        return Notification.objects.filter(
+            club_user=self.request.user
+        ).order_by("-created_at")
+
+    @extend_schema(
+        responses=inline_serializer(
+            name="NotificationsResponse",
+            fields={
+                "response": BaseSerializers.NotificationsSerializer(many=True),
+                "total": serializers.IntegerField(),
+            },
+        )
+    )
+    def get(self, request):
+        qs = self.get_queryset()
+
+        serializer = self.get_serializer(
+            qs[:5],
+            many=True
+        )
+
+        return Response({
+            "response": serializer.data,
+            "total": qs.count()
+        })
+
     
 
 class CategoriesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
@@ -366,32 +395,43 @@ def get_token_by_username(request):
     except SignupToken.DoesNotExist:
         return Response({"error": "Provided username does not exist"})
 
-@api_view(['GET'])
 @extend_schema(
-        responses={200: None, 400: None},
-        description="Typical sportif season change in August. This endpoints checks the current month and return the respective season."
-    )
-def current_season(request):
-    today = timezone.now()
-    if today.month > 8:
-        season = f"{today.year} - {today.year + 1}"
-    else:
-        season = f"{today.year - 1}-{today.year}"
-    return Response({"season": season})
+    responses=BaseSerializers.CurrentSeasonSerializer,
+    description=(
+        "Typical sportif season change in August. "
+        "This endpoint checks the current month and returns the respective season."
+    ),
+)
+class CurrentSeasonView(GenericAPIView):
+    serializer_class = BaseSerializers.CurrentSeasonSerializer
+
+    def get(self, request):
+        today = timezone.now()
+        if today.month > 8:
+            season = f"{today.year}-{today.year + 1}"
+        else:
+            season = f"{today.year - 1}-{today.year}"
+
+        serializer = self.get_serializer({"season": season})
+        return Response(serializer.data)
 
 
-class UserDetailView(views.APIView):
+@extend_schema(responses=UserDetailSerializer)
+class UserDetailView(GenericAPIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = UserDetailSerializer
 
     def get(self, request):
         user = request.user
-        return Response({
+        data = {
             "id": user.id,
             "username": user.username,
             "email": user.email,
             "role": user.role,
-            "tier": user.tier
-        }, status=status.HTTP_200_OK)
+            "tier": user.tier,
+        }
+        serializer = self.get_serializer(data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
 
 class CustomAuthToken(ObtainAuthToken):
@@ -407,12 +447,19 @@ class CustomAuthToken(ObtainAuthToken):
         return Response(BaseSerializers.TokenSerializer({'token': token.key}).data)
     
 
-class LogoutView(views.APIView):
+class LogoutView(GenericAPIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = BaseSerializers.LogoutResponseSerializer
 
+    @extend_schema(
+        request=None,
+        responses=BaseSerializers.LogoutResponseSerializer,
+        description="Logs out the authenticated user by deleting their auth token."
+    )
     def post(self, request):
-        request.user.auth_token.delete()  # Deletes token from DB
-        return Response({"detail": "Logged out"}, status=200)
+        request.user.auth_token.delete()
+        serializer = self.get_serializer({"detail": "Logged out"})
+        return Response(serializer.data)
 
 
 class RegisterView(views.APIView):
@@ -437,20 +484,24 @@ class RegisterView(views.APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@extend_schema(description="Lists the current users available users.")
-@api_view(['GET'])
-# @authentication_classes([SessionAuthentication, BasicAuthentication])
-@permission_classes([IsAuthenticated, IsAdminRoleorHigher])
-def users(request):
-    username = request.query_params.get('username', None)
-    if username:
-        user = User.objects.get(username=username)
-        serializer = UsersSerializer(user)
-    else:
-        users = User.objects.filter(role__in=["free_club", "subed_club"])
-        serializer = UsersSerializer(users, many=True)
-    return Response(serializer.data)
+@extend_schema(
+    description="Lists users or fetches a specific user by username.",
+    responses=UsersSerializer(many=True),
+)
+class UsersView(GenericAPIView):
+    permission_classes = [IsAuthenticated, IsAdminRoleorHigher]
+    serializer_class = UsersSerializer
 
+    def get(self, request):
+        username = request.query_params.get("username")
+        if username:
+            user = get_object_or_404(User, username=username)
+            serializer = self.get_serializer(user)
+            return Response(serializer.data)
+
+        queryset = User.objects.filter(role__in=["free_club", "subed_club"])
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 ###############
@@ -470,27 +521,53 @@ def get_password_requests(request):
     return Response(serializer.data)
 
 
-@extend_schema(request=BaseSerializers.RequestPasswordResetSerializer, 
-               description="Creates a new request for a password recovery.")
-@api_view(['POST'])
-def request_password_reset(request):
-    serializer = BaseSerializers.RequestPasswordResetSerializer(data=request.data)
-    if serializer.is_valid(raise_exception=True):
+@extend_schema(
+    request=BaseSerializers.RequestPasswordResetSerializer,
+    responses={
+        201: BaseSerializers.RequestPasswordResetResponseSerializer,
+        400: BaseSerializers.RequestPasswordResetResponseSerializer,
+    },
+    description="Creates a new request for a password recovery."
+)
+class RequestPasswordResetView(GenericAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = BaseSerializers.RequestPasswordResetSerializer
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        username_or_email = serializer.validated_data.get("username_or_email")
+
         try:
             user = User.objects.get(
-                Q(username=serializer.validated_data.get('username_or_email')) | Q(email=serializer.validated_data.get('username_or_email'))
+                Q(username=username_or_email) |
+                Q(email=username_or_email)
             )
         except User.DoesNotExist:
-            return Response({"error": "Não existe nenhum utilizador com estas credenciais!"}, status=status.HTTP_400_BAD_REQUEST)
-    if RequestPasswordReset.objects.filter(club_user=user).exists():
-        return Response({"error": "Já fez o pedido para recuperar a sua password. Aguarde por um email do seu administrador!"}, status=status.HTTP_400_BAD_REQUEST)
-    RequestPasswordReset.objects.create(club_user=user)
-    admin_user = User.objects.get(role="main_admin")
-    Notification.objects.create(club_user=admin_user, 
-                                    notification=f'Um pedido de recuperção de password de {user.username} foi inciado. Dirija-se para a área de Definições na aba "Gestor de Contas" imediatamente!',
-                                    type="reset", 
-                                    request_acount=user.username)
-    return Response({"message": "Pedido enviado! Esteja atento ao seu email."}, status=status.HTTP_201_CREATED)
+            return Response(
+                {"message": "No user found with these credentials."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if RequestPasswordReset.objects.filter(club_user=user).exists():
+            return Response(
+                {"message": "Reset already requested. Wait for admin email."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        RequestPasswordReset.objects.create(club_user=user)
+        admin_user = User.objects.get(role="main_admin")
+        Notification.objects.create(
+            club_user=admin_user,
+            notification=(f"Password reset request from {user.username} was initiated."),
+            type="reset",
+            request_acount=user.username
+        )
+
+        return Response(
+            {"message": "Request sent! Check your email."},
+            status=status.HTTP_201_CREATED
+        )
 
 
 @extend_schema(
@@ -549,6 +626,30 @@ class PasswordResetConfirmAPI(views.APIView):
         Notification.objects.filter(type="reset", request_acount=user.username).delete()
         RequestPasswordReset.objects.filter(club_user=user).delete()
         return Response({"success": True})
+
+
+###############
+# Request passorwd reset
+###############
+
+
+class FeedbackViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
+    queryset=FeedbackData.objects.all().order_by("created_at")
+    serializer_class=BaseSerializers.FeedbackSerializer
+    # permission_classes = [IsAuthenticated]
+    pagination_class = None
+
+    serializer_classes = {
+        "create": BaseSerializers.CreateFeedbackSerializer,
+    }
+
+    # def get_queryset(self):
+    #     user = self.request.user
+    #     return self.queryset.filter(club_user=user)
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        serializer.save(club_user=user)
 
 
 #############

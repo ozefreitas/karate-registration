@@ -122,9 +122,9 @@ class ClubSettings(models.Model):
         related_name="club_settings"
     )
     billing_day = models.PositiveSmallIntegerField(
-    default=1,
-    validators=[MinValueValidator(1), MaxValueValidator(28)]
-)
+        default=1,
+        validators=[MinValueValidator(1), MaxValueValidator(28)]
+    )
 
     def __str__(self):
-        return f"{self.club} – billing day {self.billing_day}"
+        return f"{self.club} billing day: {self.billing_day}"

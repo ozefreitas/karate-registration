@@ -1329,7 +1329,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "No response body"
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotificationsResponse"
+                                }
+                            }
+                        },
+                        "description": ""
                     }
                 }
             }
@@ -2731,6 +2738,7 @@
         "/current_season/": {
             "get": {
                 "operationId": "current_season_retrieve",
+                "description": "Typical sportif season change in August. This endpoint checks the current month and returns the respective season.",
                 "tags": [
                     "current_season"
                 ],
@@ -2748,7 +2756,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "No response body"
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CurrentSeason"
+                                }
+                            }
+                        },
+                        "description": ""
                     }
                 }
             }
@@ -4552,6 +4567,289 @@
                 }
             }
         },
+        "/feedback/": {
+            "get": {
+                "operationId": "feedback_list",
+                "tags": [
+                    "feedback"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    },
+                    {}
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Feedback"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "operationId": "feedback_create",
+                "tags": [
+                    "feedback"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateFeedback"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateFeedback"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateFeedback"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    },
+                    {}
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CreateFeedback"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/feedback/{id}/": {
+            "get": {
+                "operationId": "feedback_retrieve",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this feedback data.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "feedback"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    },
+                    {}
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Feedback"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "put": {
+                "operationId": "feedback_update",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this feedback data.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "feedback"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Feedback"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Feedback"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Feedback"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    },
+                    {}
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Feedback"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "patch": {
+                "operationId": "feedback_partial_update",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this feedback data.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "feedback"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedFeedback"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedFeedback"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedFeedback"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    },
+                    {}
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Feedback"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "feedback_destroy",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this feedback data.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "feedback"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    },
+                    {}
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
         "/login/": {
             "post": {
                 "operationId": "login_create",
@@ -4606,6 +4904,7 @@
         "/logout/": {
             "post": {
                 "operationId": "logout_create",
+                "description": "Logs out the authenticated user by deleting their auth token.",
                 "tags": [
                     "logout"
                 ],
@@ -4622,7 +4921,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "No response body"
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LogoutResponse"
+                                }
+                            }
+                        },
+                        "description": ""
                     }
                 }
             }
@@ -5121,7 +5427,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "No response body"
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserDetail"
+                                }
+                            }
+                        },
+                        "description": ""
                     }
                 }
             }
@@ -7147,8 +7460,25 @@
                     {}
                 ],
                 "responses": {
-                    "200": {
-                        "description": "No response body"
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RequestPasswordResetResponse"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RequestPasswordResetResponse"
+                                }
+                            }
+                        },
+                        "description": ""
                     }
                 }
             }
@@ -9110,8 +9440,28 @@
         },
         "/users/": {
             "get": {
-                "operationId": "users_retrieve",
-                "description": "Lists the current users available users.",
+                "operationId": "users_list",
+                "description": "Lists users or fetches a specific user by username.",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "required": false,
+                        "in": "query",
+                        "description": "A page number within the paginated result set.",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page_size",
+                        "required": false,
+                        "in": "query",
+                        "description": "Number of results to return per page.",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "tags": [
                     "users"
                 ],
@@ -9128,7 +9478,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "No response body"
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedUsersList"
+                                }
+                            }
+                        },
+                        "description": ""
                     }
                 }
             }
@@ -10570,6 +10927,38 @@
                     "season"
                 ]
             },
+            "CreateFeedback": {
+                "type": "object",
+                "properties": {
+                    "first_name": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Primeiro Nome",
+                        "maxLength": 100
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Último Nome",
+                        "maxLength": 100
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "nullable": true,
+                        "maxLength": 254
+                    },
+                    "feedback_type": {
+                        "$ref": "#/components/schemas/FeedbackTypeEnum"
+                    },
+                    "feedback": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "feedback"
+                ]
+            },
             "CreateMatch": {
                 "type": "object",
                 "properties": {
@@ -10847,6 +11236,17 @@
                     "gender",
                     "id",
                     "modified_date"
+                ]
+            },
+            "CurrentSeason": {
+                "type": "object",
+                "properties": {
+                    "season": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "season"
                 ]
             },
             "DeleteMember": {
@@ -11185,6 +11585,60 @@
                     "season"
                 ]
             },
+            "Feedback": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "first_name": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Primeiro Nome",
+                        "maxLength": 100
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Último Nome",
+                        "maxLength": 100
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "nullable": true,
+                        "maxLength": 254
+                    },
+                    "feedback_type": {
+                        "$ref": "#/components/schemas/FeedbackTypeEnum"
+                    },
+                    "feedback": {
+                        "type": "string"
+                    },
+                    "club_user": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "nullable": true
+                    }
+                },
+                "required": [
+                    "club_user",
+                    "feedback",
+                    "id"
+                ]
+            },
+            "FeedbackTypeEnum": {
+                "enum": [
+                    "general",
+                    "problem",
+                    "draw",
+                    "event",
+                    "member"
+                ],
+                "type": "string",
+                "description": "* `general` - General\n* `problem` - Problem\n* `draw` - Draw\n* `event` - Event\n* `member` - Member"
+            },
             "GenderEnum": {
                 "enum": [
                     "Masculino",
@@ -11349,6 +11803,14 @@
                         "type": "integer",
                         "readOnly": true
                     },
+                    "fouls_contender_1": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "fouls_contender_2": {
+                        "type": "string",
+                        "readOnly": true
+                    },
                     "points_contender_1": {
                         "type": "integer",
                         "maximum": 32767,
@@ -11371,7 +11833,20 @@
                     }
                 },
                 "required": [
+                    "fouls_contender_1",
+                    "fouls_contender_2",
                     "id"
+                ]
+            },
+            "LogoutResponse": {
+                "type": "object",
+                "properties": {
+                    "detail": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "detail"
                 ]
             },
             "Match": {
@@ -11704,6 +12179,20 @@
                         "type": "string",
                         "title": "Escalão",
                         "maxLength": 100
+                    },
+                    "min_weight": {
+                        "type": "integer",
+                        "maximum": 32767,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "Peso Mínimo (inclusivé)"
+                    },
+                    "max_weight": {
+                        "type": "integer",
+                        "maximum": 32767,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "Peso Máximo (inclusivé)"
                     }
                 },
                 "required": [
@@ -11927,6 +12416,24 @@
                     "id",
                     "notification",
                     "target_event"
+                ]
+            },
+            "NotificationsResponse": {
+                "type": "object",
+                "properties": {
+                    "response": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Notifications"
+                        }
+                    },
+                    "total": {
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "response",
+                    "total"
                 ]
             },
             "PaginatedCategoryList": {
@@ -12359,6 +12866,37 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Teams"
+                        }
+                    }
+                }
+            },
+            "PaginatedUsersList": {
+                "type": "object",
+                "required": [
+                    "count",
+                    "results"
+                ],
+                "properties": {
+                    "count": {
+                        "type": "integer",
+                        "example": 123
+                    },
+                    "next": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://api.example.org/accounts/?page=4"
+                    },
+                    "previous": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://api.example.org/accounts/?page=2"
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Users"
                         }
                     }
                 }
@@ -12844,6 +13382,44 @@
                     }
                 }
             },
+            "PatchedFeedback": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "first_name": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Primeiro Nome",
+                        "maxLength": 100
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Último Nome",
+                        "maxLength": 100
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "nullable": true,
+                        "maxLength": 254
+                    },
+                    "feedback_type": {
+                        "$ref": "#/components/schemas/FeedbackTypeEnum"
+                    },
+                    "feedback": {
+                        "type": "string"
+                    },
+                    "club_user": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "nullable": true
+                    }
+                }
+            },
             "PatchedMemberShips": {
                 "type": "object",
                 "properties": {
@@ -13220,6 +13796,9 @@
                     "kataresult": {
                         "$ref": "#/components/schemas/KataResult"
                     },
+                    "kumiteresult": {
+                        "$ref": "#/components/schemas/KumiteResult"
+                    },
                     "is_third_place": {
                         "type": "boolean"
                     },
@@ -13475,6 +14054,17 @@
                 },
                 "required": [
                     "username_or_email"
+                ]
+            },
+            "RequestPasswordResetResponse": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "message"
                 ]
             },
             "RequestTypeEnum": {
@@ -14037,6 +14627,9 @@
                     "kataresult": {
                         "$ref": "#/components/schemas/KataResult"
                     },
+                    "kumiteresult": {
+                        "$ref": "#/components/schemas/KumiteResult"
+                    },
                     "is_third_place": {
                         "type": "boolean"
                     },
@@ -14208,6 +14801,10 @@
                     "is_validated": {
                         "type": "boolean"
                     },
+                    "created_by": {
+                        "type": "integer",
+                        "nullable": true
+                    },
                     "updated_by": {
                         "type": "integer",
                         "nullable": true
@@ -14322,6 +14919,34 @@
                     "creation_date",
                     "id",
                     "modified_date"
+                ]
+            },
+            "UserDetail": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "username": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "role": {
+                        "type": "string"
+                    },
+                    "tier": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "email",
+                    "id",
+                    "role",
+                    "tier",
+                    "username"
                 ]
             },
             "Username": {

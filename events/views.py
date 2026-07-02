@@ -272,7 +272,6 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                             dorsal = dorsals.get(member.id)
                             row.append(str(dorsal).zfill(3) if dorsal else "")
                         ws.append(row)
-
                     else:
                         categories = discipline.categories.filter(
                             gender=member.gender,
@@ -317,60 +316,53 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                     str(dorsal).zfill(3) if dorsal else "",
                 ])
 
+            # --- Teams sheet: build BEFORE saving ---
+            ws_teams = wb.create_sheet(title="Teams")
+            team_headers = [
+                "Equipa",
+                "Dojo",
+                "Atleta 1", "Dorsal 1",
+                "Atleta 2", "Dorsal 2",
+                "Atleta 3", "Dorsal 3",
+            ]
+            ws_teams.append(team_headers)  # header written ONCE, outside the loop
+
+            def get_person_info(person):
+                if not person:
+                    return "", ""
+                full_name = f"{person.first_name} {person.last_name}"
+                dorsal = dorsals.get(person.id)
+                return full_name, str(dorsal).zfill(3) if dorsal else ""
+
+            for discipline in disciplines:
+                for team in discipline.teams.select_related("club").all():
+                    p1_name, p1_dorsal = get_person_info(team.athlete1)
+                    p2_name, p2_dorsal = get_person_info(team.athlete2)
+                    p3_name, p3_dorsal = get_person_info(team.athlete3)
+
+                    club = next(
+                        (
+                            getattr(p.club, "username", "")
+                            for p in [team.athlete1, team.athlete2, team.athlete3]
+                            if p and p.club
+                        ),
+                        "",
+                    )
+
+                    ws_teams.append([
+                        getattr(team, "name", ""),
+                        club,
+                        p1_name, p1_dorsal,
+                        p2_name, p2_dorsal,
+                        p3_name, p3_dorsal,
+                    ])
+
+        # --- Save ONCE, after all sheets are fully built ---
         response = HttpResponse(
             content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
         response["Content-Disposition"] = f'attachment; filename="event_{event.id}_members.xlsx"'
         wb.save(response)
-
-        # Teams sheet
-        teams = Team.objects.filter(event=event).select_related(
-            "person_1__club",
-            "person_2__club", 
-            "person_3__club"
-        )
-
-        if teams.exists():
-            ws_teams = wb.create_sheet(title="Teams")
-            
-            team_headers = [
-                "Equipa",
-                "Dojo",
-                "Atleta 1", f"Dorsal 1",
-                "Atleta 2", f"Dorsal 2",
-                "Atleta 3", f"Dorsal 3",
-            ]
-            ws_teams.append(team_headers)
-
-            for team in teams.order_by("name"):
-                def get_person_info(person):
-                    if not person:
-                        return "", ""
-                    full_name = f"{person.first_name} {person.last_name}"
-                    dorsal = dorsals.get(person.id)
-                    return full_name, str(dorsal).zfill(3) if dorsal else ""
-
-                p1_name, p1_dorsal = get_person_info(team.person_1)
-                p2_name, p2_dorsal = get_person_info(team.person_2)
-                p3_name, p3_dorsal = get_person_info(team.person_3)
-
-                # Use the club of the first available person
-                club = next(
-                    (
-                        getattr(p.club, "username", "")
-                        for p in [team.person_1, team.person_2, team.person_3]
-                        if p and p.club
-                    ),
-                    "",
-                )
-
-                ws_teams.append([
-                    getattr(team, "name", ""),
-                    club,
-                    p1_name, p1_dorsal,
-                    p2_name, p2_dorsal,
-                    p3_name, p3_dorsal,
-                ])
 
         return response
 

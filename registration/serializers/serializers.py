@@ -466,7 +466,7 @@ class UpdatePersonSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = models.Person
-        exclude = ("club", "created_by", "creation_date", "modified_date")
+        exclude = ("club", "creation_date", "modified_date")
     
     # def get_fields(self):
     #     fields = super().get_fields()

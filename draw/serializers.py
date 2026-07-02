@@ -32,11 +32,36 @@ class KataResultSerializer(serializers.ModelSerializer):
         model = models.KataResult
         exclude = ["match", "created_at"]
 
+
+class FoulTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.FoulType
+        fields = ["id", "name", "penalty_points"]
+
+
+class KumiteFoulSerializer(serializers.ModelSerializer):
+    foul_type = FoulTypeSerializer(read_only=True)
+
+    class Meta:
+        model = models.KumiteFoul
+        fields = ["id", "foul_type"]
+
         
 class KumiteResultSerializer(serializers.ModelSerializer):
+    fouls_contender_1 = serializers.SerializerMethodField()
+    fouls_contender_2 = serializers.SerializerMethodField()
+
     class Meta:
         model = models.KumiteResult
         exclude = ["match", "created_at"]
+
+    def get_fouls_contender_1(self, obj):
+        fouls = [f for f in obj.fouls.all() if f.contender_id == obj.match.contender_1_id]
+        return KumiteFoulSerializer(fouls, many=True).data
+
+    def get_fouls_contender_2(self, obj):
+        fouls = [f for f in obj.fouls.all() if f.contender_id == obj.match.contender_2_id]
+        return KumiteFoulSerializer(fouls, many=True).data
 
 
 class MatchSerializer(serializers.ModelSerializer):
@@ -73,6 +98,7 @@ class CreateMatchSerializer(serializers.ModelSerializer):
 
 class UpdateMatchSerializer(serializers.ModelSerializer):
     kataresult = KataResultSerializer(required=False)
+    kumiteresult = KumiteResultSerializer(required=False)
 
     class Meta:
         model = models.Match
@@ -92,6 +118,7 @@ class UpdateMatchSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         kata_data = validated_data.pop("kataresult", None)
+        kumite_data = validated_data.pop("kumiteresult", None)
 
         # Update Match fields
         instance = super().update(instance, validated_data)
@@ -101,6 +128,13 @@ class UpdateMatchSerializer(serializers.ModelSerializer):
             models.KataResult.objects.update_or_create(
                 match=instance,
                 defaults=kata_data,
+            )
+        
+        # Update or create KumiteResult if data was provided
+        if kumite_data is not None:
+            models.KumiteResult.objects.update_or_create(
+                match=instance,
+                defaults=kumite_data,
             )
 
         return instance
