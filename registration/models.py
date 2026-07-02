@@ -54,7 +54,8 @@ class Person(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         related_name="created_by",
-        null=True
+        null=True,
+        blank=True
     )
     updated_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -128,7 +129,7 @@ class Person(models.Model):
         if not self.registration_date:
             self.registration_date = date.today()
         
-        if self.created_by.role == 'main_admin':
+        if self.created_by is not None and self.created_by.role == 'main_admin':
             self.is_validated = True
 
         super().save(*args, **kwargs)

@@ -196,7 +196,7 @@ class PersonsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
-        if instance.created_by == None:
+        if instance.created_by is None:
             updated_person = serializer.save(created_by=request.user, updated_by=request.user, is_validated=instance.is_validated)
         else:
             updated_person = serializer.save(updated_by=request.user, is_validated=instance.is_validated)
