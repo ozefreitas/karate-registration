@@ -508,7 +508,7 @@ class UpdatePersonSerializer(serializers.ModelSerializer):
         if request.user.role in ["main_admin", "superuser"]:
             return attrs
 
-        if (person.created_by.role != "main_admin" and person.created_by == person.club and person.is_validated):
+        if person.created_by is not None and (person.created_by.role != "main_admin" and person.created_by == person.club and person.is_validated):
             for field in [ "first_name", "id_number", "last_name", "birth_date", "gender", "graduation"]:
                 if field in attrs:
                     raise serializers.ValidationError(
