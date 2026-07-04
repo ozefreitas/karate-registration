@@ -312,15 +312,13 @@ class PersonsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
 
 class MemberShipsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
-    # TODO: order get request by the category_index from the serializer
     queryset=Membership.objects.all().order_by("person__first_name", "person__last_name", "person__id")
     serializer_class = registration_serializers.MemberShipsSerializer
-    permission_classes = [PersonPermission]
+    # permission_classes = [PersonPermission]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
 
     serializer_classes = {
         "create": registration_serializers.CreateMemberShipsSerializer,
-        # "update": registration_serializers.UpdateMemberSerializer
     }
 
     def get_queryset(self):
@@ -335,6 +333,13 @@ class MemberShipsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             raise PermissionDenied("You do not have access to this data.")
         
         else: return self.queryset
+    
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        # capture the representation before deletion
+        data = registration_serializers.CreateMemberShipsSerializer(instance).data
+        self.perform_destroy(instance)
+        return Response(data, status=status.HTTP_200_OK)
     
 
 class MonthlyPersonPaymentViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):

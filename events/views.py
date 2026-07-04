@@ -255,9 +255,13 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             all_members = []
 
             for discipline in disciplines:
-                for member in discipline.individuals.select_related("club").all():
+                members_qs = DisciplineMember.objects.filter(
+                    discipline=discipline
+                ).select_related("person", "person__club", "category")
+
+                for dm in members_qs:
+                    member = dm.person
                     event_age = get_comp_age(member.birth_date) if age_method == "true" else calc_age(age_method, member.birth_date, season)
-                    category_to_assign = None
 
                     if not event.has_categories:
                         row = [
@@ -273,27 +277,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                             row.append(str(dorsal).zfill(3) if dorsal else "")
                         ws.append(row)
                     else:
-                        categories = discipline.categories.filter(
-                            gender=member.gender,
-                            min_age__lte=event_age,
-                            max_age__gte=event_age
-                        )
-                        for category in categories:
-                            if category.min_weight is None and category.max_weight is None:
-                                category_to_assign = category
-                            if category.min_weight is not None and category.max_weight is not None:
-                                if category.min_weight <= member.weight <= category.max_weight:
-                                    category_to_assign = category
-                                else:
-                                    continue
-                            if category.max_weight is not None:
-                                if member.weight < category.max_weight:
-                                    category_to_assign = category
-                            if category.min_weight is not None:
-                                if member.weight >= category.min_weight:
-                                    category_to_assign = category
-
-                        all_members.append((discipline, member, event_age, category_to_assign))
+                        all_members.append((discipline, member, event_age, dm.category))
 
             all_members_sorted = sorted(
                 all_members,
@@ -303,8 +287,13 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 ),
             )
 
-            for discipline, member, event_age, category_to_assign in all_members_sorted:
+            for discipline, member, event_age, category in all_members_sorted:
                 dorsal = dorsals.get(member.id)
+                category_str = getattr(category, "name", None)
+                if getattr(category, "min_weight", None) is not None:
+                    category_str += " + " + str(getattr(category, "min_weight"))
+                elif getattr(category, "max_weight", None) is not None:
+                    category_str += " - " + str(getattr(category, "max_weight"))
                 ws.append([
                     getattr(member.club, "username", ""),
                     getattr(member, "first_name", "") + " " + getattr(member, "last_name", ""),
@@ -312,7 +301,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                     getattr(member, "id_number", ""),
                     getattr(member, "gender", ""),
                     discipline.name,
-                    category_to_assign.name if category_to_assign else "",
+                    category_str,
                     str(dorsal).zfill(3) if dorsal else "",
                 ])
 
@@ -321,9 +310,14 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             team_headers = [
                 "Equipa",
                 "Dojo",
-                "Atleta 1", "Dorsal 1",
-                "Atleta 2", "Dorsal 2",
-                "Atleta 3", "Dorsal 3",
+                "Escalão",
+                "Género",
+                "Atleta 1",
+                "Atleta 2", 
+                "Atleta 3", 
+                "Dorsal 1",
+                "Dorsal 2", 
+                "Dorsal 3",
             ]
             ws_teams.append(team_headers)  # header written ONCE, outside the loop
 
@@ -349,12 +343,19 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                         "",
                     )
 
+                    team_category = getattr(team, "category", "")
+
                     ws_teams.append([
                         getattr(team, "name", ""),
                         club,
-                        p1_name, p1_dorsal,
-                        p2_name, p2_dorsal,
-                        p3_name, p3_dorsal,
+                        getattr(team_category, "name", ""),
+                        getattr(team, "gender", ""),
+                        p1_name,
+                        p2_name, 
+                        p3_name, 
+                        p1_dorsal, 
+                        p2_dorsal, 
+                        p3_dorsal,
                     ])
 
         # --- Save ONCE, after all sheets are fully built ---
