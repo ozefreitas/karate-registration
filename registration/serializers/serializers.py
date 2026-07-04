@@ -131,6 +131,12 @@ class CreateMemberShipsSerializer(serializers.ModelSerializer):
         exclude = ["id", "creation_date", "modified_date"]
 
 
+class DestroyMemberShipsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Membership
+        exclude = ["id", "creation_date", "modified_date"]
+
+
 class CompactCategorizedPersonsSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     club = serializers.SerializerMethodField()
