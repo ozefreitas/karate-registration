@@ -2,7 +2,7 @@ from django.conf import settings
 from django_filters.rest_framework import DjangoFilterBackend
 from django.utils import timezone
 from django.http import HttpResponse
-from django.db.models import Q, Prefetch, Max
+from django.db.models import Q, Prefetch, Max, Count
 from decouple import config
 import statistics
 from datetime import timedelta, datetime, date
@@ -15,6 +15,7 @@ from .models import Event, Discipline, Announcement, DisciplineMember, Disciplin
 from registration.models import Person, Team
 from core.permissions import IsAuthenticatedOrReadOnly, EventIndividualsPermission, EventPermission, IsAdminRoleorHigherForGET, IsAdminRoleorHigher
 from core.models import Category, Notification
+from core.serializers.categories import CategoryStatsSerializer
 from events import serializers
 from registration.serializers import serializers as registrationSerializers
 from clubs.serializers import RatingSerializer, CheckEventRateSerializer
@@ -367,6 +368,49 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
         return response
 
+    @extend_schema(
+        summary="Category registration statistics for an event",
+        description="Returns the number of registered members per category (and discipline) for the given event. Categories with no registrations are omitted.",
+        responses=CategoryStatsSerializer(many=True),
+    )
+    @action(detail=True, methods=["get"], url_path="category_stats", permission_classes=[IsAdminRoleorHigherForGET])
+    def category_stats(self, request, pk=None):
+        event = self.get_object()
+
+        stats = (
+            DisciplineMember.objects
+            .filter(discipline__event=event, category__isnull=False)
+            .values(
+                "discipline__id",
+                "discipline__name",
+                "category__id",
+                "category__name",
+                "category__min_weight",
+                "category__max_weight",
+                "category__gender"
+            )
+            .annotate(member_count=Count("id"))
+            .order_by("discipline__name", "category__name")
+        )
+
+        data = []
+        for row in stats:
+            category_str = row["category__name"] + " " + row["category__gender"]
+            if row["category__min_weight"] is not None:
+                category_str += " +" + str(row["category__min_weight"]) + "kg"
+            elif row["category__max_weight"] is not None:
+                category_str += " -" + str(row["category__max_weight"]) + "kg"
+
+            data.append(
+                {
+                    "discipline_id": row["discipline__id"],
+                    "discipline_name": row["discipline__name"],
+                    "category_id": row["category__id"],
+                    "category_name": category_str,
+                    "member_count": row["member_count"],
+                }
+            )
+        return Response(data)
 
     @extend_schema(
         request=serializers.GenerateDrawRequestSerializer,
