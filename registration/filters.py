@@ -54,7 +54,8 @@ class PersonsFilters(filters.FilterSet):
             qs = qs.exclude(
                 Q(first_element__disciplines_team=discipline) |
                 Q(second_element__disciplines_team=discipline) |
-                Q(third_element__disciplines_team=discipline)
+                Q(third_element__disciplines_team=discipline) |
+                Q(forth_element__disciplines_team=discipline)
             )
         
         return qs.distinct()

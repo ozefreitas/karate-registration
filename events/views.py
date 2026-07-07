@@ -306,21 +306,24 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                     str(dorsal).zfill(3) if dorsal else "",
                 ])
 
-            # --- Teams sheet: build BEFORE saving ---
+            # --- Teams sheet ---
             ws_teams = wb.create_sheet(title="Teams")
             team_headers = [
                 "Equipa",
                 "Dojo",
+                "Modalidade",
                 "Escalão",
                 "Género",
                 "Atleta 1",
                 "Atleta 2", 
-                "Atleta 3", 
+                "Atleta 3",
                 "Dorsal 1",
                 "Dorsal 2", 
                 "Dorsal 3",
+                "Suplente",
+                "Dorsal Suplente"
             ]
-            ws_teams.append(team_headers)  # header written ONCE, outside the loop
+            ws_teams.append(team_headers)
 
             def get_person_info(person):
                 if not person:
@@ -334,11 +337,12 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                     p1_name, p1_dorsal = get_person_info(team.athlete1)
                     p2_name, p2_dorsal = get_person_info(team.athlete2)
                     p3_name, p3_dorsal = get_person_info(team.athlete3)
+                    p4_name, p4_dorsal = get_person_info(team.athlete4)
 
                     club = next(
                         (
                             getattr(p.club, "username", "")
-                            for p in [team.athlete1, team.athlete2, team.athlete3]
+                            for p in [team.athlete1, team.athlete2, team.athlete3, team.athlete4]
                             if p and p.club
                         ),
                         "",
@@ -349,6 +353,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                     ws_teams.append([
                         getattr(team, "name", ""),
                         club,
+                        discipline.name,
                         getattr(team_category, "name", ""),
                         getattr(team, "gender", ""),
                         p1_name,
@@ -357,6 +362,8 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                         p1_dorsal, 
                         p2_dorsal, 
                         p3_dorsal,
+                        p4_name,
+                        p4_dorsal,
                     ])
 
         # --- Save ONCE, after all sheets are fully built ---
