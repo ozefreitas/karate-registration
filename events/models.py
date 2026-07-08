@@ -130,7 +130,7 @@ class DisciplineTeam(models.Model):
         unique_together = ('discipline', 'team') 
     
     def __str__(self):
-        return '{} - {} -> {} {}'.format(self.discipline.event.name, self.discipline.name, self.team)
+        return '{} - {} -> {}'.format(self.discipline.event.name, self.discipline.name, self.team)
 
 
 class EventDorsal(models.Model):

@@ -28,24 +28,15 @@ def seed_registrations_by_club(registrations: list, discipline_type: str):
     if len(groups) == 1:
         return groups[0]
 
-    # Snake distribution into bracket slots
-    slots = [None] * len(registrations)
-    indices = list(range(len(registrations)))
-    direction = 1
-    idx_pos = 0
+    # Interleave: pick one from each group in rotation
+    result = []
+    while any(groups):
+        for group in groups:
+            if group:
+                result.append(group.pop(0))
+        groups = [g for g in groups if g]  # remove empty groups
 
-    for group in groups:
-        for reg in group:
-            slots[indices[idx_pos]] = reg
-            idx_pos += direction
-            if idx_pos >= len(indices):
-                direction = -1
-                idx_pos = len(indices) - 1
-            elif idx_pos < 0:
-                direction = 1
-                idx_pos = 0
-
-    return slots
+    return result
 
 
 def generate_liga_draw(config: dict) -> None:
@@ -114,9 +105,9 @@ def generate_torneio_draw(event: str, config: dict = None, misto: bool = False) 
         
         bracket_name = f'{discipline.name} {category.name} {category.gender}'
         if category.min_weight is not None:
-            bracket_name += f' + {category.min_weight} Kg'
+            bracket_name += f' +{category.min_weight}kg'
         elif category.max_weight is not None:
-            bracket_name += f' - {category.max_weight} Kg'
+            bracket_name += f' -{category.max_weight}kg'
 
         new_bracket = Bracket.objects.create(
                                             name=bracket_name,

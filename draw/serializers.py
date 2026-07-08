@@ -68,10 +68,15 @@ class MatchSerializer(serializers.ModelSerializer):
     contender_1 = CompactPersonSerializer()
     contender_2 = CompactPersonSerializer()
     winner = CompactPersonSerializer()
+    team_contender_1 = CompactTeamSerializer()
+    team_contender_2 = CompactTeamSerializer()
+    team_winner = CompactTeamSerializer()
     kataresult = KataResultSerializer(read_only=True, allow_null=True)
     kumiteresult = KumiteResultSerializer(read_only=True, allow_null=True)
     contender_1_dorsal = serializers.SerializerMethodField()
     contender_2_dorsal = serializers.SerializerMethodField()
+    team_contender_1_dorsals = serializers.SerializerMethodField()
+    team_contender_2_dorsals = serializers.SerializerMethodField()
     
     class Meta:
         model = models.Match
@@ -81,13 +86,38 @@ class MatchSerializer(serializers.ModelSerializer):
         if not person:
             return None
         dorsals = self.context.get("dorsals", {})
-        return str(dorsals.get(person.id)).zfill(3)
+        dorsal = dorsals.get(person.id)
+        if dorsal is None:
+            return None
+        return str(dorsal).zfill(3)
+
+    def _get_team_dorsals(self, team):
+        if not team:
+            return {}
+        athletes = {
+            "athlete1": team.athlete1,
+            "athlete2": team.athlete2,
+            "athlete3": team.athlete3,
+            "athlete4": team.athlete4,
+            "athlete5": team.athlete5,
+        }
+        return {
+            slot: self._get_dorsal(athlete)
+            for slot, athlete in athletes.items()
+            if athlete is not None
+        }
 
     def get_contender_1_dorsal(self, obj):
         return self._get_dorsal(obj.contender_1)
 
     def get_contender_2_dorsal(self, obj):
         return self._get_dorsal(obj.contender_2)
+
+    def get_team_contender_1_dorsals(self, obj):
+        return self._get_team_dorsals(obj.team_contender_1)
+
+    def get_team_contender_2_dorsals(self, obj):
+        return self._get_team_dorsals(obj.team_contender_2)
 
 
 class CreateMatchSerializer(serializers.ModelSerializer):
@@ -106,10 +136,18 @@ class UpdateMatchSerializer(serializers.ModelSerializer):
     
     def validate(self, data):
         instance = self.instance
+        is_team = instance.bracket.discipline.is_team
         contender_1 = data.get("contender_1", instance.contender_1)
         contender_2 = data.get("contender_2", instance.contender_2)
+        team_contender_1 = data.get("team_contender_1", instance.team_contender_1)
+        team_contender_2 = data.get("team_contender_2", instance.team_contender_2)
 
-        if data.get("ongoing") and contender_1 is None and contender_2 is None:
+        if data.get("ongoing") and not is_team and contender_1 is None and contender_2 is None:
+            raise serializers.ValidationError(
+                "Partida não tem pelo menos um dos competidores definidos. Conclua as partidas das rondas anteriores!"
+            )
+
+        if data.get("ongoing") and is_team and team_contender_1 is None and team_contender_2 is None:
             raise serializers.ValidationError(
                 "Partida não tem pelo menos um dos competidores definidos. Conclua as partidas das rondas anteriores!"
             )
@@ -163,6 +201,7 @@ class ScoringEntrySerializer(serializers.ModelSerializer):
     team = CompactTeamSerializer()
     scoring_result = ScoringResultSerializer(read_only=True, allow_null=True)
     person_dorsal = serializers.SerializerMethodField()
+    team_dorsal = serializers.SerializerMethodField()
 
     class Meta:
         model = models.ScoringEntry
@@ -172,10 +211,33 @@ class ScoringEntrySerializer(serializers.ModelSerializer):
         if not person:
             return None
         dorsals = self.context.get("dorsals", {})
-        return str(dorsals.get(person.id)).zfill(3)
+        dorsal = dorsals.get(person.id)
+        if dorsal is None:
+            return None
+        return str(dorsal).zfill(3)
+    
+    def _get_team_dorsals(self, team):
+        if not team:
+            return {}
+        athletes = {
+            "athlete1": team.athlete1,
+            "athlete2": team.athlete2,
+            "athlete3": team.athlete3,
+            "athlete4": team.athlete4,
+            "athlete5": team.athlete5,
+        }
+        return {
+            slot: self._get_dorsal(athlete)
+            for slot, athlete in athletes.items()
+            if athlete is not None
+        }
 
     def get_person_dorsal(self, obj):
         return self._get_dorsal(obj.person)
+    
+    def get_team_dorsal(self, obj):
+        return self._get_team_dorsals(obj.team)
+
 
 class CreateScoringEntrySerializer(serializers.ModelSerializer):
     class Meta:

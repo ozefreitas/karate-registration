@@ -291,7 +291,8 @@ class Classification(models.Model):
     }
 
     bracket = models.ForeignKey("draw.Bracket", on_delete=models.CASCADE, related_name="classifications")
-    person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="classifications")
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="classifications", null=True, blank=True)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name="classifications", null=True, blank=True)
     place = models.PositiveSmallIntegerField(choices=PLACE_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
 

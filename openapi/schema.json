@@ -10076,6 +10076,10 @@
                         "type": "string",
                         "format": "date-time",
                         "readOnly": true
+                    },
+                    "team": {
+                        "type": "string",
+                        "nullable": true
                     }
                 },
                 "required": [
@@ -10875,14 +10879,18 @@
                         "type": "integer"
                     },
                     "person": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "team": {
+                        "type": "string",
+                        "nullable": true
                     }
                 },
                 "required": [
                     "bracket",
                     "created_at",
                     "id",
-                    "person",
                     "place"
                 ]
             },
@@ -12025,6 +12033,15 @@
                     "winner": {
                         "$ref": "#/components/schemas/CompactPerson"
                     },
+                    "team_contender_1": {
+                        "$ref": "#/components/schemas/CompactTeam"
+                    },
+                    "team_contender_2": {
+                        "$ref": "#/components/schemas/CompactTeam"
+                    },
+                    "team_winner": {
+                        "$ref": "#/components/schemas/CompactTeam"
+                    },
                     "kataresult": {
                         "allOf": [
                             {
@@ -12048,6 +12065,14 @@
                         "readOnly": true
                     },
                     "contender_2_dorsal": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "team_contender_1_dorsals": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "team_contender_2_dorsals": {
                         "type": "string",
                         "readOnly": true
                     },
@@ -12082,18 +12107,6 @@
                     "feeds_into_scoring": {
                         "type": "integer",
                         "nullable": true
-                    },
-                    "team_contender_1": {
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "team_contender_2": {
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "team_winner": {
-                        "type": "string",
-                        "nullable": true
                     }
                 },
                 "required": [
@@ -12108,6 +12121,11 @@
                     "kumiteresult",
                     "match_number",
                     "round_number",
+                    "team_contender_1",
+                    "team_contender_1_dorsals",
+                    "team_contender_2",
+                    "team_contender_2_dorsals",
+                    "team_winner",
                     "winner"
                 ]
             },
@@ -13355,6 +13373,10 @@
                         "type": "string",
                         "format": "date-time",
                         "readOnly": true
+                    },
+                    "team": {
+                        "type": "string",
+                        "nullable": true
                     }
                 }
             },
@@ -14359,6 +14381,10 @@
                         "type": "string",
                         "readOnly": true
                     },
+                    "team_dorsal": {
+                        "type": "string",
+                        "readOnly": true
+                    },
                     "score": {
                         "type": "string",
                         "format": "decimal",
@@ -14396,7 +14422,8 @@
                     "person_dorsal",
                     "scoring_result",
                     "scoring_round",
-                    "team"
+                    "team",
+                    "team_dorsal"
                 ]
             },
             "ScoringResult": {
