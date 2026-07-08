@@ -45,3 +45,11 @@ class CreateCategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = "__all__"
 
+
+class CategoryStatsSerializer(serializers.Serializer):
+    discipline_id = serializers.IntegerField()
+    discipline_name = serializers.CharField()
+    category_id = serializers.IntegerField()
+    category_name = serializers.CharField()
+    member_count = serializers.IntegerField()
+

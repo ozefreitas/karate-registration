@@ -4022,6 +4022,133 @@
                 }
             }
         },
+        "/events/{id}/category_stats/": {
+            "get": {
+                "operationId": "events_category_stats_list",
+                "description": "Returns the number of registered members per category (and discipline) for the given event. Categories with no registrations are omitted.",
+                "summary": "Category registration statistics for an event",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "has_categories",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "has_ended",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "has_registrations",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "has_teams",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "A unique value identifying this event.",
+                        "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "in_day",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "in_month",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "is_ongoing",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "ordering",
+                        "required": false,
+                        "in": "query",
+                        "description": "Which field to use when ordering the results.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "required": false,
+                        "in": "query",
+                        "description": "A page number within the paginated result set.",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page_size",
+                        "required": false,
+                        "in": "query",
+                        "description": "Number of results to return per page.",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "season",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "tags": [
+                    "events"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedCategoryStatsList"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/events/{id}/check_event_rate/": {
             "get": {
                 "operationId": "events_check_event_rate_retrieve",
@@ -9868,6 +9995,33 @@
                     "name"
                 ]
             },
+            "CategoryStats": {
+                "type": "object",
+                "properties": {
+                    "discipline_id": {
+                        "type": "integer"
+                    },
+                    "discipline_name": {
+                        "type": "string"
+                    },
+                    "category_id": {
+                        "type": "integer"
+                    },
+                    "category_name": {
+                        "type": "string"
+                    },
+                    "member_count": {
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "category_id",
+                    "category_name",
+                    "discipline_id",
+                    "discipline_name",
+                    "member_count"
+                ]
+            },
             "CheckEventRate": {
                 "type": "object",
                 "properties": {
@@ -12247,7 +12401,7 @@
                     "member_types": {
                         "type": "array",
                         "items": {
-                            "type": "string"
+                            "$ref": "#/components/schemas/PersonMemberShip"
                         },
                         "readOnly": true
                     },
@@ -12469,6 +12623,37 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Category"
+                        }
+                    }
+                }
+            },
+            "PaginatedCategoryStatsList": {
+                "type": "object",
+                "required": [
+                    "count",
+                    "results"
+                ],
+                "properties": {
+                    "count": {
+                        "type": "integer",
+                        "example": 123
+                    },
+                    "next": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://api.example.org/accounts/?page=4"
+                    },
+                    "previous": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://api.example.org/accounts/?page=2"
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CategoryStats"
                         }
                     }
                 }
@@ -13652,7 +13837,7 @@
                     "member_types": {
                         "type": "array",
                         "items": {
-                            "type": "string"
+                            "$ref": "#/components/schemas/PersonMemberShip"
                         },
                         "readOnly": true
                     }
@@ -13896,6 +14081,21 @@
                 "type": "string",
                 "description": "* `none` - None\n* `quotes` - Quotes\n* `insurance` - Insurance\n* `events` - Events"
             },
+            "PersonMemberShip": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "member_type": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "member_type"
+                ]
+            },
             "Persons": {
                 "type": "object",
                 "properties": {
@@ -13944,7 +14144,7 @@
                     "member_types": {
                         "type": "array",
                         "items": {
-                            "type": "string"
+                            "$ref": "#/components/schemas/PersonMemberShip"
                         },
                         "readOnly": true
                     }

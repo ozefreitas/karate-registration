@@ -22,6 +22,11 @@ from drf_spectacular.utils import extend_schema_field
 
 ### Members Serializer Classes
 
+class PersonMemberShipSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    member_type = serializers.CharField()
+
+    
 class PersonsSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     age = serializers.SerializerMethodField()
@@ -84,10 +89,10 @@ class PersonsSerializer(serializers.ModelSerializer):
     def get_past_month_payment_status(self, obj):
         return obj.past_month_payment()
     
-    @extend_schema_field(serializers.ListField(child=serializers.CharField()))
+    @extend_schema_field(PersonMemberShipSerializer(many=True))
     def get_member_types(self, obj):
         return list(
-            obj.member_types.values_list("member_type", flat=True)
+            obj.member_types.values("id", "member_type")
         )
 
 
@@ -115,7 +120,7 @@ class AdminPersonsSerializer(serializers.ModelSerializer):
     
     def get_age(self, obj):
         return get_comp_age(obj.birth_date)
-    
+
 
 class MemberShipsSerializer(serializers.ModelSerializer):
     person = PersonsSerializer()
@@ -227,11 +232,12 @@ class NotAdminLikeTypePersonsSerializer(serializers.ModelSerializer):
             "next": prev_id,
         }
     
-    @extend_schema_field(serializers.ListField(child=serializers.CharField()))
+    @extend_schema_field(PersonMemberShipSerializer(many=True))
     def get_member_types(self, obj):
         return list(
-            obj.member_types.values_list("member_type", flat=True)
+            obj.member_types.values("id", "member_type")
         )
+
     
     def get_exam_request_status(self, obj):
         try:
