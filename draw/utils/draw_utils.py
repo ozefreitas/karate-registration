@@ -237,9 +237,9 @@ def generate_torneio_draw(event: str, config: dict = None, misto: bool = False) 
         for match in first_round_matches:
             if discipline.is_team:
                 if match.team_contender_1 and not match.team_contender_2:
-                    match.winner = match.team_contender_1
+                    match.team_winner = match.team_contender_1
                 elif match.team_contender_2 and not match.team_contender_1:
-                    match.winner = match.team_contender_2
+                    match.team_winner = match.team_contender_2
                 match.save()
                 match.advance_winner()
                 match.advance_loser()

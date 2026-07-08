@@ -9,7 +9,7 @@ class PersonAdmin(admin.ModelAdmin):
 
 
 class TeamAdmin(admin.ModelAdmin):
-    list_display = ("gender", "team_number")
+    list_display = ("club", "category", "gender", "team_number")
     search_fields = ("gender", "club")
 
 

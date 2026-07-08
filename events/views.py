@@ -785,7 +785,7 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             individuals_count = discipline.individuals.filter(club=request.user).count()
             DisciplineMember.objects.filter(
                 discipline=discipline,
-                member__club=request.user
+                person__club=request.user
             ).delete()
         except DisciplineMember.DoesNotExist:
             return Response({"error": "Ocorreu um erro ao remover todos os Atletas desta Modalidade."}, status=status.HTTP_404_NOT_FOUND)
@@ -1037,8 +1037,17 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 )
         
         try:
-            teams_count = discipline.teams.filter(club=request.user).count()
-            Team.objects.filter(club=request.user).delete()
+            if request.user.role in ["superuser", "main_admin", "single_admin"]:
+                teams_count = discipline.teams.count()
+                # filters DisciplineTeam objects for the discipline, and delete de Tem object itself
+                teams_to_remove = DisciplineTeam.objects.filter(discipline=discipline)
+                for team in teams_to_remove:
+                    team.team.delete()
+            else:
+                teams_count = discipline.teams.filter(club=request.user).count()
+                teams_to_remove = DisciplineTeam.objects.filter(discipline=discipline, team__club=request.user)
+                for team in teams_to_remove:
+                    team.team.delete()
         except Team.DoesNotExist:
             return Response({"error": "Ocorreu um erro ao remover todos as Equipas desta Modalidade. Tente mais tarde ou contacte o administrador."}, status=status.HTTP_404_NOT_FOUND)
         

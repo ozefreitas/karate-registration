@@ -63,9 +63,17 @@ class BracketViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     )
     def officialize(self, request, pk=None):
         bracket = self.get_object()
+        is_team = bracket.discipline.is_team
 
         if bracket.draw_type == "Torneio/Finais":
-            matches = Match.objects.filter(bracket=bracket).select_related("winner", "contender_1", "contender_2")
+            matches = Match.objects.filter(bracket=bracket).select_related(
+                "winner", 
+                "contender_1", 
+                "contender_2", 
+                "team_winner", 
+                "team_contender_1", 
+                "team_contender_2"
+            )
 
             final = matches.filter(round_number=0, match_number=1).first()
             if not final or not final.winner:

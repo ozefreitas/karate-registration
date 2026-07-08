@@ -167,8 +167,8 @@ class Category(models.Model):
     name = models.CharField("Escalão", max_length=100)
     min_age = models.PositiveSmallIntegerField("Idade Mínima (inclusivé)", null=True, blank=True)
     max_age = models.PositiveSmallIntegerField("Idade Máxima (inclusivé)", null=True, blank=True)
-    min_grad = models.CharField("Graduação Mínima (inclusivé)", max_length=4, choices=GRADUATIONS, null=True)
-    max_grad = models.CharField("Graduação Máxima (inclusivé)", max_length=4, choices=GRADUATIONS, null=True)
+    min_grad = models.CharField("Graduação Mínima (inclusivé)", max_length=4, choices=GRADUATIONS, null=True, blank=True)
+    max_grad = models.CharField("Graduação Máxima (inclusivé)", max_length=4, choices=GRADUATIONS, null=True, blank=True)
     min_weight = models.PositiveSmallIntegerField("Peso Mínimo (inclusivé)", null=True, blank=True)
     max_weight = models.PositiveSmallIntegerField("Peso Máximo (inclusivé)", null=True, blank=True)
     gender = models.CharField("Género", choices=GENDERS, max_length=10)
@@ -178,8 +178,13 @@ class Category(models.Model):
     class Meta:
         ordering = ["min_age"]
 
-    def __str__(self): 
-        return "{} {}".format(self.name, self.gender)
+    def __str__(self):
+        category_str = f'{self.name} {self.gender}'
+        if self.min_weight is not None:
+            category_str += f' +{self.min_weight}kg'
+        elif self.max_weight is not None:
+            category_str += f' -{self.max_weight}kg'
+        return category_str
 
 
 class Ranking(models.Model):
