@@ -276,7 +276,10 @@ class Team(models.Model):
         if not self.id:  # Generate only if no ID exists
             self.id = generate_unique_nanoid("Team", "registration")
         super().save(*args, **kwargs)
-
+    
+    def __str__(self):
+        return f"{self.athlete1.first_name} {self.athlete1.last_name} | {self.athlete2.first_name} {self.athlete2.last_name} | {self.athlete3.first_name} {self.athlete3.last_name} - {self.club.username}"
+    
 
 ### Classification models ###
 
@@ -288,7 +291,8 @@ class Classification(models.Model):
     }
 
     bracket = models.ForeignKey("draw.Bracket", on_delete=models.CASCADE, related_name="classifications")
-    person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="classifications")
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="classifications", null=True, blank=True)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name="classifications", null=True, blank=True)
     place = models.PositiveSmallIntegerField(choices=PLACE_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
 

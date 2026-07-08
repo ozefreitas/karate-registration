@@ -449,12 +449,30 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         all_persons = set()
         for discipline in event.disciplines.all():
             for category in discipline.categories.all():
+                # individual registrations
                 registrations = DisciplineMember.objects.filter(
                     category=category,
                     discipline=discipline
                 )
                 for reg in registrations:
                     all_persons.add(reg.person)
+
+                # team registrations - pull every athlete slot from each team
+                team_regs = DisciplineTeam.objects.filter(
+                    discipline=discipline,
+                    team__category=category
+                ).select_related("team")
+                for team_reg in team_regs:
+                    team = team_reg.team
+                    for athlete in (
+                        team.athlete1,
+                        team.athlete2,
+                        team.athlete3,
+                        team.athlete4,
+                        team.athlete5,
+                    ):
+                        if athlete is not None:
+                            all_persons.add(athlete)
 
         # assign dorsals to persons that don't have one yet for this event
         next_dorsal = (EventDorsal.objects.filter(event=event)
@@ -483,13 +501,13 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         for discipline_format in formats:
 
             if discipline_format["format"] == "torneio":
-                success = DrawUtils.generate_torneio_draw(event, discipline_format)
+                DrawUtils.generate_torneio_draw(event, discipline_format)
             
             elif discipline_format["format"] == "grupos":
-                success = DrawUtils.generate_liga_draw(discipline_format)
+                DrawUtils.generate_liga_draw(discipline_format)
 
             elif discipline_format["format"] == "misto":
-                success = DrawUtils.generate_torneio_draw(event, discipline_format, True)
+                DrawUtils.generate_torneio_draw(event, discipline_format, True)
 
         # remove previous notification for available draw for this event
         previous_notifications = Notification.objects.filter(type__in=["draw_available", "draw_patched"], target_event=event)
@@ -785,7 +803,7 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             individuals_count = discipline.individuals.filter(club=request.user).count()
             DisciplineMember.objects.filter(
                 discipline=discipline,
-                member__club=request.user
+                person__club=request.user
             ).delete()
         except DisciplineMember.DoesNotExist:
             return Response({"error": "Ocorreu um erro ao remover todos os Atletas desta Modalidade."}, status=status.HTTP_404_NOT_FOUND)
@@ -1037,8 +1055,17 @@ class DisciplineViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 )
         
         try:
-            teams_count = discipline.teams.filter(club=request.user).count()
-            Team.objects.filter(club=request.user).delete()
+            if request.user.role in ["superuser", "main_admin", "single_admin"]:
+                teams_count = discipline.teams.count()
+                # filters DisciplineTeam objects for the discipline, and delete de Tem object itself
+                teams_to_remove = DisciplineTeam.objects.filter(discipline=discipline)
+                for team in teams_to_remove:
+                    team.team.delete()
+            else:
+                teams_count = discipline.teams.filter(club=request.user).count()
+                teams_to_remove = DisciplineTeam.objects.filter(discipline=discipline, team__club=request.user)
+                for team in teams_to_remove:
+                    team.team.delete()
         except Team.DoesNotExist:
             return Response({"error": "Ocorreu um erro ao remover todos as Equipas desta Modalidade. Tente mais tarde ou contacte o administrador."}, status=status.HTTP_404_NOT_FOUND)
         
