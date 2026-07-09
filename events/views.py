@@ -568,7 +568,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         return Response(
                     {"message": "Sorteio gerado com sucesso."},
                     status=status.HTTP_200_OK
-                 )
+                )
     
 
     @action(
