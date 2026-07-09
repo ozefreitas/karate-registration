@@ -278,7 +278,15 @@ class Team(models.Model):
         super().save(*args, **kwargs)
     
     def __str__(self):
-        return f"{self.athlete1.first_name} {self.athlete1.last_name} | {self.athlete2.first_name} {self.athlete2.last_name} | {self.athlete3.first_name} {self.athlete3.last_name} - {self.club.username}"
+        team_str = f"{self.athlete1.first_name} {self.athlete1.last_name} | {self.athlete2.first_name} {self.athlete2.last_name}"
+        if self.athlete3 is not None:
+            team_str += f" | {self.athlete3.first_name} | {self.athlete3.last_name}"
+        if self.athlete4 is not None:
+            team_str += f" | {self.athlete4.first_name} | {self.athlete4.last_name}"
+        if self.athlete5 is not None:
+            team_str += f" | {self.athlete5.first_name} | {self.athlete5.last_name}"
+        team_str +=  f" - {self.club.username}"
+        return team_str
     
 
 ### Classification models ###
