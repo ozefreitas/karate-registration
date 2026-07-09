@@ -237,6 +237,9 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
         ws.append(headers)
 
+        # collect every unique person (individual or team athlete) for the "All Members" sheet
+        all_persons_set = {}
+
         if list(disciplines) == []:
             for member in event.individuals.select_related("club").all():
                 event_age = get_comp_age(member.birth_date) if age_method == "true" else calc_age(age_method, member.birth_date, season)
@@ -251,6 +254,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                     dorsal = dorsals.get(member.id)
                     row.append(str(dorsal).zfill(3) if dorsal else "")
                 ws.append(row)
+                all_persons_set[member.id] = member
 
         else:
             all_members = []
@@ -263,6 +267,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 for dm in members_qs:
                     member = dm.person
                     event_age = get_comp_age(member.birth_date) if age_method == "true" else calc_age(age_method, member.birth_date, season)
+                    all_persons_set[member.id] = member
 
                     if not event.has_categories:
                         row = [
@@ -279,6 +284,18 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                         ws.append(row)
                     else:
                         all_members.append((discipline, member, event_age, dm.category))
+
+                # also sweep team athletes so they end up in the "All Members" sheet
+                for team in discipline.teams.select_related("club").all():
+                    for athlete in (
+                        team.athlete1,
+                        team.athlete2,
+                        team.athlete3,
+                        team.athlete4,
+                        team.athlete5,
+                    ):
+                        if athlete is not None:
+                            all_persons_set[athlete.id] = athlete
 
             all_members_sorted = sorted(
                 all_members,
@@ -366,7 +383,29 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                         p4_dorsal,
                     ])
 
-        # --- Save ONCE, after all sheets are fully built ---
+        # all Members sheet (club, name, id_number, dorsal - individuals + team athletes
+        ws_all = wb.create_sheet(title="All Members")
+        ws_all.append(["Dojo", "Nome", f"Nº {config('MAIN_ADMIN')}", "Dorsal"])
+
+        all_persons_sorted = sorted(
+            all_persons_set.values(),
+            key=lambda p: (
+                getattr(p.club, "username", "").lower() if getattr(p, "club", None) else "",
+                getattr(p, "first_name", "").lower(),
+                getattr(p, "last_name", "").lower(),
+            ),
+        )
+
+        for person in all_persons_sorted:
+            dorsal = dorsals.get(person.id)
+            ws_all.append([
+                getattr(person.club, "username", ""),
+                getattr(person, "first_name", "") + " " + getattr(person, "last_name", ""),
+                getattr(person, "id_number", ""),
+                str(dorsal).zfill(3) if dorsal else "",
+            ])
+
+        # save after all sheets are fully built
         response = HttpResponse(
             content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
