@@ -1,6 +1,5 @@
 from rest_framework import serializers
 import draw.models as models
-from events.models import EventDorsal
 from registration.serializers.base import CompactPersonSerializer, CompactTeamSerializer
 from core.serializers.categories import CompactCategorySerializer
 
@@ -25,6 +24,11 @@ class CreateBracketSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Bracket
         fields = "__all__"
+
+
+class MergeBracketSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=255)
+    category_id = serializers.IntegerField()
 
 
 class KataResultSerializer(serializers.ModelSerializer):

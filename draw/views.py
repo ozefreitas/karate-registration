@@ -1,6 +1,7 @@
 from .models import Bracket, Match, ScoringEntry, ScoringRound
 import draw.serializers as serializers
 from core.views import MultipleSerializersMixIn
+from core.models import Category
 from core.permissions import IsAuthenticatedOrReadOnly, IsTechnicianOrAdmin, IsTechnicianOrAdminforPOST, IsAdminRoleorHigherForGET, IsAdminRoleorHigher
 from registration.serializers.base import CompactPersonSerializer, CompactTeamSerializer
 from registration.serializers.serializers import ClassificationsSerializer
@@ -425,6 +426,27 @@ class BracketViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         )
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
         return response
+    
+    @action(
+        detail=True,
+        methods=["post"],
+        url_path="merge_bracket",
+        permission_classes=[IsTechnicianOrAdminforPOST],
+    )
+    def merge_bracket(self, request, pk=None):
+        bracket = self.get_object()
+        bracket_category = bracket.category
+        
+        serializer = serializers.MergeBracketSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        name = serializer.validated_data["name"]
+        category = Category.objects.get(id=serializer.validated_data["category_id"])
+        if category is None:
+            return Response({"error": ""}, status=status.HTTP_400_BAD_REQUEST)
+
+
+        return Response({"message": "Escalões fundidos com sucesso!"}, status=status.HTTP_200_OK)
     
     @action(
         detail=True,

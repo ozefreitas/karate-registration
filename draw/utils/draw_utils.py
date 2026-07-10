@@ -158,7 +158,9 @@ def generate_torneio_draw(event: str, config: dict = None, misto: bool = False) 
                     ScoringEntry.objects.create(scoring_round=scoring_round, entry_number=i)
 
             else:
-                for i, reg in enumerate(registrations):
+                shuffled = list(registrations)
+                random.shuffle(shuffled)
+                for i, reg in enumerate(shuffled):
                     if discipline.is_team:
                         ScoringEntry.objects.create(scoring_round=scoring_round, team=reg.team, entry_number=i)
                     else:
