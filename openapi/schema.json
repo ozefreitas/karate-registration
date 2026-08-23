@@ -9231,6 +9231,49 @@
                 }
             }
         },
+        "/search/": {
+            "get": {
+                "operationId": "global_search",
+                "description": "Search across the user's accessible records (people, etc). Results are scoped to the requesting user's club/ownership.",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "q",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Search query (min 2 characters)",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "search"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SearchResponse"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/sign_up/generate_token/": {
             "post": {
                 "operationId": "sign_up_generate_token_create",
@@ -10494,6 +10537,10 @@
                     "is_validated": {
                         "type": "boolean"
                     },
+                    "search_vector": {
+                        "type": "string",
+                        "nullable": true
+                    },
                     "club": {
                         "type": "integer",
                         "readOnly": true
@@ -11252,6 +11299,10 @@
                         "type": "string",
                         "format": "uri",
                         "nullable": true
+                    },
+                    "search_vector": {
+                        "type": "string",
+                        "nullable": true
                     }
                 },
                 "required": [
@@ -11897,6 +11948,10 @@
                     "file": {
                         "type": "string",
                         "format": "uri",
+                        "nullable": true
+                    },
+                    "search_vector": {
+                        "type": "string",
                         "nullable": true
                     },
                     "created_by": {
@@ -12695,6 +12750,10 @@
                     },
                     "is_validated": {
                         "type": "boolean"
+                    },
+                    "search_vector": {
+                        "type": "string",
+                        "nullable": true
                     }
                 },
                 "required": [
@@ -13755,6 +13814,10 @@
                         "format": "uri",
                         "nullable": true
                     },
+                    "search_vector": {
+                        "type": "string",
+                        "nullable": true
+                    },
                     "created_by": {
                         "type": "integer",
                         "nullable": true
@@ -14632,6 +14695,51 @@
                     "score_5"
                 ]
             },
+            "SearchResponse": {
+                "type": "object",
+                "properties": {
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SearchResult"
+                        }
+                    }
+                },
+                "required": [
+                    "results"
+                ]
+            },
+            "SearchResult": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string"
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "subtitle": {
+                        "type": "string"
+                    },
+                    "url": {
+                        "type": "string"
+                    },
+                    "rank": {
+                        "type": "number",
+                        "format": "double"
+                    }
+                },
+                "required": [
+                    "id",
+                    "rank",
+                    "title",
+                    "type",
+                    "url"
+                ]
+            },
             "SeasonEnum": {
                 "enum": [
                     "2024/2025",
@@ -14998,6 +15106,10 @@
                         "format": "uri",
                         "nullable": true
                     },
+                    "search_vector": {
+                        "type": "string",
+                        "nullable": true
+                    },
                     "created_by": {
                         "type": "integer",
                         "nullable": true
@@ -15199,6 +15311,10 @@
                     },
                     "is_validated": {
                         "type": "boolean"
+                    },
+                    "search_vector": {
+                        "type": "string",
+                        "nullable": true
                     },
                     "created_by": {
                         "type": "integer",

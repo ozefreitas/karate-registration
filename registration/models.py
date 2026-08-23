@@ -3,11 +3,15 @@ from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils import timezone
+from django.contrib.postgres.search import SearchVectorField
+from django.contrib.postgres.indexes import GinIndex
+
 from datetime import datetime
 import calendar
 
 from nanoid import generate
 from datetime import date
+
 from core.constants import GENDERS, GRADUATIONS
 
 # Create your models here.
@@ -69,15 +73,17 @@ class Person(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
     is_validated = models.BooleanField(default=False)
-
+    search_vector = SearchVectorField(null=True)
+    
     class Meta:
+        indexes = [GinIndex(fields=["search_vector"])]
         constraints = [
             models.UniqueConstraint(
                 fields=["first_name", "last_name", "birth_date", "id_number"],
                 name="unique_member_identity_fields"
             )
         ]
-    
+
     def current_month_payment(self):
         """Returns paid if the member paid this month's quota."""
         if not self.quotes_legible:
@@ -307,7 +313,6 @@ class Classification(models.Model):
     class Meta:
         unique_together = ["bracket", "place"] 
 
-        
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)

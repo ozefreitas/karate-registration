@@ -199,3 +199,17 @@ class CreateFeedbackSerializer(serializers.ModelSerializer):
     class Meta:
         model = FeedbackData
         exclude = ["id", "created_at", "club_user"]
+
+
+class SearchResultSerializer(serializers.Serializer):
+    type = serializers.CharField()
+    id = serializers.CharField()
+    title = serializers.CharField()
+    subtitle = serializers.CharField(required=False, allow_blank=True)
+    url = serializers.CharField()
+    rank = serializers.FloatField()
+ 
+ 
+class SearchResponseSerializer(serializers.Serializer):
+    results = SearchResultSerializer(many=True)
+ 

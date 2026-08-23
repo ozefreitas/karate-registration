@@ -3,6 +3,8 @@ from django.utils.text import slugify
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.conf import settings
+from django.contrib.postgres.search import SearchVectorField
+from django.contrib.postgres.indexes import GinIndex
 
 from core.constants import EVENT_TYPES, SEASONS
 
@@ -35,6 +37,10 @@ class Event(models.Model):
         blank=True,
         related_name='created_events'
     )
+    search_vector = SearchVectorField(null=True)
+
+    class Meta:
+        indexes = [GinIndex(fields=["search_vector"])]
 
     # def clean(self):
     #     super().clean()

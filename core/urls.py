@@ -16,6 +16,7 @@ router.register(r'feedback', views.FeedbackViewSet, basename='feedbacks')
 
 urlpatterns = [
     path('', include(router.urls)),
+    path("search/", views.GlobalSearchView.as_view(), name="global-search"),
     path("auth/token/", views.CustomTokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("auth/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path('sign_up/generate_token/', views.sign_up_token, name="generate-token"),

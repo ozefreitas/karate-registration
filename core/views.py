@@ -6,11 +6,14 @@ from django.utils.encoding import force_bytes
 from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
+from django.contrib.postgres.search import SearchQuery, SearchRank
 
 from .filters import NotificationsFilters, CategoriesFilters
 from core.permissions import IsAuthenticatedOrReadOnly, IsUnauthenticatedForPost, IsNationalForPostDelete, IsAdminRoleorHigher, IsPayingUserorAdminForGet, CanFilterByUserPermission, MemberValidationRequestPermissions
 from .models import Category, SignupToken, RequestedAcount, User, RequestPasswordReset, MemberValidationRequest, Notification, FeedbackData
 from clubs.models import Club
+from events.models import Event
+from registration.models import Person
 from .models import Notification, MonthlyPaymentPlan, MemberValidationRequest
 from core.serializers import base as BaseSerializers
 from core.serializers.categories import CategorySerializer, CreateCategorySerializer, CompactCategorySerializer
@@ -21,13 +24,16 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.exceptions import ValidationError
 from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.views import APIView
 from rest_framework.decorators import action, permission_classes, api_view
 from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework.response import Response
 from rest_framework import viewsets, filters, status, views, serializers
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.exceptions import PermissionDenied
+
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 
 # Create your views here.
 
@@ -36,6 +42,61 @@ class MultipleSerializersMixIn:
 
     def get_serializer_class(self):
         return self.serializer_classes.get(self.action, self.serializer_class)
+
+
+class GlobalSearchView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        operation_id="global_search",
+        parameters=[
+            OpenApiParameter(
+                name="q",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                required=True,
+                description="Search query (min 2 characters)",
+            )
+        ],
+        responses=BaseSerializers.SearchResponseSerializer,
+        description="Search across the user's accessible records (people, etc). "
+                     "Results are scoped to the requesting user's club/ownership.",
+    )
+    def get(self, request):
+        query = request.query_params.get("q", "").strip()
+        if not query:
+            return Response({"results": []})
+
+        user = request.user
+        search_query = SearchQuery(query, search_type="plain", config="portuguese")
+        results = []
+
+        # each entry: (model, type_name, title_field, ownership_filter_fn)
+        model_configs = [
+            (Person, "person", "first_name", lambda u: {"club": u}),
+            (Event, "event", "name", lambda u: {"created_by": u}),
+        ]
+
+        for model, type_name, title_field, owner_filter in model_configs:
+            qs = (
+                model.objects
+                .filter(**owner_filter(user))
+                .annotate(rank=SearchRank("search_vector", search_query))
+                .filter(search_vector=search_query)
+                .order_by("-rank")[:10]
+            )
+            for obj in qs:
+                results.append({
+                    "type": type_name,
+                    "id": obj.id,
+                    "title": getattr(obj, title_field),
+                    "rank": obj.rank,
+                })
+
+        results.sort(key=lambda r: r["rank"], reverse=True)
+        serializer = BaseSerializers.SearchResponseSerializer({"results": results[:20]})
+        return Response(serializer.data)
+
 
 
 class NotificationViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
