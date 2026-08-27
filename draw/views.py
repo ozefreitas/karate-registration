@@ -71,6 +71,10 @@ class BracketViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         serializer = CompactTeamSerializer(teams, many=True)
         return Response(serializer.data)
 
+    @extend_schema(
+        request=serializers.ReGenBracketDrawSerializer,
+        # responses=serializers.GenerateDrawResponseSerializer,
+    )
     @action(
         detail=True,
         methods=["post"],
@@ -83,9 +87,12 @@ class BracketViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         discipline = bracket.discipline
         bracket_draw_type = bracket.draw_type
         event = bracket.event
-        # WORKAROUND!! Need to create a modal after ###
-        finals_size = 8
-        split_clubs = True
+
+        serializer = serializers.ReGenBracketDrawSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        finals_size = serializer.validated_data["finalsSize"]
+        split_clubs = serializer.validated_data["splitClubs"]
 
         will_go_to_scoring = False
         if bracket_draw_type == "Misto" and finals_size:

@@ -71,7 +71,6 @@ class GlobalSearchView(APIView):
         search_query = SearchQuery(query, search_type="plain", config="portuguese")
         results = []
 
-        # each entry: (model, type_name, title_field, ownership_filter_fn)
         model_configs = [
             (Person, "person", "first_name", lambda u: {"club": u}),
             (Event, "event", "name", lambda u: {"created_by": u}),
@@ -80,7 +79,7 @@ class GlobalSearchView(APIView):
         for model, type_name, title_field, owner_filter in model_configs:
             qs = (
                 model.objects
-                .filter(**owner_filter(user))
+                # .filter(**owner_filter(user))
                 .annotate(rank=SearchRank("search_vector", search_query))
                 .filter(search_vector=search_query)
                 .order_by("-rank")[:10]

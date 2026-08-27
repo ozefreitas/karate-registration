@@ -145,10 +145,18 @@ class DestroyMemberShipsSerializer(serializers.ModelSerializer):
 class CompactCategorizedPersonsSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     club = serializers.SerializerMethodField()
+    age = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Person
-        fields = ["id", "first_name", "last_name", "gender", "club", "full_name"]
+        fields = [
+            "id", 
+            "gender", 
+            "club", 
+            "full_name", 
+            "age",
+            "weight",
+        ]
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -163,6 +171,9 @@ class CompactCategorizedPersonsSerializer(serializers.ModelSerializer):
     
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
+
+    def get_age(self, obj):
+        return get_comp_age(obj.birth_date)
 
 
 class NotAdminLikeTypePersonsSerializer(serializers.ModelSerializer):

@@ -31,6 +31,26 @@ class MergeBracketSerializer(serializers.Serializer):
     category_id = serializers.IntegerField()
 
 
+class ReGenBracketDrawSerializer(serializers.Serializer):
+    splitClubs = serializers.BooleanField()
+    splitFavourites = serializers.BooleanField()
+    removed_ids = serializers.ListField(
+        child=serializers.CharField(),
+        required=False,
+        allow_empty=True,
+        help_text="Lista de IDs dos Membros/Equipas a serem removidos da bracket corrente"
+    )
+    added_ids  = serializers.ListField(
+        child=serializers.CharField(),
+        required=False,
+        allow_empty=True,
+        help_text="Lista de IDs dos Membros/Equipas a serem adicionados à bracket corrente"
+    )
+    maxMembersPerGroup = serializers.CharField(required=False, allow_blank=True)
+    minMembersPerGroup = serializers.CharField(required=False, allow_blank=True)
+    finalsSize = serializers.CharField(required=False, allow_blank=True)
+
+
 class KataResultSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.KataResult
@@ -131,8 +151,8 @@ class CreateMatchSerializer(serializers.ModelSerializer):
 
 
 class UpdateMatchSerializer(serializers.ModelSerializer):
-    kataresult = KataResultSerializer(required=False)
-    kumiteresult = KumiteResultSerializer(required=False)
+    kataresult = KataResultSerializer(required=False, allow_null=True)
+    kumiteresult = KumiteResultSerializer(required=False, allow_null=True)
 
     class Meta:
         model = models.Match
@@ -171,6 +191,8 @@ class UpdateMatchSerializer(serializers.ModelSerializer):
                 match=instance,
                 defaults=kata_data,
             )
+        else:
+            models.KataResult.objects.filter(match=instance).delete()
         
         # Update or create KumiteResult if data was provided
         if kumite_data is not None:
@@ -178,6 +200,8 @@ class UpdateMatchSerializer(serializers.ModelSerializer):
                 match=instance,
                 defaults=kumite_data,
             )
+        else:
+            models.KumiteResult.objects.filter(match=instance).delete()
 
         return instance
 
