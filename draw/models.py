@@ -22,9 +22,19 @@ class Bracket(models.Model):
     draw_type = models.CharField("Tipo", choices=DRAW_TYPES, max_length=16, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     officialized_at = models.DateTimeField(null=True, blank=True)
+    public = models.BooleanField("Disponível", default=True)
 
     def __str__(self):
         return f'{self.name} - {self.event.name} {self.event.season}'
+
+
+class BracketAbsence(models.Model):
+    bracket = models.ForeignKey(Bracket, on_delete=models.CASCADE, related_name='attendances')
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, null=True, blank=True)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, null=True, blank=True)
+
+    class Meta:
+        unique_together = [('bracket', 'person'), ('bracket', 'team')]
     
 
 class Match(models.Model):
@@ -32,6 +42,8 @@ class Match(models.Model):
     # Individuals
     contender_1 = models.ForeignKey(Person, null=True, blank=True, on_delete=models.SET_NULL, related_name="matches_as_contender_1")
     contender_2 = models.ForeignKey(Person, null=True, blank=True, on_delete=models.SET_NULL, related_name="matches_as_contender_2")
+    contender_1_present = models.BooleanField(default=True)
+    contender_2_present = models.BooleanField(default=True)
     winner = models.ForeignKey(Person, null=True, blank=True, on_delete=models.SET_NULL, related_name="matches_won")
     round_number = models.IntegerField()
     is_third_place = models.BooleanField(default=False)
@@ -45,6 +57,8 @@ class Match(models.Model):
     # Teams
     team_contender_1 = models.ForeignKey(Team, null=True, blank=True, on_delete=models.SET_NULL, related_name="matches_as_contender_1")
     team_contender_2 = models.ForeignKey(Team, null=True, blank=True, on_delete=models.SET_NULL, related_name="matches_as_contender_2")
+    team_contender_1_present = models.BooleanField(default=True)
+    team_contender_2_present = models.BooleanField(default=True)
     team_winner = models.ForeignKey(Team, null=True, blank=True, on_delete=models.SET_NULL, related_name="matches_won")
     ongoing = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)

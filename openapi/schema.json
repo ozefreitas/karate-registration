@@ -471,17 +471,17 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/Bracket"
+                                "$ref": "#/components/schemas/ReGenBracketDraw"
                             }
                         },
                         "application/x-www-form-urlencoded": {
                             "schema": {
-                                "$ref": "#/components/schemas/Bracket"
+                                "$ref": "#/components/schemas/ReGenBracketDraw"
                             }
                         },
                         "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/Bracket"
+                                "$ref": "#/components/schemas/ReGenBracketDraw"
                             }
                         }
                     },
@@ -10089,6 +10089,10 @@
                         "format": "date-time",
                         "nullable": true
                     },
+                    "public": {
+                        "type": "boolean",
+                        "title": "Disponível"
+                    },
                     "event": {
                         "type": "string",
                         "title": "Evento"
@@ -10207,6 +10211,9 @@
             "CategoryStats": {
                 "type": "object",
                 "properties": {
+                    "is_team": {
+                        "type": "boolean"
+                    },
                     "discipline_id": {
                         "type": "integer"
                     },
@@ -10219,16 +10226,17 @@
                     "category_name": {
                         "type": "string"
                     },
-                    "member_count": {
+                    "count": {
                         "type": "integer"
                     }
                 },
                 "required": [
                     "category_id",
                     "category_name",
+                    "count",
                     "discipline_id",
                     "discipline_name",
-                    "member_count"
+                    "is_team"
                 ]
             },
             "CheckEventRate": {
@@ -10581,16 +10589,6 @@
                         "type": "string",
                         "readOnly": true
                     },
-                    "first_name": {
-                        "type": "string",
-                        "title": "Primeiro Nome",
-                        "maxLength": 200
-                    },
-                    "last_name": {
-                        "type": "string",
-                        "title": "Último Nome",
-                        "maxLength": 200
-                    },
                     "gender": {
                         "allOf": [
                             {
@@ -10606,15 +10604,25 @@
                     "full_name": {
                         "type": "string",
                         "readOnly": true
+                    },
+                    "age": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "weight": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0,
+                        "nullable": true,
+                        "title": "Peso"
                     }
                 },
                 "required": [
+                    "age",
                     "club",
-                    "first_name",
                     "full_name",
                     "gender",
-                    "id",
-                    "last_name"
+                    "id"
                 ]
             },
             "CompactCategory": {
@@ -10958,6 +10966,10 @@
                         "type": "string",
                         "format": "date-time",
                         "nullable": true
+                    },
+                    "public": {
+                        "type": "boolean",
+                        "title": "Disponível"
                     },
                     "event": {
                         "type": "string",
@@ -11351,6 +11363,12 @@
                         "type": "integer",
                         "readOnly": true
                     },
+                    "contender_1_present": {
+                        "type": "boolean"
+                    },
+                    "contender_2_present": {
+                        "type": "boolean"
+                    },
                     "round_number": {
                         "type": "integer",
                         "maximum": 2147483647,
@@ -11363,6 +11381,12 @@
                         "type": "integer",
                         "maximum": 2147483647,
                         "minimum": -2147483648
+                    },
+                    "team_contender_1_present": {
+                        "type": "boolean"
+                    },
+                    "team_contender_2_present": {
+                        "type": "boolean"
                     },
                     "ongoing": {
                         "type": "boolean"
@@ -12297,6 +12321,12 @@
                         "type": "string",
                         "readOnly": true
                     },
+                    "contender_1_present": {
+                        "type": "boolean"
+                    },
+                    "contender_2_present": {
+                        "type": "boolean"
+                    },
                     "round_number": {
                         "type": "integer",
                         "maximum": 2147483647,
@@ -12309,6 +12339,12 @@
                         "type": "integer",
                         "maximum": 2147483647,
                         "minimum": -2147483648
+                    },
+                    "team_contender_1_present": {
+                        "type": "boolean"
+                    },
+                    "team_contender_2_present": {
+                        "type": "boolean"
                     },
                     "ongoing": {
                         "type": "boolean"
@@ -13475,6 +13511,10 @@
                         "format": "date-time",
                         "nullable": true
                     },
+                    "public": {
+                        "type": "boolean",
+                        "title": "Disponível"
+                    },
                     "event": {
                         "type": "string",
                         "title": "Evento"
@@ -14236,12 +14276,34 @@
                         "readOnly": true
                     },
                     "kataresult": {
-                        "$ref": "#/components/schemas/KataResult"
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/KataResult"
+                            }
+                        ],
+                        "nullable": true
                     },
                     "kumiteresult": {
-                        "$ref": "#/components/schemas/KumiteResult"
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/KumiteResult"
+                            }
+                        ],
+                        "nullable": true
+                    },
+                    "contender_1_present": {
+                        "type": "boolean"
+                    },
+                    "contender_2_present": {
+                        "type": "boolean"
                     },
                     "is_third_place": {
+                        "type": "boolean"
+                    },
+                    "team_contender_1_present": {
+                        "type": "boolean"
+                    },
+                    "team_contender_2_present": {
                         "type": "boolean"
                     },
                     "ongoing": {
@@ -14457,6 +14519,44 @@
                 },
                 "required": [
                     "rating_signal"
+                ]
+            },
+            "ReGenBracketDraw": {
+                "type": "object",
+                "properties": {
+                    "splitClubs": {
+                        "type": "boolean"
+                    },
+                    "splitFavourites": {
+                        "type": "boolean"
+                    },
+                    "removed_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Lista de IDs dos Membros/Equipas a serem removidos da bracket corrente"
+                    },
+                    "added_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Lista de IDs dos Membros/Equipas a serem adicionados à bracket corrente"
+                    },
+                    "maxMembersPerGroup": {
+                        "type": "string"
+                    },
+                    "minMembersPerGroup": {
+                        "type": "string"
+                    },
+                    "finalsSize": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "splitClubs",
+                    "splitFavourites"
                 ]
             },
             "RegisterUser": {
@@ -15129,12 +15229,34 @@
                         "readOnly": true
                     },
                     "kataresult": {
-                        "$ref": "#/components/schemas/KataResult"
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/KataResult"
+                            }
+                        ],
+                        "nullable": true
                     },
                     "kumiteresult": {
-                        "$ref": "#/components/schemas/KumiteResult"
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/KumiteResult"
+                            }
+                        ],
+                        "nullable": true
+                    },
+                    "contender_1_present": {
+                        "type": "boolean"
+                    },
+                    "contender_2_present": {
+                        "type": "boolean"
                     },
                     "is_third_place": {
+                        "type": "boolean"
+                    },
+                    "team_contender_1_present": {
+                        "type": "boolean"
+                    },
+                    "team_contender_2_present": {
                         "type": "boolean"
                     },
                     "ongoing": {

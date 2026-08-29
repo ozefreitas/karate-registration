@@ -439,6 +439,22 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             .order_by("discipline__name", "category__name")
         )
 
+        team_stats = (
+            DisciplineTeam.objects
+            .filter(discipline__event=event, team__category__isnull=False)
+            .values(
+                "discipline__id",
+                "discipline__name",
+                "team__category__id",
+                "team__category__name",
+                "team__category__min_weight",
+                "team__category__max_weight",
+                "team__category__gender"
+            )
+            .annotate(team_count=Count("id"))
+            .order_by("discipline__name", "team__category__name")
+        )
+
         data = []
         for row in stats:
             category_str = row["category__name"] + " " + row["category__gender"]
@@ -449,13 +465,33 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 
             data.append(
                 {
+                    "is_team": False,
                     "discipline_id": row["discipline__id"],
                     "discipline_name": row["discipline__name"],
                     "category_id": row["category__id"],
                     "category_name": category_str,
-                    "member_count": row["member_count"],
+                    "count": row["member_count"],
                 }
             )
+        
+        for row in team_stats:
+            category_str = row["team__category__name"] + " " + row["team__category__gender"]
+            if row["team__category__min_weight"] is not None:
+                category_str += " +" + str(row["team__category__min_weight"]) + "kg"
+            elif row["team__category__max_weight"] is not None:
+                category_str += " -" + str(row["team__category__max_weight"]) + "kg"
+
+            data.append(
+                {
+                    "is_team": True,
+                    "discipline_id": row["discipline__id"],
+                    "discipline_name": row["discipline__name"],
+                    "category_id": row["team__category__id"],
+                    "category_name": category_str,
+                    "count": row["team_count"],
+                }
+            )
+
         return Response(data)
 
     @extend_schema(

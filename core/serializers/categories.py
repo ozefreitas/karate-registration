@@ -47,9 +47,10 @@ class CreateCategorySerializer(serializers.ModelSerializer):
 
 
 class CategoryStatsSerializer(serializers.Serializer):
+    is_team = serializers.BooleanField()
     discipline_id = serializers.IntegerField()
     discipline_name = serializers.CharField()
     category_id = serializers.IntegerField()
     category_name = serializers.CharField()
-    member_count = serializers.IntegerField()
+    count = serializers.IntegerField()
 
