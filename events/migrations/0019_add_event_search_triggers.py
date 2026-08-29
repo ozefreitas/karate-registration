@@ -13,14 +13,12 @@ class Migration(migrations.Migration):
         migrations.RunSQL(
             sql="""
                 CREATE TRIGGER event_search_vector_trigger
-                BEFORE INSERT OR UPDATE OF name, description, search_vector
+                BEFORE INSERT OR UPDATE OF name, description, location, search_vector
                 ON events_event
                 FOR EACH ROW EXECUTE FUNCTION
                 tsvector_update_trigger(
-                    search_vector, 'pg_catalog.portuguese', name, description
+                    search_vector, 'pg_catalog.portuguese', name, description, location
                 );
-
-                UPDATE events_event SET search_vector = NULL;
             """,
             reverse_sql="DROP TRIGGER IF EXISTS event_search_vector_trigger ON events_event;",
         ),

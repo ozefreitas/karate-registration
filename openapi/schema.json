@@ -14721,12 +14721,6 @@
                     "title": {
                         "type": "string"
                     },
-                    "subtitle": {
-                        "type": "string"
-                    },
-                    "url": {
-                        "type": "string"
-                    },
                     "rank": {
                         "type": "number",
                         "format": "double"
@@ -14736,8 +14730,7 @@
                     "id",
                     "rank",
                     "title",
-                    "type",
-                    "url"
+                    "type"
                 ]
             },
             "SeasonEnum": {

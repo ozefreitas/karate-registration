@@ -205,8 +205,8 @@ class SearchResultSerializer(serializers.Serializer):
     type = serializers.CharField()
     id = serializers.CharField()
     title = serializers.CharField()
-    subtitle = serializers.CharField(required=False, allow_blank=True)
-    url = serializers.CharField()
+    # subtitle = serializers.CharField(required=False, allow_blank=True)
+    # url = serializers.CharField()
     rank = serializers.FloatField()
  
  
