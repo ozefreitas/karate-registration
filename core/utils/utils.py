@@ -1,4 +1,6 @@
 from django.utils import timezone
+from django.contrib.postgres.search import SearchQuery, SearchRank
+
 import datetime
 from events.models import Event
 
@@ -53,3 +55,18 @@ def range_decoder(min_age: int, max_age: int):
     some_range = range(min_age, max_age + 1)
     return some_range
 
+ 
+def apply_search(queryset, query: str, config: str = "portuguese"):
+    """
+    Filters and ranks a queryset by its `search_vector` field.
+    Shared between the global cross-model search and any single-model
+    endpoint (e.g. the Members ViewSet) that wants the same `?q=` behavior.
+    """
+    search_query = SearchQuery(query, search_type="plain", config=config)
+    return (
+        queryset
+        .annotate(rank=SearchRank("search_vector", search_query))
+        .filter(search_vector=search_query)
+        .order_by("-rank")
+    )
+ 

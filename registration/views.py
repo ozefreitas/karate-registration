@@ -3,6 +3,8 @@ from django.db import transaction, IntegrityError
 from django.utils import timezone
 from django.db.models import Case, When
 
+from core.utils.utils import apply_search
+
 from .models import Team, Classification, MonthlyPersonPayment, MonthlyPersonPaymentConfig, Person, Membership
 from .filters import PersonsFilters, MonthlyPersonPaymentFilters, ClassificationsFilters
 from events.models import Event
@@ -20,7 +22,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 
 # views for the athlets registrations
 
@@ -62,33 +65,54 @@ class PersonsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
     def partial_update(self, request, *args, **kwargs):
         return super().partial_update(request, *args, **kwargs)
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="q",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description="Full-text search across name fields",
+            )
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
             return self.queryset.none()
-
+    
         user = self.request.user
-
+    
         # safety guard
         if not user.is_authenticated:
             return self.queryset.none()
-
+    
         role = getattr(user, "role", None)
-
+    
         if role == "superuser":
-            return self.queryset
-
-        if role in ["main_admin", "single_admin"]:
-            return self.queryset.filter(
+            qs = self.queryset
+    
+        elif role in ["main_admin", "single_admin"]:
+            qs = self.queryset.filter(
                 is_validated=True,
                 member_types__member_type__in=["athlete", "student"]
             ).exclude(
                 club__role__in=["superuser"]
             )
-
-        if role in ["subed_club", "free_club"]:
-            return self.queryset.filter(club=user)
-
-        raise PermissionDenied("You do not have access to this data.")
+    
+        elif role in ["subed_club", "free_club"]:
+            qs = self.queryset.filter(club=user)
+    
+        else:
+            raise PermissionDenied("You do not have access to this data.")
+    
+        query = self.request.query_params.get("q", "").strip()
+        if query:
+            qs = apply_search(qs, query)
+    
+        return qs
 
     def get_serializer_class(self):
         if getattr(self, "swagger_fake_view", False):

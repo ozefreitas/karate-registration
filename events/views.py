@@ -19,7 +19,7 @@ from core.serializers.categories import CategoryStatsSerializer
 from events import serializers
 from registration.serializers import serializers as registrationSerializers
 from clubs.serializers import RatingSerializer, CheckEventRateSerializer
-from core.utils.utils import calc_age
+from core.utils.utils import apply_search, calc_age
 from registration.utils.utils import get_comp_age, athlete_age
 from core.views import MultipleSerializersMixIn
 from draw.models import Match, Bracket
@@ -30,7 +30,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from drf_spectacular.utils import extend_schema, OpenApiResponse
+
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 
 # Create your views here.
 
@@ -48,6 +50,20 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         "update": serializers.UpdateEventSerializer
     }
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="q",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description="Full-text search across name fields",
+            )
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
     def get_queryset(self):
         qs = super().get_queryset()
         user = self.request.user
@@ -55,28 +71,34 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         now = timezone.now()
 
         if role in ['main_admin', 'single_admin', 'superuser']:
-            return qs.filter(
+            qs = qs.filter(
                 Q(created_by__isnull=True) | Q(created_by__role__in=['main_admin', 'single_admin', 'superuser'])
             ).order_by("event_date")
 
         if role == 'subed_club':
-            return qs.filter(
+            qs = qs.filter(
                 Q(created_by__isnull=True) | Q(created_by=user) | Q(created_by__role__in=['main_admin', 'single_admin', 'superuser'])
             ).order_by("event_date")
 
         if role == 'free_club':
             future_7 = now + timedelta(days=7)
-            return qs.filter(
+            qs = qs.filter(
                 Q(start_registration__isnull=False, start_registration__lte=now, event_date__gte=now, created_by__isnull=True)
                 |
                 Q(start_registration__isnull=True, event_date__gte=now, event_date__lte=future_7, created_by__isnull=True)
             ).order_by("event_date")
 
         if role == "technician":
-            return qs.filter(Q(created_by__isnull=True) | Q(created_by__role__in=['main_admin']), event_date=now).order_by("event_date")
+            qs = qs.filter(Q(created_by__isnull=True) | Q(created_by__role__in=['main_admin']), event_date=now).order_by("event_date")
 
         # Everyone else sees only admin-created events
-        return qs.filter(Q(created_by__isnull=True) | Q(created_by__role__in=['main_admin'])).order_by("event_date")
+        qs = qs.filter(Q(created_by__isnull=True) | Q(created_by__role__in=['main_admin'])).order_by("event_date")
+
+        query = self.request.query_params.get("q", "").strip()
+        if query:
+            qs = apply_search(qs, query)
+    
+        return qs
 
     def perform_create(self, serializer):
         user = self.request.user

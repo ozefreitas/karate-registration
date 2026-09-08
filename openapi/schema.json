@@ -3849,6 +3849,14 @@
                     },
                     {
                         "in": "query",
+                        "name": "q",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Full-text search across name fields"
+                    },
+                    {
+                        "in": "query",
                         "name": "season",
                         "schema": {
                             "type": "string"
@@ -7882,6 +7890,14 @@
                         "schema": {
                             "type": "integer"
                         }
+                    },
+                    {
+                        "in": "query",
+                        "name": "q",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Full-text search across name fields"
                     }
                 ],
                 "tags": [
