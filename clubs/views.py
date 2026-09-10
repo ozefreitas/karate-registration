@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from datetime import datetime
 from django.utils import timezone
 
-from .models import Club, ClubSubscription, ClubSubscriptionConfig, ClubSettings
+from .models import ClubSubscription, ClubSubscriptionConfig, ClubSettings
 from core.models import Notification
 import clubs.serializers as ClubSerializers
 from core.permissions import IsGETforClubs, IsAdminRoleorHigher, IsSubedClubForAll
@@ -21,22 +21,6 @@ from datetime import date
 # Create your views here.
 
 User = get_user_model()
-
-class ClubsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
-    queryset=Club.objects.all()
-    serializer_class=ClubSerializers.ClubsSerializer
-    permission_classes = [IsGETforClubs]
-
-    serializer_classes = {
-        "create": ClubSerializers.CreateClubSerializer,
-    }
-
-    def perform_create(self, serializer):
-        user = self.request.user
-        if user.role != "main_admin":
-            return Response(status=status.HTTP_403_FORBIDDEN)
-        serializer.save(mother_acount=user)
-    
 
 @extend_schema(
     description="Returns member statistics per club",

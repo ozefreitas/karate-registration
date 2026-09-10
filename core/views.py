@@ -11,7 +11,6 @@ from django.contrib.postgres.search import SearchQuery, SearchRank
 from .filters import NotificationsFilters, CategoriesFilters
 from core.permissions import IsAuthenticatedOrReadOnly, IsUnauthenticatedForPost, IsNationalForPostDelete, IsAdminRoleorHigher, IsPayingUserorAdminForGet, CanFilterByUserPermission, MemberValidationRequestPermissions
 from .models import Category, SignupToken, RequestedAcount, User, RequestPasswordReset, MemberValidationRequest, Notification, FeedbackData
-from clubs.models import Club
 from events.models import Event
 from registration.models import Person
 from .models import Notification, MonthlyPaymentPlan, MemberValidationRequest
@@ -31,6 +30,7 @@ from rest_framework.response import Response
 from rest_framework import viewsets, filters, status, views, serializers
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.exceptions import PermissionDenied
 
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
@@ -223,50 +223,50 @@ class CategoriesViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
             )
 
 
-class RequestedAcountViewSet(viewsets.ModelViewSet):
-    queryset=RequestedAcount.objects.all()
-    serializer_class=BaseSerializers.RequestedAcountSerializer
-    permission_classes = [IsUnauthenticatedForPost]
+# class RequestedAcountViewSet(viewsets.ModelViewSet):
+#     queryset=RequestedAcount.objects.all()
+#     serializer_class=BaseSerializers.RequestedAcountSerializer
+#     permission_classes = [IsUnauthenticatedForPost]
 
-    def perform_create(self, serializer):
-        username = serializer.validated_data.get('username')
+#     def perform_create(self, serializer):
+#         username = serializer.validated_data.get('username')
 
-        try:
-            club_name = Club.objects.get(name=username)
-        except Club.DoesNotExist:
-            raise serializers.ValidationError(f"No Club found with '{username}' username")
+#         try:
+#             club_name = Club.objects.get(name=username)
+#         except Club.DoesNotExist:
+#             raise serializers.ValidationError(f"No Club found with '{username}' username")
 
-        if club_name.is_registered:
-            raise serializers.ValidationError(f"Club '{username}' is already registered.")
+#         if club_name.is_registered:
+#             raise serializers.ValidationError(f"Club '{username}' is already registered.")
 
-        # Mark as registered
-        club_name.is_registered = True
-        club_name.save()
-        if club_name.is_admin:
-            serializer.save()
-        else:
-            admin_user = User.objects.get(role="main_admin")
-            Notification.objects.create(name=admin_user, 
-                                        notification=f'Um pedido de criação de conta com o username {username} foi inciado. Dirija-se para a área de Definições na aba "Gestor de Contas".',
-                                        type="request", 
-                                        request_acount=username)
+#         # Mark as registered
+#         club_name.is_registered = True
+#         club_name.save()
+#         if club_name.is_admin:
+#             serializer.save()
+#         else:
+#             admin_user = User.objects.get(role="main_admin")
+#             Notification.objects.create(name=admin_user, 
+#                                         notification=f'Um pedido de criação de conta com o username {username} foi inciado. Dirija-se para a área de Definições na aba "Gestor de Contas".',
+#                                         type="request", 
+#                                         request_acount=username)
 
-            # Save the RequestedAcount instance normally
-            serializer.save()
+#             # Save the RequestedAcount instance normally
+#             serializer.save()
 
-    def perform_destroy(self, instance):
-        with transaction.atomic():
-            club_name = Club.objects.filter(name=instance.username).first()
-            if club_name:
-                club_name.is_registered = False
-                club_name.save()
+#     def perform_destroy(self, instance):
+#         with transaction.atomic():
+#             club_name = Club.objects.filter(name=instance.username).first()
+#             if club_name:
+#                 club_name.is_registered = False
+#                 club_name.save()
 
-            Notification.objects.filter(
-                type="request",
-                request_acount=instance.username 
-            ).delete()
+#             Notification.objects.filter(
+#                 type="request",
+#                 request_acount=instance.username 
+#             ).delete()
 
-            instance.delete()
+#             instance.delete()
 
 
 class MemberValidationRequestViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
@@ -533,25 +533,19 @@ class LogoutView(GenericAPIView):
 
 
 class RegisterView(views.APIView):
-    @extend_schema(
-        request=BaseSerializers.RegisterUserSerializer,
-        responses={201: None, 400: None},
-        description="Register a new user with username, email and password."
-    )
-    def post(self, request):
-        serializer = BaseSerializers.RegisterUserSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            club_obj = Club.objects.get(name=serializer.validated_data.get('username'))
-            if club_obj.is_admin:
-                RequestedAcount.objects.filter(username=serializer.validated_data.get('username')).delete()
-                serializer.save()
-                return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
-            else:
-                RequestedAcount.objects.filter(username=serializer.validated_data.get('username')).delete()
-                Notification.objects.filter(type="request", request_acount=serializer.validated_data.get('username')).delete()
-                serializer.save()
-                return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def create_child_view(request):
+        parent = request.user
+        if parent.role not in (User.Role.MAINADMIN, User.Role.SUBEDCLUB):
+            raise PermissionDenied
+
+        username = request.data["username"] 
+        role = User.Role.TECHNICIAN if parent.role == User.Role.MAINADMIN else User.Role.PERSON
+
+        child = User.objects.create_child(parent=parent, username=username, role=role)
+
+        # send invite/activation email so the child sets their own password
+        # send_activation_email(child)
+        return Response({"id": child.id, "username": child.username})
 
 
 @extend_schema(

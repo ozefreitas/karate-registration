@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Club, ClubSubscription, ClubSubscriptionConfig, ClubSettings
+from .models import ClubSubscription, ClubSubscriptionConfig, ClubSettings
 from core.serializers.users import UsersSerializer
 
 
@@ -15,18 +15,6 @@ class CheckEventRateSerializer(serializers.Serializer):
 
 class AvailableQuoteYearsSerializer(serializers.Serializer):
     years = serializers.ListField(child=serializers.IntegerField())
-
-
-class ClubsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Club
-        fields = "__all__"
-
-
-class CreateClubSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Club
-        exclude = ["id", "is_registered", "mother_acount"]
 
 
 class ClubSubscriptionsSerializer(serializers.ModelSerializer):

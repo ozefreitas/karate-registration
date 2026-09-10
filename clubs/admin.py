@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ClubRatingAudit, Club, ClubSubscription, ClubSubscriptionConfig, ClubSettings
+from .models import ClubRatingAudit, ClubSubscription, ClubSubscriptionConfig, ClubSettings
 
 # Register your models here.
 
@@ -9,7 +9,6 @@ class ClubsRatingAuditAdmin(admin.ModelAdmin):
 class ClubSubscriptionAdmin(admin.ModelAdmin):
     list_display = ("club", "amount", "year")
 
-admin.site.register(Club)
 admin.site.register(ClubRatingAudit, ClubsRatingAuditAdmin)
 admin.site.register(ClubSubscription, ClubSubscriptionAdmin)
 admin.site.register(ClubSubscriptionConfig)

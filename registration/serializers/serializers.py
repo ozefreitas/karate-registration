@@ -39,17 +39,19 @@ class PersonsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Person
-        fields = ("id", 
-                  "full_name", 
-                  "gender",
-                  "updated_by", 
-                  "age",
-                  "current_month_payment_status", 
-                  "past_month_payment_status", 
-                  "request_status",
-                  "exam_request_status",
-                  "is_validated",
-                  "member_types")
+        fields = (
+            "id", 
+            "full_name", 
+            "gender",
+            "updated_by", 
+            "age",
+            "current_month_payment_status", 
+            "past_month_payment_status", 
+            "request_status",
+            "exam_request_status",
+            "is_validated",
+            "member_types",
+        )
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
@@ -105,15 +107,15 @@ class AdminPersonsSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Person
         fields = (
-                "id", 
-                "full_name", 
-                "gender", 
-                "club", 
-                "updated_by",
-                "weight",
-                "graduation",
-                "age"
-                )
+            "id", 
+            "full_name", 
+            "gender", 
+            "club", 
+            "updated_by",
+            "weight",
+            "graduation",
+            "age"
+        )
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
@@ -188,7 +190,15 @@ class NotAdminLikeTypePersonsSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = models.Person
-        exclude = ("creation_date", "modified_date", "created_by", "updated_by", "club", "favorite")
+        exclude = (
+            "creation_date", 
+            "modified_date", 
+            "created_by", 
+            "updated_by", 
+            "club", 
+            "favorite",
+            "search_vector"
+        )
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
@@ -272,10 +282,22 @@ class AdminPersonRetrieveSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     age = serializers.SerializerMethodField()
     next_prev = serializers.SerializerMethodField()
+    club = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Person
-        exclude = ("quotes_legible", "creation_date", "modified_date", "favorite", "club", "created_by", "updated_by")
+        exclude = (
+            "quotes_legible", 
+            "creation_date", 
+            "modified_date", 
+            "favorite",
+            "created_by", 
+            "updated_by",
+            "search_vector"
+        )
+
+    def get_club(self, obj):
+        return obj.club.username
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
@@ -317,7 +339,12 @@ class NotInEventCoachesSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = models.Person
-        fields = ["id", "gender", "full_name", "graduation"]
+        fields = [
+            "id", 
+            "gender", 
+            "full_name", 
+            "graduation"
+        ]
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
@@ -330,7 +357,15 @@ class NotInEventPersonsSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = models.Person
-        fields = ["id", "weight", "gender", "age", "full_name", "category", "graduation"]
+        fields = [
+            "id", 
+            "weight", 
+            "gender", 
+            "age", 
+            "full_name", 
+            "category", 
+            "graduation"
+        ]
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
@@ -397,7 +432,15 @@ class ClubsCreatePersonSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Person
-        exclude = ["id", "created_by", "updated_by", "profile_image", "creation_date", "modified_date"]
+        exclude = [
+            "id", 
+            "created_by", 
+            "updated_by", 
+            "profile_image", 
+            "creation_date", 
+            "modified_date",
+            "search_vector"
+        ]
         read_only_fields = ("club", ) 
 
     def validate(self, data):
@@ -453,7 +496,16 @@ class ClubsCreatePersonSerializer(serializers.ModelSerializer):
 class AdminCreatePersonSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Person
-        exclude = ("address", "post_code", "national_card_number", "taxpayer_number", "created_by", "updated_by", "profile_image")
+        exclude = (
+            "address", 
+            "post_code", 
+            "national_card_number", 
+            "taxpayer_number", 
+            "created_by", 
+            "updated_by", 
+            "profile_image",
+            "search_vector"
+        )
 
     def validate(self, data):
         weight = data.get("weight")
@@ -489,7 +541,12 @@ class UpdatePersonSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = models.Person
-        exclude = ("club", "creation_date", "modified_date")
+        exclude = (
+            "club", 
+            "creation_date", 
+            "modified_date",
+            "search_vector"
+        )
     
     # def get_fields(self):
     #     fields = super().get_fields()

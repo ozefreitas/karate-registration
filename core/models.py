@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.conf import settings
@@ -68,13 +68,9 @@ class User(AbstractUser):
         if self.role == self.Role.SUPERUSER and self.username != "ozefreitas":
             raise ValidationError("Only the user 'ozefreitas' can be Superuser.")
 
-        # MAINADMIN restriction
-        # if self.role == self.Role.MAINADMIN and self.username != "SKIPortugal":
-        #     raise ValidationError("Only the user 'SKIPortugal' can be Main Admin.")
-
         # SINGLEADMIN restrictions
         if self.role == self.Role.SINGLEADMIN:
-            if self.children.exists():
+            if self.pk and self.children.exists():
                 raise ValidationError("A Single Admin cannot have child accounts.")
             if self.parent is not None:
                 raise ValidationError("A Single Admin cannot be assigned as a child.")
@@ -115,6 +111,27 @@ class User(AbstractUser):
         # Validate rules before saving
         self.full_clean()
         super().save(*args, **kwargs)
+
+
+class UserManager(BaseUserManager):
+    def create_child(self, *, parent, username, role, tier=None, **extra_fields):
+        if parent.role not in (User.Role.MAINADMIN, User.Role.SUBEDCLUB):
+            raise ValidationError("Only Main Admin or Subed Club accounts can create child accounts.")
+
+        if User.objects.filter(username=username).exists():
+            raise ValidationError("Username already taken.")
+
+        child = self.model(
+            username=username,
+            role=role,
+            tier=tier or User.Tier.BASE,
+            parent=parent,
+            **extra_fields,
+        )
+        child.set_unusable_password()  # force them to set it via invite link
+        child.full_clean()
+        child.save()
+        return child
 
 
 class Profile(models.Model):
