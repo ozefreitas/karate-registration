@@ -37,7 +37,7 @@ class Event(models.Model):
         blank=True,
         related_name='created_events'
     )
-    search_vector = SearchVectorField(null=True)
+    search_vector = SearchVectorField(null=True, blank=True)
 
     class Meta:
         indexes = [GinIndex(fields=["search_vector"])]

@@ -2607,300 +2607,6 @@
                 }
             }
         },
-        "/clubs/": {
-            "get": {
-                "operationId": "clubs_list",
-                "parameters": [
-                    {
-                        "name": "page",
-                        "required": false,
-                        "in": "query",
-                        "description": "A page number within the paginated result set.",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "name": "page_size",
-                        "required": false,
-                        "in": "query",
-                        "description": "Number of results to return per page.",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "tags": [
-                    "clubs"
-                ],
-                "security": [
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/PaginatedClubsList"
-                                }
-                            }
-                        },
-                        "description": ""
-                    }
-                }
-            },
-            "post": {
-                "operationId": "clubs_create",
-                "tags": [
-                    "clubs"
-                ],
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/CreateClub"
-                            }
-                        },
-                        "application/x-www-form-urlencoded": {
-                            "schema": {
-                                "$ref": "#/components/schemas/CreateClub"
-                            }
-                        },
-                        "multipart/form-data": {
-                            "schema": {
-                                "$ref": "#/components/schemas/CreateClub"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "security": [
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/CreateClub"
-                                }
-                            }
-                        },
-                        "description": ""
-                    }
-                }
-            }
-        },
-        "/clubs/{id}/": {
-            "get": {
-                "operationId": "clubs_retrieve",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "id",
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "description": "A unique integer value identifying this club.",
-                        "required": true
-                    }
-                ],
-                "tags": [
-                    "clubs"
-                ],
-                "security": [
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Clubs"
-                                }
-                            }
-                        },
-                        "description": ""
-                    }
-                }
-            },
-            "put": {
-                "operationId": "clubs_update",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "id",
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "description": "A unique integer value identifying this club.",
-                        "required": true
-                    }
-                ],
-                "tags": [
-                    "clubs"
-                ],
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/Clubs"
-                            }
-                        },
-                        "application/x-www-form-urlencoded": {
-                            "schema": {
-                                "$ref": "#/components/schemas/Clubs"
-                            }
-                        },
-                        "multipart/form-data": {
-                            "schema": {
-                                "$ref": "#/components/schemas/Clubs"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "security": [
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Clubs"
-                                }
-                            }
-                        },
-                        "description": ""
-                    }
-                }
-            },
-            "patch": {
-                "operationId": "clubs_partial_update",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "id",
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "description": "A unique integer value identifying this club.",
-                        "required": true
-                    }
-                ],
-                "tags": [
-                    "clubs"
-                ],
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/PatchedClubs"
-                            }
-                        },
-                        "application/x-www-form-urlencoded": {
-                            "schema": {
-                                "$ref": "#/components/schemas/PatchedClubs"
-                            }
-                        },
-                        "multipart/form-data": {
-                            "schema": {
-                                "$ref": "#/components/schemas/PatchedClubs"
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Clubs"
-                                }
-                            }
-                        },
-                        "description": ""
-                    }
-                }
-            },
-            "delete": {
-                "operationId": "clubs_destroy",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "id",
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "description": "A unique integer value identifying this club.",
-                        "required": true
-                    }
-                ],
-                "tags": [
-                    "clubs"
-                ],
-                "security": [
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No response body"
-                    }
-                }
-            }
-        },
         "/current_season/": {
             "get": {
                 "operationId": "current_season_retrieve",
@@ -8488,300 +8194,6 @@
                 }
             }
         },
-        "/request_acount/": {
-            "get": {
-                "operationId": "request_acount_list",
-                "parameters": [
-                    {
-                        "name": "page",
-                        "required": false,
-                        "in": "query",
-                        "description": "A page number within the paginated result set.",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "name": "page_size",
-                        "required": false,
-                        "in": "query",
-                        "description": "Number of results to return per page.",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "tags": [
-                    "request_acount"
-                ],
-                "security": [
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/PaginatedRequestedAcountList"
-                                }
-                            }
-                        },
-                        "description": ""
-                    }
-                }
-            },
-            "post": {
-                "operationId": "request_acount_create",
-                "tags": [
-                    "request_acount"
-                ],
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/RequestedAcount"
-                            }
-                        },
-                        "application/x-www-form-urlencoded": {
-                            "schema": {
-                                "$ref": "#/components/schemas/RequestedAcount"
-                            }
-                        },
-                        "multipart/form-data": {
-                            "schema": {
-                                "$ref": "#/components/schemas/RequestedAcount"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "security": [
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/RequestedAcount"
-                                }
-                            }
-                        },
-                        "description": ""
-                    }
-                }
-            }
-        },
-        "/request_acount/{id}/": {
-            "get": {
-                "operationId": "request_acount_retrieve",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "id",
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "description": "A unique integer value identifying this requested acount.",
-                        "required": true
-                    }
-                ],
-                "tags": [
-                    "request_acount"
-                ],
-                "security": [
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/RequestedAcount"
-                                }
-                            }
-                        },
-                        "description": ""
-                    }
-                }
-            },
-            "put": {
-                "operationId": "request_acount_update",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "id",
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "description": "A unique integer value identifying this requested acount.",
-                        "required": true
-                    }
-                ],
-                "tags": [
-                    "request_acount"
-                ],
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/RequestedAcount"
-                            }
-                        },
-                        "application/x-www-form-urlencoded": {
-                            "schema": {
-                                "$ref": "#/components/schemas/RequestedAcount"
-                            }
-                        },
-                        "multipart/form-data": {
-                            "schema": {
-                                "$ref": "#/components/schemas/RequestedAcount"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "security": [
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/RequestedAcount"
-                                }
-                            }
-                        },
-                        "description": ""
-                    }
-                }
-            },
-            "patch": {
-                "operationId": "request_acount_partial_update",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "id",
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "description": "A unique integer value identifying this requested acount.",
-                        "required": true
-                    }
-                ],
-                "tags": [
-                    "request_acount"
-                ],
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/PatchedRequestedAcount"
-                            }
-                        },
-                        "application/x-www-form-urlencoded": {
-                            "schema": {
-                                "$ref": "#/components/schemas/PatchedRequestedAcount"
-                            }
-                        },
-                        "multipart/form-data": {
-                            "schema": {
-                                "$ref": "#/components/schemas/PatchedRequestedAcount"
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/RequestedAcount"
-                                }
-                            }
-                        },
-                        "description": ""
-                    }
-                }
-            },
-            "delete": {
-                "operationId": "request_acount_destroy",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "id",
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "description": "A unique integer value identifying this requested acount.",
-                        "required": true
-                    }
-                ],
-                "tags": [
-                    "request_acount"
-                ],
-                "security": [
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No response body"
-                    }
-                }
-            }
-        },
         "/schema/": {
             "get": {
                 "operationId": "schema_retrieve",
@@ -9387,55 +8799,6 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "No response body"
-                    },
-                    "400": {
-                        "description": "No response body"
-                    }
-                }
-            }
-        },
-        "/sign_up/register_user/": {
-            "post": {
-                "operationId": "sign_up_register_user_create",
-                "description": "Register a new user with username, email and password.",
-                "tags": [
-                    "sign_up"
-                ],
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/RegisterUser"
-                            }
-                        },
-                        "application/x-www-form-urlencoded": {
-                            "schema": {
-                                "$ref": "#/components/schemas/RegisterUser"
-                            }
-                        },
-                        "multipart/form-data": {
-                            "schema": {
-                                "$ref": "#/components/schemas/RegisterUser"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "security": [
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    },
-                    {}
-                ],
-                "responses": {
-                    "201": {
                         "description": "No response body"
                     },
                     "400": {
@@ -10425,34 +9788,6 @@
                     "year"
                 ]
             },
-            "Clubs": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "readOnly": true
-                    },
-                    "name": {
-                        "type": "string",
-                        "title": "Clube",
-                        "maxLength": 99
-                    },
-                    "is_registered": {
-                        "type": "boolean"
-                    },
-                    "is_admin": {
-                        "type": "boolean"
-                    },
-                    "mother_acount": {
-                        "type": "integer",
-                        "nullable": true
-                    }
-                },
-                "required": [
-                    "id",
-                    "name"
-                ]
-            },
             "ClubsCreatePerson": {
                 "type": "object",
                 "properties": {
@@ -10560,10 +9895,6 @@
                     },
                     "is_validated": {
                         "type": "boolean"
-                    },
-                    "search_vector": {
-                        "type": "string",
-                        "nullable": true
                     },
                     "club": {
                         "type": "integer",
@@ -11135,22 +10466,6 @@
                     "place"
                 ]
             },
-            "CreateClub": {
-                "type": "object",
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "title": "Clube",
-                        "maxLength": 99
-                    },
-                    "is_admin": {
-                        "type": "boolean"
-                    }
-                },
-                "required": [
-                    "name"
-                ]
-            },
             "CreateClubSettigs": {
                 "type": "object",
                 "properties": {
@@ -11326,10 +10641,6 @@
                     "file": {
                         "type": "string",
                         "format": "uri",
-                        "nullable": true
-                    },
-                    "search_vector": {
-                        "type": "string",
                         "nullable": true
                     }
                 },
@@ -11988,10 +11299,6 @@
                     "file": {
                         "type": "string",
                         "format": "uri",
-                        "nullable": true
-                    },
-                    "search_vector": {
-                        "type": "string",
                         "nullable": true
                     },
                     "created_by": {
@@ -12802,10 +12109,6 @@
                     },
                     "is_validated": {
                         "type": "boolean"
-                    },
-                    "search_vector": {
-                        "type": "string",
-                        "nullable": true
                     }
                 },
                 "required": [
@@ -12980,37 +12283,6 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Classifications"
-                        }
-                    }
-                }
-            },
-            "PaginatedClubsList": {
-                "type": "object",
-                "required": [
-                    "count",
-                    "results"
-                ],
-                "properties": {
-                    "count": {
-                        "type": "integer",
-                        "example": 123
-                    },
-                    "next": {
-                        "type": "string",
-                        "nullable": true,
-                        "format": "uri",
-                        "example": "http://api.example.org/accounts/?page=4"
-                    },
-                    "previous": {
-                        "type": "string",
-                        "nullable": true,
-                        "format": "uri",
-                        "example": "http://api.example.org/accounts/?page=2"
-                    },
-                    "results": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Clubs"
                         }
                     }
                 }
@@ -13290,37 +12562,6 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Persons"
-                        }
-                    }
-                }
-            },
-            "PaginatedRequestedAcountList": {
-                "type": "object",
-                "required": [
-                    "count",
-                    "results"
-                ],
-                "properties": {
-                    "count": {
-                        "type": "integer",
-                        "example": 123
-                    },
-                    "next": {
-                        "type": "string",
-                        "nullable": true,
-                        "format": "uri",
-                        "example": "http://api.example.org/accounts/?page=4"
-                    },
-                    "previous": {
-                        "type": "string",
-                        "nullable": true,
-                        "format": "uri",
-                        "example": "http://api.example.org/accounts/?page=2"
-                    },
-                    "results": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/RequestedAcount"
                         }
                     }
                 }
@@ -13675,30 +12916,6 @@
                     }
                 }
             },
-            "PatchedClubs": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "readOnly": true
-                    },
-                    "name": {
-                        "type": "string",
-                        "title": "Clube",
-                        "maxLength": 99
-                    },
-                    "is_registered": {
-                        "type": "boolean"
-                    },
-                    "is_admin": {
-                        "type": "boolean"
-                    },
-                    "mother_acount": {
-                        "type": "integer",
-                        "nullable": true
-                    }
-                }
-            },
             "PatchedDisciplines": {
                 "type": "object",
                 "properties": {
@@ -13868,10 +13085,6 @@
                     "file": {
                         "type": "string",
                         "format": "uri",
-                        "nullable": true
-                    },
-                    "search_vector": {
-                        "type": "string",
                         "nullable": true
                     },
                     "created_by": {
@@ -14155,36 +13368,6 @@
                 "properties": {
                     "prev_match_id": {
                         "type": "string"
-                    }
-                }
-            },
-            "PatchedRequestedAcount": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "readOnly": true
-                    },
-                    "username": {
-                        "type": "string",
-                        "maxLength": 128
-                    },
-                    "first_name": {
-                        "type": "string",
-                        "maxLength": 64
-                    },
-                    "last_name": {
-                        "type": "string",
-                        "maxLength": 64
-                    },
-                    "id_number": {
-                        "type": "string",
-                        "maxLength": 64
-                    },
-                    "email": {
-                        "type": "string",
-                        "format": "email",
-                        "maxLength": 254
                     }
                 }
             },
@@ -14575,48 +13758,6 @@
                     "splitFavourites"
                 ]
             },
-            "RegisterUser": {
-                "type": "object",
-                "description": "Will check for the tohen authenticity, expiration and usage before creating an user acount",
-                "properties": {
-                    "first_name": {
-                        "type": "string",
-                        "title": "Primeiro nome",
-                        "maxLength": 150
-                    },
-                    "last_name": {
-                        "type": "string",
-                        "title": "Último nome",
-                        "maxLength": 150
-                    },
-                    "email": {
-                        "type": "string",
-                        "format": "email",
-                        "title": "Endereço de email",
-                        "maxLength": 254
-                    },
-                    "username": {
-                        "type": "string",
-                        "title": "Utilizador",
-                        "description": "Obrigatório. 150 carateres ou menos. Apenas letras, dígitos @/./+/-/_.",
-                        "pattern": "^[\\w.@+-]+$",
-                        "maxLength": 150
-                    },
-                    "password": {
-                        "type": "string",
-                        "writeOnly": true
-                    },
-                    "token": {
-                        "type": "string",
-                        "format": "uuid"
-                    }
-                },
-                "required": [
-                    "password",
-                    "token",
-                    "username"
-                ]
-            },
             "RequestPasswordReset": {
                 "type": "object",
                 "properties": {
@@ -14648,44 +13789,6 @@
                 ],
                 "type": "string",
                 "description": "* `general` - General\n* `verify` - Verify\n* `exams` - Exams"
-            },
-            "RequestedAcount": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "readOnly": true
-                    },
-                    "username": {
-                        "type": "string",
-                        "maxLength": 128
-                    },
-                    "first_name": {
-                        "type": "string",
-                        "maxLength": 64
-                    },
-                    "last_name": {
-                        "type": "string",
-                        "maxLength": 64
-                    },
-                    "id_number": {
-                        "type": "string",
-                        "maxLength": 64
-                    },
-                    "email": {
-                        "type": "string",
-                        "format": "email",
-                        "maxLength": 254
-                    }
-                },
-                "required": [
-                    "email",
-                    "first_name",
-                    "id",
-                    "id_number",
-                    "last_name",
-                    "username"
-                ]
             },
             "RoleEnum": {
                 "enum": [
@@ -15215,10 +14318,6 @@
                         "format": "uri",
                         "nullable": true
                     },
-                    "search_vector": {
-                        "type": "string",
-                        "nullable": true
-                    },
                     "created_by": {
                         "type": "integer",
                         "nullable": true
@@ -15442,10 +14541,6 @@
                     },
                     "is_validated": {
                         "type": "boolean"
-                    },
-                    "search_vector": {
-                        "type": "string",
-                        "nullable": true
                     },
                     "created_by": {
                         "type": "integer",

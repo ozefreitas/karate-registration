@@ -73,7 +73,7 @@ class Person(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
     is_validated = models.BooleanField(default=False)
-    search_vector = SearchVectorField(null=True)
+    search_vector = SearchVectorField(null=True, blank=True)
     
     class Meta:
         indexes = [GinIndex(fields=["search_vector"])]

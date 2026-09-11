@@ -38,7 +38,7 @@ class MultipleSerializersMixIn:
 
 
 class PersonsViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
-    queryset=queryset = Person.objects.prefetch_related("member_types").order_by("first_name", "last_name", "id")
+    queryset=queryset = Person.objects.prefetch_related("member_types").order_by("first_name", "last_name", "id") 
     serializer_class = registration_serializers.PersonsSerializer  
     permission_classes = [PersonPermission]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]

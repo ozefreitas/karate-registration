@@ -19,7 +19,7 @@ class EventsSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Event
-        fields = "__all__"
+        exclude = ["search_vector"]
 
     def get_individuals(self, obj):
         """Filters the members in the individuals fields based on que requesting user"""
@@ -167,7 +167,12 @@ class EventRegistrationCountSerializer(serializers.ModelSerializer):
 class CreateEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
-        exclude = ("individuals", "rating", "created_by")
+        exclude = (
+            "individuals", 
+            "rating", 
+            "created_by", 
+            "search_vector"
+        )
     
     def validate(self, data):
         name = data.get("name")
@@ -199,7 +204,7 @@ class CreateEventSerializer(serializers.ModelSerializer):
 class UpdateEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
-        exclude = ("id",)
+        exclude = ("id", "search_vector")
 
 
 class GenerateDrawResponseSerializer(serializers.Serializer):
