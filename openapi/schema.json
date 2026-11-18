@@ -14,6 +14,9 @@
                 ],
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -139,6 +142,9 @@
                 ],
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -191,6 +197,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -232,6 +241,9 @@
                     "bracket"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -293,6 +305,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -352,6 +367,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -392,6 +410,9 @@
                 ],
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -426,6 +447,9 @@
                     "bracket"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -489,6 +513,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -550,6 +577,9 @@
                     "required": true
                 },
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -613,6 +643,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -661,6 +694,9 @@
                     "bracket"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -713,6 +749,9 @@
                     "bracket"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -840,6 +879,9 @@
                 ],
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -889,6 +931,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -930,6 +975,9 @@
                     "categories"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -991,6 +1039,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -1050,6 +1101,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -1090,6 +1144,9 @@
                 ],
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -1113,6 +1170,9 @@
                     "categories"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -1172,6 +1232,9 @@
                 ],
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -1222,6 +1285,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -1264,6 +1330,9 @@
                     "classifications"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -1326,6 +1395,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -1386,6 +1458,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -1427,6 +1502,9 @@
                 ],
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -1451,6 +1529,9 @@
                     "classifications"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -1484,6 +1565,9 @@
                 ],
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -1514,6 +1598,9 @@
                     "club_settings"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -1566,6 +1653,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -1607,6 +1697,9 @@
                     "club_settings"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -1667,6 +1760,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -1726,6 +1822,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -1766,6 +1865,9 @@
                 ],
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -1800,6 +1902,9 @@
                     "club_subscription"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -1853,6 +1958,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -1894,6 +2002,9 @@
                     "club_subscription"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -1955,6 +2066,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -2014,6 +2128,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -2053,6 +2170,9 @@
                     "club_subscription"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -2099,6 +2219,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -2129,6 +2252,9 @@
                     "club_subscription"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -2181,6 +2307,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -2232,6 +2361,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -2282,6 +2414,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -2312,6 +2447,9 @@
                     "club_subscription_config"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -2364,6 +2502,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -2404,6 +2545,9 @@
                     "club_subscription_config"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -2463,6 +2607,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -2521,6 +2668,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -2560,6 +2710,9 @@
                 ],
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -2583,6 +2736,9 @@
                     "club_subscription_config"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -2615,6 +2771,9 @@
                     "current_season"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -2703,6 +2862,9 @@
                 ],
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -2752,6 +2914,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -2793,6 +2958,9 @@
                     "disciplines"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -2854,6 +3022,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -2913,6 +3084,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -2952,6 +3126,9 @@
                     "disciplines"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -3007,6 +3184,9 @@
                     "required": true
                 },
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -3070,6 +3250,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -3131,6 +3314,9 @@
                     "required": true
                 },
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -3194,6 +3380,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -3236,6 +3425,9 @@
                 ],
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -3270,6 +3462,9 @@
                     "disciplines"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -3325,6 +3520,9 @@
                     "required": true
                 },
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -3388,6 +3586,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -3449,6 +3650,9 @@
                     "required": true
                 },
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -3574,6 +3778,9 @@
                 ],
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -3623,6 +3830,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -3664,6 +3874,9 @@
                     "events"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -3725,6 +3938,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -3784,6 +4000,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -3823,6 +4042,9 @@
                     "events"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -3878,6 +4100,9 @@
                     "required": true
                 },
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -4006,6 +4231,9 @@
                 ],
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -4048,6 +4276,9 @@
                 ],
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -4089,6 +4320,9 @@
                     "events"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -4145,6 +4379,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -4186,6 +4423,9 @@
                     "events"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -4249,6 +4489,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -4310,6 +4553,9 @@
                     "required": true
                 },
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -4373,6 +4619,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -4404,6 +4653,9 @@
                 ],
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -4434,6 +4686,9 @@
                     "events"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -4551,6 +4806,9 @@
                 ],
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -4581,6 +4839,9 @@
                     "feedback"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -4635,6 +4896,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -4677,6 +4941,9 @@
                     "feedback"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -4739,6 +5006,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -4799,6 +5069,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -4839,6 +5112,9 @@
                     "feedback"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -4885,6 +5161,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -4911,11 +5190,14 @@
         "/logout/": {
             "post": {
                 "operationId": "logout_create",
-                "description": "Logs out the authenticated user by deleting their auth token.",
+                "description": "Revokes the JWT refresh token or deletes a legacy auth token.",
                 "tags": [
                     "logout"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -4963,6 +5245,9 @@
                     "match"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -5016,6 +5301,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -5057,6 +5345,9 @@
                     "match"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -5117,6 +5408,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -5176,6 +5470,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -5215,6 +5512,9 @@
                     "match"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -5269,6 +5569,9 @@
                     }
                 },
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -5331,6 +5634,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -5392,6 +5698,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -5422,6 +5731,9 @@
                     "me"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -5474,6 +5786,9 @@
                 ],
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -5523,6 +5838,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -5564,6 +5882,9 @@
                     "member_validation"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -5625,6 +5946,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -5684,6 +6008,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -5723,6 +6050,9 @@
                     "member_validation"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -5777,6 +6107,9 @@
                 ],
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -5827,6 +6160,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -5869,6 +6205,9 @@
                     "memberships"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -5931,6 +6270,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -5991,6 +6333,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -6031,6 +6376,9 @@
                     "memberships"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -6076,6 +6424,9 @@
                     "monthly_member_payment_configs"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -6126,6 +6477,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -6167,6 +6521,9 @@
                     "monthly_member_payment_configs"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -6228,6 +6585,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -6287,6 +6647,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -6327,6 +6690,9 @@
                 ],
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -6350,6 +6716,9 @@
                     "monthly_payment_plans"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -6403,6 +6772,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -6444,6 +6816,9 @@
                     "monthly_payment_plans"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -6505,6 +6880,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -6564,6 +6942,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -6603,6 +6984,9 @@
                     "monthly_payment_plans"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -6645,6 +7029,9 @@
                     "monthly_payments"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -6698,6 +7085,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -6739,6 +7129,9 @@
                     "monthly_payments"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -6800,6 +7193,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -6859,6 +7255,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -6898,6 +7297,9 @@
                     "monthly_payments"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -6973,6 +7375,9 @@
                 ],
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -7022,6 +7427,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -7063,6 +7471,9 @@
                     "notifications"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -7124,6 +7535,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -7183,6 +7597,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -7222,6 +7639,9 @@
                     "notifications"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -7266,6 +7686,9 @@
                     "required": true
                 },
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -7337,6 +7760,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -7386,6 +7812,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -7413,6 +7842,9 @@
                     "password_recovery"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -7461,6 +7893,9 @@
                     "required": true
                 },
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -7611,6 +8046,9 @@
                 ],
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -7660,6 +8098,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -7701,6 +8142,9 @@
                     "persons"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -7762,6 +8206,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -7821,6 +8268,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -7860,6 +8310,9 @@
                     "persons"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -8001,6 +8454,9 @@
                 ],
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -8031,6 +8487,9 @@
                     "persons"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -8137,6 +8596,9 @@
                 ],
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -8170,6 +8632,9 @@
                     "persons"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -8324,6 +8789,9 @@
                 ],
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -8391,6 +8859,9 @@
                 ],
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -8443,6 +8914,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -8484,6 +8958,9 @@
                     "scoring_entry"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -8544,6 +9021,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -8603,6 +9083,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -8643,6 +9126,9 @@
                 ],
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -8678,6 +9164,9 @@
                     "search"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -8731,6 +9220,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -8759,6 +9251,9 @@
                 ],
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -8786,6 +9281,9 @@
                     "sign_up"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -8834,6 +9332,9 @@
                     "teams"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -8884,6 +9385,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -8925,6 +9429,9 @@
                     "teams"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -8986,6 +9493,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -9045,6 +9555,9 @@
                 },
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -9085,6 +9598,9 @@
                 ],
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -9109,6 +9625,9 @@
                 ],
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -9132,6 +9651,9 @@
                     "teams"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -9188,6 +9710,9 @@
                 ],
                 "security": [
                     {
+                        "jwtAuth": []
+                    },
+                    {
                         "basicAuth": []
                     },
                     {
@@ -9219,6 +9744,9 @@
                     "users"
                 ],
                 "security": [
+                    {
+                        "jwtAuth": []
+                    },
                     {
                         "basicAuth": []
                     },
@@ -14751,6 +15279,11 @@
                 "type": "apiKey",
                 "in": "cookie",
                 "name": "sessionid"
+            },
+            "jwtAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
             },
             "tokenAuth": {
                 "type": "apiKey",

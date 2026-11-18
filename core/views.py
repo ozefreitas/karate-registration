@@ -1,4 +1,5 @@
 from django.utils import timezone
+from django.contrib.auth import authenticate
 from django.db import transaction
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -21,7 +22,7 @@ from core.serializers.users import UsersSerializer, UserDetailSerializer, UsersR
 from rest_framework.authtoken.models import Token
 from rest_framework.generics import GenericAPIView
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import AuthenticationFailed, ValidationError
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.views import APIView
 from rest_framework.decorators import action, permission_classes, api_view
@@ -30,6 +31,9 @@ from rest_framework.response import Response
 from rest_framework import viewsets, filters, status, views, serializers
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenRefreshView
+from rest_framework_simplejwt.exceptions import TokenError
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.exceptions import PermissionDenied
 
 from drf_spectacular.utils import extend_schema, OpenApiParameter
@@ -511,7 +515,13 @@ class CustomAuthToken(ObtainAuthToken):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         username = serializer.validated_data['username']
-        user = User.objects.get(username=username)
+        user = authenticate(
+            request=request,
+            username=username,
+            password=serializer.validated_data['password'],
+        )
+        if user is None:
+            raise AuthenticationFailed("Invalid username or password.")
         Token.objects.filter(user=user).delete()
         token = Token.objects.create(user=user)
         return Response(BaseSerializers.TokenSerializer({'token': token.key}).data)
@@ -524,12 +534,23 @@ class LogoutView(GenericAPIView):
     @extend_schema(
         request=None,
         responses=BaseSerializers.LogoutResponseSerializer,
-        description="Logs out the authenticated user by deleting their auth token."
+        description="Revokes the JWT refresh token or deletes a legacy auth token."
     )
     def post(self, request):
-        request.user.auth_token.delete()
+        refresh_token = request.COOKIES.get("refresh_token")
+        if refresh_token:
+            try:
+                RefreshToken(refresh_token).blacklist()
+            except TokenError:
+                pass
+
+        if isinstance(request.auth, Token):
+            request.auth.delete()
+
         serializer = self.get_serializer({"detail": "Logged out"})
-        return Response(serializer.data)
+        response = Response(serializer.data)
+        response.delete_cookie("refresh_token", samesite="Strict")
+        return response
 
 
 class RegisterView(views.APIView):
@@ -737,4 +758,26 @@ class CustomTokenObtainPairView(TokenObtainPairView):
                 max_age=7*24*60*60,   # 7 days
             )
             return res
+        return response
+
+
+class CustomTokenRefreshView(TokenRefreshView):
+    def post(self, request, *args, **kwargs):
+        data = request.data.copy()
+        data["refresh"] = data.get("refresh") or request.COOKIES.get("refresh_token")
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+
+        response_data = serializer.validated_data.copy()
+        refresh = response_data.pop("refresh", None)
+        response = Response(response_data)
+        if refresh:
+            response.set_cookie(
+                key="refresh_token",
+                value=refresh,
+                httponly=True,
+                secure=True,
+                samesite="Strict",
+                max_age=7 * 24 * 60 * 60,
+            )
         return response

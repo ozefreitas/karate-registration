@@ -3,7 +3,6 @@ from django.urls import path
 from . import views
 
 from rest_framework import routers
-from rest_framework_simplejwt.views import TokenRefreshView
 
 
 router = routers.DefaultRouter()
@@ -18,7 +17,7 @@ urlpatterns = [
     path('', include(router.urls)),
     path("search/", views.GlobalSearchView.as_view(), name="global-search"),
     path("auth/token/", views.CustomTokenObtainPairView.as_view(), name="token_obtain_pair"),
-    path("auth/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("auth/token/refresh/", views.CustomTokenRefreshView.as_view(), name="token_refresh"),
     path('sign_up/generate_token/', views.sign_up_token, name="generate-token"),
     path('sign_up/get_token_username/', views.get_token_username, name="token-username"),
     path('sign_up/get_token_by_username/', views.get_token_by_username, name="username-token"),
