@@ -15,9 +15,51 @@ from core.utils.utils import calc_age
 from events.models import Event, Discipline
 from registration.utils.utils import get_comp_age
 from registration.serializers.base import CompactPersonSerializer
-from draw.serializers import BracketSerializer
+from draw.serializers import CompactBracketSerializer
 
 from drf_spectacular.utils import extend_schema_field
+
+
+def get_person_next_prev(obj, context):
+    request = context.get("request")
+    view = context.get("view")
+    user = getattr(request, "user", None)
+    role = getattr(user, "role", None)
+
+    if (
+        view is None
+        or not getattr(user, "is_authenticated", False)
+        or role not in {
+            "main_admin",
+            "single_admin",
+            "superuser",
+            "subed_club",
+        }
+    ):
+        return {"prev": None, "next": None}
+
+    people = view.get_queryset()
+    if role in {"main_admin", "single_admin", "superuser"}:
+        people = people.filter(is_validated=True)
+
+    person_ids = list(
+        people.order_by("first_name", "last_name", "id")
+        .values_list("id", flat=True)
+        .distinct()
+    )
+
+    try:
+        index = person_ids.index(obj.id)
+    except ValueError:
+        return {"prev": None, "next": None}
+
+    prev_id = person_ids[index - 1] if index > 0 else None
+    next_id = person_ids[index + 1] if index < len(person_ids) - 1 else None
+
+    return {
+        "prev": next_id,
+        "next": prev_id,
+    }
 
 
 ### Members Serializer Classes
@@ -233,25 +275,7 @@ class NotAdminLikeTypePersonsSerializer(serializers.ModelSerializer):
         }
     })
     def get_next_prev(self, obj):
-        qs = list(
-            models.Person.objects
-            .filter(club=obj.club)
-            .order_by("first_name", "last_name", "id")
-            .values_list("id", flat=True)
-        )
-
-        try:
-            index = qs.index(obj.id)
-        except ValueError:
-            return {"prev": None, "next": None}
-
-        prev_id = qs[index - 1] if index > 0 else None
-        next_id = qs[index + 1] if index < len(qs) - 1 else None
-
-        return {
-            "prev": next_id,
-            "next": prev_id,
-        }
+        return get_person_next_prev(obj, self.context)
     
     @extend_schema_field(PersonMemberShipSerializer(many=True))
     def get_member_types(self, obj):
@@ -313,25 +337,7 @@ class AdminPersonRetrieveSerializer(serializers.ModelSerializer):
         }
     })
     def get_next_prev(self, obj):
-        qs = list(
-            models.Person.objects
-            .filter(club=obj.club)
-            .order_by("first_name", "last_name", "id")
-            .values_list("id", flat=True)
-        )
-
-        try:
-            index = qs.index(obj.id)
-        except ValueError:
-            return {"prev": None, "next": None}
-
-        prev_id = qs[index - 1] if index > 0 else None
-        next_id = qs[index + 1] if index < len(qs) - 1 else None
-
-        return {
-            "prev": next_id,
-            "next": prev_id,
-        }
+        return get_person_next_prev(obj, self.context)
     
 
 class NotInEventCoachesSerializer(serializers.ModelSerializer):
@@ -847,7 +853,7 @@ class AllClassificationsSerializer(serializers.ModelSerializer):
     
 
 class ClassificationsSerializer(serializers.ModelSerializer):
-    bracket = BracketSerializer()
+    bracket = CompactBracketSerializer()
     event = serializers.SerializerMethodField()
     person = CompactPersonSerializer()
 

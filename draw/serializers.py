@@ -2,12 +2,15 @@ from rest_framework import serializers
 import draw.models as models
 from registration.serializers.base import CompactPersonSerializer, CompactTeamSerializer
 from core.serializers.categories import CompactCategorySerializer
+from events.models import DisciplineMember, DisciplineTeam
 
 
 class BracketSerializer(serializers.ModelSerializer):
     category = CompactCategorySerializer()
     is_team = serializers.SerializerMethodField()
     has_only_scoring_rounds = serializers.SerializerMethodField()
+    athlete_count = serializers.SerializerMethodField()
+    team_count = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Bracket
@@ -18,6 +21,37 @@ class BracketSerializer(serializers.ModelSerializer):
     
     def get_has_only_scoring_rounds(self, obj):
         return obj.scoring_rounds.exists() and not obj.matches.exists()
+
+    def get_athlete_count(self, obj):
+        return DisciplineMember.objects.filter(
+            discipline=obj.discipline,
+            category=obj.category,
+        ).values("person_id").distinct().count()
+
+    def get_team_count(self, obj):
+        return DisciplineTeam.objects.filter(
+            discipline=obj.discipline,
+            team__category=obj.category,
+        ).values("team_id").distinct().count()
+
+
+class CompactBracketSerializer(serializers.ModelSerializer):
+    category = CompactCategorySerializer()
+    is_team = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = models.Bracket
+        exclude = [
+            "draw_type", 
+            "created_at", 
+            "discipline", 
+            "public", 
+            "officialized_at", 
+            "event"
+        ]
+
+    def get_is_team(self, obj):
+        return obj.discipline.is_team
 
 
 class CreateBracketSerializer(serializers.ModelSerializer):

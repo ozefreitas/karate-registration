@@ -31,7 +31,6 @@ urlpatterns = [
         name="password_reset_confirm"
     ),
     path('current_season/', views.CurrentSeasonView.as_view(), name="current-season"),
-    path('login/', views.CustomAuthToken.as_view(), name="user-login"),
     path('me/', views.UserDetailView.as_view(), name="user-detail"),
     path('logout/', views.LogoutView.as_view(), name="user-logout"),
     path('users/', views.UsersView.as_view(), name="users"),

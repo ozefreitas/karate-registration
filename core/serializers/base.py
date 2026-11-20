@@ -88,9 +88,17 @@ class LogoutResponseSerializer(serializers.Serializer):
     detail = serializers.CharField()
 
 
-class AuthLoginSerializer(serializers.Serializer):
+class JWTLoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField()
+
+
+class JWTRefreshSerializer(serializers.Serializer):
+    refresh = serializers.CharField(required=False, write_only=True)
+
+
+class JWTAccessSerializer(serializers.Serializer):
+    access = serializers.CharField(read_only=True)
 
 
 class UsernameSerializer(serializers.Serializer):
@@ -150,6 +158,15 @@ class RequestPasswordResetResponseSerializer(serializers.Serializer):
 
 class PasswordSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)
+    password2 = serializers.CharField(write_only=True)
+
+
+class PasswordResetConfirmResponseSerializer(serializers.Serializer):
+    success = serializers.BooleanField()
+
+
+class PasswordRecoveryURLSerializer(serializers.Serializer):
+    url = serializers.CharField()
 
 
 class ProfileSerializer(serializers.ModelSerializer):

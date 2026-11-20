@@ -9972,6 +9972,14 @@
                         "type": "string",
                         "readOnly": true
                     },
+                    "athlete_count": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "team_count": {
+                        "type": "string",
+                        "readOnly": true
+                    },
                     "name": {
                         "type": "string",
                         "title": "Prova",
@@ -10010,6 +10018,7 @@
                     }
                 },
                 "required": [
+                    "athlete_count",
                     "category",
                     "created_at",
                     "discipline",
@@ -10017,7 +10026,8 @@
                     "has_only_scoring_rounds",
                     "id",
                     "is_team",
-                    "name"
+                    "name",
+                    "team_count"
                 ]
             },
             "Category": {
@@ -10178,7 +10188,7 @@
                 "type": "object",
                 "properties": {
                     "bracket": {
-                        "$ref": "#/components/schemas/Bracket"
+                        "$ref": "#/components/schemas/CompactBracket"
                     },
                     "event": {
                         "type": "string",
@@ -10456,6 +10466,33 @@
                 ],
                 "type": "string",
                 "description": "* `event_not_ended` - event_not_ended\n* `already_rated` - already_rated\n* `can_rate` - can_rate"
+            },
+            "CompactBracket": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "category": {
+                        "$ref": "#/components/schemas/CompactCategory"
+                    },
+                    "is_team": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "name": {
+                        "type": "string",
+                        "title": "Prova",
+                        "maxLength": 100
+                    }
+                },
+                "required": [
+                    "category",
+                    "id",
+                    "is_team",
+                    "name"
+                ]
             },
             "CompactCategorizedPersons": {
                 "type": "object",
@@ -13272,6 +13309,14 @@
                         "type": "string",
                         "readOnly": true
                     },
+                    "athlete_count": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "team_count": {
+                        "type": "string",
+                        "readOnly": true
+                    },
                     "name": {
                         "type": "string",
                         "title": "Prova",
@@ -13401,7 +13446,7 @@
                 "type": "object",
                 "properties": {
                     "bracket": {
-                        "$ref": "#/components/schemas/Bracket"
+                        "$ref": "#/components/schemas/CompactBracket"
                     },
                     "event": {
                         "type": "string",

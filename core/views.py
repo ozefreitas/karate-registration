@@ -1,9 +1,11 @@
 from django.utils import timezone
-from django.contrib.auth import authenticate
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
+from django.conf import settings
 from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
@@ -19,11 +21,9 @@ from core.serializers import base as BaseSerializers
 from core.serializers.categories import CategorySerializer, CreateCategorySerializer, CompactCategorySerializer
 from core.serializers.users import UsersSerializer, UserDetailSerializer, UsersResponseSerializer
 
-from rest_framework.authtoken.models import Token
 from rest_framework.generics import GenericAPIView
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
-from rest_framework.exceptions import AuthenticationFailed, ValidationError
-from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.exceptions import ValidationError
 from rest_framework.views import APIView
 from rest_framework.decorators import action, permission_classes, api_view
 from drf_spectacular.utils import extend_schema, inline_serializer
@@ -34,6 +34,10 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.token_blacklist.models import (
+    BlacklistedToken,
+    OutstandingToken,
+)
 from rest_framework.exceptions import PermissionDenied
 
 from drf_spectacular.utils import extend_schema, OpenApiParameter
@@ -508,25 +512,6 @@ class UserDetailView(GenericAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 
-class CustomAuthToken(ObtainAuthToken):
-    serializer_class = BaseSerializers.AuthLoginSerializer
-
-    def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        username = serializer.validated_data['username']
-        user = authenticate(
-            request=request,
-            username=username,
-            password=serializer.validated_data['password'],
-        )
-        if user is None:
-            raise AuthenticationFailed("Invalid username or password.")
-        Token.objects.filter(user=user).delete()
-        token = Token.objects.create(user=user)
-        return Response(BaseSerializers.TokenSerializer({'token': token.key}).data)
-    
-
 class LogoutView(GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = BaseSerializers.LogoutResponseSerializer
@@ -534,7 +519,7 @@ class LogoutView(GenericAPIView):
     @extend_schema(
         request=None,
         responses=BaseSerializers.LogoutResponseSerializer,
-        description="Revokes the JWT refresh token or deletes a legacy auth token."
+        description="Revokes the current JWT refresh token."
     )
     def post(self, request):
         refresh_token = request.COOKIES.get("refresh_token")
@@ -544,12 +529,11 @@ class LogoutView(GenericAPIView):
             except TokenError:
                 pass
 
-        if isinstance(request.auth, Token):
-            request.auth.delete()
-
         serializer = self.get_serializer({"detail": "Logged out"})
         response = Response(serializer.data)
-        response.delete_cookie("refresh_token", samesite="Strict")
+        cookie_options = _refresh_token_cookie_options()
+        cookie_options["max_age"] = 0
+        response.set_cookie("refresh_token", "", **cookie_options)
         return response
 
 
@@ -657,7 +641,10 @@ class RequestPasswordResetView(GenericAPIView):
 
 @extend_schema(
         request=BaseSerializers.UsernameSerializer,
-        responses={201: None, 400: None},
+        responses={
+            200: BaseSerializers.PasswordRecoveryURLSerializer,
+            400: None,
+        },
         description="Generate a unique url for password recovery by providing the id of the account."
     )
 @api_view(['POST'])
@@ -681,9 +668,14 @@ def generate_password_recovery_url(request):
 
 
 class PasswordResetConfirmAPI(views.APIView):
+    permission_classes = [AllowAny]
+
     @extend_schema(
         request=BaseSerializers.PasswordSerializer,
-        responses={201: None, 400: None},
+        responses={
+            200: BaseSerializers.PasswordResetConfirmResponseSerializer,
+            400: None,
+        },
         description="View that confirms the uidb64 and token from the requesting user, and checks if a password is provided in the payload."
     )
     def post(self, request, uidb64, token):
@@ -706,8 +698,20 @@ class PasswordResetConfirmAPI(views.APIView):
         if new_password != new_password2:
             return Response({"error": "As palavras-passe não coincidem!"}, status=status.HTTP_400_BAD_REQUEST)
 
-        user.set_password(new_password)
-        user.save()
+        try:
+            validate_password(new_password, user)
+        except DjangoValidationError as error:
+            return Response(
+                {"error": " ".join(error.messages)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        with transaction.atomic():
+            user.set_password(new_password)
+            user.save(update_fields=["password"])
+            for outstanding_token in OutstandingToken.objects.filter(user=user):
+                BlacklistedToken.objects.get_or_create(token=outstanding_token)
+
         Notification.objects.filter(type="reset", request_acount=user.username).delete()
         RequestPasswordReset.objects.filter(club_user=user).delete()
         return Response({"success": True})
@@ -741,26 +745,39 @@ class FeedbackViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
 # JWT Authentication
 #############
 
+def _refresh_token_cookie_options():
+    return {
+        "httponly": True,
+        "secure": not settings.DEBUG,
+        "samesite": "Lax" if settings.DEBUG else "None",
+        "max_age": 7 * 24 * 60 * 60,
+    }
+
+
+@extend_schema(
+    request=BaseSerializers.JWTLoginSerializer,
+    responses=BaseSerializers.JWTAccessSerializer,
+)
 class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
         if response.status_code == 200:
             refresh = response.data["refresh"]
 
-            # move refresh token to cookie
             res = Response({"access": response.data["access"]})
             res.set_cookie(
                 key="refresh_token",
                 value=refresh,
-                httponly=True,
-                secure=True,          # only HTTPS
-                samesite="Strict",    # CSRF protection
-                max_age=7*24*60*60,   # 7 days
+                **_refresh_token_cookie_options(),
             )
             return res
         return response
 
 
+@extend_schema(
+    request=BaseSerializers.JWTRefreshSerializer,
+    responses=BaseSerializers.JWTAccessSerializer,
+)
 class CustomTokenRefreshView(TokenRefreshView):
     def post(self, request, *args, **kwargs):
         data = request.data.copy()
@@ -775,9 +792,6 @@ class CustomTokenRefreshView(TokenRefreshView):
             response.set_cookie(
                 key="refresh_token",
                 value=refresh,
-                httponly=True,
-                secure=True,
-                samesite="Strict",
-                max_age=7 * 24 * 60 * 60,
+                **_refresh_token_cookie_options(),
             )
         return response
