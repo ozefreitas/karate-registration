@@ -15,15 +15,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -54,17 +45,17 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/TokenObtainPair"
+                                "$ref": "#/components/schemas/JWTLogin"
                             }
                         },
                         "application/x-www-form-urlencoded": {
                             "schema": {
-                                "$ref": "#/components/schemas/TokenObtainPair"
+                                "$ref": "#/components/schemas/JWTLogin"
                             }
                         },
                         "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/TokenObtainPair"
+                                "$ref": "#/components/schemas/JWTLogin"
                             }
                         }
                     },
@@ -75,7 +66,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/TokenObtainPair"
+                                    "$ref": "#/components/schemas/JWTAccess"
                                 }
                             }
                         },
@@ -95,28 +86,27 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/TokenRefresh"
+                                "$ref": "#/components/schemas/JWTRefresh"
                             }
                         },
                         "application/x-www-form-urlencoded": {
                             "schema": {
-                                "$ref": "#/components/schemas/TokenRefresh"
+                                "$ref": "#/components/schemas/JWTRefresh"
                             }
                         },
                         "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/TokenRefresh"
+                                "$ref": "#/components/schemas/JWTRefresh"
                             }
                         }
-                    },
-                    "required": true
+                    }
                 },
                 "responses": {
                     "200": {
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/TokenRefresh"
+                                    "$ref": "#/components/schemas/JWTAccess"
                                 }
                             }
                         },
@@ -143,15 +133,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -198,15 +179,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -243,15 +215,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -306,15 +269,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -368,15 +322,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -411,15 +356,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -449,15 +385,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -514,15 +441,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -579,15 +497,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -644,15 +553,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -696,15 +596,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -751,15 +642,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -880,15 +762,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -932,15 +805,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -977,15 +841,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -1040,15 +895,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -1102,15 +948,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -1145,15 +982,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -1172,15 +1000,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -1234,15 +1053,6 @@
                     {
                         "jwtAuth": []
                     },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    },
                     {}
                 ],
                 "responses": {
@@ -1287,15 +1097,6 @@
                     {
                         "jwtAuth": []
                     },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    },
                     {}
                 ],
                 "responses": {
@@ -1332,15 +1133,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     },
                     {}
                 ],
@@ -1397,15 +1189,6 @@
                     {
                         "jwtAuth": []
                     },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    },
                     {}
                 ],
                 "responses": {
@@ -1460,15 +1243,6 @@
                     {
                         "jwtAuth": []
                     },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    },
                     {}
                 ],
                 "responses": {
@@ -1504,15 +1278,6 @@
                     {
                         "jwtAuth": []
                     },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    },
                     {}
                 ],
                 "responses": {
@@ -1531,15 +1296,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     },
                     {}
                 ],
@@ -1566,15 +1322,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -1600,15 +1347,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -1654,15 +1392,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -1699,15 +1428,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -1761,15 +1481,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -1823,15 +1534,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -1866,15 +1568,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -1904,15 +1597,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -1959,15 +1643,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -2004,15 +1679,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -2067,15 +1733,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -2129,15 +1786,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -2172,15 +1820,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -2220,15 +1859,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -2254,15 +1884,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -2308,15 +1929,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -2362,15 +1974,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -2415,15 +2018,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -2449,15 +2043,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -2503,15 +2088,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -2547,15 +2123,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -2608,15 +2175,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -2669,15 +2227,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -2711,15 +2260,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -2738,15 +2278,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -2773,15 +2304,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     },
                     {}
                 ],
@@ -2863,15 +2385,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -2915,15 +2428,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -2960,15 +2464,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -3023,15 +2518,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -3085,15 +2571,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -3128,15 +2605,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -3186,15 +2654,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -3251,15 +2710,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -3316,15 +2766,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -3381,15 +2822,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -3426,15 +2858,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -3464,15 +2887,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -3522,15 +2936,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -3587,15 +2992,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -3652,15 +3048,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -3779,15 +3166,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -3831,15 +3209,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -3876,15 +3245,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -3939,15 +3299,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -4001,15 +3352,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -4044,15 +3386,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -4102,15 +3435,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -4232,15 +3556,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -4277,15 +3592,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -4322,15 +3628,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -4380,15 +3677,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -4425,15 +3713,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -4490,15 +3769,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -4555,15 +3825,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -4620,15 +3881,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -4654,15 +3906,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -4688,15 +3931,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -4807,15 +4041,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -4841,15 +4066,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     },
                     {}
                 ],
@@ -4898,15 +4114,6 @@
                     {
                         "jwtAuth": []
                     },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    },
                     {}
                 ],
                 "responses": {
@@ -4943,15 +4150,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     },
                     {}
                 ],
@@ -5008,15 +4206,6 @@
                     {
                         "jwtAuth": []
                     },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    },
                     {}
                 ],
                 "responses": {
@@ -5071,15 +4260,6 @@
                     {
                         "jwtAuth": []
                     },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    },
                     {}
                 ],
                 "responses": {
@@ -5115,15 +4295,6 @@
                     {
                         "jwtAuth": []
                     },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    },
                     {}
                 ],
                 "responses": {
@@ -5133,79 +4304,16 @@
                 }
             }
         },
-        "/login/": {
-            "post": {
-                "operationId": "login_create",
-                "tags": [
-                    "login"
-                ],
-                "requestBody": {
-                    "content": {
-                        "application/x-www-form-urlencoded": {
-                            "schema": {
-                                "$ref": "#/components/schemas/AuthLogin"
-                            }
-                        },
-                        "multipart/form-data": {
-                            "schema": {
-                                "$ref": "#/components/schemas/AuthLogin"
-                            }
-                        },
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/AuthLogin"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "security": [
-                    {
-                        "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/AuthLogin"
-                                }
-                            }
-                        },
-                        "description": ""
-                    }
-                }
-            }
-        },
         "/logout/": {
             "post": {
                 "operationId": "logout_create",
-                "description": "Revokes the JWT refresh token or deletes a legacy auth token.",
+                "description": "Revokes the current JWT refresh token.",
                 "tags": [
                     "logout"
                 ],
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -5247,15 +4355,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -5302,15 +4401,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -5347,15 +4437,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -5409,15 +4490,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -5471,15 +4543,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -5514,15 +4577,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -5571,15 +4625,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -5635,15 +4680,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -5699,15 +4735,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -5733,15 +4760,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -5787,15 +4805,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -5839,15 +4848,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -5884,15 +4884,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -5947,15 +4938,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -6009,15 +4991,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -6052,15 +5025,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -6109,15 +5073,6 @@
                     {
                         "jwtAuth": []
                     },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    },
                     {}
                 ],
                 "responses": {
@@ -6162,15 +5117,6 @@
                     {
                         "jwtAuth": []
                     },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    },
                     {}
                 ],
                 "responses": {
@@ -6207,15 +5153,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     },
                     {}
                 ],
@@ -6272,15 +5209,6 @@
                     {
                         "jwtAuth": []
                     },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    },
                     {}
                 ],
                 "responses": {
@@ -6335,15 +5263,6 @@
                     {
                         "jwtAuth": []
                     },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    },
                     {}
                 ],
                 "responses": {
@@ -6378,15 +5297,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     },
                     {}
                 ],
@@ -6426,15 +5336,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -6478,15 +5379,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -6523,15 +5415,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -6586,15 +5469,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -6648,15 +5522,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -6691,15 +5556,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -6718,15 +5574,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -6773,15 +5620,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -6818,15 +5656,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -6881,15 +5710,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -6943,15 +5763,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -6986,15 +5797,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -7031,15 +5833,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -7086,15 +5879,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -7131,15 +5915,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -7194,15 +5969,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -7256,15 +6022,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -7299,15 +6056,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -7376,15 +6124,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -7428,15 +6167,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -7473,15 +6203,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -7536,15 +6257,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -7598,15 +6310,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -7641,15 +6344,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -7688,15 +6382,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -7762,20 +6447,18 @@
                     {
                         "jwtAuth": []
                     },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    },
                     {}
                 ],
                 "responses": {
-                    "201": {
-                        "description": "No response body"
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PasswordResetConfirmResponse"
+                                }
+                            }
+                        },
+                        "description": ""
                     },
                     "400": {
                         "description": "No response body"
@@ -7813,20 +6496,18 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "No response body"
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PasswordRecoveryURL"
+                                }
+                            }
+                        },
+                        "description": ""
                     },
                     "400": {
                         "description": "No response body"
@@ -7844,15 +6525,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -7895,15 +6567,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     },
                     {}
                 ],
@@ -8047,15 +6710,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -8099,15 +6753,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -8144,15 +6789,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -8207,15 +6843,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -8269,15 +6896,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -8312,15 +6930,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -8455,15 +7064,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -8489,15 +7089,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -8597,15 +7188,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -8634,15 +7216,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -8791,15 +7364,6 @@
                     {
                         "jwtAuth": []
                     },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
-                    },
                     {}
                 ],
                 "responses": {
@@ -8860,15 +7424,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -8915,15 +7470,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -8960,15 +7506,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -9022,15 +7559,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -9084,15 +7612,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -9127,15 +7646,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -9166,15 +7676,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -9221,15 +7722,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -9252,15 +7744,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -9283,15 +7766,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     },
                     {}
                 ],
@@ -9334,15 +7808,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -9386,15 +7851,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -9431,15 +7887,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -9494,15 +7941,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -9556,15 +7994,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -9599,15 +8028,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -9626,15 +8046,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -9653,15 +8064,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -9711,15 +8113,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -9746,15 +8139,6 @@
                 "security": [
                     {
                         "jwtAuth": []
-                    },
-                    {
-                        "basicAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "tokenAuth": []
                     }
                 ],
                 "responses": {
@@ -9923,21 +8307,6 @@
                     "created_at",
                     "id",
                     "message"
-                ]
-            },
-            "AuthLogin": {
-                "type": "object",
-                "properties": {
-                    "username": {
-                        "type": "string"
-                    },
-                    "password": {
-                        "type": "string"
-                    }
-                },
-                "required": [
-                    "password",
-                    "username"
                 ]
             },
             "AvailableQuoteYears": {
@@ -11322,6 +9691,10 @@
                     "team_winner": {
                         "type": "string",
                         "nullable": true
+                    },
+                    "group": {
+                        "type": "integer",
+                        "nullable": true
                     }
                 },
                 "required": [
@@ -12022,6 +10395,42 @@
                 "type": "string",
                 "description": "* `15` - 9º Kyu\n* `14.5` - 8º Kyu Kari\n* `14` - 8º Kyu\n* `13.5` - 7º Kyu Kari\n* `13` - 7º Kyu\n* `12.5` - 6º Kyu Kari\n* `12` - 6º Kyu\n* `11.5` - 5º Kyu Kari\n* `11` - 5º Kyu\n* `10.5` - 4º Kyu Kari\n* `10` - 4º Kyu\n* `9.5` - 3º Kyu Kari\n* `9` - 3º Kyu\n* `8` - 2º Kyu\n* `7` - 1º Kyu\n* `6` - 1º Dan\n* `5` - 2º Dan\n* `4` - 3º Dan\n* `3` - 4º Dan\n* `2` - 5º Dan\n* `1` - 6º Dan"
             },
+            "JWTAccess": {
+                "type": "object",
+                "properties": {
+                    "access": {
+                        "type": "string",
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "access"
+                ]
+            },
+            "JWTLogin": {
+                "type": "object",
+                "properties": {
+                    "username": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "password",
+                    "username"
+                ]
+            },
+            "JWTRefresh": {
+                "type": "object",
+                "properties": {
+                    "refresh": {
+                        "type": "string",
+                        "writeOnly": true
+                    }
+                }
+            },
             "KataEnum": {
                 "enum": [
                     "none",
@@ -12209,6 +10618,10 @@
                         "type": "string",
                         "readOnly": true
                     },
+                    "group_number": {
+                        "type": "string",
+                        "readOnly": true
+                    },
                     "contender_1_present": {
                         "type": "boolean"
                     },
@@ -12252,6 +10665,10 @@
                     "feeds_into_scoring": {
                         "type": "integer",
                         "nullable": true
+                    },
+                    "group": {
+                        "type": "integer",
+                        "nullable": true
                     }
                 },
                 "required": [
@@ -12261,6 +10678,7 @@
                     "contender_2",
                     "contender_2_dorsal",
                     "created_at",
+                    "group_number",
                     "id",
                     "kataresult",
                     "kumiteresult",
@@ -13199,10 +11617,37 @@
                     "password": {
                         "type": "string",
                         "writeOnly": true
+                    },
+                    "password2": {
+                        "type": "string",
+                        "writeOnly": true
                     }
                 },
                 "required": [
-                    "password"
+                    "password",
+                    "password2"
+                ]
+            },
+            "PasswordRecoveryURL": {
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "url"
+                ]
+            },
+            "PasswordResetConfirmResponse": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "success"
                 ]
             },
             "PatchClubSettigs": {
@@ -14117,6 +12562,10 @@
                     "team_winner": {
                         "type": "string",
                         "nullable": true
+                    },
+                    "group": {
+                        "type": "integer",
+                        "nullable": true
                     }
                 }
             },
@@ -14637,49 +13086,6 @@
                 "type": "string",
                 "description": "* `base` - Base\n* `pro` - Pro\n* `elite` - Elite"
             },
-            "TokenObtainPair": {
-                "type": "object",
-                "properties": {
-                    "username": {
-                        "type": "string",
-                        "writeOnly": true
-                    },
-                    "password": {
-                        "type": "string",
-                        "writeOnly": true
-                    },
-                    "access": {
-                        "type": "string",
-                        "readOnly": true
-                    },
-                    "refresh": {
-                        "type": "string",
-                        "readOnly": true
-                    }
-                },
-                "required": [
-                    "access",
-                    "password",
-                    "refresh",
-                    "username"
-                ]
-            },
-            "TokenRefresh": {
-                "type": "object",
-                "properties": {
-                    "access": {
-                        "type": "string",
-                        "readOnly": true
-                    },
-                    "refresh": {
-                        "type": "string"
-                    }
-                },
-                "required": [
-                    "access",
-                    "refresh"
-                ]
-            },
             "TypeEnum": {
                 "enum": [
                     "none",
@@ -14985,6 +13391,10 @@
                     },
                     "team_winner": {
                         "type": "string",
+                        "nullable": true
+                    },
+                    "group": {
+                        "type": "integer",
                         "nullable": true
                     }
                 },
@@ -15316,25 +13726,10 @@
             }
         },
         "securitySchemes": {
-            "basicAuth": {
-                "type": "http",
-                "scheme": "basic"
-            },
-            "cookieAuth": {
-                "type": "apiKey",
-                "in": "cookie",
-                "name": "sessionid"
-            },
             "jwtAuth": {
                 "type": "http",
                 "scheme": "bearer",
                 "bearerFormat": "JWT"
-            },
-            "tokenAuth": {
-                "type": "apiKey",
-                "in": "header",
-                "name": "Authorization",
-                "description": "Token-based authentication with required prefix \"Token\""
             }
         }
     }

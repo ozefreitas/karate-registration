@@ -135,6 +135,7 @@ class MatchSerializer(serializers.ModelSerializer):
     contender_2_dorsal = serializers.SerializerMethodField()
     team_contender_1_dorsals = serializers.SerializerMethodField()
     team_contender_2_dorsals = serializers.SerializerMethodField()
+    group_number = serializers.SerializerMethodField()
     
     class Meta:
         model = models.Match
@@ -176,6 +177,9 @@ class MatchSerializer(serializers.ModelSerializer):
 
     def get_team_contender_2_dorsals(self, obj):
         return self._get_team_dorsals(obj.team_contender_2)
+
+    def get_group_number(self, obj):
+        return obj.group.number if obj.group is not None else None 
 
 
 class CreateMatchSerializer(serializers.ModelSerializer):

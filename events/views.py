@@ -601,7 +601,7 @@ class EventViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 DrawUtils.generate_torneio_draw(event, discipline_format)
             
             elif discipline_format["format"] == "grupos":
-                DrawUtils.generate_liga_draw(discipline_format)
+                DrawUtils.generate_group_draw(event, discipline_format)
 
             elif discipline_format["format"] == "misto":
                 DrawUtils.generate_torneio_draw(event, discipline_format, True)

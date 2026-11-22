@@ -62,9 +62,16 @@ class Match(models.Model):
     team_winner = models.ForeignKey(Team, null=True, blank=True, on_delete=models.SET_NULL, related_name="matches_won")
     ongoing = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    group = models.ForeignKey("BracketGroup", null=True, blank=True, on_delete=models.CASCADE, related_name="matches")
 
     class Meta:
-        unique_together = ['bracket', 'contender_1', 'contender_2']
+        constraints = [
+            models.UniqueConstraint(
+                fields=["bracket", "contender_1", "contender_2"],
+                condition=models.Q(group__isnull=True),
+                name="unique_knockout_match",
+            )
+        ]
 
     @property
     def is_final(self):
@@ -97,6 +104,9 @@ class Match(models.Model):
         else:
             self.winner = self.contender_1 if winner == 1 else self.contender_2
         self.save()
+
+        if self.group_id:
+            return
 
         if not self.is_third_place:
             self.advance_winner()
@@ -241,7 +251,7 @@ class ScoringRound(models.Model):
 
     def __str__(self):
         return f'{self.bracket.discipline.name} {self.bracket.category.name} {self.bracket.category.gender} Finals'
-
+   
 
 class ScoringEntry(models.Model):
     scoring_round = models.ForeignKey(ScoringRound, on_delete=models.CASCADE, related_name="entries")
@@ -277,6 +287,31 @@ class ScoringEntry(models.Model):
         else:
             return f'{self.scoring_round.bracket.discipline.name} {self.scoring_round.bracket.category.name} {self.scoring_round.bracket.category.gender} Finals - TBD'
     
+
+class BracketGroup(models.Model):
+    bracket = models.ForeignKey(Bracket, on_delete=models.CASCADE, related_name="groups")
+    number = models.PositiveIntegerField()
+
+    class Meta:
+        unique_together = ["bracket", "number"]
+        ordering = ["number"]
+
+    def __str__(self):
+        return f"{self.bracket.name} - Grupo {self.number}"
+
+
+class BracketGroupMember(models.Model):
+    group = models.ForeignKey(BracketGroup, on_delete=models.CASCADE, related_name="members")
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="group_memberships")
+    position = models.PositiveIntegerField()
+
+    class Meta:
+        unique_together = ["group", "person"]
+        ordering = ["position"]
+
+    def __str__(self):
+        return f"{self.group.bracket.name} - {self.person.first_name} {self.person.last_name} - Posição {self.position}"
+
 
 class MatchResult(models.Model):
     match = models.OneToOneField(

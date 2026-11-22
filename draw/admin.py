@@ -1,10 +1,24 @@
 from django.contrib import admin
-from .models import Bracket, Match, FoulType, KataResult, KumiteResult, KumiteFoul, ScoringEntry, ScoringRound, ScoringResult
+from .models import (
+    Bracket, 
+    Match, 
+    BracketGroup,
+    BracketGroupMember,
+    FoulType, 
+    KataResult, 
+    KumiteResult, 
+    KumiteFoul, 
+    ScoringEntry, 
+    ScoringRound, 
+    ScoringResult
+)
 
 # Register your models here.
 
 admin.site.register(Bracket)
 admin.site.register(Match)
+admin.site.register(BracketGroup)
+admin.site.register(BracketGroupMember)
 admin.site.register(FoulType)
 admin.site.register(KataResult)
 admin.site.register(KumiteResult)
