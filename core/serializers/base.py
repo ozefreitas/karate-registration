@@ -195,9 +195,33 @@ class CurrentSeasonSerializer(serializers.Serializer):
     season = serializers.CharField()
 
 class CreateNotificationsSerializer(serializers.ModelSerializer):
+
+    REGISTRATION_TYPES = {
+        Notification.TYPE.REGISTRATIONS_CLOSING,
+        Notification.TYPE.REGISTRATIONS_CLOSE,
+        Notification.TYPE.OPEN_REGISTRATIONS,
+        Notification.TYPE.DRAW_AVAILABLE,
+        Notification.TYPE.DRAW_PATCHED,
+        Notification.TYPE.CLASSIFICATIONS_AVAILABLE,
+        Notification.TYPE.RATE_EVENT,
+    }
+        
     class Meta:
         model = Notification
         exclude = ["request_acount"]
+    
+    def validate(self, attrs):
+        notification_type = attrs.get("type")
+
+        if (
+            notification_type in self.REGISTRATION_TYPES
+            and not attrs.get("target_event")
+        ):
+            raise serializers.ValidationError({
+                "target_event": "An event must be provided for registration-related notifications."
+            })
+
+        return attrs
 
 
 class AllUsersNotificationsSerializer(serializers.ModelSerializer):
