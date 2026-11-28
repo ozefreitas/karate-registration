@@ -1,4 +1,10 @@
-from .models import Bracket, Match, ScoringEntry, ScoringRound
+from .models import (
+    Bracket,
+    BracketGroupMember,
+    Match,
+    ScoringEntry,
+    ScoringRound,
+)
 import draw.serializers as serializers
 from core.views import MultipleSerializersMixIn
 from core.models import Category
@@ -592,18 +598,158 @@ class BracketViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
                 check_third = scoring_entries.filter(rank=3).first()
                 if check_third is not None:
                     third = check_third.person
+        elif bracket.draw_type == "Liga":
+            if is_team:
+                return Response(
+                    {"error": "A oficialização de Ligas de Equipas não é suportada."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            registrations = list(
+                BracketGroupMember.objects.filter(group__bracket=bracket)
+                .select_related("person", "group")
+                .order_by("group__number", "position")
+            )
+            matches = list(
+                Match.objects.filter(bracket=bracket)
+                .select_related(
+                    "contender_1",
+                    "contender_2",
+                    "winner",
+                    "kataresult",
+                    "kumiteresult",
+                )
+                .order_by("match_number")
+            )
+
+            if not registrations or not matches:
+                return Response(
+                    {"error": "Este Escalão não tem inscrições ou partidas para oficializar."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            standings = {}
+            for registration in registrations:
+                person_id = registration.person_id
+                standings.setdefault(
+                    person_id,
+                    {
+                        "person": registration.person,
+                        "wins": 0,
+                        "score_difference": 0,
+                        "group_number": registration.group.number,
+                        "position": registration.position,
+                    },
+                )
+
+            for match in matches:
+                if (
+                    match.winner_id is None
+                    or match.winner_id
+                    not in (match.contender_1_id, match.contender_2_id)
+                    or match.contender_1_id not in standings
+                    or match.contender_2_id not in standings
+                ):
+                    return Response(
+                        {
+                            "error": "Termine todas as partidas da Liga antes de oficializar este Escalão."
+                        },
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+
+                standings[match.winner_id]["wins"] += 1
+
+                kumite_result = getattr(match, "kumiteresult", None)
+                kata_result = getattr(match, "kataresult", None)
+                if kumite_result is not None:
+                    score_1 = kumite_result.points_contender_1
+                    score_2 = kumite_result.points_contender_2
+                elif kata_result is not None:
+                    score_1 = kata_result.flags_contender_1
+                    score_2 = kata_result.flags_contender_2
+                else:
+                    score_1 = score_2 = 0
+
+                score_difference = score_1 - score_2
+                standings[match.contender_1_id]["score_difference"] += (
+                    score_difference
+                )
+                standings[match.contender_2_id]["score_difference"] -= (
+                    score_difference
+                )
+
+            def rank_tied_participants(participant_ids):
+                if len(participant_ids) < 2:
+                    return participant_ids
+
+                tied_ids = set(participant_ids)
+                head_to_head_wins = {person_id: 0 for person_id in tied_ids}
+                for match in matches:
+                    if (
+                        match.contender_1_id in tied_ids
+                        and match.contender_2_id in tied_ids
+                    ):
+                        head_to_head_wins[match.winner_id] += 1
+
+                grouped_by_head_to_head = {}
+                for person_id, head_to_head_wins_count in head_to_head_wins.items():
+                    grouped_by_head_to_head.setdefault(
+                        head_to_head_wins_count, []
+                    ).append(person_id)
+
+                if len(grouped_by_head_to_head) == 1:
+                    return sorted(
+                        participant_ids,
+                        key=lambda person_id: (
+                            -standings[person_id]["score_difference"],
+                            standings[person_id]["group_number"],
+                            standings[person_id]["position"],
+                        ),
+                    )
+
+                ranked_ids = []
+                for head_to_head_wins_count in sorted(
+                    grouped_by_head_to_head, reverse=True
+                ):
+                    tied_group = grouped_by_head_to_head[
+                        head_to_head_wins_count
+                    ]
+                    ranked_ids.extend(rank_tied_participants(tied_group))
+                return ranked_ids
+
+            grouped_by_wins = {}
+            for person_id, standing in standings.items():
+                grouped_by_wins.setdefault(standing["wins"], []).append(person_id)
+
+            ranked_ids = []
+            for wins in sorted(grouped_by_wins, reverse=True):
+                ranked_ids.extend(
+                    rank_tied_participants(grouped_by_wins[wins])
+                )
+
+            ranked_people = [standings[person_id]["person"] for person_id in ranked_ids]
+            first = ranked_people[0]
+            second = ranked_people[1] if len(ranked_people) > 1 else None
+            third = ranked_people[2] if len(ranked_people) > 2 else None
+        else:
+            return Response(
+                {"error": "Este tipo de sorteio não pode ser oficializado."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         # reset if mistake
         Classification.objects.filter(bracket=bracket).delete()
 
         if is_team:
             Classification.objects.create(bracket=bracket, team=first, place=1)
-            Classification.objects.create(bracket=bracket, team=second, place=2)
+            if second is not None:
+                Classification.objects.create(bracket=bracket, team=second, place=2)
             if third is not None:
                 Classification.objects.create(bracket=bracket, team=third, place=3)
         else:
             Classification.objects.create(bracket=bracket, person=first, place=1)
-            Classification.objects.create(bracket=bracket, person=second, place=2)
+            if second is not None:
+                Classification.objects.create(bracket=bracket, person=second, place=2)
             if third is not None:
                 Classification.objects.create(bracket=bracket, person=third, place=3)
 
