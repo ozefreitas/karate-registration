@@ -312,8 +312,77 @@ class BracketViewSet(MultipleSerializersMixIn, viewsets.ModelViewSet):
         normal = Font(name='Arial')
         center = Alignment(horizontal='center')
         row = 1
+        matches = Match.objects.none()
 
-        if bracket.draw_type in ("Torneio/Finais", "Misto"):
+        if bracket.groups.exists():
+            matches = Match.objects.filter(
+                bracket=bracket,
+                group__isnull=False,
+            )
+
+            for group in bracket.groups.all():
+                ws.merge_cells(
+                    start_row=row,
+                    start_column=1,
+                    end_row=row,
+                    end_column=3,
+                )
+                ws.cell(row=row, column=1, value=f"Grupo {group.number}").font = bold
+                row += 1
+
+                group_matches = group.matches.select_related(
+                    "contender_1__club",
+                    "contender_2__club",
+                ).order_by("match_number")
+
+                for match in group_matches:
+                    if match.contender_1:
+                        ws.cell(
+                            row=row,
+                            column=1,
+                            value=f"{match.contender_1.first_name} {match.contender_1.last_name}",
+                        ).font = normal
+                        ws.cell(
+                            row=row,
+                            column=2,
+                            value=match.contender_1.club.username,
+                        ).font = normal
+                        ws.cell(
+                            row=row,
+                            column=3,
+                            value=get_dorsal(match.contender_1, dorsals),
+                        ).font = normal
+                    else:
+                        ws.cell(row=row, column=1, value="bye").font = normal
+                    row += 1
+
+                    ws.cell(row=row, column=1, value="vs").font = bold
+                    ws.cell(row=row, column=1).alignment = center
+                    row += 1
+
+                    if match.contender_2:
+                        ws.cell(
+                            row=row,
+                            column=1,
+                            value=f"{match.contender_2.first_name} {match.contender_2.last_name}",
+                        ).font = normal
+                        ws.cell(
+                            row=row,
+                            column=2,
+                            value=match.contender_2.club.username,
+                        ).font = normal
+                        ws.cell(
+                            row=row,
+                            column=3,
+                            value=get_dorsal(match.contender_2, dorsals),
+                        ).font = normal
+                    else:
+                        ws.cell(row=row, column=1, value="bye").font = normal
+                    row += 1
+
+                row += 1
+
+        elif bracket.draw_type in ("Torneio/Finais", "Misto"):
 
             # Regular matches ordered by round (highest first = first round) then match number
             first_round_number = Match.objects.filter(

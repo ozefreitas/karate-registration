@@ -16,6 +16,7 @@ class EventsSerializer(serializers.ModelSerializer):
     has_any_team = serializers.SerializerMethodField()
     has_any_indiv = serializers.SerializerMethodField()
     has_coach = serializers.SerializerMethodField()
+    has_draw = serializers.SerializerMethodField()
     
     class Meta:
         model = Event
@@ -79,6 +80,11 @@ class EventsSerializer(serializers.ModelSerializer):
     def get_has_coach(self, obj):
         disciplines = Discipline.objects.filter(event=obj, is_team=False, is_coach=True)
         if disciplines.count() > 0:
+            return True
+        return False
+
+    def get_has_draw(self, obj):
+        if obj.brackets.exists():
             return True
         return False
 

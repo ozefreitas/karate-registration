@@ -10148,6 +10148,10 @@
                         "type": "string",
                         "readOnly": true
                     },
+                    "has_draw": {
+                        "type": "string",
+                        "readOnly": true
+                    },
                     "name": {
                         "type": "string",
                         "title": "Nome",
@@ -10249,6 +10253,7 @@
                     "has_any_indiv",
                     "has_any_team",
                     "has_coach",
+                    "has_draw",
                     "individuals",
                     "is_closed",
                     "is_open",
@@ -12011,6 +12016,10 @@
                         "readOnly": true
                     },
                     "has_coach": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "has_draw": {
                         "type": "string",
                         "readOnly": true
                     },

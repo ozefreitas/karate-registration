@@ -628,7 +628,7 @@ class RequestPasswordResetView(GenericAPIView):
         admin_user = User.objects.get(role="main_admin")
         Notification.objects.create(
             club_user=admin_user,
-            notification=(f"Password reset request from {user.username} was initiated."),
+            notification=(f"Pedido de reposição de palavra-passe por {user.username} foi iniciado."),
             type="reset",
             request_acount=user.username
         )
